@@ -34,6 +34,10 @@ public class WaterPurifierAttrDao extends AbstractDao<WaterPurifierAttr, String>
         public final static Property Tips = new Property(9, String.class, "tips", false, "TIPS");
         public final static Property Days = new Property(10, int.class, "days", false, "DAYS");
         public final static Property Boolshow = new Property(11, boolean.class, "boolshow", false, "BOOLSHOW");
+        public final static Property HasCool = new Property(12, boolean.class, "hasCool", false, "HAS_COOL");
+        public final static Property HasHot = new Property(13, boolean.class, "hasHot", false, "HAS_HOT");
+        public final static Property FilterTime = new Property(14, long.class, "filterTime", false, "FILTER_TIME");
+        public final static Property FilterNowtime = new Property(15, long.class, "filterNowtime", false, "FILTER_NOWTIME");
     }
 
 
@@ -60,7 +64,11 @@ public class WaterPurifierAttrDao extends AbstractDao<WaterPurifierAttr, String>
                 "\"BUYLINKURL\" TEXT," + // 8: buylinkurl
                 "\"TIPS\" TEXT," + // 9: tips
                 "\"DAYS\" INTEGER NOT NULL ," + // 10: days
-                "\"BOOLSHOW\" INTEGER NOT NULL );"); // 11: boolshow
+                "\"BOOLSHOW\" INTEGER NOT NULL ," + // 11: boolshow
+                "\"HAS_COOL\" INTEGER NOT NULL ," + // 12: hasCool
+                "\"HAS_HOT\" INTEGER NOT NULL ," + // 13: hasHot
+                "\"FILTER_TIME\" INTEGER NOT NULL ," + // 14: filterTime
+                "\"FILTER_NOWTIME\" INTEGER NOT NULL );"); // 15: filterNowtime
     }
 
     /** Drops the underlying database table. */
@@ -108,6 +116,10 @@ public class WaterPurifierAttrDao extends AbstractDao<WaterPurifierAttr, String>
         }
         stmt.bindLong(11, entity.getDays());
         stmt.bindLong(12, entity.getBoolshow() ? 1L: 0L);
+        stmt.bindLong(13, entity.getHasCool() ? 1L: 0L);
+        stmt.bindLong(14, entity.getHasHot() ? 1L: 0L);
+        stmt.bindLong(15, entity.getFilterTime());
+        stmt.bindLong(16, entity.getFilterNowtime());
     }
 
     @Override
@@ -149,6 +161,10 @@ public class WaterPurifierAttrDao extends AbstractDao<WaterPurifierAttr, String>
         }
         stmt.bindLong(11, entity.getDays());
         stmt.bindLong(12, entity.getBoolshow() ? 1L: 0L);
+        stmt.bindLong(13, entity.getHasCool() ? 1L: 0L);
+        stmt.bindLong(14, entity.getHasHot() ? 1L: 0L);
+        stmt.bindLong(15, entity.getFilterTime());
+        stmt.bindLong(16, entity.getFilterNowtime());
     }
 
     @Override
@@ -170,7 +186,11 @@ public class WaterPurifierAttrDao extends AbstractDao<WaterPurifierAttr, String>
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // buylinkurl
             cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // tips
             cursor.getInt(offset + 10), // days
-            cursor.getShort(offset + 11) != 0 // boolshow
+            cursor.getShort(offset + 11) != 0, // boolshow
+            cursor.getShort(offset + 12) != 0, // hasCool
+            cursor.getShort(offset + 13) != 0, // hasHot
+            cursor.getLong(offset + 14), // filterTime
+            cursor.getLong(offset + 15) // filterNowtime
         );
         return entity;
     }
@@ -189,6 +209,10 @@ public class WaterPurifierAttrDao extends AbstractDao<WaterPurifierAttr, String>
         entity.setTips(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
         entity.setDays(cursor.getInt(offset + 10));
         entity.setBoolshow(cursor.getShort(offset + 11) != 0);
+        entity.setHasCool(cursor.getShort(offset + 12) != 0);
+        entity.setHasHot(cursor.getShort(offset + 13) != 0);
+        entity.setFilterTime(cursor.getLong(offset + 14));
+        entity.setFilterNowtime(cursor.getLong(offset + 15));
      }
     
     @Override

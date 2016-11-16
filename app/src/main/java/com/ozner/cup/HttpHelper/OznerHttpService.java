@@ -53,7 +53,39 @@ public interface OznerHttpService {
             , @Field("miei") String miei, @Field("devicename") String devicename);
 
 
+    /**
+     * 获取净水器属性信息
+     *
+     * @param mac
+     *
+     * @return
+     */
     @FormUrlEncoded
-    @POST("OznerServer/GetMatchineType")
-    Observable<JsonObject> getMachineType(@Field("usertoken") String usertoken, @Field("type") String mac);
+    @POST("OznerServer/GetMachineType")
+    Observable<JsonObject> getMachineType(@Field("type") String mac);
+
+    /**
+     * 获取水机滤芯信息
+     *
+     * @param mac
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/GetMachineLifeOutTime")
+    Observable<JsonObject> getWaterFilterInfo(@Field("mac") String mac);
+
+
+    /**
+     * 获取水探头滤芯信息
+     *
+     * @param usertoken
+     * @param mac
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/FilterService")
+    Observable<JsonObject> getTapFilterInfo(@Field("usertoken") String usertoken, @Field("mac") String mac);
+
 }

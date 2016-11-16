@@ -39,6 +39,8 @@
         </activity>
         <activity android:name=".Device.WaterPurifier.MatchWaterPuriferActivity">
         </activity>
+        <activity android:name=".Device.WaterPurifier.SetupWaterActivity">
+        </activity>
     </application>
 
 </manifest>

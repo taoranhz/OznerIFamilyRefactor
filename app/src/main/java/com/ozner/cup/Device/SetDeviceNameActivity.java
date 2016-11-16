@@ -71,7 +71,6 @@ public class SetDeviceNameActivity extends BaseActivity {
             if (mDevice != null) {
                 mSelPos = (String) mDevice.Setting().get(Contacts.DEV_USE_POS, "");
                 etDeviceName.setText(mDevice.getName());
-                tv_customTitle.setText(R.string.my_tap);
                 loadDevicePosData();
             }
         } catch (Exception ex) {
@@ -116,6 +115,7 @@ public class SetDeviceNameActivity extends BaseActivity {
                 String[] posArray = new String[]{};
                 posAdapter.clear();
                 if (TapManager.IsTap(mDevice.Type())) {
+                    tv_customTitle.setText(R.string.my_tap);
                     //加载默认地点
                     posArray = getResources().getStringArray(R.array.pos_tap_defalut_array);
                     for (String item : posArray) {
@@ -123,6 +123,7 @@ public class SetDeviceNameActivity extends BaseActivity {
                     }
                     loadSavePos(UserDataPreference.TapPosSaveTag);
                 } else if (CupManager.IsCup(mDevice.Type())) {
+                    tv_customTitle.setText(R.string.my_cup);
                     //加载默认地点
                     posArray = getResources().getStringArray(R.array.pos_cup_defalut_array);
                     for (String item : posArray) {
@@ -130,6 +131,7 @@ public class SetDeviceNameActivity extends BaseActivity {
                     }
                     loadSavePos(UserDataPreference.CupPosSaveTag);
                 } else if (WaterPurifierManager.IsWaterPurifier(mDevice.Type())) {
+                    tv_customTitle.setText(R.string.my_water_purifier);
                     //加载默认地点
                     posArray = getResources().getStringArray(R.array.pos_water_defalut_array);
                     for (String item : posArray) {
@@ -137,6 +139,7 @@ public class SetDeviceNameActivity extends BaseActivity {
                     }
                     loadSavePos(UserDataPreference.WaterPosSaveTag);
                 } else if (AirPurifierManager.IsBluetoothAirPurifier(mDevice.Type()) || AirPurifierManager.IsWifiAirPurifier(mDevice.Type())) {
+                    tv_customTitle.setText(R.string.my_air_purifier);
                     //加载默认地点
                     posArray = getResources().getStringArray(R.array.pos_air_defalut_array);
                     for (String item : posArray) {

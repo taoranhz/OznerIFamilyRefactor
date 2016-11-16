@@ -103,7 +103,7 @@ public class SetupTapActivity extends BaseActivity {
         if (mTap != null) {
             //初始化设备名字
             deviceNewName = mTap.getName();
-            tv_customTitle.setText(deviceNewName);
+//            tv_customTitle.setText(deviceNewName);
             StringBuffer deviceNameBuf = new StringBuffer();
             deviceNameBuf.append(mTap.getName());
             String usePos = (String) mTap.Setting().get(Contacts.DEV_USE_POS, "");

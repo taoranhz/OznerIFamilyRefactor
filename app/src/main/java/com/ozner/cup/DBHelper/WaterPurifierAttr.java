@@ -1,8 +1,12 @@
 package com.ozner.cup.DBHelper;
 
+import android.util.Log;
+
+import com.google.gson.JsonObject;
+
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 
 /**
  * Created by ozner_67 on 2016/11/15.
@@ -11,10 +15,11 @@ import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class WaterPurifierAttr {
+    private static final String TAG = "WaterPurifierAttr";
 
     /**
      * Mac:C8:93:46:43:2F:02
-     * DeviceType : A2S3(CRF)
+     * MachineType : A2S3(CRF)
      * Attr : cool:false,hot:true
      * Disabled : 0
      * CreateTime : /Date(1448208000000)/
@@ -25,6 +30,12 @@ public class WaterPurifierAttr {
      * tips : 不支持此功能哦
      * days : 10
      * boolshow : 1
+     */
+
+    /**
+     * "state": 0,
+     * "time": 2016/11/16 15:30:51,
+     * "nowtime": 2016/11/16 15:30:51
      */
 
     @Id
@@ -40,11 +51,16 @@ public class WaterPurifierAttr {
     private String tips;
     private int days;
     private boolean boolshow;
+    private boolean hasCool;
+    private boolean hasHot;
 
-    @Generated(hash = 1502671221)
-    public WaterPurifierAttr(String Mac, String DeviceType, String Attr, boolean Disabled,
-            long CreateTime, long ModifyTime, boolean IsShowDueDay, String smlinkurl, String buylinkurl,
-            String tips, int days, boolean boolshow) {
+    private long filterTime;
+    private long filterNowtime;
+
+
+    public WaterPurifierAttr(String Mac, String DeviceType, String Attr, boolean Disabled, long CreateTime, long ModifyTime,
+                             boolean IsShowDueDay, String smlinkurl, String buylinkurl, String tips, int days, boolean boolshow, boolean hasCool,
+                             boolean hasHot) {
         this.Mac = Mac;
         this.DeviceType = DeviceType;
         this.Attr = Attr;
@@ -57,10 +73,34 @@ public class WaterPurifierAttr {
         this.tips = tips;
         this.days = days;
         this.boolshow = boolshow;
+        this.hasCool = hasCool;
+        this.hasHot = hasHot;
     }
 
     @Generated(hash = 1460846934)
     public WaterPurifierAttr() {
+    }
+
+    @Generated(hash = 918272366)
+    public WaterPurifierAttr(String Mac, String DeviceType, String Attr, boolean Disabled, long CreateTime, long ModifyTime, boolean IsShowDueDay,
+                             String smlinkurl, String buylinkurl, String tips, int days, boolean boolshow, boolean hasCool, boolean hasHot, long filterTime,
+                             long filterNowtime) {
+        this.Mac = Mac;
+        this.DeviceType = DeviceType;
+        this.Attr = Attr;
+        this.Disabled = Disabled;
+        this.CreateTime = CreateTime;
+        this.ModifyTime = ModifyTime;
+        this.IsShowDueDay = IsShowDueDay;
+        this.smlinkurl = smlinkurl;
+        this.buylinkurl = buylinkurl;
+        this.tips = tips;
+        this.days = days;
+        this.boolshow = boolshow;
+        this.hasCool = hasCool;
+        this.hasHot = hasHot;
+        this.filterTime = filterTime;
+        this.filterNowtime = filterNowtime;
     }
 
     public String getMac() {
@@ -195,5 +235,71 @@ public class WaterPurifierAttr {
 
     public boolean getBoolshow() {
         return this.boolshow;
+    }
+
+    public boolean isHasCool() {
+        return hasCool;
+    }
+
+    public void setHasCool(boolean hasCool) {
+        this.hasCool = hasCool;
+        this.Attr = "cool:" + hasCool + ",hot:" + hasHot;
+    }
+
+    public boolean isHasHot() {
+        return hasHot;
+    }
+
+    public void setHasHot(boolean hasHot) {
+        this.hasHot = hasHot;
+        this.Attr = "cool:" + hasCool + ",hot:" + hasHot;
+    }
+
+
+    public long getFilterTime() {
+        return filterTime;
+    }
+
+    public void setFilterTime(long filterTime) {
+        this.filterTime = filterTime;
+    }
+
+    public long getFilterNowtime() {
+        return filterNowtime;
+    }
+
+    public void setFilterNowtime(long filterNowtime) {
+        this.filterNowtime = filterNowtime;
+    }
+
+    public void fromJsonObject(String mac, JsonObject jsonObject) {
+        try {
+            setMac(mac);
+            setDeviceType(jsonObject.get("MachineType").getAsString());
+            setDisabled(jsonObject.get("Disabled").getAsBoolean());
+            setCreateTime(jsonObject.get("CreateTime").getAsString());
+            setModifyTime(jsonObject.get("ModifyTime").getAsString());
+            setIsShowDueDay(jsonObject.get("IsShowDueDay").getAsBoolean());
+            setSmlinkurl(jsonObject.get("smlinkurl").getAsString());
+            setBuylinkurl(jsonObject.get("buylinkurl").getAsString());
+            setTips(jsonObject.get("tips").getAsString());
+            setDays(jsonObject.get("days").getAsInt());
+            setBoolshow(jsonObject.get("boolshow").getAsBoolean());
+
+            String attr = jsonObject.get("Attr").getAsString();
+            setAttr(attr);
+            setHasCool(Boolean.parseBoolean(attr.split(",")[0].split(":")[1]));
+            setHasHot(Boolean.parseBoolean(attr.split(",")[1].split(":")[1]));
+        } catch (Exception ex) {
+            Log.e(TAG, "fromJsonObject_Ex: " + ex.getMessage());
+        }
+    }
+
+    public boolean getHasCool() {
+        return this.hasCool;
+    }
+
+    public boolean getHasHot() {
+        return this.hasHot;
     }
 }

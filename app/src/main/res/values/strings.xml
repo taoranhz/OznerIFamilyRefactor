@@ -89,6 +89,7 @@
     <string name="finish">完成</string>
     <string name="no_success">未成功</string>
     <string name="device_disConnect">设备连接已断开</string>
+    <string name="not_support">不支持此功能</string>
 
     <string name="connect_wlan">连接WLAN</string>
     <string name="inpu_water_name">输入净水器名字</string>
@@ -108,6 +109,7 @@
     <string name="tds_rank">击败了%1$d的用户</string>
     <string name="data_loading">数据加载中</string>
     <string name="filter_need_change">请及时更换滤芯</string>
+    <string name="filter_status">滤芯状态</string>
     <string name="health">健康</string>
     <string name="soso">一般</string>
     <string name="bad">较差</string>
@@ -119,13 +121,26 @@
     <string name="refrigeration">制冷</string>
     <string name="power">电源</string>
     <string name="please_open_power">请先打开电源开关</string>
-    <string name="send_status_fail">发送状态:发送失败</string>
-    <string name="send_status_success">发送状态:发送成功</string>
+    <string name="send_status_fail">发送失败</string>
+    <string name="send_status_success">发送成功</string>
+
+    <string name="Iknow">我知道了</string>
+    <string name="buy_filter">购买滤芯</string>
 
     <!--设置-->
+    <string name="my_water_purifier">我的净水器</string>
+    <string name="my_tap">我的水探头</string>
+    <string name="my_cup">我的水杯</string>
+    <string name="my_air_purifier">我的空气净化器</string>
+    <string name="my_repen">我的补水仪</string>
+
+    <string name="water_mac">水机编号</string>
+    <string name="about_water_purifier">关于净水器</string>
+
+
     <string name="Not_found_device">未发现设备</string>
     <string name="input_device_name">请输入设备名字</string>
-    <string name="my_tap">我的水探头</string>
+
     <string name="save">保存</string>
     <string name="detection_time">检测时间</string>
     <string name="detection_time1">检测时间1</string>

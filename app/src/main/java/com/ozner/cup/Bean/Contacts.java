@@ -8,6 +8,8 @@ package com.ozner.cup.Bean;
 public class Contacts {
     //传递参数mac
     public final static String PARMS_MAC = "parms_mac";
+    //传递参数url
+    public final static String PARMS_URL = "parms_url";
     //activity返回的设备名字
     public final static String RESULT_NAME = "result_name";
     //activity返回的设备位置

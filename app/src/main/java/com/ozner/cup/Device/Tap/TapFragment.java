@@ -1,7 +1,6 @@
 package com.ozner.cup.Device.Tap;
 
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -50,7 +49,6 @@ import static com.ozner.cup.R.string.bad;
 
 public class TapFragment extends DeviceFragment {
     private static final String TAG = "TapFragment";
-    private final int SetUpRequestCode = 0x101;
     private static final int TextSize = 45;
     private static final int NumSize = 60;
     @InjectView(R.id.iv_battery_icon)
@@ -455,9 +453,9 @@ public class TapFragment extends DeviceFragment {
                 if (mTap != null) {
                     Intent setIntent = new Intent(getContext(), SetupTapActivity.class);
                     setIntent.putExtra(SetupTapActivity.PARMS_MAC, mTap.Address());
-                    startActivityForResult(setIntent, SetUpRequestCode);
+                    startActivity(setIntent);
                 } else {
-                    Toast.makeText(getContext(), "设备地址不存在", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.Not_found_device, Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.llay_tds_detail:
@@ -465,18 +463,18 @@ public class TapFragment extends DeviceFragment {
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            switch (requestCode) {
-                case SetUpRequestCode:
-
-                    refreshUIData();
-                    break;
-            }
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (resultCode == Activity.RESULT_OK) {
+//            switch (requestCode) {
+//                case SetUpRequestCode:
+//
+//                    refreshUIData();
+//                    break;
+//            }
+//        }
+//    }
 
     class TapMonitor extends BroadcastReceiver {
 

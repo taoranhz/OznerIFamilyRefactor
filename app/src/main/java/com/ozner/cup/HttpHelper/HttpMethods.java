@@ -115,8 +115,27 @@ public class HttpMethods {
                 .subscribe(subscriber);
     }
 
-    public void getMatchineType(String usertoken, String mac, Subscriber<JsonObject> subscriber) {
-        oznerHttpService.getMachineType(usertoken, mac)
+    /**
+     * 获取净水器属性信息
+     *
+     * @param mac
+     * @param subscriber
+     */
+    public void getMatchineType(String mac, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getMachineType(mac)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 获取净水器滤芯信息
+     *
+     * @param mac
+     * @param subscriber
+     */
+    public void getWaterFilterInfo(String mac, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getWaterFilterInfo(mac)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
