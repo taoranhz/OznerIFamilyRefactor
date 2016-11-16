@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--选择设备配对——设备名字列表-->
+    <string-array name="add_device_names">
+        <item>@string/smart_glass</item>
+        <item>@string/water_probe</item>
+        <item>@string/water_tdspen</item>
+
+        <item>@string/water_purifier</item>
+        <item>@string/air_purifier_ver</item>
+
+        <item>@string/air_purifier_desk</item>
+        <item>@string/water_replen_meter</item>
+    </string-array>
+    <!--选择设备配对——配对类型-->
+    <string-array name="add_device_connect_types">
+        <item>@string/bluetooth_connection</item>
+        <item>@string/bluetooth_connection</item>
+        <item>@string/bluetooth_connection</item>
+        <item>@string/wifi_connection</item>
+        <item>@string/wifi_connection</item>
+        <item>@string/bluetooth_connection</item>
+        <item>@string/bluetooth_connection</item>
+    </string-array>
+    <!--选择设备配对——设备图标-->
+    <integer-array name="add_device_type_icons">
+        <item>@drawable/device_icon_cup</item>
+        <item>@drawable/device_icon_tap</item>
+        <item>@drawable/device_icon_tdspen</item>
+        <item>@drawable/device_icon_water</item>
+        <item>@drawable/device_icon_air_ver</item>
+        <item>@drawable/device_icon_air_desk</item>
+        <item>@drawable/device_icon_replen</item>
+    </integer-array>
+    <!--选择设备配对——配对图标-->
+    <integer-array name="add_device_connect_icons">
+        <item>@mipmap/connect_bluetooth_on</item>
+        <item>@mipmap/connect_bluetooth_on</item>
+        <item>@mipmap/connect_bluetooth_on</item>
+        <item>@mipmap/connect_wifi_on</item>
+        <item>@mipmap/connect_wifi_on</item>
+        <item>@mipmap/connect_bluetooth_on</item>
+        <item>@mipmap/connect_bluetooth_on</item>
+
+    </integer-array>
+
+
+    <string-array name="pos_tap_defalut_array">
+        <item>@string/pos_toilets</item>
+        <item>@string/pos_kitchen</item>
+    </string-array>
+    <string-array name="pos_cup_defalut_array">
+        <item>@string/cup_mine</item>
+        <item>@string/cup_family</item>
+        <item>@string/cup_friend</item>
+    </string-array>
+
+    <string-array name="pos_water_defalut_array">
+        <item>@string/pos_home</item>
+        <item>@string/pos_office</item>
+    </string-array>
+    <string-array name="pos_air_defalut_array">
+        <item>@string/pos_living_room</item>
+        <item>@string/pos_bedroom</item>
+    </string-array>
+</resources>

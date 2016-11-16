@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/llay_root"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:gravity="center_horizontal"
+              android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/iv_device_Icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/found_tap_selected"/>
+
+    <TextView
+        android:id="@+id/tv_device_Name"
+        android:layout_width="wrap_content"
+        android:textAlignment="center"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_device_Icon"
+        android:layout_centerHorizontal="true"
+        android:text="智能杯"/>
+
+    <RadioButton
+        android:id="@+id/rb_check"
+        android:layout_width="30dp"
+        android:layout_height="15dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/found_device_selector"
+        android:button="@null"/>
+</LinearLayout>

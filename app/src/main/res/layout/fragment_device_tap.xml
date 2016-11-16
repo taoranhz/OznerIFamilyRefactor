@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:background="@drawable/tds_detail_bg">
+
+        <RelativeLayout
+            android:id="@+id/rlay_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/iv_battery_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="13dp"
+                    android:src="@drawable/battery0"/>
+
+                <TextView
+                    android:id="@+id/tv_battery_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:text="@string/state_null"
+                    android:textColor="@color/white"
+                    android:textSize="13dp"/>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlay_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/iv_filter_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="33dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/filter_state0"/>
+
+                <TextView
+                    android:id="@+id/tv_filter_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_filter_icon"
+                    android:text="@string/state_null"
+                    android:textColor="@color/white"
+                    android:textSize="13dp"/>
+
+                <TextView
+                    android:id="@+id/tv_filter_tips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_filter_value"
+                    android:layout_marginTop="3dp"
+                    android:layout_toRightOf="@+id/iv_filter_icon"
+                    android:text="@string/filter_need_change"
+                    android:textColor="@color/white"
+                    android:textSize="13dp"/>
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/iv_setting"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/setting"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/llay_tds_detail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/rlay_bottom"
+            android:orientation="vertical">
+
+            <include
+                layout="@layout/progress_detail_tds"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/tv_top_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/tds_months"
+            android:textSize="18dp"/>
+
+
+        <LinearLayout
+            android:id="@+id/llay_legend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingLeft="16.5dp"
+            android:paddingRight="16.5dp">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_weight="1"
+                android:gravity="center">
+
+
+                <ImageView
+                    android:id="@+id/iv_tapHelathImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="4dp"
+                    android:src="@drawable/tap_health"/>
+
+                <TextView
+                    android:id="@+id/tv_tapHealthPre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_tapHelathImg"
+                    android:text="@string/health"
+                    android:textColor="@color/faq_text_blue"
+                    android:textSize="14dp"/>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/iv_tapGenericImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="4dp"
+                    android:src="@drawable/tap_gengric"/>
+
+                <TextView
+                    android:id="@+id/tv_tapGenericPre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_tapGenericImg"
+                    android:text="@string/soso"
+                    android:textColor="@color/generic"
+                    android:textSize="14dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="7dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal">
+
+                <ImageView
+                    android:id="@+id/iv_tapBadImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="4dp"
+                    android:src="@drawable/tap_bad"/>
+
+                <TextView
+                    android:id="@+id/tv_tapBadPre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_tapBadImg"
+                    android:text="@string/bad"
+                    android:textColor="@color/err_red"
+                    android:textSize="14dp"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <com.ozner.cup.UIView.TapTDSChartView
+            android:id="@+id/tdsChartView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/llay_legend"
+            android:layout_below="@+id/tv_top_title"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="6dp"/>
+    </RelativeLayout>
+
+</LinearLayout>

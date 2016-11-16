@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--系统颜色设置-->
+    <color name="colorPrimary">@color/theme_blue</color>
+    <color name="colorPrimaryDark">@color/theme_blue</color>
+    <color name="colorAccent">@color/theme_blue</color>
+
+    <!--App颜色设置-->
+    <color name="light_black">#292929</color>
+    <color name="white">#ffffff</color>
+    <color name="gray">#666666</color>
+    <color name="gray_bg">#fff0eff5</color>
+    <color name="colorLine">#e1e1e1</color>
+    <!--<color name="theme_blue">#ff81cef8</color>-->
+    <color name="theme_blue">#ffafecff</color>
+    <color name="pressed_blue">#48b4e9</color>
+    <color name="font_gray">#959595</color>
+    <color name="err_red">#f26368</color>
+    <color name="left_menu_white">#fff5f9fc</color>
+    <color name="left_menu_data_bg">#ffe2ebf4</color>
+    <color name="text_blue">#00A6F4</color>
+    <color name="text_dark_blue">#3b536e</color>
+    <color name="small_text_color">#8294a9</color>
+    <color name="deep_blue">#607a96</color>
+    <color name="detail_textblue">#ff3b71df</color>
+    <color name="faq_text_blue">#3c89f2</color>
+
+    <color name="generic">#ff7d58e7</color>
+</resources>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_selected="false">
+        <layer-list>
+            <item android:bottom="5.5dp" android:left="5.5dp" android:right="5.5dp" android:top="5.5dp">
+                <shape android:shape="oval" android:useLevel="false">
+                    <stroke android:width="0.2dp" android:color="@color/font_gray"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_selected="true">
+        <layer-list>
+            <!-- outer circle -->
+            <item>
+                <shape android:shape="oval">
+                    <stroke android:width="0.2dp" android:color="#55cadafb" />
+                </shape>
+            </item>
+
+            <!-- inner shadow of outer circle -->
+            <item android:bottom="0.2dp" android:left="0.2dp" android:right="0.2dp" android:top="0.2dp">
+                <shape android:shape="oval">
+                    <stroke android:width="0.2dp" android:color="#66cadafb" />
+                </shape>
+            </item>
+            <item android:bottom="0.4dp" android:left="0.4dp" android:right="0.4dp" android:top="0.4dp">
+                <shape android:shape="oval">
+                    <stroke android:width="0.2dp" android:color="#77cadafb" />
+                </shape>
+            </item>
+            <item android:bottom="0.6dp" android:left="0.6dp" android:right="0.6dp" android:top="0.6dp">
+                <shape android:shape="oval">
+                    <stroke android:width="0.2dp" android:color="#88cadafb" />
+                </shape>
+            </item>
+            <item android:bottom="0.8dp" android:left="0.8dp" android:right="0.8dp" android:top="0.8dp">
+                <shape android:shape="oval">
+                    <stroke android:width="0.2dp" android:color="#99cadafb" />
+                </shape>
+            </item>
+            <item android:bottom="1dp" android:left="1dp" android:right="1dp" android:top="1dp">
+                <shape android:shape="oval">
+                    <stroke android:width="0.2dp" android:color="#aacadafb" />
+                </shape>
+            </item>
+            <item android:bottom="1.2dp" android:left="1.2dp" android:right="1.2dp" android:top="1.2dp">
+                <shape android:shape="oval">
+                    <stroke android:width="0.2dp" android:color="#bbcadafb" />
+                </shape>
+            </item>
+            <item android:bottom="1.4dp" android:left="1.4dp" android:right="1.4dp" android:top="1.4dp">
+                <shape android:shape="oval">
+                    <stroke android:width="0.2dp" android:color="#cccadafb" />
+                </shape>
+            </item>
+            <item android:bottom="1.6dp" android:left="1.6dp" android:right="1.6dp" android:top="1.6dp">
+                <shape android:shape="oval">
+                    <stroke android:width="0.2dp" android:color="#ddcadafb" />
+                </shape>
+            </item>
+            <item android:bottom="1.8dp" android:left="1.8dp" android:right="1.8dp" android:top="1.8dp">
+                <shape android:shape="oval">
+                    <stroke android:width="0.2dp" android:color="#eecadafb" />
+                </shape>
+            </item>
+            <item android:bottom="2dp" android:left="2dp" android:right="2dp" android:top="2dp">
+                <shape android:shape="oval">
+                    <stroke android:width="0.2dp" android:color="#ffcadafb" />
+                </shape>
+            </item>
+
+            <item android:bottom="2.2dp" android:left="2.2dp" android:right="2.2dp" android:top="2.2dp">
+                <shape android:shape="oval">
+                    <stroke android:width="1dp" android:color="#ff3c89f2" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <!--<item android:state_selected="false">-->
+        <!--<shape android:shape="oval" android:useLevel="false">-->
+            <!--<stroke android:width="1.5dp" android:color="@color/unchecked"></stroke>-->
+        <!--</shape>-->
+    <!--</item>-->
+    <!--<item android:state_selected="true">-->
+        <!--<shape android:shape="oval" android:useLevel="false">-->
+            <!--<stroke android:width="1.5dp" android:color="@color/checked"></stroke>-->
+        <!--</shape>-->
+    <!--</item>-->
+</selector>

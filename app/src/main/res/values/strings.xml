@@ -1,0 +1,186 @@
+<resources>
+    <!--<string name="app_name">OznerCupRefactor</string>-->
+
+    <!--<string name="navigation_drawer_open">Open navigation drawer</string>-->
+    <!--<string name="navigation_drawer_close">Close navigation drawer</string>-->
+
+    <!--<string name="action_settings">Settings</string>-->
+
+    <string name="app_name">浩泽净水家</string>
+
+    <string name="navigation_drawer_open">打开侧边栏</string>
+    <string name="navigation_drawer_close">关闭侧边栏</string>
+    <string name="settings">设置</string>
+
+    <!--底部菜单-->
+    <string name="device">设备</string>
+    <string name="eshop">商城</string>
+    <string name="chat">咨询</string>
+    <string name="mine">我的</string>
+
+    <!--错误信息提示-->
+    <string name="exception_tips">异常信息</string>
+    <string name="err_net_outline">网络中断，请检查您的网络状态"</string>
+
+    <string name="err_miss_phone">请输入11位手机号</string>
+    <string name="err_miss_verify_code">请输入验证码</string>
+    <string name="err_miss_proctol">请先同意《浩泽净水家免责条款》</string>
+
+
+    <!--登录-->
+    <string name="input_userphone">请输入手机号</string>
+    <string name="input_verifycode">请输入验证码</string>
+    <string name="get_verify_code">获取验证码</string>
+    <string name="login">登  录</string>
+    <string name="get_voice_code">获取语音验证码</string>
+    <string name="agree_proctol">我已阅读并同意</string>
+    <string name="ozner_proctol">《浩泽净水家免责条款》</string>
+    <string name="login_no_code">未收到验证码？</string>
+    <string name="login_btn_voi">获取语音验证码</string>
+    <string name="verify_code_requesting">正在获取验证码...</string>
+    <string name="logining">登录中...</string>
+    <string name="tips_getcode">验证码将以短信的形式发送给您,请注意查收</string>
+    <string name="tips_getvoice">您将会收到来自400电话语音，请注意接听。</string>
+
+
+    <!--设备-->
+    <string name="connected">已连接</string>
+    <string name="connecting">连接中</string>
+    <string name="device_connecting">正在连接中</string>
+    <string name="device_unconnected">设备未连接</string>
+    <string name="disconnect">断开</string>
+    <string name="add_device">添加设备</string>
+    <string name="nodevice_add_device">请添加设备</string>
+    <string name="start_ozner_smart">开启浩泽智能生活</string>
+    <string name="match_device">设备配对</string>
+    <string name="add_newDevice">添加新设备</string>
+    <string name="select_ozner_device">选择智能设备</string>
+    <string name="ozner_smart_service">浩泽智能化生活服务</string>
+    <string name="start_smart_service">立即添加设备，开始体验浩泽智能化生活服务。</string>
+    <string name="device_name">设备名字</string>
+    <string name="use_position">使用地点</string>
+    <!--设备名字-->
+    <string name="smart_glass">智能杯</string>
+    <string name="water_probe">水探头</string>
+    <string name="water_purifier">净水器</string>
+    <string name="water_tdspen">水质检测笔</string>
+    <string name="air_purifier_ver">空气净化器\n(立式)</string>
+    <string name="air_purifier_desk">空气净化器\n(台式)</string>
+    <string name="water_replen_meter">智能补水仪</string>
+
+    <!--配对方式-->
+    <string name="bluetooth_connection">蓝牙连接</string>
+    <string name="wifi_connection">WIFI连接</string>
+
+    <!--配对-->
+    <string name="rember_password">下次记住密码</string>
+    <string name="match_notice_tap">长按下start按钮3秒</string>
+    <string name="matching_bluetooth">正在进行蓝牙配对</string>
+    <string name="found_device">已搜索到设备</string>
+    <string name="rematch">重新配对</string>
+    <string name="match_successed">配对成功</string>
+    <string name="match_failed">配对超时</string>
+    <string name="common_problem">常见问题</string>
+    <string name="problem_notice_tap">您可以检查水探头电量、蓝牙开启状态后再进行配对</string>
+    <string name="input_tap_name">输入水探头名字</string>
+    <string name="input_weight">输入体重</string>
+
+    <string name="office">办公室</string>
+    <string name="finish">完成</string>
+    <string name="no_success">未成功</string>
+    <string name="device_disConnect">设备连接已断开</string>
+
+    <string name="connect_wlan">连接WLAN</string>
+    <string name="inpu_water_name">输入净水器名字</string>
+    <string name="select_useful_wifi">选择一个可用的WLAN，让设备接入网络</string>
+    <string name="Purifier_RouterConnecting">路由器正在尝试与云端建立联系</string>
+    <string name="Purifier_CheckToReMatch">您可以检查净水器WIFI连接状态后再进行配对</string>
+    <string name="Purifier_SendConfig">正在发送配置信息</string>
+    <string name="next_step">下一步</string>
+    <string name="Purifier_WaitRestart">等待设备重启</string>
+    <string name="Purifier_WaitRegist">等待设备激活</string>
+
+    <!--Tds-->
+    <string name="tds_months">本月水质纯净指数分布</string>
+    <string name="tdsTitle">水质纯净值TDS</string>
+    <string name="state_null">暂无</string>
+    <string name="no_data">暂无数据</string>
+    <string name="tds_rank">击败了%1$d的用户</string>
+    <string name="data_loading">数据加载中</string>
+    <string name="filter_need_change">请及时更换滤芯</string>
+    <string name="health">健康</string>
+    <string name="soso">一般</string>
+    <string name="bad">较差</string>
+
+    <string name="pre_purifier">净化前</string>
+    <string name="after_purifier">净化后</string>
+    <string name="purifierDetail_after">经过净化后的水质健康，适合您直饮</string>
+    <string name="warm">加热</string>
+    <string name="refrigeration">制冷</string>
+    <string name="power">电源</string>
+    <string name="please_open_power">请先打开电源开关</string>
+    <string name="send_status_fail">发送状态:发送失败</string>
+    <string name="send_status_success">发送状态:发送成功</string>
+
+    <!--设置-->
+    <string name="Not_found_device">未发现设备</string>
+    <string name="input_device_name">请输入设备名字</string>
+    <string name="my_tap">我的水探头</string>
+    <string name="save">保存</string>
+    <string name="detection_time">检测时间</string>
+    <string name="detection_time1">检测时间1</string>
+    <string name="detection_time2">检测时间2</string>
+    <string name="tap_attention">滤芯不足10天会显示提醒</string>
+    <string name="about_tap">关于水探头</string>
+    <string name="delete_this_device">删除此设备</string>
+    <string name="add">新增</string>
+    <string name="add_pos">添加地点</string>
+    <string name="append">添加</string>
+    <string name="cancle">取消</string>
+    <string name="ensure">确定</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+
+    <string name="pos_toilets">洗手间</string>
+    <string name="pos_kitchen">厨房</string>
+
+    <string name="pos_home">家</string>
+    <string name="pos_office">办公室</string>
+
+    <string name="pos_living_room">客厅</string>
+    <string name="pos_bedroom">卧室</string>
+
+    <string name="cup_mine">我的水杯</string>
+    <string name="cup_family">家人水杯</string>
+    <string name="cup_friend">朋友水杯</string>
+
+    <!--错误码-->
+    <string name="Code_Accept_nofound">没有发现对应请求</string>
+    <string name="Code_AddFriend_exists">已经发送过请求</string>
+    <string name="Code_C_TokenNull">Token验证失败</string>
+    <string name="Code_Code_TimeOut">验证码过期</string>
+    <string name="Code_Code_Wrong">验证码错误</string>
+    <string name="Code_Device_Notfound">设备没有发现</string>
+    <string name="Code_Exception">异常错误</string>
+    <string name="Code_Failed">失败</string>
+    <string name="Code_Friend_NoGx">和目标用户没有好友关系</string>
+    <string name="Code_Friend_NoUser">对方不是浩泽用户</string>
+    <string name="Code_P_NotNull">参数不能为空</string>
+    <string name="Code_P_params_empty">参数不能为空</string>
+    <string name="Code_P_params_error">参数错误</string>
+    <string name="Code_Success">Success</string>
+    <string name="Code_W_AddUser">添加用户异常</string>
+    <string name="Code_W_TokenWrite">Token写入数据库失败</string>
+    <string name="Code_W_Uname">用户名错误</string>
+    <string name="Code_Baidu_idwrong">用户没有绑定baidu设备id或者手机类型</string>
+    <string name="Code_Baidu_nouser">没有此用户</string>
+    <string name="Code_Like_Liked">已经点过赞</string>
+    <string name="Code_Fiflter_CodeNotfound">二维码无效</string>
+    <string name="Code_Fiflter_CodeUsed">二维码已经使用过了</string>
+    <string name="Code_Fiflter_DeviceNotfound">设备未绑定</string>
+    <string name="Code_Login_Error">登录失败</string>
+    <string name="Code_UserNotFound">没有发现此用户</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

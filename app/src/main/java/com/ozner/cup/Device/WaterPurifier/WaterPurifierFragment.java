@@ -1,0 +1,561 @@
+package com.ozner.cup.Device.WaterPurifier;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.ozner.WaterPurifier.WaterPurifier;
+import com.ozner.cup.CupRecord;
+import com.ozner.cup.Device.DeviceFragment;
+import com.ozner.cup.Main.MainActivity;
+import com.ozner.cup.R;
+import com.ozner.cup.UIView.PurifierDetailProgress;
+import com.ozner.device.BaseDeviceIO;
+import com.ozner.device.OperateCallback;
+import com.ozner.device.OznerDevice;
+import com.ozner.device.OznerDeviceManager;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
+
+public class WaterPurifierFragment extends DeviceFragment {
+    private static final String TAG = "WaterPurifier";
+    private static final int TextSize = 40;
+    private static final int NumSize = 50;
+
+    @InjectView(R.id.iv_deviceConnectIcon)
+    ImageView ivDeviceConnectIcon;
+    @InjectView(R.id.tv_deviceConnectTips)
+    TextView tvDeviceConnectTips;
+    @InjectView(R.id.llay_deviceConnectTip)
+    LinearLayout llayDeviceConnectTip;
+    @InjectView(R.id.iv_filter_icon)
+    ImageView ivFilterIcon;
+    @InjectView(R.id.tv_filter_value)
+    TextView tvFilterValue;
+    @InjectView(R.id.tv_filter_tips)
+    TextView tvFilterTips;
+    @InjectView(R.id.rlay_filter)
+    RelativeLayout rlayFilter;
+    @InjectView(R.id.iv_setting)
+    ImageView ivSetting;
+    @InjectView(R.id.tv_preValue)
+    TextView tvPreValue;
+    @InjectView(R.id.tv_afterValue)
+    TextView tvAfterValue;
+    @InjectView(R.id.lay_tdsValue)
+    LinearLayout layTdsValue;
+    @InjectView(R.id.tv_tdsTips)
+    TextView tvTdsTips;
+    @InjectView(R.id.waterProgress)
+    PurifierDetailProgress waterProgress;
+    @InjectView(R.id.iv_tdsStateIcon)
+    ImageView ivTdsStateIcon;
+    @InjectView(R.id.tv_tdsStateText)
+    TextView tvTdsStateText;
+    @InjectView(R.id.llay_tdsTips)
+    LinearLayout llayTdsTips;
+    @InjectView(R.id.tv_powerswitch)
+    TextView tvPowerswitch;
+    @InjectView(R.id.iv_powerswitch)
+    ImageView ivPowerswitch;
+    @InjectView(R.id.rlay_powerswitch)
+    RelativeLayout rlayPowerswitch;
+    @InjectView(R.id.tv_hotswitch)
+    TextView tvHotswitch;
+    @InjectView(R.id.iv_hotswitch)
+    ImageView ivHotswitch;
+    @InjectView(R.id.rlay_hotswitch)
+    RelativeLayout rlayHotswitch;
+    @InjectView(R.id.rl_hot)
+    RelativeLayout rlHot;
+    @InjectView(R.id.tv_coolswitch)
+    TextView tvCoolswitch;
+    @InjectView(R.id.iv_coolswitch)
+    ImageView ivCoolswitch;
+    @InjectView(R.id.rlay_coolswitch)
+    RelativeLayout rlayCoolswitch;
+    @InjectView(R.id.rl_cool)
+    RelativeLayout rlCool;
+
+    boolean isPowerOn = false;
+    boolean isCoolOn = false;
+    boolean isHotOn = false;
+    @InjectView(R.id.llay_tdsState)
+    LinearLayout llayTdsState;
+    @InjectView(R.id.tv_spec)
+    TextView tvSpec;
+    @InjectView(R.id.llay_tds_detail)
+    LinearLayout llayTdsDetail;
+    private WaterPurifier mWaterPurifer;
+    private RotateAnimation rotateAnimation;
+    WaterPurifierMonitor waterMonitor;
+    private int oldPreValue, oldThenValue;
+
+    /**
+     * 实例化Fragment
+     *
+     * @param mac
+     *
+     * @return
+     */
+    public static DeviceFragment newInstance(String mac) {
+        WaterPurifierFragment fragment = new WaterPurifierFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(DeviceAddress, mac);
+        if (bundle != null) {
+            fragment.setArguments(bundle);
+        }
+        return fragment;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_water_purifier, container, false);
+        ButterKnife.inject(this, view);
+        return view;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        initAnimation();
+        try {
+            Bundle bundle = getArguments();
+            mWaterPurifer = (WaterPurifier) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
+            oldPreValue = oldThenValue = 0;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
+        }
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void setDevice(OznerDevice device) {
+        if (mWaterPurifer != null) {
+            if (mWaterPurifer.Address() != device.Address()) {
+                mWaterPurifer.release();
+                mWaterPurifer = null;
+                mWaterPurifer = (WaterPurifier) device;
+                refreshUIData();
+            }
+        } else {
+            mWaterPurifer = (WaterPurifier) device;
+            refreshUIData();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        registerMonitor();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        releaseMonitor();
+        super.onStop();
+    }
+
+    @OnClick({R.id.rlay_filter, R.id.iv_setting, R.id.llay_tds_detail, R.id.rlay_powerswitch, R.id.rlay_hotswitch, R.id.rlay_coolswitch})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.rlay_filter:
+                break;
+            case R.id.iv_setting:
+                break;
+            case R.id.llay_tds_detail:
+                break;
+            case R.id.rlay_powerswitch:
+                if (mWaterPurifer != null && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+                    isPowerOn = !mWaterPurifer.status().Power();
+                    switchPower(isPowerOn);
+                    mWaterPurifer.status().setPower(isPowerOn, new SwitchCallback());
+                } else {
+                    showCenterToast(R.string.device_disConnect);
+                }
+                break;
+            case R.id.rlay_hotswitch:
+                if (mWaterPurifer != null && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+                    if (isPowerOn) {
+                        isHotOn = !mWaterPurifer.status().Hot();
+                        switchHot(isPowerOn);
+                        mWaterPurifer.status().setHot(isHotOn, new SwitchCallback());
+                    } else {
+                        showCenterToast(R.string.please_open_power);
+                    }
+                } else {
+                    showCenterToast(R.string.device_disConnect);
+                }
+                break;
+            case R.id.rlay_coolswitch:
+                if (mWaterPurifer != null && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+                    if (isPowerOn) {
+                        isCoolOn = !mWaterPurifer.status().Cool();
+                        switchCool(isCoolOn);
+                        mWaterPurifer.status().setCool(isCoolOn, new SwitchCallback());
+                    } else {
+                        showCenterToast(R.string.please_open_power);
+                    }
+                } else {
+                    showCenterToast(R.string.device_disConnect);
+                }
+                break;
+        }
+    }
+
+    /**
+     * 在中间弹出提示信息
+     *
+     * @param resId
+     */
+    private void showCenterToast(int resId) {
+        Toast toast = Toast.makeText(getContext(), resId, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
+    /**
+     * 是否已添加到View
+     *
+     * @return
+     */
+    private boolean isWaterPuriferAdd() {
+        return !WaterPurifierFragment.this.isRemoving() && !WaterPurifierFragment.this.isDetached() && WaterPurifierFragment.this.isAdded();
+    }
+
+    /**
+     * 注册广播接收器
+     */
+    private void registerMonitor() {
+        waterMonitor = new WaterPurifierMonitor();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WaterPurifier.ACTION_WATER_PURIFIER_STATUS_CHANGE);
+        filter.addAction(OznerDeviceManager.ACTION_OZNER_MANAGER_DEVICE_CHANGE);
+        filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTING);
+        filter.addAction(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED);
+        filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTED);
+        getContext().registerReceiver(waterMonitor, filter);
+    }
+
+    /**
+     * 注销广播接收器
+     */
+    private void releaseMonitor() {
+        if (WaterPurifierFragment.this.isAdded() && !WaterPurifierFragment.this.isRemoving() && !WaterPurifierFragment.this.isDetached() && waterMonitor != null) {
+            getContext().unregisterReceiver(waterMonitor);
+        }
+    }
+
+    /**
+     * 初始化动画
+     */
+    private void initAnimation() {
+        rotateAnimation = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotateAnimation.setRepeatCount(-1);
+        LinearInterpolator li = new LinearInterpolator();
+        rotateAnimation.setInterpolator(li);
+        rotateAnimation.setFillAfter(false);
+        rotateAnimation.setDuration(1000);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        try {
+            if (WaterPurifierFragment.this.isAdded() && !WaterPurifierFragment.this.isRemoving() && !WaterPurifierFragment.this.isDetached())
+                ((MainActivity) context).setCustomTitle(getString(R.string.water_purifier));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.e(TAG, "onAttach_Ex: " + ex.getMessage());
+        }
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onResume() {
+        refreshUIData();
+        super.onResume();
+    }
+
+    @Override
+    protected void refreshUIData() {
+        // TODO: 2016/11/11 加载数据，并填充页面 
+        if (isWaterPuriferAdd()) {
+            if (mWaterPurifer != null && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+                // TODO: 2016/11/7 加载数据，并填充页面
+                Log.e(TAG, "refreshUIData: ");
+                refreshConnectState();
+                refreshSensorData();
+                refreshSwitchState();
+            } else {
+                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+                tvPreValue.setText(R.string.state_null);
+                tvAfterValue.setText(R.string.state_null);
+                tvPreValue.setTextSize(TextSize);
+                tvAfterValue.setTextSize(TextSize);
+                ivTdsStateIcon.setVisibility(View.GONE);
+                tvTdsStateText.setText(R.string.state_null);
+                waterProgress.update(0, 0);
+            }
+        }
+    }
+
+
+    /**
+     * 刷新连接状态
+     */
+    private void refreshConnectState() {
+        if (mWaterPurifer != null) {
+            Log.e(TAG, "refreshConnectState: " + mWaterPurifer.toString());
+            if (ivDeviceConnectIcon.getAnimation() == null) {
+                ivDeviceConnectIcon.setAnimation(rotateAnimation);
+            }
+            if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
+                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                tvDeviceConnectTips.setText(R.string.device_connecting);
+                ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
+                ivDeviceConnectIcon.getAnimation().start();
+            } else if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+                if (ivDeviceConnectIcon.getAnimation() != null) {
+                    ivDeviceConnectIcon.getAnimation().cancel();
+                }
+            } else if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
+                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                tvDeviceConnectTips.setText(R.string.device_unconnected);
+                if (ivDeviceConnectIcon.getAnimation() != null) {
+                    ivDeviceConnectIcon.getAnimation().cancel();
+                }
+                ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
+            }
+        }
+    }
+
+    /**
+     * 刷新开关状态
+     */
+    private void refreshSwitchState() {
+        if (mWaterPurifer != null) {
+            isPowerOn = mWaterPurifer.status().Power();
+            isHotOn = mWaterPurifer.status().Hot();
+            isCoolOn = mWaterPurifer.status().Cool();
+        } else {
+            isPowerOn = false;
+            isHotOn = false;
+            isCoolOn = false;
+        }
+        switchHot(isHotOn);
+        switchCool(isCoolOn);
+        switchPower(isPowerOn);
+
+    }
+
+    /**
+     * 刷新传感器数据
+     */
+    private void refreshSensorData() {
+        if (mWaterPurifer != null) {
+            ((MainActivity) getActivity()).setCustomTitle(mWaterPurifer.getName());
+            showTdsState(mWaterPurifer.sensor().TDS1(), mWaterPurifer.sensor().TDS2());
+        }
+    }
+
+
+    /**
+     * 处理TDS显示相关
+     *
+     * @param preTds
+     * @param thenTds
+     */
+    private void showTdsState(int preTds, int thenTds) {
+        int tdsPre, tdsThen;
+        //获取净化前后的TDS值
+        if (mWaterPurifer.sensor().TDS1() > 0 && mWaterPurifer.sensor().TDS2() > 0
+                && mWaterPurifer.sensor().TDS1() != 65535 && mWaterPurifer.sensor().TDS2() != 65535) {
+            //TDS值比较大的作为净化前的值
+            if (mWaterPurifer.sensor().TDS1() > mWaterPurifer.sensor().TDS2()) {
+                tdsPre = mWaterPurifer.sensor().TDS1();
+                tdsThen = mWaterPurifer.sensor().TDS2();
+            } else {
+                tdsPre = mWaterPurifer.sensor().TDS2();
+                tdsThen = mWaterPurifer.sensor().TDS1();
+            }
+        } else {
+            //有任何一个不大于0或者有任何一个为65535，就全部置为0
+            tdsPre = tdsThen = 0;
+        }
+
+        //只有当数据和上次不一样时才更新刷新
+        if (oldPreValue != tdsPre || oldThenValue != tdsThen) {
+
+            oldPreValue = tdsPre;
+            oldThenValue = tdsThen;
+
+            //净化前后的值都不为0，并且都不为65535
+            if (tdsPre != 0) {
+                tvPreValue.setText(String.valueOf(tdsPre));
+                tvAfterValue.setText(String.valueOf(tdsThen));
+                tvPreValue.setTextSize(NumSize);
+                tvAfterValue.setTextSize(NumSize);
+            } else {
+                tvPreValue.setText(R.string.state_null);
+                tvAfterValue.setText(R.string.state_null);
+                tvPreValue.setTextSize(TextSize);
+                tvAfterValue.setTextSize(TextSize);
+            }
+
+            showTdsStateTips(tdsThen);
+
+            if (tdsPre > 250) {
+                tdsPre = 250;
+            }
+            if (tdsThen > 250) {
+                tdsThen = 250;
+            }
+
+            waterProgress.update(Math.round((tdsPre / 250f) * 100), Math.round((tdsThen / 250f) * 100));
+        }
+    }
+
+    /**
+     * 根据净化后的tds显示状态
+     */
+    private void showTdsStateTips(int thenTds) {
+        if (thenTds > 0) {
+            ivTdsStateIcon.setVisibility(View.VISIBLE);
+            llayTdsTips.setVisibility(View.VISIBLE);
+        } else {
+            llayTdsTips.setVisibility(View.INVISIBLE);
+        }
+
+        if (thenTds == 0) {
+            ivTdsStateIcon.setVisibility(View.GONE);
+            tvTdsStateText.setText(R.string.state_null);
+        } else if (thenTds > 0 && thenTds <= CupRecord.TDS_Good_Value) {
+            if (!this.isDetached())
+                Glide.with(this).load(R.drawable.face_good).into(ivTdsStateIcon);
+            tvTdsStateText.setText(R.string.health);
+        } else if (thenTds > CupRecord.TDS_Good_Value && thenTds < CupRecord.TDS_Bad_Value) {
+            if (!this.isDetached()) {
+                Glide.with(this).load(R.drawable.face_soso).into(ivTdsStateIcon);
+            }
+            tvTdsStateText.setText(R.string.soso);
+        } else if (thenTds > CupRecord.TDS_Bad_Value) {
+            if (!this.isDetached()) {
+                Glide.with(this).load(R.drawable.face_bad).into(ivTdsStateIcon);
+            }
+            tvTdsStateText.setText(R.string.bad);
+        }
+    }
+
+
+    /**
+     * 切换电源开关
+     *
+     * @param isOn
+     */
+    public void switchPower(boolean isOn) {
+        if (!isOn && isCoolOn) {
+            switchCool(isOn);
+        }
+        if (!isOn && isHotOn) {
+            switchHot(isOn);
+        }
+        ivPowerswitch.setSelected(isOn);
+        rlayPowerswitch.setSelected(isOn);
+        tvPowerswitch.setSelected(isOn);
+//        waterPurifier.status().setPower(isOn, this);
+        isPowerOn = isOn;
+    }
+
+    /**
+     * 切换制冷开关
+     *
+     * @param isOn
+     */
+    public void switchCool(boolean isOn) {
+        rlayCoolswitch.setSelected(isOn);
+        ivCoolswitch.setSelected(isOn);
+        tvCoolswitch.setSelected(isOn);
+        isCoolOn = isOn;
+    }
+
+    /**
+     * 切换加热开关
+     *
+     * @param isOn
+     */
+    public void switchHot(boolean isOn) {
+        rlayHotswitch.setSelected(isOn);
+        ivHotswitch.setSelected(isOn);
+        tvHotswitch.setSelected(isOn);
+        isHotOn = isOn;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+
+    Handler mHandler = new Handler();
+
+    /**
+     * 开关操作回调
+     */
+    class SwitchCallback implements OperateCallback<Void> {
+
+        @Override
+        public void onSuccess(Void var1) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (isWaterPuriferAdd())
+                        showCenterToast(R.string.send_status_success);
+                    refreshUIData();
+                }
+            }, 300);
+        }
+
+        @Override
+        public void onFailure(Throwable var1) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (isWaterPuriferAdd())
+                        showCenterToast(R.string.send_status_fail);
+                    refreshUIData();
+                }
+            }, 300);
+        }
+    }
+
+    class WaterPurifierMonitor extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            refreshUIData();
+        }
+    }
+}
