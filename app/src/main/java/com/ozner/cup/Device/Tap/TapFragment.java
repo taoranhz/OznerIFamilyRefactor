@@ -11,9 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -91,7 +89,7 @@ public class TapFragment extends DeviceFragment {
     TapTDSChartView tdsChartView;
     private Tap mTap;
     private TapMonitor tapMonitor;
-    private RotateAnimation rotateAnimation;
+//    private RotateAnimation rotateAnimation;
     private int oldTdsValue;
     int[] tdsDatas = new int[31];
 
@@ -191,17 +189,17 @@ public class TapFragment extends DeviceFragment {
         return view;
     }
 
-    /**
-     * 初始化动画
-     */
-    private void initAnimation() {
-        rotateAnimation = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        rotateAnimation.setRepeatCount(-1);
-        LinearInterpolator li = new LinearInterpolator();
-        rotateAnimation.setInterpolator(li);
-        rotateAnimation.setFillAfter(false);
-        rotateAnimation.setDuration(1000);
-    }
+//    /**
+//     * 初始化动画
+//     */
+//    private void initAnimation() {
+//        rotateAnimation = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//        rotateAnimation.setRepeatCount(-1);
+//        LinearInterpolator li = new LinearInterpolator();
+//        rotateAnimation.setInterpolator(li);
+//        rotateAnimation.setFillAfter(false);
+//        rotateAnimation.setDuration(1000);
+//    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

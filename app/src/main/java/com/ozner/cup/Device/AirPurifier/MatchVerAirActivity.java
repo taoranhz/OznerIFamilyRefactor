@@ -1,4 +1,4 @@
-package com.ozner.cup.Device.WaterPurifier;
+package com.ozner.cup.Device.AirPurifier;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -25,7 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.ozner.WaterPurifier.WaterPurifierManager;
+import com.ozner.AirPurifier.AirPurifierManager;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.BuildConfig;
 import com.ozner.cup.Command.OznerPreference;
@@ -40,18 +40,16 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-/**
- *
- */
-public class MatchWaterPuriferActivity extends BaseActivity {
-    private static final String TAG = "MatchWater";
-
+public class MatchVerAirActivity extends BaseActivity {
+    private static final String TAG = "MatchVerAir";
     @InjectView(R.id.title)
-    TextView tv_title;
+    TextView title;
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
     @InjectView(R.id.tv_state)
     TextView tvState;
+    @InjectView(R.id.ib_moreLeft)
+    ImageButton ibMoreLeft;
     @InjectView(R.id.rv_found_devices)
     RecyclerView rvFoundDevices;
     @InjectView(R.id.llay_found_device)
@@ -98,31 +96,29 @@ public class MatchWaterPuriferActivity extends BaseActivity {
     EditText etDeviceName;
     @InjectView(R.id.et_device_position)
     EditText etDevicePosition;
-    @InjectView(R.id.iv_place_icon)
-    ImageView ivPlaceIcon;
     @InjectView(R.id.btn_match_success)
     Button btnMatchSuccess;
     @InjectView(R.id.llay_input_deviceInfo)
     LinearLayout llayInputDeviceInfo;
     @InjectView(R.id.llay_match_succ_holder)
     LinearLayout llayMatchSuccHolder;
+    @InjectView(R.id.llay_conn_notice)
+    LinearLayout llayConnNotice;
 
-    AnimationDrawable anim1, anim2, anim3, anim4, anim5;
-    @InjectView(R.id.ib_moreLeft)
-    ImageButton ibMoreLeft;
-    private boolean isRemPass = true;
-    private boolean isShowPass = false;
     private WifiManager wifiManager;
+    AnimationDrawable anim1, anim2, anim3, anim4, anim5;
+    private FoundDevcieAdapter mDevAdpater;
     private WifiPair wifiPair;
     private WifiPairImp pairImp;
-    private FoundDevcieAdapter mDevAdpater;
-    private BaseDeviceIO selDeviceIo;
     Monitor monitor;
+    private BaseDeviceIO selDeviceIo;
+    private boolean isRemPass = true;
+    private boolean isShowPass = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_match_water_purifer);
+        setContentView(R.layout.activity_match_ver_air);
         ButterKnife.inject(this);
         monitor = new Monitor();
         IntentFilter filter = new IntentFilter();
@@ -145,6 +141,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
             }
         }
 
+
         readyMatchDevice();
     }
 
@@ -155,28 +152,29 @@ public class MatchWaterPuriferActivity extends BaseActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.back);
-        tv_title.setText(R.string.match_device);
+        title.setText(R.string.match_device);
     }
 
     /**
-     * 初始化RecyleView
+     * 初始化配网动画
      */
-    private void initFoundDeviceView() {
-        mDevAdpater = new FoundDevcieAdapter(this, R.drawable.match_water_selected, R.drawable.match_water_unselect);
-//        mDevAdpater.setOnItemClickListener(new FoundDevcieAdapter.ClientClickListener() {
-//            @Override
-//            public void onItemClick(int position, BaseDeviceIO deviceIO) {
-//                Log.e(TAG, "onItemClick: " + position);
-//                selDeviceIo = deviceIO;
-//                showInputDeviceInfo();
-//            }
-//        });
-//        filladapterData();
-        rvFoundDevices.setAdapter(mDevAdpater);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        rvFoundDevices.setLayoutManager(linearLayoutManager);
+    private void initAnimation() {
+        anim1 = (AnimationDrawable) ivImage1.getDrawable();
+        anim2 = (AnimationDrawable) ivImage2.getDrawable();
+        anim3 = (AnimationDrawable) ivImage3.getDrawable();
+        anim4 = (AnimationDrawable) ivImage4.getDrawable();
+        anim5 = (AnimationDrawable) ivImage5.getDrawable();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                break;
+        }
+        return true;
+    }
 
     @OnClick({R.id.iv_passwordImg, R.id.cb_remPass, R.id.btn_next_step, R.id.btn_rematch, R.id.btn_match_success})
     public void onClick(View view) {
@@ -202,76 +200,6 @@ public class MatchWaterPuriferActivity extends BaseActivity {
                 break;
         }
     }
-
-    /**
-     * 开始配网操作
-     */
-    private void startMatch() {
-        if (tvSelectedWifi.getText().length() > 0) {
-            if (etPassword.getText().length() > 0) {
-                if (isRemPass) {
-                    remPassWord(tvSelectedWifi.getText().toString(), etPassword.getText().toString());
-                } else {
-                    clearPassWord(tvSelectedWifi.getText().toString());
-                }
-                if (BuildConfig.DEBUG) {
-                    Log.e(TAG, "开始配网: ssid:" + tvSelectedWifi.getText().toString() + " ,password:" + etPassword.getText().toString());
-                }
-                //开始配网
-                try {
-                    wifiPair.pair(tvSelectedWifi.getText().toString(), etPassword.getText().toString());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    Log.e(TAG, "matchDevice_Ex: " + ex.getMessage());
-                }
-
-                showMatchDevice();
-            } else {
-                showToastCenter("请输入密码");
-            }
-        } else {
-            showToastCenter("未连接WIFI");
-        }
-    }
-
-    /**
-     * 保存设备信息
-     */
-    private void saveDevice() {
-        if (selDeviceIo != null) {
-            try {
-                Log.e(TAG, "saveDevice:sleDeviceIo_info: " + selDeviceIo.getType() + " , " + selDeviceIo.name);
-                OznerDevice device = OznerDeviceManager.Instance().getDevice(selDeviceIo);
-                if (device != null && WaterPurifierManager.IsWaterPurifier(device.Type())) {
-                    Log.e(TAG, "saveDevice: " + device.Type());
-                    OznerDeviceManager.Instance().save(device);
-                    if (etDeviceName.getText().length() > 0) {
-                        device.Setting().name(etDeviceName.getText().toString().trim());
-                    } else {
-                        device.Setting().name(getString(R.string.water_purifier));
-                    }
-                    device.updateSettings();
-                } else {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, "saveDevice: devcie is null");
-                    showToastCenter(R.string.device_disConnect);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                showToastCenter(ex.getMessage());
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, "saveDevice_Ex: " + ex.getMessage());
-            } finally {
-                this.finish();
-            }
-        } else {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, "saveDevice: selDeviceIo is null");
-            showToastCenter(R.string.device_disConnect);
-        }
-
-    }
-
 
     /**
      * 初始化wifi信息
@@ -326,35 +254,102 @@ public class MatchWaterPuriferActivity extends BaseActivity {
         return OznerPreference.GetValue(this, ssid, "");
     }
 
+
     /**
-     * 初始化配网动画
+     * 开始配网操作
      */
-    private void initAnimation() {
-        anim1 = (AnimationDrawable) ivImage1.getDrawable();
-        anim2 = (AnimationDrawable) ivImage2.getDrawable();
-        anim3 = (AnimationDrawable) ivImage3.getDrawable();
-        anim4 = (AnimationDrawable) ivImage4.getDrawable();
-        anim5 = (AnimationDrawable) ivImage5.getDrawable();
-    }
+    private void startMatch() {
+        if (tvSelectedWifi.getText().length() > 0) {
+            if (etPassword.getText().length() > 0) {
+                if (isRemPass) {
+                    remPassWord(tvSelectedWifi.getText().toString(), etPassword.getText().toString());
+                } else {
+                    clearPassWord(tvSelectedWifi.getText().toString());
+                }
+                if (BuildConfig.DEBUG) {
+                    Log.e(TAG, "开始配网: ssid:" + tvSelectedWifi.getText().toString() + " ,password:" + etPassword.getText().toString());
+                }
+                //开始配网
+                try {
+                    wifiPair.pair(tvSelectedWifi.getText().toString(), etPassword.getText().toString());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    Log.e(TAG, "matchDevice_Ex: " + ex.getMessage());
+                }
 
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                break;
+                showMatchDevice();
+            } else {
+                showToastCenter("请输入密码");
+            }
+        } else {
+            showToastCenter("未连接WIFI");
         }
-        return true;
     }
 
+    /**
+     * 保存设备信息
+     */
+    private void saveDevice() {
+        if (selDeviceIo != null) {
+            try {
+                Log.e(TAG, "saveDevice:sleDeviceIo_info: " + selDeviceIo.getType() + " , " + selDeviceIo.name);
+                OznerDevice device = OznerDeviceManager.Instance().getDevice(selDeviceIo);
+                if (device != null && AirPurifierManager.IsWifiAirPurifier(device.Type())) {
+                    Log.e(TAG, "saveDevice: " + device.Type());
+                    OznerDeviceManager.Instance().save(device);
+                    if (etDeviceName.getText().length() > 0) {
+                        device.Setting().name(etDeviceName.getText().toString().trim());
+                    } else {
+                        device.Setting().name(getString(R.string.air_purifier));
+                    }
+                    device.updateSettings();
+                } else {
+                    if (BuildConfig.DEBUG)
+                        Log.e(TAG, "saveDevice: devcie is null");
+                    showToastCenter(R.string.device_disConnect);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                showToastCenter(ex.getMessage());
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, "saveDevice_Ex: " + ex.getMessage());
+            } finally {
+                this.finish();
+            }
+        } else {
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, "saveDevice: selDeviceIo is null");
+            showToastCenter(R.string.device_disConnect);
+        }
+
+    }
+
+
+    /**
+     * 初始化RecyleView
+     */
+    private void initFoundDeviceView() {
+        mDevAdpater = new FoundDevcieAdapter(this, R.drawable.found_ver_air_selected, R.drawable.found_ver_air_unselect);
+//        mDevAdpater.setOnItemClickListener(new FoundDevcieAdapter.ClientClickListener() {
+//            @Override
+//            public void onItemClick(int position, BaseDeviceIO deviceIO) {
+//                Log.e(TAG, "onItemClick: " + position);
+//                selDeviceIo = deviceIO;
+//                showInputDeviceInfo();
+//            }
+//        });
+//        filladapterData();
+        rvFoundDevices.setAdapter(mDevAdpater);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        rvFoundDevices.setLayoutManager(linearLayoutManager);
+    }
 
     /**
      * 将通用的布局显示内容初始化为水机配网信息
      */
     private void initStaticValue() {
         tvNoticeBottom.setText(R.string.Purifier_CheckToReMatch);
-        etDeviceName.setHint(R.string.inpu_water_name);
+        etDeviceName.setHint(R.string.input_airpurifier_name);
     }
 
 
@@ -362,7 +357,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
      * 输入密码准备配网
      */
     private void readyMatchDevice() {
-        tv_title.setText(R.string.match_device);
+        title.setText(R.string.match_device);
         initWifiInfo();
         llayWifiConnecting.setVisibility(View.GONE);
         llayMatchFail.setVisibility(View.GONE);
@@ -377,16 +372,20 @@ public class MatchWaterPuriferActivity extends BaseActivity {
             Glide.with(this).load(R.drawable.match_device_purifier_wifi).into(ivMatchLoading);
     }
 
+
     /**
      * 开始配网
      */
     private void showMatchDevice() {
+
+        tvMatchNotice.setVisibility(View.GONE);
         llayMatchSuccHolder.setVisibility(View.GONE);
         llayInputWifiInfo.setVisibility(View.GONE);
         llayMatchFail.setVisibility(View.GONE);
         llayInputDeviceInfo.setVisibility(View.GONE);
-        tvMatchNotice.setVisibility(View.INVISIBLE);
-        tvMatchType.setVisibility(View.INVISIBLE);
+        llayConnNotice.setVisibility(View.VISIBLE);
+        tvMatchType.setVisibility(View.VISIBLE);
+        tvMatchType.setText(R.string.matching_wifi);
         llayFoundDevice.setVisibility(View.INVISIBLE);
         llayWifiConnecting.setVisibility(View.VISIBLE);
         startMatchAnim();
@@ -397,8 +396,9 @@ public class MatchWaterPuriferActivity extends BaseActivity {
      */
     private void showMatchFail() {
         stopMatchAnim();
+        llayConnNotice.setVisibility(View.GONE);
         llayMatchSuccHolder.setVisibility(View.GONE);
-        tv_title.setText(R.string.match_failed);
+        title.setText(R.string.match_failed);
         llayWifiConnecting.setVisibility(View.GONE);
         llayInputWifiInfo.setVisibility(View.GONE);
         llayInputDeviceInfo.setVisibility(View.GONE);
@@ -417,7 +417,6 @@ public class MatchWaterPuriferActivity extends BaseActivity {
             ex.printStackTrace();
             Log.e(TAG, "showMatchFail_ex: " + ex.getMessage());
         }
-
     }
 
     /**
@@ -426,7 +425,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
     private void showFoundDevice() {
         stopMatchAnim();
         mDevAdpater.setItemWidth(getRVWidth());
-        tv_title.setText(R.string.match_successed);
+        title.setText(R.string.match_successed);
         llayWifiConnecting.setVisibility(View.GONE);
         llayInputWifiInfo.setVisibility(View.GONE);
         llayMatchFail.setVisibility(View.GONE);
@@ -443,25 +442,20 @@ public class MatchWaterPuriferActivity extends BaseActivity {
             Glide.with(this).load(R.drawable.match_device_successed).into(ivMatchLoading);
     }
 
+
     /**
-     * 显示填写设备信息，并完成配网
+     * 获取RecyleView的宽度
+     * 用来计算每一个item应有的宽度
+     *
+     * @return
      */
-    private void showInputDeviceInfo() {
-        llayMatchSuccHolder.setVisibility(View.GONE);
-        tv_title.setText(R.string.match_successed);
-        llayWifiConnecting.setVisibility(View.GONE);
-        llayInputWifiInfo.setVisibility(View.GONE);
-        llayMatchFail.setVisibility(View.GONE);
-
-        tvMatchNotice.setVisibility(View.INVISIBLE);
-        tvMatchType.setVisibility(View.INVISIBLE);
-
-        llayFoundDevice.setVisibility(View.VISIBLE);
-        llayInputDeviceInfo.setVisibility(View.VISIBLE);
-        if (!this.isDestroyed())
-            Glide.with(this).load(R.drawable.match_device_successed).into(ivMatchLoading);
-
+    private int getRVWidth() {
+        int margin = dip2px(this, 20);
+        int imageWidth = 2 * getMeasuredWidth(ibMoreLeft)[0];
+        int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
+        return screenWidth - imageWidth - margin;
     }
+
 
     /**
      * 开始配网动画
@@ -506,47 +500,10 @@ public class MatchWaterPuriferActivity extends BaseActivity {
             anim3 = null;
             anim4 = null;
             anim5 = null;
-
-//            Observable.create(new OnSubscribe<ImageView>() {
-//                @Override
-//                public void call(Subscriber<? super ImageView> subscriber) {
-//                    subscriber.onNext(ivImage1);
-//                    subscriber.onNext(ivImage2);
-//                    subscriber.onNext(ivImage3);
-//                    subscriber.onNext(ivImage4);
-//                    subscriber.onNext(ivImage5);
-//                }
-//            }).subscribe(new Action1() {
-//                @Override
-//                public void call(Object o) {
-//                    ImageView ivImage = (ImageView) o;
-//                    AnimationDrawable bitmapDrawable = (AnimationDrawable) ivImage.getDrawable();
-//                    bitmapDrawable.
-//                    if (bitmapDrawable != null) {
-//                        if (!bitmapDrawable.getBitmap().isRecycled()) {
-//                            bitmapDrawable.getBitmap().recycle();
-//                        }
-//                    }
-//                }
-//            });
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "relealeAnim: " + ex.getMessage());
         }
-    }
-
-
-    /**
-     * 获取RecyleView的宽度
-     * 用来计算每一个item应有的宽度
-     *
-     * @return
-     */
-    private int getRVWidth() {
-        int margin = dip2px(this, 20);
-        int imageWidth = 2 * getMeasuredWidth(ibMoreLeft)[0];
-        int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
-        return screenWidth - imageWidth - margin;
     }
 
     @Override
@@ -560,32 +517,6 @@ public class MatchWaterPuriferActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    class Monitor extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
-                initWifiInfo();
-            }
-            if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
-                initWifiInfo();
-            }
-        }
-    }
-
-
-    /**
-     * 更新配网提示信息
-     *
-     * @param tips
-     */
-    private void updateConnectTips(final String tips) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                tvMatchingTips.setText(tips);
-            }
-        });
-    }
 
     /**
      * 更新配网提示信息
@@ -600,6 +531,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
             }
         });
     }
+
 
     class WifiPairImp implements WifiPair.WifiPairCallback {
 
@@ -659,6 +591,18 @@ public class MatchWaterPuriferActivity extends BaseActivity {
                     showMatchFail();
                 }
             });
+        }
+    }
+
+    class Monitor extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
+                initWifiInfo();
+            }
+            if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+                initWifiInfo();
+            }
         }
     }
 }

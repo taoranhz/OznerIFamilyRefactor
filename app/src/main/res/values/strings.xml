@@ -64,6 +64,7 @@
     <string name="water_probe">水探头</string>
     <string name="water_purifier">净水器</string>
     <string name="water_tdspen">水质检测笔</string>
+    <string name="air_purifier">空气净化器</string>
     <string name="air_purifier_ver">空气净化器\n(立式)</string>
     <string name="air_purifier_desk">空气净化器\n(台式)</string>
     <string name="water_replen_meter">智能补水仪</string>
@@ -93,13 +94,20 @@
 
     <string name="connect_wlan">连接WLAN</string>
     <string name="inpu_water_name">输入净水器名字</string>
+    <string name="input_airpurifier_name">输入净化器名称</string>
+
     <string name="select_useful_wifi">选择一个可用的WLAN，让设备接入网络</string>
     <string name="Purifier_RouterConnecting">路由器正在尝试与云端建立联系</string>
-    <string name="Purifier_CheckToReMatch">您可以检查净水器WIFI连接状态后再进行配对</string>
+    <string name="Purifier_CheckToReMatch">您可以检查WiFi连接状态后再进行配对</string>
     <string name="Purifier_SendConfig">正在发送配置信息</string>
     <string name="next_step">下一步</string>
     <string name="Purifier_WaitRestart">等待设备重启</string>
     <string name="Purifier_WaitRegist">等待设备激活</string>
+
+    <string name="sync_press">同时按下</string>
+    <string name="and">和</string>
+    <string name="lamp_blinks">，WIFI指示灯闪烁</string>
+    <string name="matching_wifi">正在进行WiFi配对</string>
 
     <!--Tds-->
     <string name="tds_months">本月水质纯净指数分布</string>

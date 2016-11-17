@@ -1,4 +1,4 @@
-package com.ozner.cup.Device.Tap.Adapter;
+package com.ozner.cup.Device.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

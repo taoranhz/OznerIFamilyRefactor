@@ -1,4 +1,4 @@
-package com.ozner.cup.Device.Tap;
+package com.ozner.cup.Device.Cup;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -25,32 +25,27 @@ import android.widget.Toast;
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScan;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Cup;
+import com.ozner.cup.CupManager;
 import com.ozner.cup.Device.Adapter.FoundDevcieAdapter;
 import com.ozner.cup.R;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
-import com.ozner.tap.Tap;
-import com.ozner.tap.TapManager;
-
-import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class MatchTapActivity extends BaseActivity {
-    private static final String TAG = "MatchTap";
+public class MatchCupActivity extends BaseActivity {
+    private static final String TAG = "MatchCup";
+
     @InjectView(R.id.title)
     TextView tv_title;
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
-//    @InjectView(R.id.tv_state)
-//    TextView tvState;
     @InjectView(R.id.ib_moreLeft)
     ImageButton ibMoreLeft;
-//    @InjectView(R.id.ib_moreRight)
-//    ImageButton ibMoreRight;
     @InjectView(R.id.iv_match_loading)
     ImageView ivMatchLoading;
     @InjectView(R.id.iv_match_icon)
@@ -77,28 +72,23 @@ public class MatchTapActivity extends BaseActivity {
     LinearLayout llayInputInfo;
     @InjectView(R.id.tv_notice_Bottom)
     TextView tvNoticeBottom;
-//    @InjectView(R.id.btn_rematch)
-//    Button btnRematch;
-//    @InjectView(R.id.btn_match_success)
-//    Button btnMatchSuccess;
-    private boolean isShowFound = false;
+
+    private Monitor mMonitor;
     private boolean isSearching = true;
+    private boolean isShowFound = false;
     private FoundDevcieAdapter mDevAdpater;
     TimerCount timerCount;
-    private Monitor mMonitor;
     private BaseDeviceIO selDeviceIo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_match_tap);
+        setContentView(R.layout.activity_match_cup);
         ButterKnife.inject(this);
         initActionBar();
         initFoundDeviceView();
         startFindDevice();
-//        showEditDeviceInfo();
     }
-
 
     /**
      * 初始化actionBar
@@ -114,7 +104,7 @@ public class MatchTapActivity extends BaseActivity {
      * 初始化RecyleView
      */
     private void initFoundDeviceView() {
-        mDevAdpater = new FoundDevcieAdapter(this, R.drawable.found_tap_selected, R.drawable.found_tap_unselected);
+        mDevAdpater = new FoundDevcieAdapter(this, R.drawable.found_cup_selected, R.drawable.found_cup_unselected);
         mDevAdpater.setOnItemClickListener(new FoundDevcieAdapter.ClientClickListener() {
             @Override
             public void onItemClick(int position, BaseDeviceIO deviceIO) {
@@ -130,72 +120,81 @@ public class MatchTapActivity extends BaseActivity {
     }
 
     /**
-     * 注册蓝牙监听
-     */
-    private void registerBlueReceiver() {
-        if (mMonitor == null) {
-            mMonitor = new Monitor();
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(BluetoothScan.ACTION_SCANNER_FOUND);
-            this.registerReceiver(mMonitor, filter);
-        }
-    }
-
-    /**
-     * 注销蓝牙监听
-     */
-    private void unRegisterBlueReceiver() {
-        if (mMonitor != null) {
-            this.unregisterReceiver(mMonitor);
-            mMonitor = null;
-        }
-    }
-
-
-    /**
      * 加载搜索到的设备
      */
     private void loadFoundDevices() {
-        mDevAdpater.clear();
-        if (OznerDeviceManager.Instance() != null) {
-            BaseDeviceIO[] deviceIOs = null;
-            try {
-                deviceIOs = OznerDeviceManager.Instance().getNotBindDevices();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                deviceIOs = null;
-            }
-            if (deviceIOs != null) {
-                for (BaseDeviceIO device : deviceIOs) {
-                    //只添加 水探头
-                    if (TapManager.IsTap(device.getType())) {
-                        if (device instanceof BluetoothIO) {
-                            BluetoothIO bluetoothIO = (BluetoothIO) device;
-                            //检查水探头处于start模式
-                            if (Tap.isBindMode(bluetoothIO))
-                                mDevAdpater.addItem(device);
+        try {
+            mDevAdpater.clear();
+            if (OznerDeviceManager.Instance() != null) {
+                BaseDeviceIO[] deviceIOs = null;
+                try {
+                    deviceIOs = OznerDeviceManager.Instance().getNotBindDevices();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    deviceIOs = null;
+                }
+                if (deviceIOs != null) {
+                    for (BaseDeviceIO device : deviceIOs) {
+                        //只添加 水杯
+                        if (CupManager.IsCup(device.getType())) {
+                            if (device instanceof BluetoothIO) {
+                                BluetoothIO bluetoothIO = (BluetoothIO) device;
+                                //检查水探头处于start模式
+                                if (Cup.isBindMode(bluetoothIO))
+                                    mDevAdpater.addItem(device);
+                            }
                         }
                     }
                 }
             }
+
+            if (mDevAdpater.getItemCount() > 0) {
+                if (isSearching) {
+                    int deviceCount = mDevAdpater.getItemCount();
+                    if (deviceCount > 3) {
+                        deviceCount = 3;
+                    }
+                    mDevAdpater.setItemWidth(getRVWidth() / deviceCount);
+
+                    if (!isShowFound) {
+                        showFoundDevice();
+                    }
+                }
+            } else {
+                if (!isSearching) {
+                    showNoFoundDevice();
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.e(TAG, "loadFoundDevices_Ex: "+ ex.getMessage());
+            showNoFoundDevice();
         }
+    }
 
-        if (mDevAdpater.getItemCount() > 0) {
-            if (isSearching) {
-                int deviceCount = mDevAdpater.getItemCount();
-                if (deviceCount > 3) {
-                    deviceCount = 3;
-                }
-                mDevAdpater.setItemWidth(getRVWidth() / deviceCount);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                break;
+        }
+        return true;
+    }
 
-                if (!isShowFound) {
-                    showFoundDevice();
+    @OnClick({R.id.btn_rematch, R.id.btn_match_success})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_rematch:
+                startFindDevice();
+                break;
+            case R.id.btn_match_success:
+                if (selDeviceIo != null) {
+                    saveDevice(selDeviceIo);
+                } else {
+                    Toast.makeText(this, getString(R.string.device_disConnect), Toast.LENGTH_SHORT).show();
                 }
-            }
-        } else {
-            if (!isSearching) {
-                showNoFoundDevice();
-            }
+                break;
         }
     }
 
@@ -207,12 +206,12 @@ public class MatchTapActivity extends BaseActivity {
     private void saveDevice(BaseDeviceIO deviceIo) {
         try {
             OznerDevice device = OznerDeviceManager.Instance().getDevice(deviceIo);
-            if (device != null && TapManager.IsTap(device.Type())) {
+            if (device != null && CupManager.IsCup(device.Type())) {
                 OznerDeviceManager.Instance().save(device);
                 if (etDeviceName.getText().length() > 0) {
                     device.Setting().name(etDeviceName.getText().toString().trim());
                 } else {
-                    device.Setting().name(getString(R.string.water_probe));
+                    device.Setting().name(getString(R.string.smart_glass));
                 }
                 device.updateSettings();
             } else {
@@ -226,6 +225,19 @@ public class MatchTapActivity extends BaseActivity {
     }
 
     /**
+     * 获取RecyleView的宽度
+     * 用来计算每一个item应有的宽度
+     *
+     * @return
+     */
+    private int getRVWidth() {
+        int margin = dip2px(this, 20);
+        int imageWidth = 2 * getMeasuredWidth(ibMoreLeft)[0];
+        int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
+        return screenWidth - imageWidth - margin;
+    }
+
+    /**
      * 配对界面初始化
      */
     private void startFindDevice() {
@@ -236,7 +248,7 @@ public class MatchTapActivity extends BaseActivity {
         tvMatchType.setVisibility(View.VISIBLE);
         tvMatchType.setText(getString(R.string.matching_bluetooth));
         tvMatchNotice.setText(getString(R.string.match_notice_tap));
-        ivMatchIcon.setImageResource(R.drawable.match_device_tap);
+        ivMatchIcon.setImageResource(R.drawable.match_device_cup);
         ivMatchLoading.setImageResource(R.drawable.match_loading);
         ivMatchLoading.setVisibility(View.VISIBLE);
         ivMatchIcon.setVisibility(View.VISIBLE);
@@ -258,7 +270,7 @@ public class MatchTapActivity extends BaseActivity {
         llayFoundDevice.setVisibility(View.VISIBLE);
         tvMatchNotice.setVisibility(View.INVISIBLE);
         tvMatchType.setVisibility(View.INVISIBLE);
-        ivMatchLoading.setImageResource(R.drawable.found_tap_selected);
+        ivMatchLoading.setImageResource(R.drawable.found_cup_selected);
         llayFoundDevice.setVisibility(View.VISIBLE);
         tvSuccesHolder.setVisibility(View.VISIBLE);
     }
@@ -299,7 +311,6 @@ public class MatchTapActivity extends BaseActivity {
         ivMatchLoading.setImageResource(R.drawable.match_device_successed);
     }
 
-
     /**
      * 开始旋转
      */
@@ -313,7 +324,6 @@ public class MatchTapActivity extends BaseActivity {
         animation.setInterpolator(li);
         animation.setFillAfter(false);
         ivMatchLoading.setAnimation(animation);
-
     }
 
     /**
@@ -331,7 +341,6 @@ public class MatchTapActivity extends BaseActivity {
         }
     }
 
-
     /**
      * 开始计时器
      */
@@ -346,7 +355,6 @@ public class MatchTapActivity extends BaseActivity {
         }
     }
 
-
     /**
      * 停止计时器
      */
@@ -359,55 +367,25 @@ public class MatchTapActivity extends BaseActivity {
     }
 
     /**
-     * 测试数据填充
+     * 注册蓝牙监听
      */
-    private void filladapterData() {
-        for (int i = 0; i < 5; i++) {
-            BaseDeviceIO io = new BluetoothIO(this, null, null, null, new Date().getTime());
-            mDevAdpater.addItem(io);
-        }
-        int rvWidth = getRVWidth();
-        mDevAdpater.setItemWidth(rvWidth / 3);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                break;
-        }
-        return true;
-    }
-
-    @OnClick({R.id.btn_rematch, R.id.btn_match_success})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btn_rematch:
-                startFindDevice();
-                break;
-            case R.id.btn_match_success:
-                if (selDeviceIo != null) {
-                    saveDevice(selDeviceIo);
-                } else {
-                    Toast.makeText(this, getString(R.string.device_disConnect), Toast.LENGTH_SHORT).show();
-                }
-                break;
+    private void registerBlueReceiver() {
+        if (mMonitor == null) {
+            mMonitor = new Monitor();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(BluetoothScan.ACTION_SCANNER_FOUND);
+            this.registerReceiver(mMonitor, filter);
         }
     }
 
     /**
-     * 获取RecyleView的宽度
-     * 用来计算每一个item应有的宽度
-     *
-     * @return
+     * 注销蓝牙监听
      */
-    private int getRVWidth() {
-        int margin = dip2px(this, 20);
-        int imageWidth = 2 * getMeasuredWidth(ibMoreLeft)[0];
-        int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
-        return screenWidth - imageWidth - margin;
+    private void unRegisterBlueReceiver() {
+        if (mMonitor != null) {
+            this.unregisterReceiver(mMonitor);
+            mMonitor = null;
+        }
     }
 
     @Override
@@ -438,7 +416,7 @@ public class MatchTapActivity extends BaseActivity {
 
         @Override
         public void onFinish() {
-            if (!MatchTapActivity.this.isFinishing() && !MatchTapActivity.this.isDestroyed()) {
+            if (!MatchCupActivity.this.isFinishing() && !MatchCupActivity.this.isDestroyed()) {
                 if (mDevAdpater.getItemCount() > 0) {
                     if (!isShowFound)
                         showFoundDevice();

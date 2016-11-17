@@ -13,11 +13,13 @@ import android.widget.TextView;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
+import com.ozner.AirPurifier.AirPurifierManager;
 import com.ozner.WaterPurifier.WaterPurifierManager;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Chat.ChatFragment;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
+import com.ozner.cup.Device.AirPurifier.AirVerPurifierFragment;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Device.NoDeviceFragment;
 import com.ozner.cup.Device.Tap.TapFragment;
@@ -81,7 +83,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     /**
      * 设置主页的标题
      *
-     * @param resId    
+     * @param resId
      */
     public void setCustomTitle(int resId) {
         if (!isDestroyed())
@@ -190,6 +192,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 return TapFragment.newInstance(device.Address());
             } else if (WaterPurifierManager.IsWaterPurifier(device.Type())) {
                 return WaterPurifierFragment.newInstance(device.Address());
+            } else if (AirPurifierManager.IsWifiAirPurifier(device.Type())) {
+                return AirVerPurifierFragment.newInstance(device.Address());
             } else {
                 return NoDeviceFragment.newInstance();
             }

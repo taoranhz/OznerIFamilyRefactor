@@ -14,9 +14,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -116,7 +113,7 @@ public class WaterPurifierFragment extends DeviceFragment {
     @InjectView(R.id.llay_tds_detail)
     LinearLayout llayTdsDetail;
     private WaterPurifier mWaterPurifer;
-    private RotateAnimation rotateAnimation;
+    //    private RotateAnimation rotateAnimation;
     WaterPurifierMonitor waterMonitor;
     private int oldPreValue, oldThenValue;
     WaterNetInfoManager waterNetInfoManager;
@@ -461,18 +458,18 @@ public class WaterPurifierFragment extends DeviceFragment {
         });
     }
 
-    /**
-     * 初始化动画
-     */
-
-    private void initAnimation() {
-        rotateAnimation = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        rotateAnimation.setRepeatCount(-1);
-        LinearInterpolator li = new LinearInterpolator();
-        rotateAnimation.setInterpolator(li);
-        rotateAnimation.setFillAfter(false);
-        rotateAnimation.setDuration(1000);
-    }
+//    /**
+//     * 初始化动画
+//     */
+//
+//    private void initAnimation() {
+//        rotateAnimation = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//        rotateAnimation.setRepeatCount(-1);
+//        LinearInterpolator li = new LinearInterpolator();
+//        rotateAnimation.setInterpolator(li);
+//        rotateAnimation.setFillAfter(false);
+//        rotateAnimation.setDuration(1000);
+//    }
 
     @Override
     public void onAttach(Context context) {

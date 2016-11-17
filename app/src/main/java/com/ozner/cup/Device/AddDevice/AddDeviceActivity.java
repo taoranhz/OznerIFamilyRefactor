@@ -10,11 +10,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Device.AddDevice.bean.AddDeviceListBean;
+import com.ozner.cup.Device.AirPurifier.MatchVerAirActivity;
+import com.ozner.cup.Device.Cup.MatchCupActivity;
 import com.ozner.cup.Device.Tap.MatchTapActivity;
 import com.ozner.cup.Device.WaterPurifier.MatchWaterPuriferActivity;
 import com.ozner.cup.R;
@@ -123,6 +124,7 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
     private void dealItemClick(int devIconResId) {
         switch (devIconResId) {
             case R.drawable.device_icon_cup:
+                startActivity(new Intent(this, MatchCupActivity.class));
                 break;
             case R.drawable.device_icon_tap:
                 startActivity(new Intent(this, MatchTapActivity.class));
@@ -133,6 +135,7 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
                 startActivity(new Intent(this, MatchWaterPuriferActivity.class));
                 break;
             case R.drawable.device_icon_air_ver:
+                startActivity(new Intent(this, MatchVerAirActivity.class));
                 break;
             case R.drawable.device_icon_air_desk:
                 break;
