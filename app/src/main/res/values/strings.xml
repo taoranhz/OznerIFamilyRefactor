@@ -141,6 +141,10 @@
     <string name="outdoor_air">室外空气:</string>
     <string name="insidedoor_air">室内空气</string>
     <string name="voc">VOC</string>
+    <string name="air_open">开关</string>
+    <string name="air_mode">模式</string>
+    <string name="air_timing">定时</string>
+    <string name="air_lock">童锁</string>
 
     <string name="in_test">检测中</string>
     <string name="excellent">优</string>

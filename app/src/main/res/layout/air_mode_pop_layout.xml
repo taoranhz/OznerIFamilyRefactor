@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center"
+              android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="174dp"
+        android:layout_height="121dp">
+
+
+        <RelativeLayout
+            android:id="@+id/rlay_AutoSwitch"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/air_mode_pop_background"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/iv_AutoSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/air_auto_selector"/>
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/rlay_StrongSwitch"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/air_mode_pop_background"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/iv_StrongSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/air_strong_selector"/>
+        </RelativeLayout>
+
+
+        <RelativeLayout
+
+            android:id="@+id/rlay_SlientSwitch"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/air_mode_pop_background"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/iv_SlientSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/air_slient_selector"/>
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

@@ -1,19 +1,25 @@
 package com.ozner.cup.Device.AirPurifier;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -67,12 +73,46 @@ public class AirVerPurifierFragment extends DeviceFragment {
     TextView tvOutPM25;
     @InjectView(R.id.rlay_air_outside)
     RelativeLayout rlayAirOutside;
+    @InjectView(R.id.tv_powerSwitch)
+    TextView tvPowerSwitch;
+    @InjectView(R.id.iv_poserSwitch)
+    ImageView ivPoserSwitch;
+    @InjectView(R.id.llay_Switch)
+    LinearLayout llaySwitch;
+    @InjectView(R.id.rlay_powerSwitch)
+    RelativeLayout rlayPowerSwitch;
+    @InjectView(R.id.llay_open)
+    LinearLayout llayOpen;
+    @InjectView(R.id.tv_modeSwitch)
+    TextView tvModeSwitch;
+    @InjectView(R.id.iv_modeSwitch)
+    ImageView ivModeSwitch;
+    @InjectView(R.id.rlay_modeSwitch)
+    RelativeLayout rlayModeSwitch;
+    @InjectView(R.id.llay_mode)
+    LinearLayout llayMode;
+    @InjectView(R.id.tv_lockSwitch)
+    TextView tvLockSwitch;
+    @InjectView(R.id.iv_lockSwitch)
+    ImageView ivLockSwitch;
+    @InjectView(R.id.rlay_lockSwitch)
+    RelativeLayout rlayLockSwitch;
+    @InjectView(R.id.llay_lock)
+    LinearLayout llayLock;
     private AirPurifier_MXChip mVerAirPurifier;
     AirPurifierMonitor airMonitor;
-
-
+    private boolean isPowerOn, isModeOn, isLockOn;
     private int oldVoc, oldPM, oldTemp, oldHum;
     private String deviceNewName = "";
+    private PopupWindow modePopWindow;
+
+    /**
+     * 定义模式开关注解，限定设置模式方法的参数
+     */
+    @IntDef({AirPurifier_MXChip.FAN_SPEED_AUTO, AirPurifier_MXChip.FAN_SPEED_POWER, AirPurifier_MXChip.FAN_SPEED_SILENT})
+    public @interface AIR_Mode {
+
+    }
 
     /**
      * 实例化Fragment
@@ -203,12 +243,79 @@ public class AirVerPurifierFragment extends DeviceFragment {
         super.onResume();
     }
 
-    @OnClick({R.id.rlay_filterStatus, R.id.iv_purifierSetBtn})
+    /**
+     * 显示模式选择
+     */
+    private void showModePopWindow(int mode) {
+        final Dialog airDialog = new Dialog(getContext(), R.style.SelectPicBaseStyle);
+        airDialog.setContentView(R.layout.air_mode_pop_layout);
+        airDialog.setCanceledOnTouchOutside(true);
+        switch (mode) {
+            case AirPurifier_MXChip.FAN_SPEED_AUTO:
+                airDialog.findViewById(R.id.iv_AutoSwitch).setSelected(true);
+                break;
+            case AirPurifier_MXChip.FAN_SPEED_POWER:
+                airDialog.findViewById(R.id.iv_StrongSwitch).setSelected(true);
+                break;
+            case AirPurifier_MXChip.FAN_SPEED_SILENT:
+                airDialog.findViewById(R.id.iv_SlientSwitch).setSelected(true);
+                break;
+        }
+        airDialog.findViewById(R.id.rlay_AutoSwitch).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, "onClick: Auto");
+                airDialog.findViewById(R.id.iv_AutoSwitch).setSelected(true);
+                airDialog.findViewById(R.id.iv_StrongSwitch).setSelected(false);
+                airDialog.findViewById(R.id.iv_SlientSwitch).setSelected(false);
+//                airDialog.cancel();
+            }
+        });
+        airDialog.findViewById(R.id.rlay_StrongSwitch).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                airDialog.findViewById(R.id.iv_AutoSwitch).setSelected(false);
+                airDialog.findViewById(R.id.iv_StrongSwitch).setSelected(true);
+                airDialog.findViewById(R.id.iv_SlientSwitch).setSelected(false);
+                Log.e(TAG, "onClick: Strong");
+//                airDialog.cancel();
+            }
+        });
+        airDialog.findViewById(R.id.rlay_SlientSwitch).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, "onClick: Slient");
+                airDialog.findViewById(R.id.iv_AutoSwitch).setSelected(false);
+                airDialog.findViewById(R.id.iv_StrongSwitch).setSelected(false);
+                airDialog.findViewById(R.id.iv_SlientSwitch).setSelected(true);
+//                airDialog.cancel();
+            }
+        });
+
+        WindowManager.LayoutParams lp2 = airDialog.getWindow().getAttributes();
+        lp2.y = llayMode.getHeight();
+        Window window2 = airDialog.getWindow();
+        window2.setGravity(Gravity.CENTER);
+
+        window2.setAttributes(lp2);
+        window2.setWindowAnimations(R.style.SelectPicAnimationStyle);
+        airDialog.show();
+    }
+
+    @OnClick({R.id.rlay_filterStatus, R.id.iv_purifierSetBtn, R.id.llay_open, R.id.llay_mode, R.id.llay_lock})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rlay_filterStatus:
+
                 break;
             case R.id.iv_purifierSetBtn:
+                break;
+            case R.id.llay_open:
+                break;
+            case R.id.llay_mode:
+                showModePopWindow(AirPurifier_MXChip.FAN_SPEED_AUTO);
+                break;
+            case R.id.llay_lock:
                 break;
         }
     }
@@ -217,7 +324,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
      * 设置状态栏颜色
      */
     private void setBarColor(int resId) {
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
+        if (Build.VERSION.SDK_INT >= 21) {
             Window window = ((MainActivity) getActivity()).getWindow();
             //更改状态栏颜色
             window.setStatusBarColor(ContextCompat.getColor(getContext(), resId));
@@ -240,6 +347,59 @@ public class AirVerPurifierFragment extends DeviceFragment {
         setBarColor(R.color.air_good_bg);
         setToolbarColor(R.color.air_good_bg);
         llayTop.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.air_good_bg));
+    }
+
+    /**
+     * 设置电源开关
+     *
+     * @param isOn
+     */
+    private void switchPower(boolean isOn) {
+        rlayPowerSwitch.setSelected(isOn);
+        tvPowerSwitch.setSelected(isOn);
+        ivPoserSwitch.setSelected(isOn);
+        if (!isOn) {
+            switchMode(isOn, AirPurifier_MXChip.FAN_SPEED_AUTO);
+            switchLock(isOn);
+        }
+    }
+
+
+    /**
+     * 设置模式开关
+     *
+     * @param isOn
+     * @param mode
+     */
+    private void switchMode(boolean isOn, @AIR_Mode int mode) {
+        rlayModeSwitch.setSelected(isOn);
+        tvModeSwitch.setSelected(isOn);
+        if (isOn) {
+            switch (mode) {
+                case AirPurifier_MXChip.FAN_SPEED_AUTO:
+                    ivModeSwitch.setImageResource(R.drawable.air_auto_on);
+                    break;
+                case AirPurifier_MXChip.FAN_SPEED_POWER:
+                    ivModeSwitch.setImageResource(R.drawable.air_power_on);
+                    break;
+                case AirPurifier_MXChip.FAN_SPEED_SILENT:
+                    ivModeSwitch.setImageResource(R.drawable.air_slient_on);
+                    break;
+            }
+        } else {
+            ivModeSwitch.setImageResource(R.drawable.air_auto_off);
+        }
+    }
+
+    /**
+     * 设置童锁开关
+     *
+     * @param isOn
+     */
+    private void switchLock(boolean isOn) {
+        rlayLockSwitch.setSelected(isOn);
+        ivLockSwitch.setSelected(isOn);
+        tvLockSwitch.setSelected(isOn);
     }
 
     @Override
@@ -268,6 +428,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
         if (mVerAirPurifier != null) {
             Log.e(TAG, "refreshSensorData: " + mVerAirPurifier.sensor().toString());
             showConnectState();
+            showSwitcherState();
             showPM25(mVerAirPurifier.sensor().PM25());
             showTemp(mVerAirPurifier.sensor().Temperature());
             showVOCState(mVerAirPurifier.sensor().VOC());
@@ -291,6 +452,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
         tvAirShiDu.setText("-");
     }
 
+
     /**
      * 显示设备关机
      */
@@ -298,6 +460,29 @@ public class AirVerPurifierFragment extends DeviceFragment {
 
     }
 
+    /**
+     * 刷新开关状态
+     */
+    private void showSwitcherState() {
+        try {
+            switchPower(mVerAirPurifier.airStatus().Power());
+            switchLock(mVerAirPurifier.airStatus().Lock());
+            switch (mVerAirPurifier.airStatus().speed()) {
+                case AirPurifier_MXChip.FAN_SPEED_AUTO:
+                    switchMode(true, AirPurifier_MXChip.FAN_SPEED_AUTO);
+                    break;
+                case AirPurifier_MXChip.FAN_SPEED_POWER:
+                    switchMode(true, AirPurifier_MXChip.FAN_SPEED_POWER);
+                    break;
+                case AirPurifier_MXChip.FAN_SPEED_SILENT:
+                    switchMode(true, AirPurifier_MXChip.FAN_SPEED_SILENT);
+                    break;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.e(TAG, "showSwitcherState_Ex: " + ex.getMessage());
+        }
+    }
 
     /**
      * 设置连接状态
