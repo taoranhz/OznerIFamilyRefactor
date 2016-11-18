@@ -33,9 +33,9 @@ public class BaseActivity extends AppCompatActivity {
         if (android.os.Build.VERSION.SDK_INT >= 21) {
             Window window = getWindow();
             //更改状态栏颜色
-            window.setStatusBarColor(ContextCompat.getColor(this, R.color.theme_blue));
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorAccent));
             //更改底部导航栏颜色(限有底部的手机)
-            window.setNavigationBarColor(ContextCompat.getColor(this, R.color.theme_blue));
+            window.setNavigationBarColor(ContextCompat.getColor(this, R.color.colorAccent));
         }
     }
 
@@ -52,6 +52,7 @@ public class BaseActivity extends AppCompatActivity {
 
     /**
      * 在屏幕中间显示提示
+     *
      * @param resId
      */
     public void showToastCenter(int resId) {

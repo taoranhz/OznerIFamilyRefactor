@@ -426,6 +426,7 @@ public class MatchVerAirActivity extends BaseActivity {
         stopMatchAnim();
         mDevAdpater.setItemWidth(getRVWidth());
         title.setText(R.string.match_successed);
+        llayConnNotice.setVisibility(View.GONE);
         llayWifiConnecting.setVisibility(View.GONE);
         llayInputWifiInfo.setVisibility(View.GONE);
         llayMatchFail.setVisibility(View.GONE);

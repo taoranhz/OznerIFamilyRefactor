@@ -135,6 +135,19 @@
     <string name="Iknow">我知道了</string>
     <string name="buy_filter">购买滤芯</string>
 
+
+    <string name="device_no_net">设备已断网</string>
+    <string name="phone_nonet">手机未连接网络</string>
+    <string name="outdoor_air">室外空气:</string>
+    <string name="insidedoor_air">室内空气</string>
+    <string name="voc">VOC</string>
+
+    <string name="in_test">检测中</string>
+    <string name="excellent">优</string>
+    <string name="good">良</string>
+    <string name="bads">差</string>
+    <string name="ordinary">一般</string>
+
     <!--设置-->
     <string name="my_water_purifier">我的净水器</string>
     <string name="my_tap">我的水探头</string>

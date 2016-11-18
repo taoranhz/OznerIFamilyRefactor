@@ -13,6 +13,10 @@
     <color name="colorLine">#e1e1e1</color>
     <!--<color name="theme_blue">#ff81cef8</color>-->
     <color name="theme_blue">#ffafecff</color>
+    <color name="air_good_bg">#5ecffe</color>
+    <color name="air_soso_bg">#a381fb</color>
+    <color name="air_bad_bg">#fe6565</color>
+
     <color name="pressed_blue">#48b4e9</color>
     <color name="font_gray">#959595</color>
     <color name="err_red">#f26368</color>

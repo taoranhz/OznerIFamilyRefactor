@@ -95,11 +95,14 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
      * @param position
      */
     public void selectDevice(int position) {
-        mLeftAdapter.setSelectPosition(position);
-        if (position >= 0 && position < lvMyDevice.getCount()) {
-            lvMyDevice.setItemChecked(position, true);
-            ((MainActivity) getActivity()).onDeviceItemClick(mLeftAdapter.getItem(position), mLeftAdapter.getItem(position).Address());
-        }
+//        if (!mLeftAdapter.getItem(position).Address().equals(UserDataPreference.GetUserData(getContext(), UserDataPreference.SelMac, ""))) {
+//            UserDataPreference.SetUserData(getContext(), UserDataPreference.SelMac, mLeftAdapter.getItem(position).Address());
+            mLeftAdapter.setSelectPosition(position);
+            if (position >= 0 && position < lvMyDevice.getCount()) {
+                lvMyDevice.setItemChecked(position, true);
+                ((MainActivity) getActivity()).onDeviceItemClick(mLeftAdapter.getItem(position), mLeftAdapter.getItem(position).Address());
+            }
+//        }
     }
 
     public OznerDevice getSelectedDevice() {

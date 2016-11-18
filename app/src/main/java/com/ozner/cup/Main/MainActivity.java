@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -88,6 +89,16 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     public void setCustomTitle(int resId) {
         if (!isDestroyed())
             customTitle.setText(resId);
+    }
+
+    /**
+     * 设置toolbar背景色
+     *
+     * @param resId
+     */
+    public void setToolBarColor(int resId) {
+        if (!isDestroyed())
+            toolbar.setBackgroundColor(ContextCompat.getColor(this, resId));
     }
 
     /**
@@ -203,7 +214,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     }
 
     private void showDevice() {
-        try {
+//        try {
             FragmentTransaction trans = this.getSupportFragmentManager().beginTransaction();
             OznerDevice device = ((LeftMenuFragment) (getSupportFragmentManager().findFragmentById(R.id.fg_left_menu))).getSelectedDevice();
             if (device != null) {
@@ -222,9 +233,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 trans.replace(R.id.fg_content, devFragmentMap.get(NoDeviceTag));
             }
             trans.commitAllowingStateLoss();
-        } catch (Exception ex) {
-            Log.e(TAG, "showDevice_Ex: " + ex.getMessage());
-        }
+//        } catch (Exception ex) {
+//            Log.e(TAG, "showDevice_Ex: " + ex.getMessage());
+//        }
     }
 
     @Override
