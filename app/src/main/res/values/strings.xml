@@ -145,6 +145,12 @@
     <string name="air_mode">模式</string>
     <string name="air_timing">定时</string>
     <string name="air_lock">童锁</string>
+    <string name="show_belt_color">显示灯带颜色</string>
+    <string name="air_purifier_lamplight_tips">空气质量灯光提醒</string>
+    <string name="bad_less">污染较少</string>
+    <string name="bad_more">污染严重</string>
+
+    <string name="air_purifier_use_instru">空气净化器使用说明</string>
 
     <string name="in_test">检测中</string>
     <string name="excellent">优</string>

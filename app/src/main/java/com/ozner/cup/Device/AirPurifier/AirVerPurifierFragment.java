@@ -25,6 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ozner.AirPurifier.AirPurifier_MXChip;
+import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.HttpHelper.NetState;
 import com.ozner.cup.Main.MainActivity;
@@ -335,6 +336,13 @@ public class AirVerPurifierFragment extends DeviceFragment {
 
                 break;
             case R.id.iv_purifierSetBtn:
+                if (mVerAirPurifier != null) {
+                    Intent setupIntent = new Intent(getContext(), SetUpAirVerActivity.class);
+                    setupIntent.putExtra(Contacts.PARMS_MAC, mVerAirPurifier.Address());
+                    startActivity(setupIntent);
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
                 break;
             case R.id.llay_open:
                 Log.e(TAG, "onClick: llay_open");
