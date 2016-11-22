@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ozner.WaterPurifier.WaterPurifier;
@@ -113,7 +111,6 @@ public class WaterPurifierFragment extends DeviceFragment {
     @InjectView(R.id.llay_tds_detail)
     LinearLayout llayTdsDetail;
     private WaterPurifier mWaterPurifer;
-    //    private RotateAnimation rotateAnimation;
     WaterPurifierMonitor waterMonitor;
     private int oldPreValue, oldThenValue;
     WaterNetInfoManager waterNetInfoManager;
@@ -260,29 +257,17 @@ public class WaterPurifierFragment extends DeviceFragment {
         }
     }
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (resultCode == Activity.RESULT_OK) {
-//            switch (requestCode) {
-//                case SetUpRequestCode:
 //
-//                    refreshUIData();
-//                    break;
-//            }
-//        }
+//    /**
+//     * 在中间弹出提示信息
+//     *
+//     * @param resId
+//     */
+//    private void showCenterToast(int resId) {
+//        Toast toast = Toast.makeText(getContext(), resId, Toast.LENGTH_SHORT);
+//        toast.setGravity(Gravity.CENTER, 0, 0);
+//        toast.show();
 //    }
-
-    /**
-     * 在中间弹出提示信息
-     *
-     * @param resId
-     */
-    private void showCenterToast(int resId) {
-        Toast toast = Toast.makeText(getContext(), resId, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
-    }
 
     /**
      * 是否已添加到View

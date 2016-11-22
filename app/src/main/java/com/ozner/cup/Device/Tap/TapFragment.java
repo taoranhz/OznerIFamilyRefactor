@@ -189,18 +189,6 @@ public class TapFragment extends DeviceFragment {
         return view;
     }
 
-//    /**
-//     * 初始化动画
-//     */
-//    private void initAnimation() {
-//        rotateAnimation = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-//        rotateAnimation.setRepeatCount(-1);
-//        LinearInterpolator li = new LinearInterpolator();
-//        rotateAnimation.setInterpolator(li);
-//        rotateAnimation.setFillAfter(false);
-//        rotateAnimation.setDuration(1000);
-//    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         tdsChartView.setAdapter(recordAdapter);
@@ -460,19 +448,6 @@ public class TapFragment extends DeviceFragment {
                 break;
         }
     }
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (resultCode == Activity.RESULT_OK) {
-//            switch (requestCode) {
-//                case SetUpRequestCode:
-//
-//                    refreshUIData();
-//                    break;
-//            }
-//        }
-//    }
 
     class TapMonitor extends BroadcastReceiver {
 

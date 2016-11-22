@@ -1,6 +1,7 @@
 package com.ozner.cup.Device.AirPurifier;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -19,7 +21,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,12 +30,15 @@ import com.ozner.cup.HttpHelper.NetState;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
 import com.ozner.device.BaseDeviceIO;
+import com.ozner.device.OperateCallback;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+
+import static android.R.attr.mode;
 
 
 public class AirVerPurifierFragment extends DeviceFragment {
@@ -101,10 +105,10 @@ public class AirVerPurifierFragment extends DeviceFragment {
     LinearLayout llayLock;
     private AirPurifier_MXChip mVerAirPurifier;
     AirPurifierMonitor airMonitor;
-    private boolean isPowerOn, isModeOn, isLockOn;
     private int oldVoc, oldPM, oldTemp, oldHum;
     private String deviceNewName = "";
-    private PopupWindow modePopWindow;
+    private ProgressDialog progressDialog;
+    private Handler mHandler = new Handler();
 
     /**
      * 定义模式开关注解，限定设置模式方法的参数
@@ -112,6 +116,24 @@ public class AirVerPurifierFragment extends DeviceFragment {
     @IntDef({AirPurifier_MXChip.FAN_SPEED_AUTO, AirPurifier_MXChip.FAN_SPEED_POWER, AirPurifier_MXChip.FAN_SPEED_SILENT})
     public @interface AIR_Mode {
 
+    }
+
+    /**
+     * 显示等待框
+     */
+    private void showProgressDialog(String msg) {
+        hideProgressDialog();
+        progressDialog = ProgressDialog.show(getContext(), null, msg);
+    }
+
+    /**
+     * 取消等待框
+     */
+    private void hideProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.cancel();
+            progressDialog = null;
+        }
     }
 
     /**
@@ -268,7 +290,8 @@ public class AirVerPurifierFragment extends DeviceFragment {
                 airDialog.findViewById(R.id.iv_AutoSwitch).setSelected(true);
                 airDialog.findViewById(R.id.iv_StrongSwitch).setSelected(false);
                 airDialog.findViewById(R.id.iv_SlientSwitch).setSelected(false);
-//                airDialog.cancel();
+                setSpeedMode(AirPurifier_MXChip.FAN_SPEED_AUTO);
+                airDialog.cancel();
             }
         });
         airDialog.findViewById(R.id.rlay_StrongSwitch).setOnClickListener(new View.OnClickListener() {
@@ -277,8 +300,10 @@ public class AirVerPurifierFragment extends DeviceFragment {
                 airDialog.findViewById(R.id.iv_AutoSwitch).setSelected(false);
                 airDialog.findViewById(R.id.iv_StrongSwitch).setSelected(true);
                 airDialog.findViewById(R.id.iv_SlientSwitch).setSelected(false);
+                setSpeedMode(AirPurifier_MXChip.FAN_SPEED_POWER);
+
                 Log.e(TAG, "onClick: Strong");
-//                airDialog.cancel();
+                airDialog.cancel();
             }
         });
         airDialog.findViewById(R.id.rlay_SlientSwitch).setOnClickListener(new View.OnClickListener() {
@@ -288,7 +313,8 @@ public class AirVerPurifierFragment extends DeviceFragment {
                 airDialog.findViewById(R.id.iv_AutoSwitch).setSelected(false);
                 airDialog.findViewById(R.id.iv_StrongSwitch).setSelected(false);
                 airDialog.findViewById(R.id.iv_SlientSwitch).setSelected(true);
-//                airDialog.cancel();
+                setSpeedMode(AirPurifier_MXChip.FAN_SPEED_SILENT);
+                airDialog.cancel();
             }
         });
 
@@ -311,12 +337,169 @@ public class AirVerPurifierFragment extends DeviceFragment {
             case R.id.iv_purifierSetBtn:
                 break;
             case R.id.llay_open:
+                Log.e(TAG, "onClick: llay_open");
+//                showCenterToast(R.string.about_tap);
+                if (mVerAirPurifier != null) {
+                    setPower(mVerAirPurifier.airStatus().Power());
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
                 break;
             case R.id.llay_mode:
-                showModePopWindow(AirPurifier_MXChip.FAN_SPEED_AUTO);
+                if (mVerAirPurifier != null) {
+                    showModePopWindow(mVerAirPurifier.airStatus().speed());
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
                 break;
             case R.id.llay_lock:
+                if (mVerAirPurifier != null) {
+                    setLock(mVerAirPurifier.airStatus().Lock());
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
                 break;
+        }
+    }
+
+    /**
+     * 设置电源
+     *
+     * @param nowPowerState 电源当前的状态
+     */
+    private void setPower(boolean nowPowerState) {
+        if (mVerAirPurifier != null && mode != mVerAirPurifier.airStatus().speed()) {
+            if (NetState.checkNetwork(getContext()) == NetState.State.CONNECTED) {
+                if (!mVerAirPurifier.isOffline()) {
+                    showProgressDialog(getString(R.string.command_sending));
+                    mVerAirPurifier.airStatus().setPower(!nowPowerState, new OperateCallback<Void>() {
+                        @Override
+                        public void onSuccess(Void var1) {
+                            mHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    hideProgressDialog();
+                                    refreshUIData();
+                                }
+                            }, 300);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable var1) {
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    hideProgressDialog();
+                                    showCenterToast(R.string.send_status_fail);
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    showCenterToast(R.string.device_no_net);
+                }
+            } else {
+                showCenterToast(R.string.phone_nonet);
+            }
+        } else {
+            showCenterToast(R.string.Not_found_device);
+        }
+    }
+
+
+    /**
+     * 设置风速模式
+     *
+     * @param mode
+     */
+    private void setSpeedMode(int mode) {
+        if (mVerAirPurifier != null && mode != mVerAirPurifier.airStatus().speed()) {
+            if (NetState.checkNetwork(getContext()) == NetState.State.CONNECTED) {
+                if (!mVerAirPurifier.isOffline()) {
+                    if (mVerAirPurifier.airStatus().Power()) {
+                        showProgressDialog(getString(R.string.command_sending));
+                        mVerAirPurifier.airStatus().setSpeed(mode, new OperateCallback<Void>() {
+                            @Override
+                            public void onSuccess(Void var1) {
+                                mHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        hideProgressDialog();
+                                        refreshUIData();
+                                    }
+                                }, 300);
+                            }
+
+                            @Override
+                            public void onFailure(Throwable var1) {
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        hideProgressDialog();
+                                        showCenterToast(R.string.send_status_fail);
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        showCenterToast(R.string.please_open_power);
+                    }
+                } else {
+                    showCenterToast(R.string.device_no_net);
+                }
+            } else {
+                showCenterToast(R.string.phone_nonet);
+            }
+        } else {
+            showCenterToast(R.string.Not_found_device);
+        }
+    }
+
+    /**
+     * 设置童锁
+     *
+     * @param nowLockState 当前童锁状态
+     */
+    private void setLock(boolean nowLockState) {
+        if (mVerAirPurifier != null && mode != mVerAirPurifier.airStatus().speed()) {
+            if (NetState.checkNetwork(getContext()) == NetState.State.CONNECTED) {
+                if (!mVerAirPurifier.isOffline()) {
+                    if (mVerAirPurifier.airStatus().Power()) {
+                        showProgressDialog(getString(R.string.command_sending));
+                        mVerAirPurifier.airStatus().setLock(!nowLockState, new OperateCallback<Void>() {
+                            @Override
+                            public void onSuccess(Void var1) {
+                                mHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        hideProgressDialog();
+                                        refreshUIData();
+                                    }
+                                }, 300);
+                            }
+
+                            @Override
+                            public void onFailure(Throwable var1) {
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        hideProgressDialog();
+                                        showCenterToast(R.string.send_status_fail);
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        showCenterToast(R.string.please_open_power);
+                    }
+                } else {
+                    showCenterToast(R.string.device_no_net);
+                }
+            } else {
+                showCenterToast(R.string.phone_nonet);
+            }
+        } else {
+            showCenterToast(R.string.Not_found_device);
         }
     }
 
@@ -380,7 +563,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
                     ivModeSwitch.setImageResource(R.drawable.air_auto_on);
                     break;
                 case AirPurifier_MXChip.FAN_SPEED_POWER:
-                    ivModeSwitch.setImageResource(R.drawable.air_power_on);
+                    ivModeSwitch.setImageResource(R.drawable.air_strong_on);
                     break;
                 case AirPurifier_MXChip.FAN_SPEED_SILENT:
                     ivModeSwitch.setImageResource(R.drawable.air_slient_on);
@@ -402,6 +585,9 @@ public class AirVerPurifierFragment extends DeviceFragment {
         tvLockSwitch.setSelected(isOn);
     }
 
+    /**
+     * 刷新UI数据，所有数据刷新从这里开始
+     */
     @Override
     protected void refreshUIData() {
 //        Log.e(TAG, "refreshUIData: ");
@@ -426,7 +612,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
      */
     private void refreshSensorData() {
         if (mVerAirPurifier != null) {
-            Log.e(TAG, "refreshSensorData: " + mVerAirPurifier.sensor().toString());
+            Log.e("Air_sensor", "refreshSensorData: " + mVerAirPurifier.sensor().toString());
             showConnectState();
             showSwitcherState();
             showPM25(mVerAirPurifier.sensor().PM25());
@@ -465,7 +651,6 @@ public class AirVerPurifierFragment extends DeviceFragment {
      */
     private void showSwitcherState() {
         try {
-            switchPower(mVerAirPurifier.airStatus().Power());
             switchLock(mVerAirPurifier.airStatus().Lock());
             switch (mVerAirPurifier.airStatus().speed()) {
                 case AirPurifier_MXChip.FAN_SPEED_AUTO:
@@ -478,6 +663,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
                     switchMode(true, AirPurifier_MXChip.FAN_SPEED_SILENT);
                     break;
             }
+            switchPower(mVerAirPurifier.airStatus().Power());
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "showSwitcherState_Ex: " + ex.getMessage());

@@ -45,6 +45,11 @@
         </activity>
         <activity android:name=".Device.AirPurifier.MatchVerAirActivity">
         </activity>
+        <activity
+            android:name=".Device.AirPurifier.SetUpAirVerActivity"
+            android:label="@string/title_activity_set_up_air_ver"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

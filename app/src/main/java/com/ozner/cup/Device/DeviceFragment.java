@@ -1,8 +1,10 @@
 package com.ozner.cup.Device;
 
+import android.view.Gravity;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.Toast;
 
 import com.ozner.cup.Base.BaseFragment;
 import com.ozner.device.OznerDevice;
@@ -32,5 +34,17 @@ public abstract class DeviceFragment extends BaseFragment {
         rotateAnimation.setFillAfter(false);
         rotateAnimation.setDuration(1000);
     }
+
+    /**
+     * 在中间弹出提示信息
+     *
+     * @param resId
+     */
+    public void showCenterToast(int resId) {
+        Toast toast = Toast.makeText(getContext(), resId, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
 
 }

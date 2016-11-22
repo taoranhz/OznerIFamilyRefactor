@@ -213,6 +213,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
             android:layout_weight="1"
+            android:clickable="true"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
@@ -231,8 +232,7 @@
                 android:layout_height="68.5dp"
                 android:layout_below="@+id/tv_openswitch"
                 android:layout_centerHorizontal="true"
-                android:background="@drawable/purifier_switch_selector"
-                android:clickable="true">
+                android:background="@drawable/purifier_switch_selector">
 
                 <ImageView
                     android:id="@+id/iv_poserSwitch"

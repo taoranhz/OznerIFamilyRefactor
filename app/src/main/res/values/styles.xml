@@ -41,9 +41,13 @@
     </style>
 
 
-
     <style name="SelectPicAnimationStyle" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
         <item name="android:windowExitAnimation">@anim/dialog_exit</item>
     </style>
+
+    <style name="AppTheme.NoActionBar.AppBarOverlay"
+           parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 </resources>
