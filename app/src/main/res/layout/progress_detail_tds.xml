@@ -32,7 +32,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="170dp"
         android:layout_centerInParent="true">
 
         <com.ozner.cup.UIView.TdsDetailProgress
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
@@ -60,6 +60,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -81,6 +82,10 @@
                 android:id="@+id/tv_tdsValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="-5dp"
+                android:layout_marginTop="-5dp"
+                android:includeFontPadding="false"
+                android:padding="0dp"
                 android:text="@string/no_data"
                 android:textColor="@color/detail_textblue"
                 android:textSize="45dp"/>
@@ -89,9 +94,10 @@
                 android:id="@+id/tv_tdsRank"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="击败了56%的用户"
                 android:textColor="@color/detail_textblue"
                 android:textSize="20dp"
-                android:visibility="gone"/>
+                android:visibility="invisible"/>
         </LinearLayout>
 
 

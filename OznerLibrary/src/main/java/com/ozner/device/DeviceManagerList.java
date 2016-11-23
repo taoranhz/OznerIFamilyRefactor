@@ -3,7 +3,6 @@ package com.ozner.device;
 import android.content.Context;
 
 import com.ozner.AirPurifier.AirPurifierManager;
-import com.ozner.MusicCap.MusicCap;
 import com.ozner.MusicCap.MusicCapMgr;
 import com.ozner.WaterPurifier.WaterPurifierManager;
 import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeterMgr;

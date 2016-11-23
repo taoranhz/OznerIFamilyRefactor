@@ -48,6 +48,8 @@ public class SetDeviceNameActivity extends BaseActivity {
     EditText etDeviceName;
     @InjectView(R.id.lv_use_position)
     ListView lvUsePosition;
+    @InjectView(R.id.tv_property)
+    TextView tvProperty;
 
     OznerDevice mDevice;
     String mac;
@@ -124,6 +126,7 @@ public class SetDeviceNameActivity extends BaseActivity {
                     loadSavePos(UserDataPreference.TapPosSaveTag);
                 } else if (CupManager.IsCup(mDevice.Type())) {
                     tv_customTitle.setText(R.string.my_cup);
+                    tvProperty.setText(R.string.property);
                     //加载默认地点
                     posArray = getResources().getStringArray(R.array.pos_cup_defalut_array);
                     for (String item : posArray) {
@@ -207,10 +210,18 @@ public class SetDeviceNameActivity extends BaseActivity {
      */
     private void showAddPosDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(SetDeviceNameActivity.this, AlertDialog.THEME_HOLO_LIGHT);
-        builder.setTitle(R.string.add_pos);
+
         final View inputView = LayoutInflater.from(SetDeviceNameActivity.this).inflate(R.layout.add_pos_view, null);
         builder.setView(inputView);
         et_addPos = (EditText) inputView.findViewById(R.id.et_addPos);
+
+        if (mDevice != null && CupManager.IsCup(mDevice.Type())) {
+            builder.setTitle(R.string.add_property);
+            et_addPos.setHint(R.string.input_new_property);
+        } else {
+            builder.setTitle(R.string.add_pos);
+            et_addPos.setHint(R.string.input_new_pos);
+        }
         builder.setPositiveButton(R.string.append, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(final DialogInterface dialog, int which) {

@@ -139,7 +139,7 @@ public class MatchCupActivity extends BaseActivity {
                         if (CupManager.IsCup(device.getType())) {
                             if (device instanceof BluetoothIO) {
                                 BluetoothIO bluetoothIO = (BluetoothIO) device;
-                                //检查水探头处于start模式
+                                //检查水杯处于start模式
                                 if (Cup.isBindMode(bluetoothIO))
                                     mDevAdpater.addItem(device);
                             }

@@ -21,6 +21,7 @@ import com.ozner.cup.Chat.ChatFragment;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
 import com.ozner.cup.Device.AirPurifier.AirVerPurifierFragment;
+import com.ozner.cup.Device.Cup.CupFragment;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Device.NoDeviceFragment;
 import com.ozner.cup.Device.Tap.TapFragment;
@@ -198,7 +199,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     private DeviceFragment getDeviceFragment(OznerDevice device) {
         if (device != null) {
             if (CupManager.IsCup(device.Type())) {
-                return NoDeviceFragment.newInstance();
+                return CupFragment.newInstance(device.Address());
             } else if (TapManager.IsTap(device.Type())) {
                 return TapFragment.newInstance(device.Address());
             } else if (WaterPurifierManager.IsWaterPurifier(device.Type())) {
@@ -213,6 +214,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         }
     }
 
+    /**
+     * 显示设备
+     */
     private void showDevice() {
 //        try {
             FragmentTransaction trans = this.getSupportFragmentManager().beginTransaction();

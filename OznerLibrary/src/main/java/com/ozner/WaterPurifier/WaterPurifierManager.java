@@ -10,6 +10,9 @@ import com.ozner.device.BaseDeviceManager;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 
+import java.util.Arrays;
+import java.util.Date;
+
 /**
  * Created by xzyxd on 2015/11/2.
  */
@@ -44,12 +47,10 @@ public class WaterPurifierManager extends BaseDeviceManager {
         {
             return true;
         }
-
         if (Model.trim().equals("16a21bd6"))
         {
             return true;
         }
-
 
         return false;
 

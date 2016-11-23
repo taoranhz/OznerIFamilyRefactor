@@ -16,6 +16,10 @@ public class Contacts {
     public final static String RESULT_POS = "result_pos";
     //设备使用位置
     public final static String DEV_USE_POS = "device_use_pos";
+    //水杯用户体重
+    public final static String DEV_USER_WEIGHT = "device_user_weight";
+    //饮水目标
+    public final static String DEV_USER_WATER_GOAL = "device_user_water_goal";
 
     //网络请求基础url
     public final static String HttpBaseUrl = "http://app.ozner.net:888/";

@@ -6,6 +6,7 @@
     <color name="colorAccent">@color/theme_blue</color>
 
     <!--App颜色设置-->
+    <color name="light_green">#ff5aeb97</color>
     <color name="light_black">#292929</color>
     <color name="white">#ffffff</color>
     <color name="gray">#666666</color>
@@ -28,6 +29,10 @@
     <color name="deep_blue">#607a96</color>
     <color name="detail_textblue">#ff3b71df</color>
     <color name="faq_text_blue">#3c89f2</color>
+
+    <color name="led_tape_blue">#ff3ca8f1</color>
+    <color name="led_tape_orange">#ffff9e40</color>
+    <color name="led_tape_red">#fff26262</color>
 
     <color name="generic">#ff7d58e7</color>
 </resources>

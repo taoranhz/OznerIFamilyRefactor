@@ -71,6 +71,16 @@ public class NoDeviceFragment extends DeviceFragment {
     }
 
     @Override
+    public void onResume() {
+        try {
+            ((MainActivity) getActivity()).setCustomTitle(getString(R.string.add_device));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        super.onResume();
+    }
+
+    @Override
     public void onAttach(Context context) {
         try {
             if (!isDetached() && !isRemoving() && isAdded())

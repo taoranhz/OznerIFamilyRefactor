@@ -50,4 +50,15 @@
            parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="AppTheme.NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+
+    <style name="CupStateCheckStyle">
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@null</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:textColor">@color/text_blue_selector</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
 </resources>

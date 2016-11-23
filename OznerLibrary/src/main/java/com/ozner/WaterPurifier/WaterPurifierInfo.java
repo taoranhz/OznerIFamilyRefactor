@@ -37,7 +37,7 @@ public class WaterPurifierInfo {
         this.MainBoard=new String(bytes,38,22);
         this.ControlBoard=new String(bytes,60,22);
         this.ErrorCount=bytes[123];
-        this.Error= ByteUtil.getInt(bytes,124);
+        this.Error=ByteUtil.getInt(bytes,124);
     }
 
 

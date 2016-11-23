@@ -118,11 +118,11 @@ public abstract class OznerDevice extends XObject {
         if (Helper.StringIsNullOrEmpty(setting.name())) {
             setting.name(getDefaultName());
         }
-        IntentFilter intentFilter = new IntentFilter();
+        IntentFilter intentFilter=new IntentFilter();
         intentFilter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTED);
         intentFilter.addAction(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED);
 
-        context.registerReceiver(statusBroadcastReceiver, intentFilter);
+        context.registerReceiver(statusBroadcastReceiver,intentFilter);
     }
 
     /**
@@ -131,10 +131,10 @@ public abstract class OznerDevice extends XObject {
      *
      */
     public void release() {
-        if (statusBroadcastReceiver != null) {
-            this.context.unregisterReceiver(statusBroadcastReceiver);
-            statusBroadcastReceiver = null;
-        }
+//        if (statusBroadcastReceiver != null) {
+//            this.context.unregisterReceiver(statusBroadcastReceiver);
+//            statusBroadcastReceiver = null;
+//        }
     }
 
     /**
@@ -247,7 +247,6 @@ public abstract class OznerDevice extends XObject {
      * 在后台模式时判断接口是否包含有效数据,如果是则连接,否不进行连接
      *
      * @param io 接口IO
-     *
      * @return true包含数据
      */
     protected boolean doCheckAvailable(BaseDeviceIO io) {
@@ -285,7 +284,7 @@ public abstract class OznerDevice extends XObject {
         if (deviceIO != null) {
             deviceIO.open();
             if (deviceIO.isReady()) {
-                deviceIO.reCallDoReadly();
+                deviceIO.reCallDoReady();
             }
         } else {
             glb_timerLoop.removeDevice(this);

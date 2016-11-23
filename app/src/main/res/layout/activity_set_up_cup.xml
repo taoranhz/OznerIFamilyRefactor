@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:toggle="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ozner.cup.Device.Cup.SetUpCupActivity">
+
+    <include layout="@layout/toolbar"/>
+
+    <ScrollView
+        android:id="@+id/sl_root"
+        android:layout_width="match_parent"
+
+        android:layout_height="match_parent"
+        android:background="@color/gray_bg"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rlay_device_name"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/my_cup"
+                    android:textColor="@color/light_black"/>
+
+                <ImageView
+                    android:id="@+id/iv_name_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/right_gray"/>
+
+                <TextView
+                    android:id="@+id/tv_device_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:layout_toLeftOf="@+id/iv_name_right"
+                    android:text=""/>
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginLeft="15dp"
+                android:background="@color/colorLine"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/weight_and_volum"
+                    android:textColor="@color/light_black"/>
+
+
+                <TextView
+                    android:id="@+id/tv_volumUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:text="ml"
+                    android:textColor="@color/detail_textblue"/>
+
+                <TextView
+                    android:id="@+id/tv_split"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="5dp"
+                    android:layout_toLeftOf="@+id/et_volum"
+                    android:text=":"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/tv_weightUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/tv_split"
+                    android:text="kg"
+                    android:textColor="@color/detail_textblue"/>
+
+                <EditText
+                    android:id="@+id/et_weight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/tv_weightUnit"
+                    android:background="@null"
+                    android:gravity="right|center_vertical"
+                    android:includeFontPadding="false"
+                    android:inputType="number"
+                    android:minWidth="30dp"
+                    android:text="55"
+                    android:textColor="@color/detail_textblue"/>
+
+                <EditText
+                    android:id="@+id/et_volum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/tv_volumUnit"
+                    android:background="@null"
+                    android:gravity="right|center_vertical"
+                    android:includeFontPadding="false"
+                    android:inputType="number"
+                    android:minWidth="30dp"
+                    android:text="2000"
+                    android:textColor="@color/detail_textblue"/>
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginLeft="15dp"
+                android:background="@color/colorLine"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/today_state"
+                    android:textColor="@color/light_black"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+                    <!--感冒发烧-->
+                    <CheckBox
+                        android:id="@+id/cb_cool"
+                        style="@style/CupStateCheckStyle"
+                        android:drawableTop="@drawable/cup_cold_selector"
+                        android:text="@string/cup_catch_cold"/>
+                    <!--运动出汗-->
+                    <CheckBox
+                        android:id="@+id/cb_sport"
+                        style="@style/CupStateCheckStyle"
+                        android:drawableTop="@drawable/cup_sport_selector"
+                        android:text="@string/cup_sport_sweat"/>
+                    <!--天气炎热-->
+                    <CheckBox
+                        android:id="@+id/cb_hotday"
+                        style="@style/CupStateCheckStyle"
+                        android:drawableTop="@drawable/cup_hot_selector"
+                        android:text="@string/cup_hotday"/>
+
+                    <!--大姨妈来了-->
+                    <CheckBox
+                        android:id="@+id/cb_period"
+                        style="@style/CupStateCheckStyle"
+                        android:drawableTop="@drawable/cup_period_selector"
+                        android:text="@string/cup_period"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/cup_takewater_remind"/>
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cup_take_water_time"
+                        android:textColor="@color/light_black"/>
+
+
+                    <ImageView
+                        android:id="@+id/iv_remind_right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:src="@drawable/right_gray"/>
+
+                    <TextView
+                        android:id="@+id/tv_remind_endtime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/iv_remind_right"
+                        android:text="20:00"
+                        android:textColor="@color/detail_textblue"/>
+
+                    <TextView
+                        android:id="@+id/tv_split_remind"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_toLeftOf="@+id/tv_remind_endtime"
+                        android:text="—"
+                        android:textColor="@color/detail_textblue"/>
+
+                    <TextView
+                        android:id="@+id/tv_remind_starttime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/tv_split_remind"
+                        android:text="08:00"
+                        android:textColor="@color/detail_textblue"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="15dp"
+                    android:background="@color/colorLine"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/cup_take_water_interval"
+                        android:textColor="@color/light_black"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp">
+
+                        <TextView
+                            android:id="@+id/tv_remind_interval"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1"
+                            android:textColor="@color/detail_textblue"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/minute"
+                            android:textColor="@color/detail_textblue"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="15dp"
+                    android:background="@color/colorLine"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:text="灯带颜色提醒"
+                    android:textColor="@color/light_black"/>
+
+
+                <com.ozner.cup.UIView.ColorPickerView
+                    android:id="@+id/cup_colorpicker"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center_horizontal|bottom"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@color/colorLine"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/cup_remind_sound"
+                        android:textColor="@color/light_black"/>
+
+                    <com.zcw.togglebutton.ToggleButton
+                        android:id="@+id/tb_cupRemind"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        toggle:tbBorderWidth="2px"
+                        toggle:tbOffBorderColor="@color/colorLine"
+                        toggle:tbOffColor="@color/colorLine"
+                        toggle:tbOnColor="@color/light_green"
+                        toggle:tbSpotColor="@color/white">
+                    </com.zcw.togglebutton.ToggleButton>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:text="@string/show_belt_color"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/data_title"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb_temp"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/cup_remind_way_temp"
+                        android:button="@null"
+                        android:checked="true"
+                        android:gravity="center"
+                        android:text="@string/takewater_temp"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_tds"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/cup_remind_way_tds"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:text="@string/takewater_tds"/>
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/led_tape_blue"/>
+
+                        <TextView
+                            android:id="@+id/tv_below"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/temp_blow"
+                            android:textSize="12dp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/led_tape_orange"/>
+
+                        <TextView
+                            android:id="@+id/tv_middle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="25℃-50℃"
+                            android:textSize="12dp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/led_tape_red"/>
+
+                        <TextView
+                            android:id="@+id/tv_hight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/temp_up"
+                            android:textSize="12dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/colorLine"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_toRightOf="@+id/iv_notetips"
+                    android:drawableLeft="@drawable/icon_attention"
+                    android:drawablePadding="5dp"
+                    android:text="@string/cup_setting_attention"
+                    android:textColor="@color/detail_textblue"/>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlay_about_cup"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/about_cup"
+                    android:textColor="@color/light_black"/>
+
+                <ImageView
+                    android:id="@+id/iv_about_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/right_gray"/>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_delete_device"
+                android:layout_width="230dp"
+                android:layout_height="38dp"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="25dp"
+                android:layout_marginTop="25dp"
+                android:background="@drawable/del_btn_stroke"
+                android:gravity="center"
+                android:text="@string/delete_this_device"
+                android:textColor="@color/err_red"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

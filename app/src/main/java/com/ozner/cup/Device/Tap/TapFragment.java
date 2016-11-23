@@ -268,7 +268,7 @@ public class TapFragment extends DeviceFragment {
             tvTdsValue.setText(R.string.no_data);
             ivTdsState.setVisibility(View.GONE);
             tvTdsState.setText(R.string.state_null);
-            tvTdsRank.setVisibility(View.GONE);
+            tvTdsRank.setVisibility(View.INVISIBLE);
         } else {
             //显示tds对应状态
             if (tdsValue > 0 && tdsValue <= CupRecord.TDS_Good_Value) {
@@ -315,7 +315,7 @@ public class TapFragment extends DeviceFragment {
                 ivTdsState.setVisibility(View.GONE);
                 tvTdsValue.setText(R.string.no_data);
                 tvTdsValue.setTextSize(TextSize);
-                tvTdsRank.setVisibility(View.GONE);
+                tvTdsRank.setVisibility(View.INVISIBLE);
                 tdsDetailProgress.update(0);
             }
         }

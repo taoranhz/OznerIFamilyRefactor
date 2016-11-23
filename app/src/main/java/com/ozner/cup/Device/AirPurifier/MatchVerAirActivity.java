@@ -272,12 +272,13 @@ public class MatchVerAirActivity extends BaseActivity {
                 //开始配网
                 try {
                     wifiPair.pair(tvSelectedWifi.getText().toString(), etPassword.getText().toString());
+                    showMatchDevice();
                 } catch (Exception ex) {
                     ex.printStackTrace();
+                    showMatchFail();
                     Log.e(TAG, "matchDevice_Ex: " + ex.getMessage());
                 }
 
-                showMatchDevice();
             } else {
                 showToastCenter("请输入密码");
             }

@@ -3,6 +3,7 @@ package com.ozner.WaterPurifier;
 import android.content.Context;
 import android.content.Intent;
 
+import com.ozner.XObject;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
 import com.ozner.device.OperateCallbackProxy;

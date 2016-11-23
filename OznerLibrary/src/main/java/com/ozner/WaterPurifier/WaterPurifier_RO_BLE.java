@@ -4,14 +4,18 @@ import android.content.Context;
 
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScanResponse;
+import com.ozner.cup.CupManager;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
 import com.ozner.util.ByteUtil;
 import com.ozner.util.dbg;
+import com.ozner.wifi.mxchip.MXChipIO;
 
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by zhiyongxu on 16/9/12.
@@ -102,9 +106,9 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
 
         public void fromBytes(byte[] bytes)
         {
-            Filter_A_Time=(int) ByteUtil.getUInt(bytes,0);
-            Filter_B_Time=(int) ByteUtil.getUInt(bytes,4);
-            Filter_C_Time=(int) ByteUtil.getUInt(bytes,8);
+            Filter_A_Time=(int)ByteUtil.getUInt(bytes,0);
+            Filter_B_Time=(int)ByteUtil.getUInt(bytes,4);
+            Filter_C_Time=(int)ByteUtil.getUInt(bytes,8);
             Filter_A_Percentage=bytes[12];
             Filter_B_Percentage=bytes[13];
             Filter_C_Percentage=bytes[14];
@@ -342,7 +346,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
         return false;
     }
 
-    public static BluetoothScanResponse parseScanResp(String name, byte[] Service_Data)
+    public static BluetoothScanResponse parseScanResp(String name,byte[] Service_Data)
     {
         if (name.equals("Ozner RO")) {
             BluetoothScanResponse rep = new BluetoothScanResponse();
@@ -352,6 +356,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
                 rep.Firmware = new Date(Service_Data[3] + 2000 - 1900, Service_Data[4] - 1,
                         Service_Data[5], Service_Data[6],
                         Service_Data[7], Service_Data[8]);
+
                 rep.Model="Ozner RO";
                 rep.MainbroadPlatform= new String(Service_Data, 9, 3);
                 rep.MainbroadFirmware = new Date(Service_Data[12] + 2000 - 1900, Service_Data[13] - 1,
@@ -359,7 +364,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
                         Service_Data[16], Service_Data[17]);
 
                 rep.CustomDataLength=8;
-                rep.ScanResponseType= WaterPurifier_RO_BLE.BLE_RO_ScanResponseType;
+                rep.ScanResponseType=WaterPurifier_RO_BLE.BLE_RO_ScanResponseType;
                 rep.ScanResponseData= Arrays.copyOfRange(Service_Data, 18, 25);
             }
             return rep;

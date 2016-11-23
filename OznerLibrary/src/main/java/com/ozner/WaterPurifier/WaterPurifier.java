@@ -1,11 +1,21 @@
 package com.ozner.WaterPurifier;
 
 import android.content.Context;
+import android.content.Intent;
 
+import com.ozner.XObject;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
+import com.ozner.device.OperateCallbackProxy;
 import com.ozner.device.OznerDevice;
 import com.ozner.oznerlibrary.R;
+import com.ozner.util.ByteUtil;
+import com.ozner.util.Helper;
+import com.ozner.wifi.mxchip.MXChipIO;
+import com.ozner.wifi.mxchip.Pair.CRC8;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by xzyxd on 2015/11/2.

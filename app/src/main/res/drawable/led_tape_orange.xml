@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+    android:shape="oval"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <stroke android:color="@color/led_tape_orange" android:width="3dp"/>
+    <size android:height="40dp" android:width="40dp"/>
+</shape>

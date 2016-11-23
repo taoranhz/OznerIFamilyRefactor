@@ -85,6 +85,7 @@
     <string name="problem_notice_tap">您可以检查水探头电量、蓝牙开启状态后再进行配对</string>
     <string name="input_tap_name">输入水探头名字</string>
     <string name="input_weight">输入体重</string>
+    <string name="beat_users">击败了%1$d%%的用户</string>
 
     <string name="office">办公室</string>
     <string name="finish">完成</string>
@@ -158,6 +159,17 @@
     <string name="bads">差</string>
     <string name="ordinary">一般</string>
 
+
+    <string name="cup_waterVolum">今日饮水量:</string>
+    <string name="cup_volumGoal">饮水目标:</string>
+    <string name="temp_null">无法测量当前温度</string>
+    <string name="water_temp">水温:</string>
+    <string name="temp_cool">偏凉</string>
+    <string name="temp_hot">偏烫</string>
+    <string name="temp_moderation">适中</string>
+    <string name="can_drink">当前水温适宜饮用</string>
+    <string name="can_not_drink">当前水温不适宜饮用</string>
+
     <!--设置-->
     <string name="my_water_purifier">我的净水器</string>
     <string name="my_tap">我的水探头</string>
@@ -181,6 +193,9 @@
     <string name="delete_this_device">删除此设备</string>
     <string name="add">新增</string>
     <string name="add_pos">添加地点</string>
+    <string name="add_property">添加属性</string>
+    <string name="input_new_pos">输入新的地点</string>
+    <string name="input_new_property">输入新的属性</string>
     <string name="append">添加</string>
     <string name="cancle">取消</string>
     <string name="ensure">确定</string>
@@ -196,9 +211,35 @@
     <string name="pos_living_room">客厅</string>
     <string name="pos_bedroom">卧室</string>
 
+    <string name="property">属性</string>
+
     <string name="cup_mine">我的水杯</string>
     <string name="cup_family">家人水杯</string>
     <string name="cup_friend">朋友水杯</string>
+    <string name="weight_and_volum">体重与饮水量</string>
+    <string name="today_state">今日状态</string>
+    <string name="cup_catch_cold">感冒发烧</string>
+    <string name="cup_sport_sweat">运动出汗</string>
+    <string name="cup_hotday">天气炎热</string>
+    <string name="cup_period">大姨妈来了</string>
+    <string name="cup_takewater_remind">饮水提醒</string>
+    <string name="cup_take_water_time">饮水提醒时间段</string>
+    <string name="cup_take_water_interval">饮水提醒时间间隔</string>
+    <string name="hour">小时</string>
+    <string name="minute">分钟</string>
+    <string name="cup_remind_sound">水杯声音提醒</string>
+    <string name="takewater_temp">饮水温度</string>
+    <string name="takewater_tds">饮水纯净指数TDS</string>
+
+    <string name="tds_blow">50以下</string>
+    <string name="tds_middle">50-200</string>
+    <string name="tds_high">200以上</string>
+    <string name="temp_blow">25℃以下</string>
+    <string name="temp_middle">25℃-50℃</string>
+    <string name="temp_up">50℃以上</string>
+    <string name="cup_setting_attention">注意：电量低于10%时，光圈双闪。</string>
+    <string name="about_cup">关于智能杯</string>
+
 
     <!--错误码-->
     <string name="Code_Accept_nofound">没有发现对应请求</string>
