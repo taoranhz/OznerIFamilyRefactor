@@ -743,14 +743,14 @@ public class AirVerPurifierFragment extends DeviceFragment {
      * @param temp
      */
     private void showTemp(int temp) {
-        if (oldTemp != temp) {
+//        if (oldTemp != temp) {
             oldTemp = temp;
             if (65535 != temp) {
                 tvAirTemp.setText(temp + "℃");
             } else {
                 tvAirTemp.setText("-");
             }
-        }
+//        }
     }
 
     /**
@@ -759,14 +759,14 @@ public class AirVerPurifierFragment extends DeviceFragment {
      * @param hum
      */
     private void showHumidity(int hum) {
-        if (oldHum != hum) {
+//        if (oldHum != hum) {
             oldHum = hum;
             if (65535 != hum) {
                 tvAirShiDu.setText(hum + "%");
             } else {
                 tvAirShiDu.setText("-");
             }
-        }
+//        }
     }
 
     /**
@@ -775,7 +775,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
      * @param voc
      */
     private void showVOCState(int voc) {
-        if (oldVoc != voc) {
+//        if (oldVoc != voc) {
             oldVoc = voc;
             if (65535 != voc) {
                 switch (voc) {
@@ -801,7 +801,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
             } else {
                 tvAirVOC.setText("-");
             }
-        }
+//        }
     }
 
     @Override
