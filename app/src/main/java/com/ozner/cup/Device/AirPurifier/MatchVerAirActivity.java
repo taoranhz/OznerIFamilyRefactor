@@ -378,18 +378,21 @@ public class MatchVerAirActivity extends BaseActivity {
      * 开始配网
      */
     private void showMatchDevice() {
-
-        tvMatchNotice.setVisibility(View.GONE);
-        llayMatchSuccHolder.setVisibility(View.GONE);
-        llayInputWifiInfo.setVisibility(View.GONE);
-        llayMatchFail.setVisibility(View.GONE);
-        llayInputDeviceInfo.setVisibility(View.GONE);
-        llayConnNotice.setVisibility(View.VISIBLE);
-        tvMatchType.setVisibility(View.VISIBLE);
-        tvMatchType.setText(R.string.matching_wifi);
-        llayFoundDevice.setVisibility(View.INVISIBLE);
-        llayWifiConnecting.setVisibility(View.VISIBLE);
-        startMatchAnim();
+        try {
+            tvMatchNotice.setVisibility(View.GONE);
+            llayMatchSuccHolder.setVisibility(View.GONE);
+            llayInputWifiInfo.setVisibility(View.GONE);
+            llayMatchFail.setVisibility(View.GONE);
+            llayInputDeviceInfo.setVisibility(View.GONE);
+            llayConnNotice.setVisibility(View.VISIBLE);
+            tvMatchType.setVisibility(View.VISIBLE);
+            tvMatchType.setText(R.string.matching_wifi);
+            llayFoundDevice.setVisibility(View.INVISIBLE);
+            llayWifiConnecting.setVisibility(View.VISIBLE);
+            startMatchAnim();
+        } catch (Exception ex) {
+            Log.e(TAG, "showMatchDevice_Ex: " + ex.getMessage());
+        }
     }
 
     /**

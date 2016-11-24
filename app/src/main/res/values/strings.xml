@@ -183,6 +183,8 @@
 
     <string name="Not_found_device">未发现设备</string>
     <string name="input_device_name">请输入设备名字</string>
+    <string name="weight_can_not_empty">体重不能为空</string>
+    <string name="water_goal_cannot_empty">饮水目标不能为空</string>
 
     <string name="save">保存</string>
     <string name="detection_time">检测时间</string>
@@ -239,6 +241,9 @@
     <string name="temp_up">50℃以上</string>
     <string name="cup_setting_attention">注意：电量低于10%时，光圈双闪。</string>
     <string name="about_cup">关于智能杯</string>
+    <string name="set_start_time">设置开始时间</string>
+    <string name="set_end_time">设置结束时间</string>
+    <string name="set_remind_interval">设置饮水提醒间隔</string>
 
 
     <!--错误码-->

@@ -5,17 +5,21 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Bean.Contacts;
@@ -37,12 +41,18 @@ import butterknife.OnClick;
 
 import static com.ozner.cup.R.id.rlay_device_name;
 
-public class SetUpCupActivity extends BaseActivity {
-    private static final String TAG = "SetUpCupActivity";
+public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener {
+    private static final String TAG = "SetUpCup";
     private final int SET_NAME_REQ_CODE = 0x101;//设置名字请求码
 
+    private static final int Cup_Status_Cool_Checked = 0x1;
+    private static final int Cup_Status_Sport_Checked = 0x2;
+    private static final int Cup_Status_Hotday_Checked = 0x4;
+    private static final int Cup_Status_Period_Checked = 0x8;
+    private final float WaterGoal_Weight_Factor = 27.428f;
     private final int DEFAULT_WEIGHT = 55;
-    private final int DEFAULT_WATER_GOAL = 2000;
+    //    private final int DEFAULT_WATER_GOAL = 2000;
+    private final int Status_Add_Goal = 50;
 
     @InjectView(R.id.tv_delete_device)
     TextView tvDeleteDevice;
@@ -95,18 +105,21 @@ public class SetUpCupActivity extends BaseActivity {
     private int mWeight, mWaterGoal;
     private String deviceNewName = null, deviceNewPos = null;
     private Calendar tipStartCal, tipEndCal;
+    private int checkState = 0;
+    private String[] intervalArray = new String[5];
+    private boolean isRemindEnable = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_up_cup);
         ButterKnife.inject(this);
-//        cupColorpicker = (ColorPickerView) findViewById(R.id.cup_colorpicker);
-//        tbCupRemind = (ToggleButton) findViewById(R.id.tb_cupRemind);
         tipStartCal = Calendar.getInstance();
         tipEndCal = Calendar.getInstance();
         initToolBar();
         initColorPicker();
+        initIntervalList();
+        initTodayStatusListener();
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             Log.e(TAG, "onCreate: mac:" + mac);
@@ -116,6 +129,37 @@ public class SetUpCupActivity extends BaseActivity {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
         }
+
+        etWeight.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                resetTodayStatus();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
+                    mWeight = Integer.parseInt(etWeight.getText().toString().trim());
+                    mWaterGoal = (int) Math.rint(mWeight * WaterGoal_Weight_Factor);
+                    etVolum.setText(String.valueOf(mWaterGoal));
+                }
+            }
+        });
+    }
+
+    /**
+     * 初始化提醒时间间隔数据
+     */
+    private void initIntervalList() {
+        for (int i = 0; i < 4; i++) {
+            intervalArray[i] = String.valueOf(i * 15 + 15);
+        }
+        intervalArray[4] = "120";
     }
 
     /**
@@ -128,9 +172,9 @@ public class SetUpCupActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        cupColor = color;
                         if (mCup != null && mCup.connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
                             mCup.changeHaloColor(color);
-                            cupColor = color;
                         }
                     }
                 });
@@ -162,6 +206,78 @@ public class SetUpCupActivity extends BaseActivity {
     }
 
     /**
+     * 初始化今日状态改变事件
+     */
+    private void initTodayStatusListener() {
+        cbCool.setOnCheckedChangeListener(this);
+        cbSport.setOnCheckedChangeListener(this);
+        cbHotday.setOnCheckedChangeListener(this);
+        cbPeriod.setOnCheckedChangeListener(this);
+    }
+
+    /**
+     * 重置今日状态
+     */
+    private void resetTodayStatus() {
+        cbCool.setChecked(false);
+        cbHotday.setChecked(false);
+        cbPeriod.setChecked(false);
+        cbSport.setChecked(false);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        updateWaterGoal(isChecked);
+        switch (buttonView.getId()) {
+            case R.id.cb_cool:
+                if (isChecked)
+                    checkState |= Cup_Status_Cool_Checked;
+                else
+                    checkState &= ~Cup_Status_Cool_Checked;
+                break;
+            case R.id.cb_sport:
+                if (isChecked)
+                    checkState |= Cup_Status_Sport_Checked;
+                else
+                    checkState &= ~Cup_Status_Sport_Checked;
+                break;
+            case R.id.cb_hotday:
+                if (isChecked)
+                    checkState |= Cup_Status_Hotday_Checked;
+                else
+                    checkState &= ~Cup_Status_Hotday_Checked;
+                break;
+            case R.id.cb_period:
+                if (isChecked)
+                    checkState |= Cup_Status_Period_Checked;
+                else
+                    checkState &= ~Cup_Status_Period_Checked;
+                break;
+        }
+        Log.e(TAG, "onCheckedChanged: " + checkState);
+    }
+
+    /**
+     * 根据今日状态的选中状态更新饮水目标
+     *
+     * @param isChecked
+     */
+    private void updateWaterGoal(boolean isChecked) {
+        try {
+            mWaterGoal = Integer.parseInt(etVolum.getText().toString().trim());
+        } catch (Exception ex) {
+            mWaterGoal = 0;
+        }
+        if (isChecked) {
+            mWaterGoal += Status_Add_Goal;
+        } else {
+            if (mWaterGoal > Status_Add_Goal)
+                mWaterGoal -= Status_Add_Goal;
+        }
+        etVolum.setText(String.valueOf(mWaterGoal));
+    }
+
+    /**
      * 初始化Ui数据
      */
     private void initViewData() {
@@ -178,6 +294,9 @@ public class SetUpCupActivity extends BaseActivity {
             }
             tvDeviceName.setText(deviceNameBuf.toString());
 
+            //初始化今日状态选中
+            initTodayStatus();
+
             //初始化用户体重
             mWeight = (int) mCup.Setting().get(Contacts.DEV_USER_WEIGHT, -1);
             if (-1 == mWeight) {
@@ -188,7 +307,7 @@ public class SetUpCupActivity extends BaseActivity {
             //初始化饮水目标
             mWaterGoal = (int) mCup.Setting().get(Contacts.DEV_USER_WATER_GOAL, -1);
             if (-1 == mWaterGoal) {
-                mWaterGoal = DEFAULT_WATER_GOAL;
+                mWaterGoal = (int) Math.rint(mWeight * WaterGoal_Weight_Factor);
             }
             etVolum.setText(String.valueOf(mWaterGoal));
 
@@ -196,6 +315,28 @@ public class SetUpCupActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 初始化今日状态
+     */
+    private void initTodayStatus() {
+        if (mCup != null) {
+            checkState = (int) mCup.Setting().get(Contacts.Cup_Today_Status, 0);
+            if (checkState > 0) {
+                if ((checkState & Cup_Status_Cool_Checked) != 0) {
+                    cbCool.setChecked(true);
+                }
+                if ((checkState & Cup_Status_Sport_Checked) != 0) {
+                    cbSport.setChecked(true);
+                }
+                if ((checkState & Cup_Status_Hotday_Checked) != 0) {
+                    cbHotday.setChecked(true);
+                }
+                if ((checkState & Cup_Status_Period_Checked) != 0) {
+                    cbPeriod.setChecked(true);
+                }
+            }
+        }
+    }
 
     /**
      * 初始化提醒信息
@@ -232,15 +373,8 @@ public class SetUpCupActivity extends BaseActivity {
                 @Override
                 public void onToggle(final boolean on) {
                     Log.e(TAG, "onToggle: " + on);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (on != mCup.Setting().RemindEnable()) {
-                                // TODO: 2016/11/23 开关切换事件
-
-                            }
-                        }
-                    });
+                    // TODO: 2016/11/23 开关切换事件
+                    isRemindEnable = on;
                 }
             });
         }
@@ -272,11 +406,56 @@ public class SetUpCupActivity extends BaseActivity {
      * 保存设置
      */
     private void saveSettings() {
+        try {
+            if (mCup != null) {
+                //保存设备名字
+                if (deviceNewName != null && deviceNewName.trim().length() > 0) {
+                    mCup.Setting().name(deviceNewName);
+                } else {
+                    showToastCenter(R.string.input_device_name);
+                    return;
+                }
+                //保存使用位置
+                if (deviceNewPos != null) {
+                    mCup.Setting().put(Contacts.DEV_USE_POS, deviceNewPos);
+                }
+                //保存体重
+                if (etWeight.length() > 0) {
+                    mCup.Setting().put(Contacts.DEV_USER_WEIGHT, Integer.parseInt(etWeight.getText().toString().trim()));
+                } else {
+                    showToastCenter(R.string.weight_can_not_empty);
+                    return;
+                }
+                //保存饮水目标
+                if (etVolum.length() > 0) {
+                    mCup.Setting().put(Contacts.DEV_USER_WATER_GOAL, Integer.parseInt(etVolum.getText().toString().trim()));
+                } else {
+                    showToastCenter(R.string.water_goal_cannot_empty);
+                    return;
+                }
 
+                //保存灯带颜色
+                mCup.Setting().haloColor(cupColor);
+                //保存提醒间隔
+                mCup.Setting().remindInterval(Integer.parseInt(tvRemindInterval.getText().toString().trim()));
+                //保存今日状态
+                mCup.Setting().put(Contacts.Cup_Today_Status, checkState);
+                //保存是否打开提醒功能
+                mCup.Setting().RemindEnable(isRemindEnable);
+                mCup.updateSettings();
+                OznerDeviceManager.Instance().save(mCup);
+                this.finish();
+            } else {
+                showToastCenter(R.string.Not_found_device);
+            }
+        } catch (Exception ex) {
+            showToastCenter(ex.getMessage());
+            Log.e(TAG, "saveSettings_Ex: " + ex.getMessage());
+        }
     }
 
 
-    @OnClick({R.id.tv_delete_device, R.id.rb_temp, R.id.rb_tds, R.id.rlay_about_cup, R.id.tv_remind_endtime, R.id.tv_remind_interval
+    @OnClick({R.id.tv_delete_device, R.id.rb_temp, R.id.rb_tds, R.id.rlay_about_cup, R.id.tv_remind_starttime, R.id.tv_remind_endtime, R.id.llay_remaind_interval
             , R.id.rlay_device_name})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -311,14 +490,100 @@ public class SetUpCupActivity extends BaseActivity {
                 checkTemp(false);
                 checkTds(true);
                 break;
-            case R.id.rlay_about_cup:
+            case R.id.tv_remind_starttime:
+                final TimePicker startTimePicker = new TimePicker(this);
+                startTimePicker.setIs24HourView(true);
+                startTimePicker.setCurrentHour(tipStartCal.get(Calendar.HOUR_OF_DAY));
+                startTimePicker.setCurrentMinute(tipStartCal.get(Calendar.MINUTE));
+                new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT).setView(startTimePicker)
+                        .setTitle(R.string.set_start_time)
+                        .setPositiveButton(R.string.ensure, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (startTimePicker.getCurrentHour() > tipEndCal.get(Calendar.HOUR_OF_DAY)) {
+                                            return;
+                                        } else if (startTimePicker.getCurrentHour().equals(tipEndCal.get(Calendar.HOUR_OF_DAY))) {
+                                            if (startTimePicker.getCurrentMinute() >= tipEndCal.get(Calendar.MINUTE)) {
+                                                return;
+                                            }
+                                        }
+                                        tipStartCal.set(Calendar.HOUR_OF_DAY, startTimePicker.getCurrentHour());
+                                        tipStartCal.set(Calendar.MINUTE, startTimePicker.getCurrentMinute());
+                                        tvRemindStarttime.setText(DateFormatUtils.hourMinFormt(tipStartCal.getTime()));
+                                    }
+                                });
+                            }
+                        }).show();
+
                 break;
             case R.id.tv_remind_endtime:
+                final TimePicker endTimePicker = new TimePicker(this);
+                endTimePicker.setIs24HourView(true);
+                endTimePicker.setCurrentHour(tipEndCal.get(Calendar.HOUR_OF_DAY));
+                endTimePicker.setCurrentMinute(tipEndCal.get(Calendar.MINUTE));
+                new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT).setView(endTimePicker)
+                        .setTitle(R.string.set_end_time)
+                        .setPositiveButton(R.string.ensure, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (endTimePicker.getCurrentHour() < tipStartCal.get(Calendar.HOUR_OF_DAY)) {
+                                            return;
+                                        } else if (endTimePicker.getCurrentHour().equals(tipStartCal.get(Calendar.HOUR_OF_DAY))) {
+                                            if (endTimePicker.getCurrentMinute() <= tipStartCal.get(Calendar.MINUTE)) {
+                                                return;
+                                            }
+                                        }
+
+                                        tipEndCal.set(Calendar.HOUR_OF_DAY, endTimePicker.getCurrentHour());
+                                        tipEndCal.set(Calendar.MINUTE, endTimePicker.getCurrentMinute());
+                                        tvRemindEndtime.setText(DateFormatUtils.hourMinFormt(tipEndCal.getTime()));
+                                    }
+                                });
+                            }
+                        }).show();
                 break;
-            case R.id.tv_remind_interval:
+            case R.id.llay_remaind_interval:
+                showReIntervalDialog();
+                break;
+            case R.id.rlay_about_cup:
                 break;
         }
     }
+
+    /**
+     * 显示饮水提醒间隔对话框
+     */
+    private void showReIntervalDialog() {
+        String selInterval = tvRemindInterval.getText().toString().trim();
+        int checkIndex = -1;
+        for (int i = 0; i < intervalArray.length; i++) {
+            if (selInterval.equals(intervalArray[i])) {
+                checkIndex = i;
+                break;
+            }
+        }
+        new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
+                .setTitle(R.string.set_remind_interval)
+                .setSingleChoiceItems(intervalArray, checkIndex, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, final int which) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvRemindInterval.setText(intervalArray[which]);
+                            }
+                        });
+                        dialog.cancel();
+                    }
+                }).show();
+    }
+
 
     /**
      * 选中温度提示
@@ -371,5 +636,4 @@ public class SetUpCupActivity extends BaseActivity {
             }
         }
     }
-
 }

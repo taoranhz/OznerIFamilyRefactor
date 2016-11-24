@@ -1,20 +1,15 @@
 package com.ozner.wifi;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
-import com.aylanetworks.aaml.AylaCache;
 import com.aylanetworks.aaml.AylaDevice;
 import com.aylanetworks.aaml.AylaHostScanResults;
-import com.aylanetworks.aaml.AylaHttpServer;
 import com.aylanetworks.aaml.AylaLanMode;
 import com.aylanetworks.aaml.AylaNetworks;
 import com.aylanetworks.aaml.AylaSetup;
@@ -23,8 +18,6 @@ import com.aylanetworks.aaml.AylaUser;
 import com.mxchip.jmdns.JmdnsAPI;
 import com.mxchip.jmdns.JmdnsListener;
 import com.ozner.device.BaseDeviceIO;
-import com.ozner.device.NotSupportDeviceException;
-import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 import com.ozner.util.Helper;
 import com.ozner.util.HttpUtil;
@@ -626,14 +619,14 @@ public class WifiPair {
             doPairFailure(new TimeoutException());
             return;
         }
-        if ((runPairCount % 3)==0)
-        {
-            runHandler.post(new MXChipPairImp());
-        }else
-        {
-            runHandler.post(new AylaPairImp());
-        }
-        //runHandler.post(new MXChipPairImp());
+//        if ((runPairCount % 3)==0)
+//        {
+//            runHandler.post(new MXChipPairImp());
+//        }else
+//        {
+//            runHandler.post(new AylaPairImp());
+//        }
+        runHandler.post(new MXChipPairImp());
         runPairCount++;
 
     }

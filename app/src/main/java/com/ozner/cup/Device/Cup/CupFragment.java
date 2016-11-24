@@ -171,6 +171,8 @@ public class CupFragment extends DeviceFragment {
 
     @Override
     public void onResume() {
+        if (isThisAdd())
+            ((MainActivity) getActivity()).setCustomTitle(getString(R.string.smart_glass));
         initRecordCal();
         refreshUIData();
         super.onResume();
@@ -436,7 +438,7 @@ public class CupFragment extends DeviceFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(TAG, "onReceive: " + mCup.toString());
+//            Log.e(TAG, "onReceive: " + mCup.toString());
             refreshUIData();
         }
     }

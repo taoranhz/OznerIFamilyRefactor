@@ -54,9 +54,13 @@ public class ProgressDialogHandler extends Handler {
     }
 
     private void dismissProgressDialog() {
-        if (pd != null) {
-            pd.dismiss();
-            pd = null;
+        try {
+            if (pd != null) {
+                pd.dismiss();
+                pd = null;
+            }
+        } catch (Exception ex) {
+
         }
     }
 
