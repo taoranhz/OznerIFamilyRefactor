@@ -397,6 +397,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
                             mHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    refreshUIData();
                                     hideProgressDialog();
                                     showCenterToast(R.string.send_status_fail);
                                 }
@@ -412,6 +413,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
         } else {
             showCenterToast(R.string.Not_found_device);
         }
+        refreshUIData();
     }
 
 
@@ -443,6 +445,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
                                 mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        refreshUIData();
                                         hideProgressDialog();
                                         showCenterToast(R.string.send_status_fail);
                                     }
@@ -461,6 +464,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
         } else {
             showCenterToast(R.string.Not_found_device);
         }
+        refreshUIData();
     }
 
     /**
@@ -491,6 +495,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
                                 mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        refreshUIData();
                                         hideProgressDialog();
                                         showCenterToast(R.string.send_status_fail);
                                     }
@@ -509,6 +514,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
         } else {
             showCenterToast(R.string.Not_found_device);
         }
+        refreshUIData();
     }
 
     /**
@@ -598,7 +604,6 @@ public class AirVerPurifierFragment extends DeviceFragment {
      */
     @Override
     protected void refreshUIData() {
-//        Log.e(TAG, "refreshUIData: ");
         try {
             if (mVerAirPurifier != null && isThisAdd()) {
                 //设置设备名字
@@ -651,7 +656,8 @@ public class AirVerPurifierFragment extends DeviceFragment {
      * 显示设备关机
      */
     private void showDeviceClose() {
-
+        tvPmValue.setText(R.string.device_close);
+        tvPmValue.setAlpha(0.6f);
     }
 
     /**
@@ -690,6 +696,9 @@ public class AirVerPurifierFragment extends DeviceFragment {
                     showDeviceDisConn();
                 } else {
                     llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+                    if (!mVerAirPurifier.airStatus().Power()) {
+                        showDeviceClose();
+                    }
                 }
 
             } else {
@@ -710,7 +719,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
      */
     private void showPM25(int pm25) {
 //        if (oldPM != pm25) {
-        if (!mVerAirPurifier.isOffline()) {
+        if (!mVerAirPurifier.isOffline() && mVerAirPurifier.airStatus().Power()) {
             oldPM = pm25;
             if (pm25 > 0 && pm25 < 1000) {
                 if (pm25 < 75) {

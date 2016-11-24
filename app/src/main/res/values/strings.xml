@@ -137,6 +137,7 @@
     <string name="buy_filter">购买滤芯</string>
 
 
+    <string name="device_close">已关机</string>
     <string name="device_no_net">设备已断网</string>
     <string name="phone_nonet">手机未连接网络</string>
     <string name="outdoor_air">室外空气:</string>
