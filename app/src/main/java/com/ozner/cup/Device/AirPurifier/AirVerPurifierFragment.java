@@ -709,7 +709,8 @@ public class AirVerPurifierFragment extends DeviceFragment {
      * @param pm25
      */
     private void showPM25(int pm25) {
-        if (oldPM != pm25) {
+//        if (oldPM != pm25) {
+        if (!mVerAirPurifier.isOffline()) {
             oldPM = pm25;
             if (pm25 > 0 && pm25 < 1000) {
                 if (pm25 < 75) {
@@ -735,6 +736,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
                 tvPmState.setText("-");
             }
         }
+//        }
     }
 
     /**
@@ -744,12 +746,12 @@ public class AirVerPurifierFragment extends DeviceFragment {
      */
     private void showTemp(int temp) {
 //        if (oldTemp != temp) {
-            oldTemp = temp;
-            if (65535 != temp) {
-                tvAirTemp.setText(temp + "℃");
-            } else {
-                tvAirTemp.setText("-");
-            }
+        oldTemp = temp;
+        if (65535 != temp) {
+            tvAirTemp.setText(temp + "℃");
+        } else {
+            tvAirTemp.setText("-");
+        }
 //        }
     }
 
@@ -760,12 +762,12 @@ public class AirVerPurifierFragment extends DeviceFragment {
      */
     private void showHumidity(int hum) {
 //        if (oldHum != hum) {
-            oldHum = hum;
-            if (65535 != hum) {
-                tvAirShiDu.setText(hum + "%");
-            } else {
-                tvAirShiDu.setText("-");
-            }
+        oldHum = hum;
+        if (65535 != hum) {
+            tvAirShiDu.setText(hum + "%");
+        } else {
+            tvAirShiDu.setText("-");
+        }
 //        }
     }
 
@@ -776,31 +778,31 @@ public class AirVerPurifierFragment extends DeviceFragment {
      */
     private void showVOCState(int voc) {
 //        if (oldVoc != voc) {
-            oldVoc = voc;
-            if (65535 != voc) {
-                switch (voc) {
-                    case -1:
-                        tvAirVOC.setText(R.string.in_test);
-                        break;
-                    case 0:
-                        tvAirVOC.setText(R.string.excellent);
-                        break;
-                    case 1:
-                        tvAirVOC.setText(R.string.good);
-                        break;
-                    case 2:
-                        tvAirVOC.setText(R.string.ordinary);
-                        break;
-                    case 3:
-                        tvAirVOC.setText(R.string.bads);
-                        break;
-                    default:
-                        tvAirVOC.setText(R.string.state_null);
-                        break;
-                }
-            } else {
-                tvAirVOC.setText("-");
+        oldVoc = voc;
+        if (65535 != voc) {
+            switch (voc) {
+                case -1:
+                    tvAirVOC.setText(R.string.in_test);
+                    break;
+                case 0:
+                    tvAirVOC.setText(R.string.excellent);
+                    break;
+                case 1:
+                    tvAirVOC.setText(R.string.good);
+                    break;
+                case 2:
+                    tvAirVOC.setText(R.string.ordinary);
+                    break;
+                case 3:
+                    tvAirVOC.setText(R.string.bads);
+                    break;
+                default:
+                    tvAirVOC.setText(R.string.state_null);
+                    break;
             }
+        } else {
+            tvAirVOC.setText("-");
+        }
 //        }
     }
 
