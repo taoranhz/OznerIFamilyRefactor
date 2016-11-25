@@ -9,11 +9,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.ozner.AirPurifier.AirPurifier_MXChip;
+import com.ozner.AirPurifier.AirPurifier;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Device.SetDeviceNameActivity;
@@ -24,6 +22,9 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
+/**
+ * 台式空净和立式空净共同的设置页面
+ */
 public class SetUpAirVerActivity extends BaseActivity {
     private static final String TAG = "SetUpAirVer";
     private final int SET_NAME_REQ_CODE = 0x101;//设置名字请求码
@@ -33,18 +34,8 @@ public class SetUpAirVerActivity extends BaseActivity {
     Toolbar toolbar;
     @InjectView(R.id.tv_device_name)
     TextView tvDeviceName;
-    @InjectView(R.id.rlay_device_name)
-    RelativeLayout rlayDeviceName;
-    @InjectView(R.id.rlay_introduct)
-    RelativeLayout rlayIntroduct;
-    @InjectView(R.id.llay_faq)
-    RelativeLayout llayFaq;
-    @InjectView(R.id.tv_delete_device)
-    TextView tvDeleteDevice;
-    @InjectView(R.id.content_set_up_air_ver)
-    LinearLayout contentSetUpAirVer;
     private String mac = "";
-    private AirPurifier_MXChip mVerAirPurifier;
+    private AirPurifier mAirPurifier;
     private String deviceNewName = null, deviceNewPos = null;
 
     @Override
@@ -59,7 +50,7 @@ public class SetUpAirVerActivity extends BaseActivity {
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             Log.e(TAG, "onCreate: mac:" + mac);
-            mVerAirPurifier = (AirPurifier_MXChip) OznerDeviceManager.Instance().getDevice(mac);
+            mAirPurifier = (AirPurifier) OznerDeviceManager.Instance().getDevice(mac);
             initViewData();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -103,11 +94,11 @@ public class SetUpAirVerActivity extends BaseActivity {
      * 初始化页面数据
      */
     private void initViewData() {
-        if (mVerAirPurifier != null) {
-            deviceNewName = mVerAirPurifier.getName();
+        if (mAirPurifier != null) {
+            deviceNewName = mAirPurifier.getName();
             StringBuffer deviceNameBuf = new StringBuffer();
-            deviceNameBuf.append(mVerAirPurifier.getName());
-            String usePos = (String) mVerAirPurifier.Setting().get(Contacts.DEV_USE_POS, "");
+            deviceNameBuf.append(mAirPurifier.getName());
+            String usePos = (String) mAirPurifier.Setting().get(Contacts.DEV_USE_POS, "");
             if (usePos != null && !usePos.isEmpty()) {
                 deviceNameBuf.append("(");
                 deviceNameBuf.append(usePos);
@@ -115,7 +106,7 @@ public class SetUpAirVerActivity extends BaseActivity {
             }
             tvDeviceName.setText(deviceNameBuf.toString());
         } else {
-            Log.e(TAG, "initViewData: mVerAirPurifier 为空");
+            Log.e(TAG, "initViewData: mAirPurifier 为空");
         }
     }
 
@@ -136,8 +127,8 @@ public class SetUpAirVerActivity extends BaseActivity {
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (mVerAirPurifier != null) {
-                                    OznerDeviceManager.Instance().remove(mVerAirPurifier);
+                                if (mAirPurifier != null) {
+                                    OznerDeviceManager.Instance().remove(mAirPurifier);
                                     setResult(RESULT_OK);
                                     SetUpAirVerActivity.this.finish();
                                 }
@@ -156,17 +147,17 @@ public class SetUpAirVerActivity extends BaseActivity {
      * 保存设置
      */
     private void saveSettings() {
-        if (mVerAirPurifier != null) {
+        if (mAirPurifier != null) {
             if (deviceNewName != null && !deviceNewName.isEmpty()) {
-                mVerAirPurifier.Setting().name(deviceNewName);
+                mAirPurifier.Setting().name(deviceNewName);
             } else {
                 showToastCenter(R.string.input_device_name);
                 return;
             }
             if (deviceNewPos != null) {
-                mVerAirPurifier.Setting().put(Contacts.DEV_USE_POS, deviceNewPos);
+                mAirPurifier.Setting().put(Contacts.DEV_USE_POS, deviceNewPos);
             }
-            mVerAirPurifier.updateSettings();
+            mAirPurifier.updateSettings();
             this.finish();
         } else {
             showToastCenter(R.string.Not_found_device);

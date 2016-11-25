@@ -1,0 +1,519 @@
+package com.ozner.cup.Device.AirPurifier;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.ozner.AirPurifier.AirPurifier_Bluetooth;
+import com.ozner.AirPurifier.AirPurifier_MXChip;
+import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Device.DeviceFragment;
+import com.ozner.cup.Main.MainActivity;
+import com.ozner.cup.R;
+import com.ozner.cup.UIView.CProessbarView;
+import com.ozner.device.BaseDeviceIO;
+import com.ozner.device.OperateCallback;
+import com.ozner.device.OznerDevice;
+import com.ozner.device.OznerDeviceManager;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
+import static com.ozner.device.BaseDeviceIO.ConnectStatus.Connected;
+
+
+public class AirDeskPurifierFragment extends DeviceFragment {
+    private static final String TAG = "AirDeskPurifier";
+    private static final int CHANGE_SPEED = 0X01;
+    private static final int FILTER_MAX_WORK_TIME = 60000;
+    @InjectView(R.id.tv_pmState)
+    TextView tvPmState;
+    @InjectView(R.id.tv_pmValue)
+    TextView tvPmValue;
+    @InjectView(R.id.tv_airTemp)
+    TextView tvAirTemp;
+    @InjectView(R.id.tv_airShiDu)
+    TextView tvAirShiDu;
+    @InjectView(R.id.tv_deskAnionTips)
+    TextView tvDeskAnionTips;
+    @InjectView(R.id.iv_filterState)
+    ImageView ivFilterState;
+    @InjectView(R.id.tv_filiteState)
+    TextView tvFiliteState;
+    @InjectView(R.id.tv_filterValue)
+    TextView tvFilterValue;
+    @InjectView(R.id.rlay_filterStatus)
+    RelativeLayout rlayFilterStatus;
+    @InjectView(R.id.iv_purifierSetBtn)
+    ImageView ivPurifierSetBtn;
+    @InjectView(R.id.tv_address)
+    TextView tvAddress;
+    @InjectView(R.id.tv_air_outdoor)
+    TextView tvAirOutdoor;
+    @InjectView(R.id.tv_air_quality)
+    TextView tvAirQuality;
+    @InjectView(R.id.tv_outPM25)
+    TextView tvOutPM25;
+    @InjectView(R.id.tv_air_pm)
+    TextView tvAirPm;
+    @InjectView(R.id.rlay_air_outside)
+    RelativeLayout rlayAirOutside;
+    @InjectView(R.id.llay_top)
+    LinearLayout llayTop;
+    @InjectView(R.id.iv_deviceConnectIcon)
+    ImageView ivDeviceConnectIcon;
+    @InjectView(R.id.tv_deviceConnectTips)
+    TextView tvDeviceConnectTips;
+    @InjectView(R.id.llay_deviceConnectTip)
+    LinearLayout llayDeviceConnectTip;
+    @InjectView(R.id.llay_Switch)
+    LinearLayout llaySwitch;
+    @InjectView(R.id.cproessbarView)
+    CProessbarView cproessbarView;
+
+    private AirPurifier_Bluetooth mDeskAirPurifier;
+    private AirPurifierMonitor airMonitor;
+    private String deviceNewName = "";
+    private int oldSpeed = 0;
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (CHANGE_SPEED == msg.what) {
+                int present = msg.arg1;
+                if (isThisAdd() && mDeskAirPurifier != null
+                        && mDeskAirPurifier.connectStatus() == Connected) {
+
+                    if (present > 1) {
+                        if (!mDeskAirPurifier.status().Power()) {
+                            mDeskAirPurifier.status().setPower(true, new OperateCallback<Void>() {
+                                @Override
+                                public void onSuccess(Void var1) {
+                                    Log.e(TAG, "onSuccess_power_true: ");
+                                    refreshUIData();
+                                }
+
+                                @Override
+                                public void onFailure(Throwable var1) {
+                                    Log.e(TAG, "onFailure_power_true: ");
+                                    refreshUIData();
+                                }
+                            });
+                        }
+
+                        mDeskAirPurifier.status().setRPM((byte) present, new OperateCallback<Void>() {
+                            @Override
+                            public void onSuccess(Void var1) {
+                                Log.e(TAG, "onSuccess_RPM: ");
+                                refreshUIData();
+                            }
+
+                            @Override
+                            public void onFailure(Throwable var1) {
+                                Log.e(TAG, "onFailure_RPM: ");
+                                refreshUIData();
+                                showCenterToast(R.string.send_status_fail);
+                            }
+                        });
+
+                    } else {
+                        mDeskAirPurifier.status().setPower(false, new OperateCallback<Void>() {
+                            @Override
+                            public void onSuccess(Void var1) {
+                                Log.e(TAG, "onSuccess_power_false: ");
+                                refreshUIData();
+                            }
+
+                            @Override
+                            public void onFailure(Throwable var1) {
+                                Log.e(TAG, "onFailure_power_false: ");
+
+                                refreshUIData();
+                                showCenterToast(R.string.send_status_fail);
+                            }
+                        });
+                    }
+
+                } else {
+                    showCenterToast(R.string.device_disConnect);
+                }
+            }
+//            super.handleMessage(msg);
+        }
+    };
+
+    /**
+     * 实例化Fragment
+     *
+     * @param mac
+     *
+     * @return
+     */
+    public static DeviceFragment newInstance(String mac) {
+        AirDeskPurifierFragment fragment = new AirDeskPurifierFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(DeviceAddress, mac);
+        if (bundle != null) {
+            fragment.setArguments(bundle);
+        }
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        try {
+            Bundle bundle = getArguments();
+            mDeskAirPurifier = (AirPurifier_Bluetooth) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_air_desk_purifier, container, false);
+        ButterKnife.inject(this, view);
+
+        cproessbarView.setOnValueChangeListener(new ValueChangeListener());
+        return view;
+    }
+
+    @Override
+    public void setDevice(OznerDevice device) {
+
+        deviceNewName = "";
+        if (mDeskAirPurifier != null) {
+            if (mDeskAirPurifier.Address() != device.Address()) {
+                mDeskAirPurifier.release();
+                mDeskAirPurifier = null;
+                mDeskAirPurifier = (AirPurifier_Bluetooth) device;
+                refreshUIData();
+            }
+        } else {
+            mDeskAirPurifier = (AirPurifier_Bluetooth) device;
+            refreshUIData();
+        }
+    }
+
+    @OnClick({R.id.iv_purifierSetBtn})
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_purifierSetBtn:
+                if (mDeskAirPurifier != null) {
+                    Intent setupIntent = new Intent(getContext(), SetUpAirVerActivity.class);
+                    setupIntent.putExtra(Contacts.PARMS_MAC, mDeskAirPurifier.Address());
+                    startActivity(setupIntent);
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
+                break;
+        }
+    }
+
+
+    @Override
+    protected void refreshUIData() {
+        try {
+            if (isThisAdd() && mDeskAirPurifier != null) {
+                showDeviceName();
+                refreshConnectState();
+                refreshSensorData();
+                setUISwitch(mDeskAirPurifier.status().RPM());
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.e(TAG, "refreshUIData_Ex: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * 刷新设备连接状态
+     */
+    private void refreshConnectState() {
+        if (mDeskAirPurifier != null) {
+            if (ivDeviceConnectIcon.getAnimation() == null) {
+                ivDeviceConnectIcon.setAnimation(rotateAnimation);
+            }
+
+            if (mDeskAirPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
+                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                tvDeviceConnectTips.setText(R.string.device_connecting);
+                ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
+                if (ivDeviceConnectIcon.getAnimation() != null) {
+                    ivDeviceConnectIcon.getAnimation().start();
+                }
+            } else if (mDeskAirPurifier.connectStatus() == Connected) {
+                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+                if (ivDeviceConnectIcon.getAnimation() != null) {
+                    ivDeviceConnectIcon.getAnimation().cancel();
+                }
+            } else if (mDeskAirPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
+                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                tvDeviceConnectTips.setText(R.string.device_unconnected);
+                if (ivDeviceConnectIcon.getAnimation() != null) {
+                    ivDeviceConnectIcon.getAnimation().cancel();
+                }
+                ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
+            }
+        }
+    }
+
+    /**
+     * 设置设备名字
+     */
+    private void showDeviceName() {
+        if (!deviceNewName.equals(mDeskAirPurifier.getName())) {
+            deviceNewName = mDeskAirPurifier.getName();
+            ((MainActivity) getActivity()).setCustomTitle(mDeskAirPurifier.getName());
+        }
+    }
+
+    /**
+     * 刷新传感器数据
+     */
+    private void refreshSensorData() {
+        if (mDeskAirPurifier != null) {
+            showPM25(mDeskAirPurifier.sensor().PM25());
+            showTemp(mDeskAirPurifier.sensor().Temperature());
+            showHumidity(mDeskAirPurifier.sensor().Humidity());
+            showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
+//            Log.e(TAG, "refreshSensorData: maxWorkTime:" + mDeskAirPurifier.sensor().FilterStatus().maxWorkTime);
+        }
+    }
+
+
+    /**
+     * 设置开关值
+     *
+     * @param present
+     */
+    private void setUISwitch(int present) {
+        oldSpeed = present;
+        if (mDeskAirPurifier != null && mDeskAirPurifier.status().Power()) {
+            cproessbarView.updateValue(oldSpeed);
+        } else {
+            cproessbarView.updateValue(0);
+        }
+    }
+
+    /**
+     * 设置PM2.5
+     *
+     * @param pm25
+     */
+    private void showPM25(int pm25) {
+        if (mDeskAirPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+            if (mDeskAirPurifier.status().Power()) {
+                tvDeskAnionTips.setVisibility(View.VISIBLE);
+                if (pm25 > 0 && pm25 < 1000) {
+                    if (pm25 < 75) {
+                        tvPmState.setText(R.string.excellent);
+                        setBarColor(R.color.air_good_bg);
+                        setToolbarColor(R.color.air_good_bg);
+                        llayTop.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.air_good_bg));
+                    } else if (pm25 >= 75 && pm25 < 150) {
+                        tvPmState.setText(R.string.good);
+                        setBarColor(R.color.air_soso_bg);
+                        setToolbarColor(R.color.air_soso_bg);
+                        llayTop.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.air_soso_bg));
+                    } else if (pm25 >= 150) {
+                        tvPmState.setText(R.string.bads);
+                        setBarColor(R.color.air_bad_bg);
+                        setToolbarColor(R.color.air_bad_bg);
+                        llayTop.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.air_bad_bg));
+                    }
+                    tvPmValue.setAlpha(1.0f);
+                    tvPmValue.setText(String.valueOf(pm25));
+                } else {
+                    tvPmValue.setText(R.string.no_data);
+                    tvPmState.setText("-");
+                }
+            } else {
+                showDeviceClose();
+            }
+        } else {
+            showDeviceDisConn();
+        }
+    }
+
+    /**
+     * 显示设备关机
+     */
+    private void showDeviceClose() {
+        tvDeskAnionTips.setVisibility(View.INVISIBLE);
+        tvPmState.setText(R.string.state_null);
+        tvPmValue.setText(R.string.device_close);
+        tvPmValue.setAlpha(0.6f);
+    }
+
+    /**
+     * 显示设备连接已断开
+     */
+    private void showDeviceDisConn() {
+        tvPmValue.setText(R.string.device_dis_connect);
+        tvPmValue.setAlpha(0.6f);
+        tvPmState.setText(R.string.state_null);
+        tvAirTemp.setText("-");
+        tvAirShiDu.setText("-");
+    }
+
+    /**
+     * 设置温度
+     *
+     * @param temp
+     */
+    private void showTemp(int temp) {
+//        if (oldTemp != temp) {
+        if (65535 != temp) {
+            tvAirTemp.setText(temp + "℃");
+        } else {
+            tvAirTemp.setText("-");
+        }
+//        }
+    }
+
+    /**
+     * 设置湿度
+     *
+     * @param hum
+     */
+    private void showHumidity(int hum) {
+//        if (oldHum != hum) {
+        if (65535 != hum) {
+            tvAirShiDu.setText(hum + "%");
+        } else {
+            tvAirShiDu.setText("-");
+        }
+//        }
+    }
+
+    /**
+     * 显示滤芯状态
+     */
+    private void showFilterStatus(int workTime) {
+        int maxWorkTime = mDeskAirPurifier.sensor().FilterStatus().maxWorkTime;
+        if (maxWorkTime <= 0) {
+            maxWorkTime = FILTER_MAX_WORK_TIME;
+        }
+        if (workTime > maxWorkTime) {
+            workTime = maxWorkTime;
+        }
+        int ret = Math.round((1 - (workTime / maxWorkTime)) * 100);
+        tvFilterValue.setText(String.format("%d%%", ret));
+    }
+
+    @Override
+    public void onStart() {
+        registerMonitor();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        releaseMonitor();
+        super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        try {
+            ((MainActivity) getActivity()).setCustomTitle(R.string.air_purifier);
+            initBgColor();
+        } catch (Exception ex) {
+            Log.e(TAG, "onResume_Ex:" + ex.getMessage());
+        }
+        refreshUIData();
+        super.onResume();
+    }
+    
+
+    /**
+     * 初始化背景色
+     */
+    private void initBgColor() {
+        setBarColor(R.color.air_good_bg);
+        setToolbarColor(R.color.air_good_bg);
+        llayTop.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.air_good_bg));
+    }
+
+    /**
+     * 注册广播接收器
+     */
+    private void registerMonitor() {
+        airMonitor = new AirPurifierMonitor();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+
+        filter.addAction(OznerDeviceManager.ACTION_OZNER_MANAGER_DEVICE_CHANGE);
+        filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTING);
+        filter.addAction(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED);
+        filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTED);
+
+        filter.addAction(AirPurifier_MXChip.ACTION_AIR_PURIFIER_SENSOR_CHANGED);
+        filter.addAction(AirPurifier_MXChip.ACTION_AIR_PURIFIER_STATUS_CHANGED);
+        getContext().registerReceiver(airMonitor, filter);
+    }
+
+    /**
+     * 注销广播接收器
+     */
+    private void releaseMonitor() {
+        if (isThisAdd() && airMonitor != null) {
+            getContext().unregisterReceiver(airMonitor);
+        }
+    }
+
+    private boolean isThisAdd() {
+        return AirDeskPurifierFragment.this.isAdded() && !AirDeskPurifierFragment.this.isRemoving() && !AirDeskPurifierFragment.this.isDetached();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+
+
+    class ValueChangeListener implements CProessbarView.ValueChangeListener {
+
+        @Override
+        public void onValueChange(final int present) {
+            try {
+                mHandler.removeMessages(CHANGE_SPEED);
+
+                Message message = mHandler.obtainMessage();
+                message.what = CHANGE_SPEED;
+                message.arg1 = present;
+                mHandler.sendMessageDelayed(message, 500);
+            } catch (Exception ex) {
+                Log.e(TAG, "ValueChange_Ex: " + ex.getMessage());
+            }
+        }
+    }
+
+    class AirPurifierMonitor extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            refreshUIData();
+        }
+    }
+}

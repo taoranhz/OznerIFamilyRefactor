@@ -471,6 +471,12 @@ public class WaterPurifierFragment extends DeviceFragment {
 
     @Override
     public void onResume() {
+        try {
+            setBarColor(R.color.colorAccent);
+            setToolbarColor(R.color.colorAccent);
+        } catch (Exception ex) {
+
+        }
         refreshUIData();
         super.onResume();
     }

@@ -14,6 +14,7 @@ import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Device.AddDevice.bean.AddDeviceListBean;
+import com.ozner.cup.Device.AirPurifier.MatchDeskAirActivity;
 import com.ozner.cup.Device.AirPurifier.MatchVerAirActivity;
 import com.ozner.cup.Device.Cup.MatchCupActivity;
 import com.ozner.cup.Device.Tap.MatchTapActivity;
@@ -138,6 +139,7 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
                 startActivity(new Intent(this, MatchVerAirActivity.class));
                 break;
             case R.drawable.device_icon_air_desk:
+                startActivity(new Intent(this, MatchDeskAirActivity.class));
                 break;
             case R.drawable.device_icon_replen:
                 break;

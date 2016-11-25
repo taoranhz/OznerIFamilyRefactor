@@ -1,12 +1,16 @@
 package com.ozner.cup.Device;
 
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.Toast;
 
 import com.ozner.cup.Base.BaseFragment;
+import com.ozner.cup.Main.MainActivity;
 import com.ozner.device.OznerDevice;
 
 
@@ -46,5 +50,25 @@ public abstract class DeviceFragment extends BaseFragment {
         toast.show();
     }
 
+
+    /**
+     * 设置状态栏颜色
+     */
+    protected void setBarColor(int resId) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = ((MainActivity) getActivity()).getWindow();
+            //更改状态栏颜色
+            window.setStatusBarColor(ContextCompat.getColor(getContext(), resId));
+        }
+    }
+
+    /**
+     * 设置主界面toolbar背景色
+     *
+     * @param resId
+     */
+    protected void setToolbarColor(int resId) {
+        ((MainActivity) getActivity()).setToolBarColor(resId);
+    }
 
 }

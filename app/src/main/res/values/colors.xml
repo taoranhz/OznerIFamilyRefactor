@@ -5,6 +5,10 @@
     <color name="colorPrimaryDark">@color/theme_blue</color>
     <color name="colorAccent">@color/theme_blue</color>
 
+    <!--<color name="theme_blue">#ff81cef8</color>-->
+    <!--<color name="theme_blue">#ffafecff</color>-->
+    <color name="theme_blue">#5ecffe</color>
+
     <!--App颜色设置-->
     <color name="light_green">#ff5aeb97</color>
     <color name="light_black">#292929</color>
@@ -12,8 +16,7 @@
     <color name="gray">#666666</color>
     <color name="gray_bg">#fff0eff5</color>
     <color name="colorLine">#e1e1e1</color>
-    <!--<color name="theme_blue">#ff81cef8</color>-->
-    <color name="theme_blue">#ffafecff</color>
+    <color name="cup_detail_bg">#ffafecff</color>
     <color name="air_good_bg">#5ecffe</color>
     <color name="air_soso_bg">#a381fb</color>
     <color name="air_bad_bg">#fe6565</color>

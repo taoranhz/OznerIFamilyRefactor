@@ -86,6 +86,7 @@ public class MatchCupActivity extends BaseActivity {
         setContentView(R.layout.activity_match_cup);
         ButterKnife.inject(this);
         initActionBar();
+        initNormalInfo();
         initFoundDeviceView();
         startFindDevice();
     }
@@ -98,6 +99,13 @@ public class MatchCupActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.back);
         tv_title.setText(R.string.match_device);
+    }
+
+    /**
+     * 初始化基本信息
+     */
+    private void initNormalInfo() {
+        etDeviceName.setHint(R.string.input_cup_name);
     }
 
     /**
@@ -167,7 +175,7 @@ public class MatchCupActivity extends BaseActivity {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            Log.e(TAG, "loadFoundDevices_Ex: "+ ex.getMessage());
+            Log.e(TAG, "loadFoundDevices_Ex: " + ex.getMessage());
             showNoFoundDevice();
         }
     }

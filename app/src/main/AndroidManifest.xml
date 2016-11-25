@@ -52,6 +52,8 @@
         </activity>
         <activity android:name=".Device.Cup.SetUpCupActivity">
         </activity>
+        <activity android:name=".Device.AirPurifier.MatchDeskAirActivity">
+        </activity>
     </application>
 
 </manifest>

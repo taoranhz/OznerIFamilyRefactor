@@ -87,6 +87,8 @@
     <string name="input_weight">输入体重</string>
     <string name="beat_users">击败了%1$d%%的用户</string>
 
+    <string name="input_cup_name">输入水杯名字</string>
+    <string name="input_air_name">输入空气净化器名字</string>
     <string name="office">办公室</string>
     <string name="finish">完成</string>
     <string name="no_success">未成功</string>
@@ -109,6 +111,8 @@
     <string name="and">和</string>
     <string name="lamp_blinks">，WIFI指示灯闪烁</string>
     <string name="matching_wifi">正在进行WiFi配对</string>
+
+    <string name="notice_bottom_air_desk">检查滤芯状态和蓝牙开启状态后再尝试配对</string>
 
     <!--Tds-->
     <string name="tds_months">本月水质纯净指数分布</string>
@@ -137,6 +141,7 @@
     <string name="buy_filter">购买滤芯</string>
 
 
+    <string name="device_dis_connect">设备已断开</string>
     <string name="device_close">已关机</string>
     <string name="device_no_net">设备已断网</string>
     <string name="phone_nonet">手机未连接网络</string>
@@ -151,6 +156,11 @@
     <string name="air_purifier_lamplight_tips">空气质量灯光提醒</string>
     <string name="bad_less">污染较少</string>
     <string name="bad_more">污染严重</string>
+
+
+    <string name="air_low_speed">低风速</string>
+    <string name="air_high_speed">高风速</string>
+    <string name="air_middle_speed">中风速</string>
 
     <string name="air_purifier_use_instru">空气净化器使用说明</string>
 

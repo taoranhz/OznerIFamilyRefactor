@@ -4,18 +4,22 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.Device.DeviceFragment;
@@ -171,12 +175,21 @@ public class CupFragment extends DeviceFragment {
 
     @Override
     public void onResume() {
+        try {
+            setBarColor(R.color.cup_detail_bg);
+            setToolbarColor(R.color.cup_detail_bg);
+        } catch (Exception ex) {
+            Log.e(TAG, "onResume_Ex: " + ex.getMessage());
+        }
         if (isThisAdd())
             ((MainActivity) getActivity()).setCustomTitle(getString(R.string.smart_glass));
         initRecordCal();
         refreshUIData();
         super.onResume();
     }
+
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -202,7 +215,9 @@ public class CupFragment extends DeviceFragment {
     protected void refreshUIData() {
         if (isThisAdd() && mCup != null) {
             Log.e(TAG, "refreshUIData: " + mCup.Sensor().toString());
+            ((MainActivity) getActivity()).setCustomTitle(mCup.getName());
             refreshConnectState();
+            refreshWaterGoal();
             if (mCup.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
                 refreshSensorData();
             }
@@ -244,7 +259,6 @@ public class CupFragment extends DeviceFragment {
     private void refreshSensorData() {
         if (mCup != null) {
             Log.e(TAG, "refreshSensorData: " + mCup.toString());
-            ((MainActivity) getActivity()).setCustomTitle(mCup.getName());
             showTdsState(mCup.Sensor().TDSFix);
             showPowerState();
             showWaterTarget();
@@ -253,7 +267,21 @@ public class CupFragment extends DeviceFragment {
     }
 
     /**
-     * 显示饮水目标
+     * 刷新饮水目标
+     */
+    private void refreshWaterGoal() {
+        if (mCup != null) {
+            int waterGoal = (int) mCup.Setting().get(Contacts.DEV_USER_WATER_GOAL, -1);
+            if (-1 == waterGoal) {
+                waterGoal = 2000;
+            }
+
+            tvWaterGoal.setText(waterGoal + "ml");
+        }
+    }
+
+    /**
+     * 显示饮水量
      */
     private void showWaterTarget() {
         if (mCup != null) {

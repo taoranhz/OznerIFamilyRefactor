@@ -359,7 +359,9 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
             tvRemindEndtime.setText(DateFormatUtils.hourMinFormt(tipEndCal.getTime()));
 
             //初始化灯带颜色
-            cupColorpicker.SetCenterColor(mCup.Setting().haloColor());
+            if (mCup.Setting().haloColor() != 0) {
+                cupColorpicker.SetCenterColor(mCup.Setting().haloColor());
+            }
 
             //初始化水杯提醒功能
             if (mCup.Setting().RemindEnable()) {

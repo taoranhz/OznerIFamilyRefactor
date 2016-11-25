@@ -20,6 +20,7 @@ import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Chat.ChatFragment;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
+import com.ozner.cup.Device.AirPurifier.AirDeskPurifierFragment;
 import com.ozner.cup.Device.AirPurifier.AirVerPurifierFragment;
 import com.ozner.cup.Device.Cup.CupFragment;
 import com.ozner.cup.Device.DeviceFragment;
@@ -107,6 +108,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
      */
     private void initNavBar() {
         bnBootomNavBar.setMode(BottomNavigationBar.MODE_FIXED);
+        bnBootomNavBar.setActiveColor(R.color.colorAccent);
         bnBootomNavBar
                 .addItem(new BottomNavigationItem(R.drawable.tab_device_selector, getString(R.string.device)))
                 .addItem(new BottomNavigationItem(R.drawable.tab_shop_selector, getString(R.string.eshop)))
@@ -135,25 +137,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         NoDeviceFragment noDeviceFragment = new NoDeviceFragment();
         devFragmentMap.put(NoDeviceTag, noDeviceFragment);
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuItem item = menu.add(0, 0, 0, "位置");
-//
-//        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//        return super.onCreateOptionsMenu(menu);
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case 0:
-//
-//                break;
-//        }
-//        return super.onOptionsItemSelected(item);
-//
-//    }
 
     @Override
     public void onBackPressed() {
@@ -206,6 +189,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 return WaterPurifierFragment.newInstance(device.Address());
             } else if (AirPurifierManager.IsWifiAirPurifier(device.Type())) {
                 return AirVerPurifierFragment.newInstance(device.Address());
+            } else if (AirPurifierManager.IsBluetoothAirPurifier(device.Type())) {
+                return AirDeskPurifierFragment.newInstance(device.Address());
             } else {
                 return NoDeviceFragment.newInstance();
             }
@@ -219,24 +204,24 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
      */
     private void showDevice() {
 //        try {
-            FragmentTransaction trans = this.getSupportFragmentManager().beginTransaction();
-            OznerDevice device = ((LeftMenuFragment) (getSupportFragmentManager().findFragmentById(R.id.fg_left_menu))).getSelectedDevice();
-            if (device != null) {
-                Log.e(TAG, "showDevice: " + device.Address() + " , deviceType:" + device.Type());
-                if (devFragmentMap.containsKey(device.Type())) {
-                    DeviceFragment df = devFragmentMap.get(device.Type());
-                    trans.replace(R.id.fg_content, df);
-                    df.setDevice(device);
-                } else {
-                    DeviceFragment newDef = getDeviceFragment(device);
-                    devFragmentMap.put(device.Type(), newDef);
-                    trans.replace(R.id.fg_content, newDef);
-                }
+        FragmentTransaction trans = this.getSupportFragmentManager().beginTransaction();
+        OznerDevice device = ((LeftMenuFragment) (getSupportFragmentManager().findFragmentById(R.id.fg_left_menu))).getSelectedDevice();
+        if (device != null) {
+            Log.e(TAG, "showDevice: " + device.Address() + " , deviceType:" + device.Type());
+            if (devFragmentMap.containsKey(device.Type())) {
+                DeviceFragment df = devFragmentMap.get(device.Type());
+                trans.replace(R.id.fg_content, df);
+                df.setDevice(device);
             } else {
-                Log.e(TAG, "showDevice: NoDeviceTag");
-                trans.replace(R.id.fg_content, devFragmentMap.get(NoDeviceTag));
+                DeviceFragment newDef = getDeviceFragment(device);
+                devFragmentMap.put(device.Type(), newDef);
+                trans.replace(R.id.fg_content, newDef);
             }
-            trans.commitAllowingStateLoss();
+        } else {
+            Log.e(TAG, "showDevice: NoDeviceTag");
+            trans.replace(R.id.fg_content, devFragmentMap.get(NoDeviceTag));
+        }
+        trans.commitAllowingStateLoss();
 //        } catch (Exception ex) {
 //            Log.e(TAG, "showDevice_Ex: " + ex.getMessage());
 //        }

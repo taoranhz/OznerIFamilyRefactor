@@ -1,10 +1,13 @@
 package com.ozner.cup.MyCenter;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 
 import com.ozner.cup.Base.BaseFragment;
 import com.ozner.cup.Main.MainActivity;
@@ -46,9 +49,41 @@ public class MyCenterFragment extends BaseFragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_my_center, container, false);
     }
+
     @Override
     public void onAttach(Context context) {
-        ((MainActivity)context).setCustomTitle("我的");
+        ((MainActivity) context).setCustomTitle("我的");
         super.onAttach(context);
+    }
+
+    @Override
+    public void onResume() {
+        try {
+            setBarColor(R.color.colorAccent);
+            setToolbarColor(R.color.colorAccent);
+        } catch (Exception ex) {
+
+        }
+        super.onResume();
+    }
+
+    /**
+     * 设置状态栏颜色
+     */
+    protected void setBarColor(int resId) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = ((MainActivity) getActivity()).getWindow();
+            //更改状态栏颜色
+            window.setStatusBarColor(ContextCompat.getColor(getContext(), resId));
+        }
+    }
+
+    /**
+     * 设置主界面toolbar背景色
+     *
+     * @param resId
+     */
+    protected void setToolbarColor(int resId) {
+        ((MainActivity) getActivity()).setToolBarColor(resId);
     }
 }

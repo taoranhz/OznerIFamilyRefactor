@@ -89,7 +89,7 @@ public class TapFragment extends DeviceFragment {
     TapTDSChartView tdsChartView;
     private Tap mTap;
     private TapMonitor tapMonitor;
-//    private RotateAnimation rotateAnimation;
+    //    private RotateAnimation rotateAnimation;
     private int oldTdsValue;
     int[] tdsDatas = new int[31];
 
@@ -197,9 +197,37 @@ public class TapFragment extends DeviceFragment {
 
     @Override
     public void onResume() {
+        try {
+            setBarColor(R.color.colorAccent);
+            setToolbarColor(R.color.colorAccent);
+        } catch (Exception ex) {
+
+        }
+        if (TapFragment.this.isAdded())
+            ((MainActivity) getActivity()).setCustomTitle(getString(R.string.water_probe));
         refreshUIData();
         super.onResume();
     }
+
+//    /**
+//     * 设置状态栏颜色
+//     */
+//    private void setBarColor(int resId) {
+//        if (Build.VERSION.SDK_INT >= 21) {
+//            Window window = ((MainActivity) getActivity()).getWindow();
+//            //更改状态栏颜色
+//            window.setStatusBarColor(ContextCompat.getColor(getContext(), resId));
+//        }
+//    }
+//
+//    /**
+//     * 设置主界面toolbar背景色
+//     *
+//     * @param resId
+//     */
+//    private void setToolbarColor(int resId) {
+//        ((MainActivity) getActivity()).setToolBarColor(resId);
+//    }
 
 
     /**

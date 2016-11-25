@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IntDef;
@@ -106,7 +105,6 @@ public class AirVerPurifierFragment extends DeviceFragment {
     LinearLayout llayLock;
     private AirPurifier_MXChip mVerAirPurifier;
     AirPurifierMonitor airMonitor;
-    private int oldVoc, oldPM, oldTemp, oldHum;
     private String deviceNewName = "";
     private ProgressDialog progressDialog;
     private Handler mHandler = new Handler();
@@ -179,7 +177,6 @@ public class AirVerPurifierFragment extends DeviceFragment {
     @Override
     public void setDevice(OznerDevice device) {
 
-        oldVoc = oldPM = oldTemp = oldHum = 0;
         deviceNewName = "";
 //        initColor();
         if (mVerAirPurifier != null) {
@@ -518,26 +515,6 @@ public class AirVerPurifierFragment extends DeviceFragment {
     }
 
     /**
-     * 设置状态栏颜色
-     */
-    private void setBarColor(int resId) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            Window window = ((MainActivity) getActivity()).getWindow();
-            //更改状态栏颜色
-            window.setStatusBarColor(ContextCompat.getColor(getContext(), resId));
-        }
-    }
-
-    /**
-     * 设置主界面toolbar背景色
-     *
-     * @param resId
-     */
-    private void setToolbarColor(int resId) {
-        ((MainActivity) getActivity()).setToolBarColor(resId);
-    }
-
-    /**
      * 初始化背景色
      */
     private void initBgColor() {
@@ -720,7 +697,6 @@ public class AirVerPurifierFragment extends DeviceFragment {
     private void showPM25(int pm25) {
 //        if (oldPM != pm25) {
         if (!mVerAirPurifier.isOffline() && mVerAirPurifier.airStatus().Power()) {
-            oldPM = pm25;
             if (pm25 > 0 && pm25 < 1000) {
                 if (pm25 < 75) {
                     tvPmState.setText(R.string.excellent);
@@ -755,7 +731,6 @@ public class AirVerPurifierFragment extends DeviceFragment {
      */
     private void showTemp(int temp) {
 //        if (oldTemp != temp) {
-        oldTemp = temp;
         if (65535 != temp) {
             tvAirTemp.setText(temp + "℃");
         } else {
@@ -771,7 +746,6 @@ public class AirVerPurifierFragment extends DeviceFragment {
      */
     private void showHumidity(int hum) {
 //        if (oldHum != hum) {
-        oldHum = hum;
         if (65535 != hum) {
             tvAirShiDu.setText(hum + "%");
         } else {
@@ -787,7 +761,6 @@ public class AirVerPurifierFragment extends DeviceFragment {
      */
     private void showVOCState(int voc) {
 //        if (oldVoc != voc) {
-        oldVoc = voc;
         if (65535 != voc) {
             switch (voc) {
                 case -1:

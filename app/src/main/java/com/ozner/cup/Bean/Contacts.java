@@ -6,6 +6,8 @@ package com.ozner.cup.Bean;
  */
 
 public class Contacts {
+    //蓝牙配对类型参数
+    public final static String PARMS_MATCHTYPE = "parms_matchtype";
     //传递参数mac
     public final static String PARMS_MAC = "parms_mac";
     //传递参数url

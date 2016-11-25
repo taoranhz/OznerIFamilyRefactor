@@ -1,4 +1,4 @@
-package com.ozner.cup.Device.Tap;
+package com.ozner.cup.Device.AirPurifier;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ozner.AirPurifier.AirPurifierManager;
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScan;
 import com.ozner.cup.Base.BaseActivity;
@@ -30,8 +32,6 @@ import com.ozner.cup.R;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
-import com.ozner.tap.Tap;
-import com.ozner.tap.TapManager;
 
 import java.util.Date;
 
@@ -39,18 +39,22 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class MatchTapActivity extends BaseActivity {
-    private static final String TAG = "MatchTap";
+public class MatchDeskAirActivity extends BaseActivity {
+    private static final String TAG = "MatchDeskAir";
     @InjectView(R.id.title)
-    TextView tv_title;
+    TextView title;
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
-//    @InjectView(R.id.tv_state)
-//    TextView tvState;
+    @InjectView(R.id.tv_state)
+    TextView tvState;
     @InjectView(R.id.ib_moreLeft)
     ImageButton ibMoreLeft;
-//    @InjectView(R.id.ib_moreRight)
-//    ImageButton ibMoreRight;
+    @InjectView(R.id.rv_found_devices)
+    RecyclerView rvFoundDevices;
+    @InjectView(R.id.ib_moreRight)
+    ImageButton ibMoreRight;
+    @InjectView(R.id.llay_found_device)
+    LinearLayout llayFoundDevice;
     @InjectView(R.id.iv_match_loading)
     ImageView ivMatchLoading;
     @InjectView(R.id.iv_match_icon)
@@ -59,24 +63,25 @@ public class MatchTapActivity extends BaseActivity {
     TextView tvMatchNotice;
     @InjectView(R.id.tv_match_type)
     TextView tvMatchType;
-    @InjectView(R.id.rv_found_devices)
-    RecyclerView rvFoundDevices;
-    @InjectView(R.id.llay_found_device)
-    LinearLayout llayFoundDevice;
+    @InjectView(R.id.tv_notice_Bottom)
+    TextView tvNoticeBottom;
+    @InjectView(R.id.btn_rematch)
+    Button btnRematch;
+    @InjectView(R.id.llay_match_fail)
+    LinearLayout llayMatchFail;
     @InjectView(R.id.et_device_name)
     EditText etDeviceName;
     @InjectView(R.id.et_device_position)
     EditText etDevicePosition;
     @InjectView(R.id.iv_place_icon)
     ImageView ivPlaceIcon;
-    @InjectView(R.id.tv_succes_holder)
-    TextView tvSuccesHolder;
-    @InjectView(R.id.llay_match_fail)
-    LinearLayout llayMatchFail;
+    @InjectView(R.id.btn_match_success)
+    Button btnMatchSuccess;
     @InjectView(R.id.llay_inputInfo)
     LinearLayout llayInputInfo;
-    @InjectView(R.id.tv_notice_Bottom)
-    TextView tvNoticeBottom;
+    @InjectView(R.id.tv_succes_holder)
+    TextView tvSuccesHolder;
+
     private boolean isShowFound = false;
     private boolean isSearching = true;
     private FoundDevcieAdapter mDevAdpater;
@@ -87,14 +92,20 @@ public class MatchTapActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_match_tap);
+        setContentView(R.layout.activity_match_desk_air);
         ButterKnife.inject(this);
         initActionBar();
+        initNormalInfo();
         initFoundDeviceView();
         startFindDevice();
-//        showEditDeviceInfo();
     }
 
+    /**
+     * 初始化基本信息
+     */
+    private void initNormalInfo() {
+        etDeviceName.setHint(R.string.input_air_name);
+    }
 
     /**
      * 初始化actionBar
@@ -103,14 +114,14 @@ public class MatchTapActivity extends BaseActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.back);
-        tv_title.setText(R.string.match_device);
+        title.setText(R.string.match_device);
     }
 
     /**
      * 初始化RecyleView
      */
     private void initFoundDeviceView() {
-        mDevAdpater = new FoundDevcieAdapter(this, R.drawable.found_tap_selected, R.drawable.found_tap_unselected);
+        mDevAdpater = new FoundDevcieAdapter(this, R.drawable.found_desk_air_seled, R.drawable.found_desk_air_unsel);
         mDevAdpater.setOnItemClickListener(new FoundDevcieAdapter.ClientClickListener() {
             @Override
             public void onItemClick(int position, BaseDeviceIO deviceIO) {
@@ -130,7 +141,7 @@ public class MatchTapActivity extends BaseActivity {
      */
     private void registerBlueReceiver() {
         if (mMonitor == null) {
-            mMonitor = new Monitor();
+            mMonitor = new MatchDeskAirActivity.Monitor();
             IntentFilter filter = new IntentFilter();
             filter.addAction(BluetoothScan.ACTION_SCANNER_FOUND);
             this.registerReceiver(mMonitor, filter);
@@ -163,14 +174,10 @@ public class MatchTapActivity extends BaseActivity {
             }
             if (deviceIOs != null) {
                 for (BaseDeviceIO device : deviceIOs) {
-                    //只添加 水探头
-                    if (TapManager.IsTap(device.getType())) {
-                        if (device instanceof BluetoothIO) {
-                            BluetoothIO bluetoothIO = (BluetoothIO) device;
-                            //检查水探头处于start模式
-                            if (Tap.isBindMode(bluetoothIO))
-                                mDevAdpater.addItem(device);
-                        }
+                    //只添加 台式空净  并且在配对模式
+                    if (AirPurifierManager.IsBluetoothAirPurifier(device.getType())
+                            && OznerDeviceManager.Instance().checkisBindMode(device)) {
+                        mDevAdpater.addItem(device);
                     }
                 }
             }
@@ -203,12 +210,12 @@ public class MatchTapActivity extends BaseActivity {
     private void saveDevice(BaseDeviceIO deviceIo) {
         try {
             OznerDevice device = OznerDeviceManager.Instance().getDevice(deviceIo);
-            if (device != null && TapManager.IsTap(device.Type())) {
+            if (device != null && AirPurifierManager.IsBluetoothAirPurifier(device.Type())) {
                 OznerDeviceManager.Instance().save(device);
                 if (etDeviceName.getText().length() > 0) {
                     device.Setting().name(etDeviceName.getText().toString().trim());
                 } else {
-                    device.Setting().name(getString(R.string.water_probe));
+                    device.Setting().name(getString(R.string.air_purifier));
                 }
                 device.updateSettings();
             } else {
@@ -227,12 +234,14 @@ public class MatchTapActivity extends BaseActivity {
     private void startFindDevice() {
         llayInputInfo.setVisibility(View.GONE);
         llayMatchFail.setVisibility(View.GONE);
-        tv_title.setText(R.string.match_device);
+        tvMatchNotice.setVisibility(View.GONE);
+        title.setText(R.string.match_device);
+        tvNoticeBottom.setText(R.string.notice_bottom_air_desk);
         llayFoundDevice.setVisibility(View.INVISIBLE);
         tvMatchType.setVisibility(View.VISIBLE);
         tvMatchType.setText(getString(R.string.matching_bluetooth));
         tvMatchNotice.setText(getString(R.string.match_notice_tap));
-        ivMatchIcon.setImageResource(R.drawable.match_device_tap);
+        ivMatchIcon.setImageResource(R.drawable.match_device_desk_air);
         ivMatchLoading.setImageResource(R.drawable.match_loading);
         ivMatchLoading.setVisibility(View.VISIBLE);
         ivMatchIcon.setVisibility(View.VISIBLE);
@@ -254,7 +263,7 @@ public class MatchTapActivity extends BaseActivity {
         llayFoundDevice.setVisibility(View.VISIBLE);
         tvMatchNotice.setVisibility(View.INVISIBLE);
         tvMatchType.setVisibility(View.INVISIBLE);
-        ivMatchLoading.setImageResource(R.drawable.found_tap_selected);
+        ivMatchLoading.setImageResource(R.drawable.found_desk_air_seled);
         llayFoundDevice.setVisibility(View.VISIBLE);
         tvSuccesHolder.setVisibility(View.VISIBLE);
     }
@@ -269,7 +278,7 @@ public class MatchTapActivity extends BaseActivity {
         ivMatchIcon.setVisibility(View.GONE);
         llayInputInfo.setVisibility(View.GONE);
         llayFoundDevice.setVisibility(View.INVISIBLE);
-        tv_title.setText(R.string.match_failed);
+        title.setText(R.string.match_failed);
         tvMatchType.setVisibility(View.VISIBLE);
         tvMatchNotice.setVisibility(View.VISIBLE);
         tvMatchType.setText(getString(R.string.rematch));
@@ -284,7 +293,7 @@ public class MatchTapActivity extends BaseActivity {
     private void showEditDeviceInfo() {
 //        isEditShow = true;
         stopRotate();
-        tv_title.setText(R.string.match_successed);
+        title.setText(R.string.match_successed);
         llayMatchFail.setVisibility(View.GONE);
         ivMatchIcon.setVisibility(View.GONE);
         tvSuccesHolder.setVisibility(View.GONE);
@@ -334,7 +343,7 @@ public class MatchTapActivity extends BaseActivity {
     public void StartTime() {
         isSearching = true;
         if (timerCount == null) {
-            timerCount = new TimerCount(30000, 1000);
+            timerCount = new MatchDeskAirActivity.TimerCount(30000, 1000);
             timerCount.start();
         } else {
             StopTime();
@@ -434,7 +443,7 @@ public class MatchTapActivity extends BaseActivity {
 
         @Override
         public void onFinish() {
-            if (!MatchTapActivity.this.isFinishing() && !MatchTapActivity.this.isDestroyed()) {
+            if (!MatchDeskAirActivity.this.isFinishing() && !MatchDeskAirActivity.this.isDestroyed()) {
                 if (mDevAdpater.getItemCount() > 0) {
                     if (!isShowFound)
                         showFoundDevice();
