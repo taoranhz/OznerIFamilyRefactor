@@ -315,7 +315,7 @@ public class TapFragment extends DeviceFragment {
 
             //数字跑马灯
             if (tdsValue != 0) {
-                if (oldTdsValue != tdsValue) {
+//                if (oldTdsValue != tdsValue) {
                     tvTdsValue.setTextSize(NumSize);
                     final ValueAnimator animator = ValueAnimator.ofInt(oldTdsValue, tdsValue);
                     animator.setDuration(500);
@@ -337,7 +337,7 @@ public class TapFragment extends DeviceFragment {
                         tdsDetailProgress.update((tdsValue << 1) / 5);
                     }
                     oldTdsValue = tdsValue;
-                }
+//                }
             } else {
                 tvTdsState.setText(R.string.state_null);
                 ivTdsState.setVisibility(View.GONE);

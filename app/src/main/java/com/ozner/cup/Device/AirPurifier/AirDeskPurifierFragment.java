@@ -81,8 +81,6 @@ public class AirDeskPurifierFragment extends DeviceFragment {
     TextView tvDeviceConnectTips;
     @InjectView(R.id.llay_deviceConnectTip)
     LinearLayout llayDeviceConnectTip;
-    @InjectView(R.id.llay_Switch)
-    LinearLayout llaySwitch;
     @InjectView(R.id.cproessbarView)
     CProessbarView cproessbarView;
 
@@ -105,13 +103,23 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                                 @Override
                                 public void onSuccess(Void var1) {
                                     Log.e(TAG, "onSuccess_power_true: ");
-                                    refreshUIData();
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            refreshUIData();
+                                        }
+                                    });
                                 }
 
                                 @Override
                                 public void onFailure(Throwable var1) {
                                     Log.e(TAG, "onFailure_power_true: ");
-                                    refreshUIData();
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            refreshUIData();
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -120,13 +128,23 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                             @Override
                             public void onSuccess(Void var1) {
                                 Log.e(TAG, "onSuccess_RPM: ");
-                                refreshUIData();
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        refreshUIData();
+                                    }
+                                });
                             }
 
                             @Override
                             public void onFailure(Throwable var1) {
                                 Log.e(TAG, "onFailure_RPM: ");
-                                refreshUIData();
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        refreshUIData();
+                                    }
+                                });
                                 showCenterToast(R.string.send_status_fail);
                             }
                         });
@@ -136,14 +154,24 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                             @Override
                             public void onSuccess(Void var1) {
                                 Log.e(TAG, "onSuccess_power_false: ");
-                                refreshUIData();
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        refreshUIData();
+                                    }
+                                });
                             }
 
                             @Override
                             public void onFailure(Throwable var1) {
                                 Log.e(TAG, "onFailure_power_false: ");
 
-                                refreshUIData();
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        refreshUIData();
+                                    }
+                                });
                                 showCenterToast(R.string.send_status_fail);
                             }
                         });
@@ -153,7 +181,6 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                     showCenterToast(R.string.device_disConnect);
                 }
             }
-//            super.handleMessage(msg);
         }
     };
 
@@ -176,7 +203,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        initAnimation();
         try {
             Bundle bundle = getArguments();
             mDeskAirPurifier = (AirPurifier_Bluetooth) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
@@ -184,6 +211,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
         }
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -257,7 +285,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                 llayDeviceConnectTip.setVisibility(View.VISIBLE);
                 tvDeviceConnectTips.setText(R.string.device_connecting);
                 ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
-                if (ivDeviceConnectIcon.getAnimation() != null) {
+                if (ivDeviceConnectIcon.getAnimation() != null && !ivDeviceConnectIcon.getAnimation().hasStarted()) {
                     ivDeviceConnectIcon.getAnimation().start();
                 }
             } else if (mDeskAirPurifier.connectStatus() == Connected) {
@@ -295,7 +323,6 @@ public class AirDeskPurifierFragment extends DeviceFragment {
             showTemp(mDeskAirPurifier.sensor().Temperature());
             showHumidity(mDeskAirPurifier.sensor().Humidity());
             showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
-//            Log.e(TAG, "refreshSensorData: maxWorkTime:" + mDeskAirPurifier.sensor().FilterStatus().maxWorkTime);
         }
     }
 
@@ -362,6 +389,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         tvPmState.setText(R.string.state_null);
         tvPmValue.setText(R.string.device_close);
         tvPmValue.setAlpha(0.6f);
+        cproessbarView.updateValue(0);
     }
 
     /**
@@ -373,6 +401,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         tvPmState.setText(R.string.state_null);
         tvAirTemp.setText("-");
         tvAirShiDu.setText("-");
+        cproessbarView.updateValue(0);
     }
 
     /**
@@ -443,7 +472,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         refreshUIData();
         super.onResume();
     }
-    
+
 
     /**
      * 初始化背景色

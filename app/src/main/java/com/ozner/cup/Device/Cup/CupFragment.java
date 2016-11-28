@@ -4,15 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -88,7 +85,7 @@ public class CupFragment extends DeviceFragment {
     TextView tvTempTips;
 
     private Cup mCup;
-    private int oldTdsValue;
+//    private int oldTdsValue;
     private CupMonitor mMonitor;
     Calendar recordCal = Calendar.getInstance();
 
@@ -145,7 +142,7 @@ public class CupFragment extends DeviceFragment {
         try {
             Bundle bundle = getArguments();
             mCup = (Cup) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
-            oldTdsValue = 0;
+//            oldTdsValue = 0;
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -189,8 +186,6 @@ public class CupFragment extends DeviceFragment {
     }
 
 
-
-
     @Override
     public void onAttach(Context context) {
         Log.e(TAG, "onAttach: ");
@@ -220,6 +215,8 @@ public class CupFragment extends DeviceFragment {
             refreshWaterGoal();
             if (mCup.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
                 refreshSensorData();
+            } else {
+                showNoData();
             }
         }
     }
@@ -358,7 +355,7 @@ public class CupFragment extends DeviceFragment {
 
             //数字跑马灯
             if (tdsValue != 0) {
-                if (oldTdsValue != tdsValue) {
+//                if (oldTdsValue != tdsValue) {
                     tvTdsValue.setTextSize(NumSize);
                     tvTdsValue.setText(String.valueOf(tdsValue));
                     if (tdsValue > 250) {
@@ -366,8 +363,8 @@ public class CupFragment extends DeviceFragment {
                     } else {
                         tdsDetailProgress.update((tdsValue << 1) / 5);
                     }
-                    oldTdsValue = tdsValue;
-                }
+//                    oldTdsValue = tdsValue;
+//                }
             } else {
                 showNoData();
             }

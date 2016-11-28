@@ -162,7 +162,7 @@ public class WaterPurifierFragment extends DeviceFragment {
 
     @Override
     public void setDevice(OznerDevice device) {
-
+        oldPreValue = oldThenValue = 0;
         initWaterAttrInfo(device.Address());
 
         if (mWaterPurifer != null) {
@@ -560,18 +560,15 @@ public class WaterPurifierFragment extends DeviceFragment {
     private void refreshSensorData() {
         if (mWaterPurifer != null) {
             ((MainActivity) getActivity()).setCustomTitle(mWaterPurifer.getName());
-            showTdsState(mWaterPurifer.sensor().TDS1(), mWaterPurifer.sensor().TDS2());
+            showTdsState();
         }
     }
 
 
     /**
      * 处理TDS显示相关
-     *
-     * @param preTds
-     * @param thenTds
      */
-    private void showTdsState(int preTds, int thenTds) {
+    private void showTdsState() {
         int tdsPre, tdsThen;
         //获取净化前后的TDS值
         if (mWaterPurifer.sensor().TDS1() > 0 && mWaterPurifer.sensor().TDS2() > 0
