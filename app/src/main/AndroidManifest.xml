@@ -58,6 +58,8 @@
         </activity>
         <activity android:name=".Device.Cup.CupTDSActivity">
         </activity>
+        <activity android:name=".Device.Cup.CupVolumActivity">
+        </activity>
     </application>
 
 </manifest>

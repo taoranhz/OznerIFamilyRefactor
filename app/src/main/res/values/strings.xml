@@ -183,6 +183,7 @@
     <string name="temp_moderation">适中</string>
     <string name="can_drink">当前水温适宜饮用</string>
     <string name="can_not_drink">当前水温不适宜饮用</string>
+    <string name="water_volum">饮水量</string>
 
     <!--设置-->
     <string name="my_water_purifier">我的净水器</string>
@@ -264,6 +265,8 @@
     <string name="day">日</string>
     <string name="friend_rank">好友排名</string>
     <string name="tdsDetailTitle">水质纯净值</string>
+    <string name="water_volum_finish">今日饮水完成</string>
+    <string name="water_volum_exp">饮水量指数分布</string>
 
     <string name="tds_exp">水质纯净值分布</string>
     <string name="day_tds_exp">今日饮水纯净指数分布</string>

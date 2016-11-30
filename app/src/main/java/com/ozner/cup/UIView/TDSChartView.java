@@ -38,7 +38,6 @@ public class TDSChartView extends UIXChartView {
 
     int ani_sharp_alpha=0;
 
-
     @Override
     public void onAnimationStart(Animator animation) {
         if (getStep()==0)

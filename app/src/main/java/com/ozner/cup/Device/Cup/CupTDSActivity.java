@@ -105,8 +105,6 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cup_tds);
         ButterKnife.inject(this);
-        rgSwitch.setOnCheckedChangeListener(this);
-        initDataAdapter();
         if (Build.VERSION.SDK_INT >= 21) {
             Window window = getWindow();
             //更改状态栏颜色
@@ -114,6 +112,9 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
             //更改底部导航栏颜色(限有底部的手机)
             window.setNavigationBarColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
         }
+        initToolBar();
+        rgSwitch.setOnCheckedChangeListener(this);
+        initDataAdapter();
 
         mMonitor = new CupMonitor();
         IntentFilter filter = new IntentFilter();
@@ -129,7 +130,6 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
         }
-        initToolBar();
     }
 
     /**

@@ -440,7 +440,7 @@ public class CupFragment extends DeviceFragment {
         ButterKnife.reset(this);
     }
 
-    @OnClick({R.id.iv_setting, R.id.llay_tds_detail})
+    @OnClick({R.id.iv_setting, R.id.llay_tds_detail, R.id.rlay_water_volum, R.id.rlay_water_temp})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_setting:
@@ -457,6 +457,24 @@ public class CupFragment extends DeviceFragment {
                     Intent tdsIntent = new Intent(getContext(), CupTDSActivity.class);
                     tdsIntent.putExtra(Contacts.PARMS_MAC, mCup.Address());
                     startActivity(tdsIntent);
+                } else {
+                    Toast.makeText(getContext(), R.string.Not_found_device, Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.rlay_water_volum://饮水量详情
+                if (mCup != null) {
+                    Intent volumIntent = new Intent(getContext(), CupVolumActivity.class);
+                    volumIntent.putExtra(Contacts.PARMS_MAC, mCup.Address());
+                    startActivity(volumIntent);
+                } else {
+                    Toast.makeText(getContext(), R.string.Not_found_device, Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.rlay_water_temp://水温详情
+                if (mCup != null) {
+
+                } else {
+                    Toast.makeText(getContext(), R.string.Not_found_device, Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
