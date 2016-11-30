@@ -47,7 +47,7 @@ public class ChatFragment extends BaseFragment {
     }
     @Override
     public void onAttach(Context context) {
-        ((MainActivity)context).setCustomTitle("咨询");
+        ((MainActivity)context).setCustomTitle(R.string.chat);
         super.onAttach(context);
     }
 
@@ -56,6 +56,7 @@ public class ChatFragment extends BaseFragment {
         try {
             setBarColor(R.color.colorAccent);
             setToolbarColor(R.color.colorAccent);
+            ((MainActivity)getActivity()).setCustomTitle(R.string.chat);
         } catch (Exception ex) {
 
         }

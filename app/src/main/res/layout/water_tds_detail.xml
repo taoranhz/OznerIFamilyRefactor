@@ -105,7 +105,7 @@
                         android:layout_centerHorizontal="true"
                         android:padding="0dp"
                         android:text="@string/state_null"
-                        android:textColor="@color/err_red"
+                        android:textColor="@color/purifier_before"
                         android:textSize="40dp"/>
 
                     <TextView
@@ -113,9 +113,8 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/tv_preValue"
                         android:layout_centerHorizontal="true"
-
                         android:text="@string/pre_purifier"
-                        android:textColor="@color/err_red"
+                        android:textColor="@color/purifier_before"
                         android:textSize="16dp"/>
                 </RelativeLayout>
 

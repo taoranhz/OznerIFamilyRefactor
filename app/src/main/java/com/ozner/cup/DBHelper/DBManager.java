@@ -94,65 +94,10 @@ public class DBManager {
 
 
     public WaterPurifierAttr getWaterAttr(String mac) {
-        DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
+        DaoMaster daoMaster = new DaoMaster(getReadableDatabase());
         DaoSession daoSession = daoMaster.newSession();
         WaterPurifierAttrDao tapDao = daoSession.getWaterPurifierAttrDao();
         QueryBuilder<WaterPurifierAttr> qb = tapDao.queryBuilder();
         return qb.where(WaterPurifierAttrDao.Properties.Mac.eq(mac)).unique();
     }
-//
-//    /**
-//     * 更新或者插入
-//     *
-//     * @param tapSetting
-//     */
-//    public void insertOrUpdate(CustomTapSetting tapSetting) {
-//        DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
-//        DaoSession daoSession = daoMaster.newSession();
-//        CustomTapSettingDao tapDao = daoSession.getCustomTapSettingDao();
-//        QueryBuilder<CustomTapSetting> qb = tapDao.queryBuilder();
-//        if (qb.where(qb.and(CustomTapSettingDao.Properties.UserId.eq(tapSetting.getUserId())
-//                , CustomTapSettingDao.Properties.Mac.eq(tapSetting.getMac())))
-//                .count() > 0) {
-//            tapDao.update(tapSetting);
-//        } else {
-//            tapDao.insert(tapSetting);
-//        }
-//    }
-//
-//    /**
-//     * 获取水探头的设置
-//     *
-//     * @param userid
-//     * @param mac
-//     *
-//     * @return null或者实体对象
-//     */
-//    public CustomTapSetting getCustomTapSetting(String userid, String mac) {
-//        DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
-//        DaoSession daoSession = daoMaster.newSession();
-//        CustomTapSettingDao tapDao = daoSession.getCustomTapSettingDao();
-//        QueryBuilder<CustomTapSetting> qb = tapDao.queryBuilder();
-//        return qb.where(qb.and(CustomTapSettingDao.Properties.UserId.eq(userid)
-//                , CustomTapSettingDao.Properties.Mac.eq(mac))).unique();
-//    }
-//
-//    /**
-//     * 删除指定水探头的设置信息
-//     *
-//     * @param userid
-//     * @param mac
-//     */
-//    public void deleteCustomTapSetting(String userid, String mac) {
-//        DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
-//        DaoSession daoSession = daoMaster.newSession();
-//        CustomTapSettingDao tapDao = daoSession.getCustomTapSettingDao();
-//        QueryBuilder<CustomTapSetting> qb = tapDao.queryBuilder();
-//        QueryBuilder<CustomTapSetting> qurResQb = qb.where(qb.and(CustomTapSettingDao.Properties.UserId.eq(userid)
-//                , CustomTapSettingDao.Properties.Mac.eq(mac)));
-//
-//        if (qurResQb.count() > 0) {
-//            tapDao.delete(qurResQb.unique());
-//        }
-//    }
 }

@@ -385,6 +385,7 @@
                         android:button="@null"
                         android:checked="true"
                         android:gravity="center"
+                        android:textColor="@color/text_light_selector"
                         android:text="@string/takewater_temp"/>
 
                     <RadioButton
@@ -393,6 +394,7 @@
                         android:layout_height="30dp"
                         android:layout_weight="1"
                         android:background="@drawable/cup_remind_way_tds"
+                        android:textColor="@color/text_light_selector"
                         android:button="@null"
                         android:gravity="center"
                         android:text="@string/takewater_tds"/>

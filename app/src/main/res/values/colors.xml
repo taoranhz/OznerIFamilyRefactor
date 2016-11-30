@@ -38,4 +38,6 @@
     <color name="led_tape_red">#fff26262</color>
 
     <color name="generic">#ff7d58e7</color>
+    <color name="purifier_before">#ffba52a7</color>
+    <color name="tdsBuybg">#e7f1fe</color>
 </resources>

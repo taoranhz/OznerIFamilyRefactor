@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_cup_tds"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ozner.cup.Device.Cup.CupTDSActivity">
+
+    <include layout="@layout/toolbar"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cup_detail_bg"
+                android:orientation="horizontal"
+                android:paddingTop="10dp">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.3"
+                    android:paddingLeft="10dp">
+
+                    <TextView
+                        android:id="@+id/tdstop"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tdsDetailTitle"
+                        android:textColor="@color/detail_textblue"
+                        android:textSize="17dp"/>
+
+                    <TextView
+                        android:id="@+id/tdsleft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@+id/tv_tdsValue"
+                        android:text="TDS"
+                        android:textColor="@color/detail_textblue"
+                        android:textSize="18dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_tdsValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tdstop"
+                        android:layout_marginLeft="5dp"
+                        android:layout_toRightOf="@+id/tdsleft"
+                        android:layout_marginBottom="-2dp"
+                        android:includeFontPadding="false"
+                        android:text="0"
+                        android:textColor="@color/detail_textblue"
+                        android:textSize="45dp"/>
+                </RelativeLayout>
+
+
+                <include
+                    layout="@layout/tds_top_right_rank_chat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cup_detail_bg"
+                android:gravity="center_vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="5dp">
+
+                <ImageView
+                    android:id="@+id/iv_tds_tip_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/face_good"/>
+
+                <TextView
+                    android:id="@+id/tv_tds_tip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/tds_good_tips"
+                    android:textColor="@color/detail_textblue"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/tv_chartTitle"
+                    android:textSize="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tds_exp"/>
+
+                <RadioGroup
+                    android:id="@+id/rg_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb_day"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/cup_remind_way_temp"
+                        android:button="@null"
+                        android:checked="true"
+                        android:gravity="center"
+                        android:text="@string/day"
+                        android:textColor="@color/text_light_selector"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_week"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_check_middle_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:text="@string/week"
+                        android:textColor="@color/text_light_selector"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_month"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/cup_remind_way_tds"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:text="@string/month"
+                        android:textColor="@color/text_light_selector"/>
+                </RadioGroup>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="15dp">
+
+                    <LinearLayout
+                        android:id="@+id/llay_waterDetail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/iv_left_btn"
+                            android:layout_width="20dp"
+                            android:layout_height="50dp"
+                            android:layout_marginRight="30dp"
+                            android:background="@drawable/light_left"
+                            android:padding="10dp"/>
+
+
+                        <com.ozner.cup.UIView.UIXWaterDetailProgress
+                            android:id="@+id/uixWaterDetailProgress"
+                            android:layout_width="180dp"
+                            android:layout_height="180dp"/>
+
+
+                        <ImageView
+                            android:id="@+id/iv_right_btn"
+                            android:layout_width="20dp"
+                            android:layout_height="50dp"
+                            android:layout_marginLeft="30dp"
+                            android:background="@drawable/light_right"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/llay_tdsChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <com.ozner.cup.UIView.TDSChartView
+                            android:id="@+id/tdsChartView"
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"/>
+
+                        <LinearLayout
+                            android:id="@+id/llay_legend"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginTop="15dp"
+                            android:orientation="horizontal"
+                            android:paddingLeft="16.5dp"
+                            android:paddingRight="16.5dp">
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:layout_weight="1"
+                                android:gravity="center">
+
+
+                                <ImageView
+                                    android:id="@+id/iv_tapHelathImg"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="4dp"
+                                    android:src="@drawable/tap_health"/>
+
+                                <TextView
+                                    android:id="@+id/tv_tapHealthPre"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toRightOf="@+id/iv_tapHelathImg"
+                                    android:text="@string/health"
+                                    android:textColor="@color/faq_text_blue"
+                                    android:textSize="14dp"/>
+
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_weight="1"
+                                android:gravity="center_horizontal"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/iv_tapGenericImg"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="4dp"
+                                    android:src="@drawable/tap_gengric"/>
+
+                                <TextView
+                                    android:id="@+id/tv_tapGenericPre"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toRightOf="@+id/iv_tapGenericImg"
+                                    android:text="@string/soso"
+                                    android:textColor="@color/generic"
+                                    android:textSize="14dp"/>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginRight="7dp"
+                                android:layout_weight="1"
+                                android:gravity="center_horizontal">
+
+                                <ImageView
+                                    android:id="@+id/iv_tapBadImg"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="4dp"
+                                    android:src="@drawable/tap_bad"/>
+
+                                <TextView
+                                    android:id="@+id/tv_tapBadPre"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toRightOf="@+id/iv_tapBadImg"
+                                    android:text="@string/bad"
+                                    android:textColor="@color/err_red"
+                                    android:textSize="14dp"/>
+                            </RelativeLayout>
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <include layout="@layout/tds_change_water_health_layout"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

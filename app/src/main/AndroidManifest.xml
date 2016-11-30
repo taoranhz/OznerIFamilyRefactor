@@ -54,6 +54,10 @@
         </activity>
         <activity android:name=".Device.AirPurifier.MatchDeskAirActivity">
         </activity>
+        <activity android:name=".Device.WaterPurifier.WaterTDSActivity">
+        </activity>
+        <activity android:name=".Device.Cup.CupTDSActivity">
+        </activity>
     </application>
 
 </manifest>

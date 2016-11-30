@@ -97,11 +97,11 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
     public void selectDevice(int position) {
 //        if (!mLeftAdapter.getItem(position).Address().equals(UserDataPreference.GetUserData(getContext(), UserDataPreference.SelMac, ""))) {
 //            UserDataPreference.SetUserData(getContext(), UserDataPreference.SelMac, mLeftAdapter.getItem(position).Address());
-            mLeftAdapter.setSelectPosition(position);
-            if (position >= 0 && position < lvMyDevice.getCount()) {
-                lvMyDevice.setItemChecked(position, true);
-                ((MainActivity) getActivity()).onDeviceItemClick(mLeftAdapter.getItem(position), mLeftAdapter.getItem(position).Address());
-            }
+        mLeftAdapter.setSelectPosition(position);
+        if (position >= 0 && position < lvMyDevice.getCount()) {
+            lvMyDevice.setItemChecked(position, true);
+            ((MainActivity) getActivity()).onDeviceItemClick(mLeftAdapter.getItem(position), mLeftAdapter.getItem(position).Address());
+        }
 //        }
     }
 
@@ -191,18 +191,19 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
         for (OznerDevice device : OznerDeviceManager.Instance().getDevices()) {
             mLeftAdapter.addData(device);
         }
-
-        //设置侧边栏默认选中
-        String selMac = UserDataPreference.GetUserData(getContext(), UserDataPreference.SelMac, null);
-        int selPos = mLeftAdapter.getSelectItemPos(selMac);
-        if (selPos >= 0) {
-            selectDevice(selPos);
-        } else {
-            if (mLeftAdapter.getCount() > 0) {
-                selectDevice(0);
+        if (mLeftAdapter.getCount() > 0) {
+            //设置侧边栏默认选中
+            String selMac = UserDataPreference.GetUserData(getContext(), UserDataPreference.SelMac, null);
+            int selPos = mLeftAdapter.getSelectItemPos(selMac);
+            if (selPos >= 0) {
+                selectDevice(selPos);
             } else {
-                selectDevice(-1);
-                ((MainActivity) getActivity()).onDeviceItemClick(null, null);
+                if (mLeftAdapter.getCount() > 0) {
+                    selectDevice(0);
+                } else {
+                    selectDevice(-1);
+                    ((MainActivity) getActivity()).onDeviceItemClick(null, null);
+                }
             }
         }
     }

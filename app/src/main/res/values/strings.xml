@@ -6,6 +6,8 @@
 
     <!--<string name="action_settings">Settings</string>-->
 
+    <string name="shoujihao">18655591525</string>
+    <string name="yanzhengma">4852</string>
     <string name="app_name">浩泽净水家</string>
 
     <string name="navigation_drawer_open">打开侧边栏</string>
@@ -126,6 +128,7 @@
     <string name="health">健康</string>
     <string name="soso">一般</string>
     <string name="bad">较差</string>
+    <string name="safety">安全</string>
 
     <string name="pre_purifier">净化前</string>
     <string name="after_purifier">净化后</string>
@@ -191,7 +194,6 @@
     <string name="water_mac">水机编号</string>
     <string name="about_water_purifier">关于净水器</string>
 
-
     <string name="Not_found_device">未发现设备</string>
     <string name="input_device_name">请输入设备名字</string>
     <string name="weight_can_not_empty">体重不能为空</string>
@@ -255,6 +257,26 @@
     <string name="set_start_time">设置开始时间</string>
     <string name="set_end_time">设置结束时间</string>
     <string name="set_remind_interval">设置饮水提醒间隔</string>
+
+
+    <string name="month">月</string>
+    <string name="week">周</string>
+    <string name="day">日</string>
+    <string name="friend_rank">好友排名</string>
+    <string name="tdsDetailTitle">水质纯净值</string>
+
+    <string name="tds_exp">水质纯净值分布</string>
+    <string name="day_tds_exp">今日饮水纯净指数分布</string>
+    <string name="week_tds_exp">本周饮水纯净指数分布</string>
+    <string name="month_tds_exp">本月饮水纯净指数分布</string>
+    <string name="tds_quality_exp">水质纯净指数分布</string>
+    <string name="tds_good_tips">完美水质，体内每个细胞都说好！</string>
+    <string name="tds_normal_tips">饮水安全须谨慎，你值的拥有更好的。</string>
+    <string name="tds_bad_tips">当前杂质较多，请放心给对手饮用。</string>
+
+    <string name="change_your_health">改善您的饮水健康</string>
+    <string name="water_know">健康水知道</string>
+    <string name="buy_water_purifier">购买净水器</string>
 
 
     <!--错误码-->

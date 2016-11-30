@@ -420,43 +420,45 @@ public class AirVerPurifierFragment extends DeviceFragment {
      * @param mode
      */
     private void setSpeedMode(int mode) {
-        if (mVerAirPurifier != null && mode != mVerAirPurifier.airStatus().speed()) {
-            if (NetState.checkNetwork(getContext()) == NetState.State.CONNECTED) {
-                if (!mVerAirPurifier.isOffline()) {
-                    if (mVerAirPurifier.airStatus().Power()) {
-                        showProgressDialog(getString(R.string.command_sending));
-                        mVerAirPurifier.airStatus().setSpeed(mode, new OperateCallback<Void>() {
-                            @Override
-                            public void onSuccess(Void var1) {
-                                mHandler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        hideProgressDialog();
-                                        refreshUIData();
-                                    }
-                                }, 300);
-                            }
+        if (mVerAirPurifier != null) {
+            if (mode != mVerAirPurifier.airStatus().speed()) {
+                if (NetState.checkNetwork(getContext()) == NetState.State.CONNECTED) {
+                    if (!mVerAirPurifier.isOffline()) {
+                        if (mVerAirPurifier.airStatus().Power()) {
+                            showProgressDialog(getString(R.string.command_sending));
+                            mVerAirPurifier.airStatus().setSpeed(mode, new OperateCallback<Void>() {
+                                @Override
+                                public void onSuccess(Void var1) {
+                                    mHandler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            hideProgressDialog();
+                                            refreshUIData();
+                                        }
+                                    }, 300);
+                                }
 
-                            @Override
-                            public void onFailure(Throwable var1) {
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        refreshUIData();
-                                        hideProgressDialog();
-                                        showCenterToast(R.string.send_status_fail);
-                                    }
-                                });
-                            }
-                        });
+                                @Override
+                                public void onFailure(Throwable var1) {
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            refreshUIData();
+                                            hideProgressDialog();
+                                            showCenterToast(R.string.send_status_fail);
+                                        }
+                                    });
+                                }
+                            });
+                        } else {
+                            showCenterToast(R.string.please_open_power);
+                        }
                     } else {
-                        showCenterToast(R.string.please_open_power);
+                        showCenterToast(R.string.device_no_net);
                     }
                 } else {
-                    showCenterToast(R.string.device_no_net);
+                    showCenterToast(R.string.phone_nonet);
                 }
-            } else {
-                showCenterToast(R.string.phone_nonet);
             }
         } else {
             showCenterToast(R.string.Not_found_device);

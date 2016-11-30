@@ -20,7 +20,6 @@ import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.Device.DeviceFragment;
-import com.ozner.cup.Device.Tap.SetupTapActivity;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.TdsDetailProgress;
@@ -85,7 +84,7 @@ public class CupFragment extends DeviceFragment {
     TextView tvTempTips;
 
     private Cup mCup;
-//    private int oldTdsValue;
+    //    private int oldTdsValue;
     private CupMonitor mMonitor;
     Calendar recordCal = Calendar.getInstance();
 
@@ -356,13 +355,13 @@ public class CupFragment extends DeviceFragment {
             //数字跑马灯
             if (tdsValue != 0) {
 //                if (oldTdsValue != tdsValue) {
-                    tvTdsValue.setTextSize(NumSize);
-                    tvTdsValue.setText(String.valueOf(tdsValue));
-                    if (tdsValue > 250) {
-                        tdsDetailProgress.update(100);
-                    } else {
-                        tdsDetailProgress.update((tdsValue << 1) / 5);
-                    }
+                tvTdsValue.setTextSize(NumSize);
+                tvTdsValue.setText(String.valueOf(tdsValue));
+                if (tdsValue > 250) {
+                    tdsDetailProgress.update(100);
+                } else {
+                    tdsDetailProgress.update((tdsValue << 1) / 5);
+                }
 //                    oldTdsValue = tdsValue;
 //                }
             } else {
@@ -447,13 +446,18 @@ public class CupFragment extends DeviceFragment {
             case R.id.iv_setting:
                 if (mCup != null) {
                     Intent setIntent = new Intent(getContext(), SetUpCupActivity.class);
-                    setIntent.putExtra(SetupTapActivity.PARMS_MAC, mCup.Address());
+                    setIntent.putExtra(Contacts.PARMS_MAC, mCup.Address());
                     startActivity(setIntent);
                 } else {
                     Toast.makeText(getContext(), R.string.Not_found_device, Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.llay_tds_detail:
+                if (mCup != null) {
+                    Intent tdsIntent = new Intent(getContext(), CupTDSActivity.class);
+                    tdsIntent.putExtra(Contacts.PARMS_MAC, mCup.Address());
+                    startActivity(tdsIntent);
+                }
                 break;
         }
     }

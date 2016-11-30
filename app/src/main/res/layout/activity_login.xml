@@ -49,7 +49,6 @@
                     android:src="@drawable/login_phone"/>
 
                 <EditText
-                    android:text="13166398575"
                     android:id="@+id/et_userphone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -59,6 +58,7 @@
                     android:paddingBottom="5dp"
                     android:paddingLeft="5dp"
                     android:paddingTop="5dp"
+                    android:text="@string/shoujihao"
                     android:textColorHint="@color/font_gray"
                     android:textSize="14dp"/>
 
@@ -97,7 +97,6 @@
                             android:src="@drawable/login_password"/>
 
                         <EditText
-                            android:text="7598"
                             android:id="@+id/et_password"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -107,6 +106,7 @@
                             android:paddingBottom="5dp"
                             android:paddingLeft="5dp"
                             android:paddingTop="5dp"
+                            android:text="@string/yanzhengma"
                             android:textColorHint="@color/font_gray"
                             android:textSize="14dp"/>
                     </LinearLayout>
@@ -163,12 +163,12 @@
                 android:orientation="horizontal">
 
                 <CheckBox
-                    android:checked="true"
                     android:id="@+id/cb_proctol"
                     android:layout_width="wrap_content"
                     android:layout_height="28dp"
                     android:background="@null"
                     android:button="@drawable/login_checkbox_selector"
+                    android:checked="true"
                     android:gravity="center"
                     android:paddingLeft="5dp"
                     android:text="@string/agree_proctol"

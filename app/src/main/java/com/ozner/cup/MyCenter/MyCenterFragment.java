@@ -52,7 +52,7 @@ public class MyCenterFragment extends BaseFragment {
 
     @Override
     public void onAttach(Context context) {
-        ((MainActivity) context).setCustomTitle("我的");
+        ((MainActivity) context).setCustomTitle(R.string.mine);
         super.onAttach(context);
     }
 
@@ -61,6 +61,7 @@ public class MyCenterFragment extends BaseFragment {
         try {
             setBarColor(R.color.colorAccent);
             setToolbarColor(R.color.colorAccent);
+            ((MainActivity) getActivity()).setCustomTitle(R.string.mine);
         } catch (Exception ex) {
 
         }

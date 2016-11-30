@@ -73,6 +73,8 @@ public class NoDeviceFragment extends DeviceFragment {
     @Override
     public void onResume() {
         try {
+            setBarColor(R.color.cup_detail_bg);
+            setToolbarColor(R.color.cup_detail_bg);
             ((MainActivity) getActivity()).setCustomTitle(getString(R.string.add_device));
         } catch (Exception ex) {
             ex.printStackTrace();

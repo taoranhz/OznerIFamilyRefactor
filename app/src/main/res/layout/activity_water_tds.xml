@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_water_tds"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ozner.cup.Device.WaterPurifier.WaterTDSActivity">
+
+    <include layout="@layout/toolbar"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <!--上部——TDS-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cup_detail_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="15dp"
+                android:paddingTop="10dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="5dp"
+                        android:drawableRight="@drawable/icon_question"
+                        android:text="@string/tdsDetailTitle"
+                        android:textColor="@color/faq_text_blue"
+                        android:textSize="17dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/lay_tdsValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/llay_purifierText"
+                        android:orientation="horizontal">
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_preValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:text="@string/state_null"
+                                android:textColor="@color/purifier_before"
+                                android:textSize="23dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/tv_preValue"
+                                android:layout_centerHorizontal="true"
+                                android:layout_marginBottom="2dp"
+                                android:text="@string/pre_purifier"
+                                android:textColor="@color/purifier_before"
+                                android:textSize="13dp"/>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tv_spec"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="8dp"
+                                android:text="/"
+                                android:textColor="@color/faq_text_blue"
+                                android:textSize="27dp"/>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical">
+
+                            <TextView
+                                android:id="@+id/tv_afterValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:text="@string/state_null"
+                                android:textColor="@color/faq_text_blue"
+                                android:textSize="23dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/tv_afterValue"
+                                android:layout_centerHorizontal="true"
+                                android:text="@string/after_purifier"
+                                android:textColor="@color/faq_text_blue"
+                                android:textSize="13dp"/>
+                        </RelativeLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <include
+                    layout="@layout/tds_top_right_rank_chat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cup_detail_bg"
+                android:gravity="center_vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="5dp">
+
+                <ImageView
+                    android:id="@+id/iv_tds_tip_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/face_good"/>
+
+                <TextView
+                    android:id="@+id/tv_tds_tip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/tds_good_tips"
+                    android:textColor="@color/detail_textblue"/>
+            </LinearLayout>
+            <!--中部——折线图-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tds_quality_exp"
+                    android:textSize="16dp"/>
+
+                <RadioGroup
+                    android:id="@+id/rg_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb_week"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/cup_remind_way_temp"
+                        android:button="@null"
+                        android:checked="true"
+                        android:gravity="center"
+                        android:textColor="@color/text_light_selector"
+                        android:text="@string/week"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_month"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/cup_remind_way_tds"
+                        android:textColor="@color/text_light_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:text="@string/month"/>
+                </RadioGroup>
+
+                <com.ozner.cup.UIView.UIZPurifierExpView
+                    android:id="@+id/uiz_purifierExp"
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:layout_above="@+id/data_legend"
+                    android:layout_below="@+id/llay_btn_group"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:drawableLeft="@drawable/purifier_legend_bad"
+                        android:drawablePadding="5dp"
+                        android:text="@string/pre_purifier"
+                        android:textColor="@color/purifier_before"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/tap_health"
+                        android:drawablePadding="5dp"
+                        android:text="@string/after_purifier"
+                        android:textColor="@color/faq_text_blue"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+            <include layout="@layout/tds_change_water_health_layout"/>
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:background="@color/white"-->
+                <!--android:gravity="center_horizontal"-->
+                <!--android:orientation="vertical"-->
+                <!--android:paddingBottom="15dp"-->
+                <!--android:paddingTop="10dp">-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/change_your_health"-->
+                    <!--android:textSize="18dp"/>-->
+
+                <!--<LinearLayout-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal">-->
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/tv_water_know"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginTop="10dp"-->
+                        <!--android:background="@drawable/stroke_unfill_detail_text_bg"-->
+                        <!--android:drawableLeft="@drawable/book"-->
+                        <!--android:drawablePadding="10dp"-->
+                        <!--android:gravity="center"-->
+                        <!--android:padding="10dp"-->
+                        <!--android:text="@string/water_know"/>-->
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/tv_buy_water_purifier"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginLeft="40dp"-->
+                        <!--android:layout_marginTop="10dp"-->
+                        <!--android:layout_toRightOf="@+id/tv_water_know"-->
+                        <!--android:background="@drawable/stroke_fill_detail_text_bg"-->
+                        <!--android:drawableLeft="@drawable/cart"-->
+                        <!--android:drawablePadding="10dp"-->
+                        <!--android:gravity="center"-->
+                        <!--android:padding="10dp"-->
+                        <!--android:text="@string/buy_water_purifier"/>-->
+                <!--</LinearLayout>-->
+
+            <!--</LinearLayout>-->
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
