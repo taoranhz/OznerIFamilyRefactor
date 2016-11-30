@@ -212,6 +212,7 @@ public class CupFragment extends DeviceFragment {
             ((MainActivity) getActivity()).setCustomTitle(mCup.getName());
             refreshConnectState();
             refreshWaterGoal();
+            showWaterTarget();
             if (mCup.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
                 refreshSensorData();
             } else {
@@ -257,7 +258,6 @@ public class CupFragment extends DeviceFragment {
             Log.e(TAG, "refreshSensorData: " + mCup.toString());
             showTdsState(mCup.Sensor().TDSFix);
             showPowerState();
-            showWaterTarget();
             showWaterTemp();
         }
     }
