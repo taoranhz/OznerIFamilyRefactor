@@ -106,7 +106,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
     }
 
     public OznerDevice getSelectedDevice() {
-        if (mLeftAdapter != null) {
+        if (mLeftAdapter != null && mLeftAdapter.getCount() > 0) {
             return mLeftAdapter.getSelectedItem();
         } else {
             return null;

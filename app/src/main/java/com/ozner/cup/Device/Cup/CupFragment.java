@@ -472,7 +472,9 @@ public class CupFragment extends DeviceFragment {
                 break;
             case R.id.rlay_water_temp://水温详情
                 if (mCup != null) {
-
+                    Intent tempIntent = new Intent(getContext(), CupTempActivity.class);
+                    tempIntent.putExtra(Contacts.PARMS_MAC, mCup.Address());
+                    startActivity(tempIntent);
                 } else {
                     Toast.makeText(getContext(), R.string.Not_found_device, Toast.LENGTH_SHORT).show();
                 }

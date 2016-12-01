@@ -106,6 +106,7 @@ public class MatchCupActivity extends BaseActivity {
      */
     private void initNormalInfo() {
         etDeviceName.setHint(R.string.input_cup_name);
+        tvMatchNotice.setText(R.string.reverse_cup);
     }
 
     /**
@@ -255,7 +256,8 @@ public class MatchCupActivity extends BaseActivity {
         llayFoundDevice.setVisibility(View.INVISIBLE);
         tvMatchType.setVisibility(View.VISIBLE);
         tvMatchType.setText(getString(R.string.matching_bluetooth));
-        tvMatchNotice.setText(getString(R.string.match_notice_tap));
+//        tvMatchNotice.setText(getString(R.string.match_notice_tap));
+        tvMatchNotice.setText(R.string.reverse_cup);
         ivMatchIcon.setImageResource(R.drawable.match_device_cup);
         ivMatchLoading.setImageResource(R.drawable.match_loading);
         ivMatchLoading.setVisibility(View.VISIBLE);

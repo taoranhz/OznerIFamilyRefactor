@@ -89,6 +89,7 @@
     <string name="input_weight">输入体重</string>
     <string name="beat_users">击败了%1$d%%的用户</string>
 
+    <string name="reverse_cup">请将智能水杯倒置</string>
     <string name="input_cup_name">输入水杯名字</string>
     <string name="input_air_name">输入空气净化器名字</string>
     <string name="office">办公室</string>
@@ -177,6 +178,7 @@
     <string name="cup_waterVolum">今日饮水量:</string>
     <string name="cup_volumGoal">饮水目标:</string>
     <string name="temp_null">无法测量当前温度</string>
+    <string name="water_temp_no_dot">水温</string>
     <string name="water_temp">水温:</string>
     <string name="temp_cool">偏凉</string>
     <string name="temp_hot">偏烫</string>
@@ -276,6 +278,14 @@
     <string name="tds_good_tips">完美水质，体内每个细胞都说好！</string>
     <string name="tds_normal_tips">饮水安全须谨慎，你值的拥有更好的。</string>
     <string name="tds_bad_tips">当前杂质较多，请放心给对手饮用。</string>
+
+    <string name="temp_exp">饮水水温分布</string>
+    <string name="day_temp_exp">今日饮水水温分布</string>
+    <string name="week_temp_exp">本周饮水水温分布</string>
+    <string name="month_temp_exp">本月饮水水温分布</string>
+    <string name="temp_cool_tips">水温太凉啦！让胃暖起来，心才会暖！</string>
+    <string name="temp_mid_tips">不凉不烫，要的就是刚刚好！</string>
+    <string name="temp_hot_tips">水温偏烫再凉一凉吧，心急可是会受伤的哦！</string>
 
     <string name="change_your_health">改善您的饮水健康</string>
     <string name="water_know">健康水知道</string>

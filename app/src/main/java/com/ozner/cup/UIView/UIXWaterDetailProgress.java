@@ -24,6 +24,10 @@ public class UIXWaterDetailProgress extends UIXBaseView {
     float _lineWidth = 0;
     float _space;
 
+    private int badTextId = R.string.bad;
+    private int midTextId = R.string.soso;
+    private int goodTextId = R.string.health;
+
     private void init() {
         _lineWidth = dpToPx(12);
         _space = dpToPx(6);
@@ -34,7 +38,7 @@ public class UIXWaterDetailProgress extends UIXBaseView {
     private Activity activity;
     private RelativeLayout chart_layout;
     private LinearLayout tds_layout;
-    private TextView tv1,tv2;
+    private TextView tv1, tv2;
     private final static int lineStartColor1 = 0xfff0a3a6;
     private final static int lineStartColor2 = 0xffab94eb;
     private final static int lineStartColor3 = 0xff94b8f2;
@@ -44,7 +48,7 @@ public class UIXWaterDetailProgress extends UIXBaseView {
     private final static int _ani_duration = 300;
 
     private int _bad_progress = 0;
-    private int _normal_progress =0;
+    private int _normal_progress = 0;
     private int _good_progress = 0;
 
     private int _ani_bad_progress = 0;
@@ -84,6 +88,43 @@ public class UIXWaterDetailProgress extends UIXBaseView {
         _normal_progress = normal;
         _good_progress = good;
         invalidate();
+    }
+
+    /**
+     * 设置健康文本
+     *
+     * @param resId
+     */
+    public void setGoodTextId(int resId) {
+        this.goodTextId = resId;
+        this.invalidate();
+    }
+
+    /**
+     * 设置中等文本
+     *
+     * @param resId
+     */
+    public void setMidTextId(int resId) {
+        this.midTextId = resId;
+        this.invalidate();
+    }
+
+    /**
+     * 设置较差文本
+     *
+     * @param resId
+     */
+    public void setBadTextId(int resId) {
+        this.badTextId = resId;
+        this.invalidate();
+    }
+
+    /**
+     * 刷新UI
+     */
+    public void refresh(){
+        this.invalidate();
     }
 
     @Override
@@ -185,10 +226,11 @@ public class UIXWaterDetailProgress extends UIXBaseView {
 
     public UIXWaterDetailProgress(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mcontext=context;
-        activity=(Activity)context;
+        mcontext = context;
+        activity = (Activity) context;
         init();
     }
+
     private void drawBackgroundLine(RectF rect, Canvas canvas) {
         Paint paint = new Paint();
         paint.setAntiAlias(true);
@@ -288,16 +330,16 @@ public class UIXWaterDetailProgress extends UIXBaseView {
         }
 
 
-            String text = String.format(getResources().getString(R.string.bad)+" %d%%", _bad_progress);
-            canvas.drawText(text, this.getWidth() / 2 - space, offset, badPaint);
-            offset += _space + _lineWidth;
+        String text = String.format(getResources().getString(badTextId) + " %d%%", _bad_progress);
+        canvas.drawText(text, this.getWidth() / 2 - space, offset, badPaint);
+        offset += _space + _lineWidth;
 
-            text = String.format(getResources().getString(R.string.soso)+" %d%%", _normal_progress);
-            canvas.drawText(text, this.getWidth() / 2 - space, offset, normalPaint);
+        text = String.format(getResources().getString(midTextId) + " %d%%", _normal_progress);
+        canvas.drawText(text, this.getWidth() / 2 - space, offset, normalPaint);
 
-            offset += _space + _lineWidth;
-            text = String.format(getResources().getString(R.string.health)+" %d%%", _good_progress);
-            canvas.drawText(text, this.getWidth() / 2 - space, offset, goodPaint);
+        offset += _space + _lineWidth;
+        text = String.format(getResources().getString(goodTextId) + " %d%%", _good_progress);
+        canvas.drawText(text, this.getWidth() / 2 - space, offset, goodPaint);
 
     }
 

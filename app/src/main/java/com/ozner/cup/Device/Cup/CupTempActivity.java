@@ -27,6 +27,7 @@ import com.ozner.cup.R;
 import com.ozner.cup.UIView.ChartAdapter;
 import com.ozner.cup.UIView.TDSChartView;
 import com.ozner.cup.UIView.UIXWaterDetailProgress;
+import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDeviceManager;
 
 import java.util.Calendar;
@@ -35,25 +36,27 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class CupTDSActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
-    private static final String TAG = "CupTDSActivity";
-    private static final int TextSize = 40;
-    private static final int NumSize = 45;
+/**
+ * Created by ozner_67 on 2016/11/30.
+ * 邮箱：xinde.zhang@cftcn.com
+ * <p>
+ * 水温详情
+ */
+public class CupTempActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
+    private static final String TAG = "CupTempActivity";
 
     @InjectView(R.id.title)
     TextView title;
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
-    @InjectView(R.id.tv_tdsValue)
-    TextView tvTdsValue;
-    @InjectView(R.id.tv_tdsRankValue)
-    TextView tvTdsRankValue;
+    @InjectView(R.id.tv_TempState)
+    TextView tvTempState;
     @InjectView(R.id.tv_chat_btn)
     TextView tvChatBtn;
-    @InjectView(R.id.iv_tds_tip_icon)
-    ImageView ivTdsTipIcon;
-    @InjectView(R.id.tv_tds_tip)
-    TextView tvTdsTip;
+    @InjectView(R.id.iv_temp_tip_icon)
+    ImageView ivTempTipIcon;
+    @InjectView(R.id.tv_temp_tip)
+    TextView tvTempTip;
     @InjectView(R.id.tv_chartTitle)
     TextView tvChartTitle;
     @InjectView(R.id.rb_day)
@@ -80,6 +83,8 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
     TextView tvTapGenericPre;
     @InjectView(R.id.tv_tapBadPre)
     TextView tvTapBadPre;
+    @InjectView(R.id.llay_legend)
+    LinearLayout llayLegend;
     @InjectView(R.id.llay_tdsChart)
     LinearLayout llayTdsChart;
     @InjectView(R.id.tv_water_know)
@@ -94,16 +99,16 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
     private int[] dataDay;
     private int[] dataWeek;
     private int[] dataMonth;
-    private int dayGood, daySoSo, dayBad, dayCount;
-    private int weekGood, weekSoSo, weekBad, weekCount;
-    private int monthGood, monthSoSo, monthBad, monthCount;
     private boolean isProgress = true;
     private int chartIndex = 0;//日图表
+    private int dayCool, dayMid, dayHot, dayTotal;
+    private int weekCool, weekMid, weekHot, weekTotal;
+    private int monthCool, monthMid, monthHot, monthTotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cup_tds);
+        setContentView(R.layout.activity_cup_temp);
         ButterKnife.inject(this);
         if (Build.VERSION.SDK_INT >= 21) {
             Window window = getWindow();
@@ -114,6 +119,7 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
         }
         initToolBar();
         rgSwitch.setOnCheckedChangeListener(this);
+        initTag();
         initDataAdapter();
 
         mMonitor = new CupMonitor();
@@ -132,16 +138,6 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
         }
     }
 
-    /**
-     * 初始化ToolBar
-     */
-    private void initToolBar() {
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
-        title.setText(R.string.tdsTitle);
-        toolbar.setNavigationIcon(R.drawable.back);
-        toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -151,6 +147,30 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
                 break;
         }
         return true;
+    }
+
+    /**
+     * 初始化ToolBar
+     */
+    private void initToolBar() {
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+        title.setText(R.string.water_temp_no_dot);
+        toolbar.setNavigationIcon(R.drawable.back);
+        toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
+    }
+
+    /**
+     * 初始化Progress标签
+     */
+    private void initTag() {
+        uixWaterDetailProgress.setGoodTextId(R.string.temp_cool);
+        uixWaterDetailProgress.setMidTextId(R.string.temp_moderation);
+        uixWaterDetailProgress.setBadTextId(R.string.temp_hot);
+        tdsChartView.clearTag();
+        tdsChartView.putTag(CupRecord.Temperature_Low_Value, getString(R.string.temp_cool));
+        tdsChartView.putTag(CupRecord.Temperature_High_Value, getString(R.string.temp_moderation));
+        tdsChartView.putTag(100, getString(R.string.temp_hot));
     }
 
     /**
@@ -174,7 +194,7 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
 
             @Override
             public int getMax() {
-                return 200;
+                return 100;
             }
 
             @Override
@@ -195,7 +215,7 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
 
             @Override
             public int getMax() {
-                return 200;
+                return 100;
             }
 
             @Override
@@ -216,7 +236,7 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
 
             @Override
             public int getMax() {
-                return 200;
+                return 100;
             }
 
             @Override
@@ -234,7 +254,7 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
         initDayData();
         initWeekData();
         initMonthData();
-        refreshTdsState();
+        refreshTempState();
 
         showDayProgress();
     }
@@ -251,16 +271,24 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
                 dayCal.set(Calendar.SECOND, 0);
                 dayCal.set(Calendar.MILLISECOND, 0);
                 CupRecord dayRecord = mCup.Volume().getRecordByDate(dayCal.getTime());
-                dayGood = dayRecord.TDS_Good;
-                daySoSo = dayRecord.TDS_Mid;
-                dayBad = dayRecord.TDS_Bad;
-                dayCount = dayRecord.Count;
-                Log.e(TAG, "initDayData: good:" + dayGood + " ,soso:" + daySoSo + " , bad:" + dayBad + " , count:" + dayCount);
+                dayCool = dayRecord.Temperature_Low;
+                dayMid = dayRecord.Temperature_Mid;
+                dayHot = dayRecord.Temperature_High;
+                dayTotal = dayRecord.Count;
 
                 CupRecord[] records = mCup.Volume().getRecordByDate(dayCal.getTime(), CupRecordList.QueryInterval.Hour);
                 for (int i = 0; i < records.length; i++) {
-                    dataDay[records[i].start.getHours()] = records[i].TDS_High;
+                    /**
+                     * 这里为了让折线图显示明显，对50-80范围内的数据进行矫正，提高在折线图上的高度
+                     */
+                    if (records[i].Temperature_MAX >= 50 && records[i].Temperature_MAX <= 80) {
+                        dataDay[records[i].start.getHours()] = records[i].Temperature_MAX + 20;
+                    } else {
+                        dataDay[records[i].start.getHours()] = records[i].Temperature_MAX;
+                    }
                 }
+
+                Log.e(TAG, "initDayData: good:" + dayCool + " ,soso:" + dayMid + " , bad:" + dayHot + " , count:" + dayTotal);
             }
         } catch (Exception ex) {
             Log.e(TAG, "initDayData_Ex: " + ex.getMessage());
@@ -280,21 +308,30 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
                 dayCal.set(Calendar.SECOND, 0);
                 dayCal.set(Calendar.MILLISECOND, 0);
                 CupRecord[] records = mCup.Volume().getRecordByDate(dayCal.getTime(), CupRecordList.QueryInterval.Day);
+
                 for (int i = 0; i < records.length; i++) {
 
                     if (records[i].start.getDay() != 0) {
-                        dataWeek[records[i].start.getDay() - 1] = records[i].TDS_High;
+                        if (records[i].Temperature_MAX >= 50 && records[i].Temperature_MAX <= 80) {
+                            dataWeek[records[i].start.getDay() - 1] = records[i].Temperature_MAX + 20;
+                        } else {
+                            dataWeek[records[i].start.getDay() - 1] = records[i].Temperature_MAX;
+                        }
                     } else {
-                        dataWeek[6] = records[i].TDS_High;
+                        if (records[i].Temperature_MAX >= 50 && records[i].Temperature_MAX <= 80) {
+                            dataWeek[6] = records[i].Temperature_MAX + 20;
+                        } else {
+                            dataWeek[6] = records[i].Temperature_MAX;
+                        }
                     }
 
-                    weekGood += records[i].TDS_Good;
-                    weekSoSo += records[i].TDS_Mid;
-                    weekBad += records[i].TDS_Bad;
-                    weekCount += records[i].Count;
+                    weekCool += records[i].Temperature_Low;
+                    weekMid += records[i].Temperature_Mid;
+                    weekHot += records[i].Temperature_High;
+                    weekTotal += records[i].Count;
                 }
-                Log.e(TAG, "initWeekData: good:" + weekGood + " ,soso:" + weekSoSo + " , bad:" + weekBad + " , count:" + weekCount);
 
+                Log.e(TAG, "initWeekData: good:" + weekCool + " ,soso:" + weekMid + " , bad:" + weekHot + " , count:" + weekTotal);
             }
         } catch (Exception ex) {
             Log.e(TAG, "initWeekData_Ex: " + ex.getMessage());
@@ -316,14 +353,18 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
 
                 CupRecord[] records = mCup.Volume().getRecordByDate(dayCal.getTime(), CupRecordList.QueryInterval.Day);
                 for (int i = 0; i < records.length; i++) {
-                    dataMonth[records[i].start.getDate() - 1] = records[i].TDS_High;
-                    monthGood += records[i].TDS_Good;
-                    monthSoSo += records[i].TDS_Mid;
-                    monthBad += records[i].TDS_Bad;
-                    monthCount += records[i].Count;
+                    if (records[i].Temperature_MAX >= 50 && records[i].Temperature_MAX <= 80) {
+                        dataMonth[records[i].start.getDate() - 1] = records[i].Temperature_MAX + 20;
+                    } else {
+                        dataMonth[records[i].start.getDate() - 1] = records[i].Temperature_MAX;
+                    }
+                    monthCool += records[i].Temperature_Low;
+                    monthMid += records[i].Temperature_Mid;
+                    monthHot += records[i].Temperature_High;
+                    monthTotal += records[i].Count;
                 }
 
-                Log.e(TAG, "initMonthData: good:" + monthGood + " ,soso:" + monthSoSo + " , bad:" + monthBad + " , count:" + monthCount);
+                Log.e(TAG, "initMonthData: good:" + monthCool + " ,soso:" + monthMid + " , bad:" + monthHot + " , count:" + monthTotal);
 
             }
         } catch (Exception ex) {
@@ -333,19 +374,43 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
 
 
     /**
+     * 刷新水温状态
+     */
+    private void refreshTempState() {
+        if (mCup != null && mCup.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+            int temp = mCup.Sensor().TemperatureFix;
+            if (temp > 0 && temp <= CupRecord.Temperature_Low_Value) {
+                tvTempState.setText(R.string.temp_cool);
+                ivTempTipIcon.setImageResource(R.drawable.face_soso);
+                tvTempTip.setText(R.string.temp_cool_tips);
+            } else if (temp > CupRecord.Temperature_Low_Value && temp <= CupRecord.Temperature_High_Value) {
+                tvTempState.setText(R.string.temp_moderation);
+                ivTempTipIcon.setImageResource(R.drawable.face_good);
+                tvTempTip.setText(R.string.temp_mid_tips);
+            } else if (temp > CupRecord.Temperature_High_Value) {
+                tvTempState.setText(R.string.temp_hot);
+                ivTempTipIcon.setImageResource(R.drawable.face_bad);
+                tvTempTip.setText(R.string.temp_hot_tips);
+            }
+        } else {
+            tvTempState.setText(R.string.state_null);
+        }
+    }
+
+    /**
      * 显示圆形图表
      */
     private void showDayProgress() {
-        tvChartTitle.setText(R.string.tds_exp);
+        tvChartTitle.setText(R.string.temp_exp);
         llayTdsChart.setVisibility(View.GONE);
         llayWaterDetail.setVisibility(View.VISIBLE);
-        if (dayCount > 0) {
-            int badPre = dayBad * 100 / dayCount;
-            int sosoPre = daySoSo * 100 / dayCount;
+        if (dayTotal > 0) {
+            int hotPre = dayHot * 100 / dayTotal;
+            int midPre = dayMid * 100 / dayTotal;
 
-            uixWaterDetailProgress.set_good_progress(100 - badPre - sosoPre);
-            uixWaterDetailProgress.set_normal_progress(sosoPre);
-            uixWaterDetailProgress.set_bad_progress(badPre);
+            uixWaterDetailProgress.set_good_progress(100 - hotPre - midPre);
+            uixWaterDetailProgress.set_normal_progress(midPre);
+            uixWaterDetailProgress.set_bad_progress(hotPre);
             uixWaterDetailProgress.startAnimation();
         }
     }
@@ -354,16 +419,16 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
      * 显示圆形图表
      */
     private void showWeekProgress() {
-        tvChartTitle.setText(R.string.tds_exp);
+        tvChartTitle.setText(R.string.temp_exp);
         llayTdsChart.setVisibility(View.GONE);
         llayWaterDetail.setVisibility(View.VISIBLE);
-        if (weekCount > 0) {
-            int badPre = weekBad * 100 / weekCount;
-            int sosoPre = weekSoSo * 100 / weekCount;
+        if (weekTotal > 0) {
+            int hotPre = weekHot * 100 / weekTotal;
+            int midPre = weekMid * 100 / weekTotal;
 
-            uixWaterDetailProgress.set_good_progress(100 - badPre - sosoPre);
-            uixWaterDetailProgress.set_normal_progress(sosoPre);
-            uixWaterDetailProgress.set_bad_progress(badPre);
+            uixWaterDetailProgress.set_good_progress(100 - hotPre - midPre);
+            uixWaterDetailProgress.set_normal_progress(midPre);
+            uixWaterDetailProgress.set_bad_progress(hotPre);
             uixWaterDetailProgress.startAnimation();
         }
     }
@@ -372,16 +437,16 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
      * 显示圆形图表
      */
     private void showMonthProgress() {
-        tvChartTitle.setText(R.string.tds_exp);
+        tvChartTitle.setText(R.string.temp_exp);
         llayTdsChart.setVisibility(View.GONE);
         llayWaterDetail.setVisibility(View.VISIBLE);
-        if (monthCount > 0) {
-            int badPre = monthBad * 100 / monthCount;
-            int sosoPre = monthSoSo * 100 / monthCount;
+        if (monthTotal > 0) {
+            int hotPre = monthHot * 100 / monthTotal;
+            int midPre = monthMid * 100 / monthTotal;
 
-            uixWaterDetailProgress.set_good_progress(100 - badPre - sosoPre);
-            uixWaterDetailProgress.set_normal_progress(sosoPre);
-            uixWaterDetailProgress.set_bad_progress(badPre);
+            uixWaterDetailProgress.set_good_progress(100 - hotPre - midPre);
+            uixWaterDetailProgress.set_normal_progress(midPre);
+            uixWaterDetailProgress.set_bad_progress(hotPre);
             uixWaterDetailProgress.startAnimation();
         }
     }
@@ -390,20 +455,20 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
      * 显示折线图表
      */
     private void showDayChart() {
-        tvChartTitle.setText(R.string.day_tds_exp);
+        tvChartTitle.setText(R.string.day_temp_exp);
         llayWaterDetail.setVisibility(View.GONE);
         llayTdsChart.setVisibility(View.VISIBLE);
         tdsChartView.setAdapter(adapterDay);
-        if (dayCount > 0) {
-            int badPre = dayBad * 100 / dayCount;
-            int sosoPre = daySoSo * 100 / dayCount;
-            tvTapBadPre.setText(String.format(getString(R.string.bad) + "(%d%%)", badPre));
-            tvTapGenericPre.setText(String.format(getString(R.string.soso) + "(%d%%)", sosoPre));
-            tvTapHealthPre.setText(String.format(getString(R.string.health) + "(%d%%)", 100 - badPre - sosoPre));
+        if (dayTotal > 0) {
+            int hotPre = dayHot * 100 / dayTotal;
+            int midPre = dayMid * 100 / dayTotal;
+            tvTapBadPre.setText(String.format(getString(R.string.temp_hot) + "(%d%%)", hotPre));
+            tvTapGenericPre.setText(String.format(getString(R.string.temp_moderation) + "(%d%%)", midPre));
+            tvTapHealthPre.setText(String.format(getString(R.string.temp_cool) + "(%d%%)", 100 - midPre - hotPre));
         } else {
-            tvTapBadPre.setText(R.string.bad);
-            tvTapGenericPre.setText(R.string.soso);
-            tvTapHealthPre.setText(R.string.health);
+            tvTapBadPre.setText(R.string.temp_hot);
+            tvTapGenericPre.setText(R.string.temp_moderation);
+            tvTapHealthPre.setText(R.string.temp_cool);
         }
     }
 
@@ -411,20 +476,20 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
      * 显示折线图表
      */
     private void showWeekChart() {
-        tvChartTitle.setText(R.string.week_tds_exp);
+        tvChartTitle.setText(R.string.week_temp_exp);
         llayWaterDetail.setVisibility(View.GONE);
         llayTdsChart.setVisibility(View.VISIBLE);
         tdsChartView.setAdapter(adapterWeek);
-        if (weekCount > 0) {
-            int badPre = weekBad * 100 / weekCount;
-            int sosoPre = weekSoSo * 100 / weekCount;
-            tvTapBadPre.setText(String.format(getString(R.string.bad) + "(%d%%)", badPre));
-            tvTapGenericPre.setText(String.format(getString(R.string.soso) + "(%d%%)", sosoPre));
-            tvTapHealthPre.setText(String.format(getString(R.string.health) + "(%d%%)", 100 - badPre - sosoPre));
+        if (weekTotal > 0) {
+            int hotPre = weekHot * 100 / weekTotal;
+            int midPre = weekMid * 100 / weekTotal;
+            tvTapBadPre.setText(String.format(getString(R.string.temp_hot) + "(%d%%)", hotPre));
+            tvTapGenericPre.setText(String.format(getString(R.string.temp_moderation) + "(%d%%)", midPre));
+            tvTapHealthPre.setText(String.format(getString(R.string.temp_cool) + "(%d%%)", 100 - midPre - hotPre));
         } else {
-            tvTapBadPre.setText(R.string.bad);
-            tvTapGenericPre.setText(R.string.soso);
-            tvTapHealthPre.setText(R.string.health);
+            tvTapBadPre.setText(R.string.temp_hot);
+            tvTapGenericPre.setText(R.string.temp_moderation);
+            tvTapHealthPre.setText(R.string.temp_cool);
         }
     }
 
@@ -432,64 +497,23 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
      * 显示折线图表
      */
     private void showMonthChart() {
-        tvChartTitle.setText(R.string.month_tds_exp);
+        tvChartTitle.setText(R.string.month_temp_exp);
         llayWaterDetail.setVisibility(View.GONE);
         llayTdsChart.setVisibility(View.VISIBLE);
         tdsChartView.setAdapter(adapterMonth);
-        if (monthCount > 0) {
-            int badPre = monthBad * 100 / monthCount;
-            int sosoPre = monthSoSo * 100 / monthCount;
-            tvTapBadPre.setText(String.format(getString(R.string.bad) + "(%d%%)", badPre));
-            tvTapGenericPre.setText(String.format(getString(R.string.soso) + "(%d%%)", sosoPre));
-            tvTapHealthPre.setText(String.format(getString(R.string.health) + "(%d%%)", 100 - badPre - sosoPre));
+        if (monthTotal > 0) {
+            int hotPre = monthHot * 100 / monthTotal;
+            int midPre = monthMid * 100 / monthTotal;
+            tvTapBadPre.setText(String.format(getString(R.string.temp_hot) + "(%d%%)", hotPre));
+            tvTapGenericPre.setText(String.format(getString(R.string.temp_moderation) + "(%d%%)", midPre));
+            tvTapHealthPre.setText(String.format(getString(R.string.temp_cool) + "(%d%%)", 100 - midPre - hotPre));
         } else {
-            tvTapBadPre.setText(R.string.bad);
-            tvTapGenericPre.setText(R.string.soso);
-            tvTapHealthPre.setText(R.string.health);
+            tvTapBadPre.setText(R.string.temp_hot);
+            tvTapGenericPre.setText(R.string.temp_moderation);
+            tvTapHealthPre.setText(R.string.temp_cool);
         }
     }
 
-    /**
-     * 刷新Tds值
-     */
-    private void refreshTdsState() {
-        if (mCup != null) {
-            int tds = mCup.Sensor().TDSFix;
-            if (tds > 0 && tds < 5000) {
-                tvTdsValue.setTextSize(NumSize);
-                tvTdsValue.setText(String.valueOf(mCup.Sensor().TDSFix));
-                showTdsStateTips(mCup.Sensor().TDSFix);
-            } else {
-                tvTdsValue.setText(R.string.state_null);
-                tvTdsValue.setTextSize(TextSize);
-            }
-        }
-    }
-
-    /**
-     * 根据tds显示状态
-     */
-    private void showTdsStateTips(int thenTds) {
-        if (thenTds == 0) {
-            ivTdsTipIcon.setVisibility(View.GONE);
-            tvTdsTip.setText(R.string.tds_good_tips);
-        } else if (thenTds > 0 && thenTds <= CupRecord.TDS_Good_Value) {
-            ivTdsTipIcon.setImageResource(R.drawable.face_good);
-            tvTdsTip.setText(R.string.tds_good_tips);
-        } else if (thenTds > CupRecord.TDS_Good_Value && thenTds < CupRecord.TDS_Bad_Value) {
-            ivTdsTipIcon.setImageResource(R.drawable.face_soso);
-            tvTdsTip.setText(R.string.tds_normal_tips);
-        } else if (thenTds > CupRecord.TDS_Bad_Value) {
-            ivTdsTipIcon.setImageResource(R.drawable.face_bad);
-            tvTdsTip.setText(R.string.tds_bad_tips);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        this.unregisterReceiver(mMonitor);
-        super.onDestroy();
-    }
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -573,24 +597,6 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
         }
     }
 
-    /**
-     * 切换图表日周月数据
-     *
-     * @param index
-     */
-    private void switchChartView(int index) {
-        switch (index) {
-            case 0:
-                showDayChart();
-                break;
-            case 1:
-                showWeekChart();
-                break;
-            case 2:
-                showMonthChart();
-                break;
-        }
-    }
 
     /**
      * 切换百分比日周月数据
@@ -611,11 +617,36 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
         }
     }
 
+    /**
+     * 切换图表日周月数据
+     *
+     * @param index
+     */
+    private void switchChartView(int index) {
+        switch (index) {
+            case 0:
+                showDayChart();
+                break;
+            case 1:
+                showWeekChart();
+                break;
+            case 2:
+                showMonthChart();
+                break;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        this.unregisterReceiver(mMonitor);
+        super.onDestroy();
+    }
+
     class CupMonitor extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            refreshTdsState();
+            refreshTempState();
         }
     }
 }

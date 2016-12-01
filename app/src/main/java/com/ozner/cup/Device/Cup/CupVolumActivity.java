@@ -27,6 +27,9 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 /**
+ * Created by ozner_67 on 2016/11/30.
+ * 邮箱：xinde.zhang@cftcn.com
+ *
  * 饮水量详情
  */
 public class CupVolumActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {

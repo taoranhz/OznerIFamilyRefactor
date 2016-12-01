@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme.NoActionBar">
         <activity
             android:name=".Main.MainActivity"
-            android:launchMode="singleInstance">
+            android:launchMode="singleTask">
         </activity>
         <activity android:name=".LoginWelcom.View.LoginActivity">
             <intent-filter>
@@ -45,10 +45,7 @@
         </activity>
         <activity android:name=".Device.AirPurifier.MatchVerAirActivity">
         </activity>
-        <activity
-            android:name=".Device.AirPurifier.SetUpAirVerActivity"
-            android:label="@string/title_activity_set_up_air_ver"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".Device.AirPurifier.SetUpAirVerActivity">
         </activity>
         <activity android:name=".Device.Cup.SetUpCupActivity">
         </activity>
@@ -59,6 +56,8 @@
         <activity android:name=".Device.Cup.CupTDSActivity">
         </activity>
         <activity android:name=".Device.Cup.CupVolumActivity">
+        </activity>
+        <activity android:name=".Device.Cup.CupTempActivity">
         </activity>
     </application>
 
