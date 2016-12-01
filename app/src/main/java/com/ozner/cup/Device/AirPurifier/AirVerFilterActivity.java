@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 public class AirVerFilterActivity extends BaseActivity {
     private static final String TAG = "AirVerFilterActivity";
@@ -166,7 +168,7 @@ public class AirVerFilterActivity extends BaseActivity {
      */
     private void refeshClean() {
         if (mAirPurifier != null) {
-            int clean = mAirPurifier.sensor().TotalClean()/1000;
+            int clean = mAirPurifier.sensor().TotalClean() / 1000;
             Log.e(TAG, "refeshClean: " + clean);
             if (clean > 0 && clean < 65535) {
                 tvCleanValue.setText(String.valueOf(clean));
@@ -228,6 +230,20 @@ public class AirVerFilterActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @OnClick({R.id.tv_pmQuestion, R.id.tv_vocQuestion})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.tv_pmQuestion:
+                Intent pmIntent = new Intent(this, PMIntroduceActivity.class);
+                startActivity(pmIntent);
+                break;
+            case R.id.tv_vocQuestion:
+                Intent vocIntnet = new Intent(this, VOCIntroduceActivity.class);
+                startActivity(vocIntnet);
+                break;
+        }
     }
 
     class AirPurifierMonitor extends BroadcastReceiver {

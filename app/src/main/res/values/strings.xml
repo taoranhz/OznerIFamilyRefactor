@@ -299,6 +299,16 @@
     <string name="filter_remain">滤芯还剩</string>
     <string name="air_remind">温馨提醒：及时更换滤芯，享纯净空气</string>
 
+    <string name="what_is_pm25">什么是PM2.5</string>
+    <string name="pm_introduce_title">细颗粒物(PM2.5)</string>
+    <string name="pm_introduce_content">\t\tPM2.5是直径小于或等于2.5微米的颗粒物，也称为细颗粒物或可入肺颗粒物，可直接进入肺部。PM2.5沉淀进肺泡后无法排除，会对呼吸系统和心血管系统造成很大伤害，引起包括支气管炎，哮喘，冠心病等疾病。</string>
+
+    <string name="what_is_voc">什么是VOC</string>
+    <string name="voc_introduce_title">挥发性有机化合物 </string>
+    <string name="voc_introduce_sub_title">Volatile Organic Comounds,缩写VOC</string>
+    <string name="voc_introduce_content">\t\t通常指在常温下容易挥发的有机化物。较常见的苯 、甲苯、二甲苯、乙苯、苯乙烯、甲醛、TVOC(6-16个碳的烷烃）、酮类等。 这些化合物具有易挥发和亲油等特点，被广泛应用于鞋类、玩具、油漆和石墨、粘合剂、化妆品、室内和汽车装饰材料等工业领域。VOC对人体健康有巨大的影响，会伤害人的肝脏、肾脏、大脑和神经系统，造成记忆力减退等严重后果，甚至可能致癌。</string>
+
+
 
     <!--错误码-->
     <string name="Code_Accept_nofound">没有发现对应请求</string>
