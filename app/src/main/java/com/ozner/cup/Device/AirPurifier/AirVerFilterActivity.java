@@ -1,0 +1,247 @@
+package com.ozner.cup.Device.AirPurifier;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.Window;
+import android.widget.TextView;
+
+import com.ozner.AirPurifier.AirPurifier_MXChip;
+import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.R;
+import com.ozner.cup.UIView.FilterProgressView;
+import com.ozner.device.BaseDeviceIO;
+import com.ozner.device.OznerDeviceManager;
+
+import java.util.Calendar;
+import java.util.Date;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+public class AirVerFilterActivity extends BaseActivity {
+    private static final String TAG = "AirVerFilterActivity";
+
+    @InjectView(R.id.title)
+    TextView title;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
+    @InjectView(R.id.tv_pmQuestion)
+    TextView tvPmQuestion;
+    @InjectView(R.id.tv_pmValue)
+    TextView tvPmValue;
+    @InjectView(R.id.tv_vocQuestion)
+    TextView tvVocQuestion;
+    @InjectView(R.id.tv_vocValue)
+    TextView tvVocValue;
+    @InjectView(R.id.tv_cleanValue)
+    TextView tvCleanValue;
+    @InjectView(R.id.tv_filter_remind)
+    TextView tvFilterRemind;
+    @InjectView(R.id.filterProgress)
+    FilterProgressView filterProgress;
+    @InjectView(R.id.tv_chatbtn)
+    TextView tvChatbtn;
+    @InjectView(R.id.tv_buy_filter_btn)
+    TextView tvBuyFilterBtn;
+    AirPurifierMonitor airMonitor;
+
+    private AirPurifier_MXChip mAirPurifier;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_air_ver_filter);
+        ButterKnife.inject(this);
+        initToolBar();
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = getWindow();
+            //更改状态栏颜色
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
+            //更改底部导航栏颜色(限有底部的手机)
+            window.setNavigationBarColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
+        }
+        filterProgress.setThumb(R.drawable.filter_status_thumb);
+
+        try {
+            String mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
+            Log.e(TAG, "onCreate: mac:" + mac);
+            mAirPurifier = (AirPurifier_MXChip) OznerDeviceManager.Instance().getDevice(mac);
+            refreshUIData();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * 初始化ToolBar
+     */
+    private void initToolBar() {
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+        title.setText(R.string.air_indoor_detail);
+        toolbar.setNavigationIcon(R.drawable.back);
+        toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                break;
+        }
+        return true;
+    }
+
+    /**
+     * 刷新UI数据
+     */
+    private void refreshUIData() {
+        refreshPM25();
+        refreshVoc();
+        refeshClean();
+        refreshFilter();
+    }
+
+    /**
+     * 刷新PM2.5
+     */
+    private void refreshPM25() {
+        if (mAirPurifier != null) {
+            int pm25 = mAirPurifier.sensor().PM25();
+            if (pm25 == 65535) {
+                tvPmValue.setText(R.string.disconnect);
+            } else if (pm25 > 0 && pm25 < 1000) {
+                tvPmValue.setText(String.valueOf(pm25));
+            } else {
+                tvPmValue.setText(R.string.state_null);
+            }
+        }
+    }
+
+    /**
+     * 刷新VOC
+     */
+    private void refreshVoc() {
+        if (mAirPurifier != null) {
+            if (mAirPurifier.sensor().PM25() != 65535) {
+                switch (mAirPurifier.sensor().VOC()) {
+                    case -1:
+                        tvVocValue.setText(R.string.in_test);
+                        break;
+                    case 0:
+                        tvVocValue.setText(R.string.excellent);
+                        break;
+                    case 1:
+                        tvVocValue.setText(R.string.good);
+                        break;
+                    case 2:
+                        tvVocValue.setText(R.string.ordinary);
+                        break;
+                    case 3:
+                        tvVocValue.setText(R.string.bads);
+                        break;
+                    default:
+                        tvVocValue.setText(R.string.state_null);
+                        break;
+                }
+            } else {
+                tvVocValue.setText(R.string.state_null);
+            }
+        }
+    }
+
+    /**
+     * 刷新净化量
+     */
+    private void refeshClean() {
+        if (mAirPurifier != null) {
+            int clean = mAirPurifier.sensor().TotalClean()/1000;
+            Log.e(TAG, "refeshClean: " + clean);
+            if (clean > 0 && clean < 65535) {
+                tvCleanValue.setText(String.valueOf(clean));
+            } else {
+                tvCleanValue.setText("0");
+            }
+        }
+    }
+
+    /**
+     * 刷新滤芯状态
+     */
+    private void refreshFilter() {
+        if (mAirPurifier != null) {
+            Date proDate = mAirPurifier.sensor().FilterStatus().lastTime;
+            Date stopDate = mAirPurifier.sensor().FilterStatus().stopTime;
+            long proMill = proDate.getTime();
+            long stopMill = stopDate.getTime();
+            long currentMill = Calendar.getInstance().getTimeInMillis();
+            long totalTime = (stopMill - proMill) / (24 * 3600 * 1000);
+            long useTime = (currentMill - proMill) / (24 * 3600 * 1000);
+            int lvXin = 0;
+            try {
+                lvXin = Math.round((totalTime - useTime) * 100 / totalTime);
+                if (lvXin < 0 || lvXin > 100) {
+                    lvXin = 0;
+                }
+            } catch (Exception ex) {
+                Log.e(TAG, "refreshFilter_Ex: " + ex.getMessage());
+            }
+            tvFilterRemind.setText(String.valueOf(lvXin));
+            filterProgress.initTime(proDate, stopDate);
+            filterProgress.update(Calendar.getInstance().getTime());
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(AirPurifier_MXChip.ACTION_AIR_PURIFIER_SENSOR_CHANGED);
+        filter.addAction(AirPurifier_MXChip.ACTION_AIR_PURIFIER_STATUS_CHANGED);
+        filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTING);
+        filter.addAction(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED);
+        filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTED);
+        this.registerReceiver(airMonitor, filter);
+    }
+
+    @Override
+    protected void onStop() {
+        try {
+            this.unregisterReceiver(airMonitor);
+        } catch (Exception ex) {
+
+        }
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    class AirPurifierMonitor extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTED)
+                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTING)
+                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED)) {
+                refreshFilter();
+            }
+            refreshPM25();
+            refreshVoc();
+            refeshClean();
+        }
+    }
+}

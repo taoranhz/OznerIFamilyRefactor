@@ -238,57 +238,6 @@
 
             </LinearLayout>
             <include layout="@layout/tds_change_water_health_layout"/>
-
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginTop="10dp"-->
-                <!--android:background="@color/white"-->
-                <!--android:gravity="center_horizontal"-->
-                <!--android:orientation="vertical"-->
-                <!--android:paddingBottom="15dp"-->
-                <!--android:paddingTop="10dp">-->
-
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="@string/change_your_health"-->
-                    <!--android:textSize="18dp"/>-->
-
-                <!--<LinearLayout-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:orientation="horizontal">-->
-
-                    <!--<TextView-->
-                        <!--android:id="@+id/tv_water_know"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginTop="10dp"-->
-                        <!--android:background="@drawable/stroke_unfill_detail_text_bg"-->
-                        <!--android:drawableLeft="@drawable/book"-->
-                        <!--android:drawablePadding="10dp"-->
-                        <!--android:gravity="center"-->
-                        <!--android:padding="10dp"-->
-                        <!--android:text="@string/water_know"/>-->
-
-                    <!--<TextView-->
-                        <!--android:id="@+id/tv_buy_water_purifier"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginLeft="40dp"-->
-                        <!--android:layout_marginTop="10dp"-->
-                        <!--android:layout_toRightOf="@+id/tv_water_know"-->
-                        <!--android:background="@drawable/stroke_fill_detail_text_bg"-->
-                        <!--android:drawableLeft="@drawable/cart"-->
-                        <!--android:drawablePadding="10dp"-->
-                        <!--android:gravity="center"-->
-                        <!--android:padding="10dp"-->
-                        <!--android:text="@string/buy_water_purifier"/>-->
-                <!--</LinearLayout>-->
-
-            <!--</LinearLayout>-->
-
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

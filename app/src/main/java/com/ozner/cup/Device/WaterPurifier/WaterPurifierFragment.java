@@ -199,7 +199,9 @@ public class WaterPurifierFragment extends DeviceFragment {
                 if (mWaterPurifer != null) {
                     Intent setupIntent = new Intent(getContext(), SetupWaterActivity.class);
                     setupIntent.putExtra(Contacts.PARMS_MAC, mWaterPurifer.Address());
-                    setupIntent.putExtra(Contacts.PARMS_URL, purifierAttr.getSmlinkurl());
+                    if (purifierAttr != null) {
+                        setupIntent.putExtra(Contacts.PARMS_URL, purifierAttr.getSmlinkurl());
+                    }
                     startActivity(setupIntent);
                 } else {
                     showCenterToast(R.string.Not_found_device);

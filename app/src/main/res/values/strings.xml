@@ -292,6 +292,14 @@
     <string name="buy_water_purifier">购买净水器</string>
 
 
+    <string name="air_indoor_detail">室内空气质量详情</string>
+    <string name="pm25_introduce">PM2.5为空气中细颗粒物</string>
+    <string name="voc_introduce">VOC为空气中挥发性有机化合物</string>
+    <string name="air_cleans_tips">空气净化器当前总净化量，更新周期1分钟</string>
+    <string name="filter_remain">滤芯还剩</string>
+    <string name="air_remind">温馨提醒：及时更换滤芯，享纯净空气</string>
+
+
     <!--错误码-->
     <string name="Code_Accept_nofound">没有发现对应请求</string>
     <string name="Code_AddFriend_exists">已经发送过请求</string>

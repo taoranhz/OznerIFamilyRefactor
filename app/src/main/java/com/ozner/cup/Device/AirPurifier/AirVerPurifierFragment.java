@@ -326,11 +326,18 @@ public class AirVerPurifierFragment extends DeviceFragment {
         airDialog.show();
     }
 
-    @OnClick({R.id.rlay_filterStatus, R.id.iv_purifierSetBtn, R.id.llay_open, R.id.llay_mode, R.id.llay_lock})
+    @OnClick({R.id.llay_center_detail, R.id.rlay_filterStatus, R.id.iv_purifierSetBtn, R.id.llay_open, R.id.llay_mode, R.id.llay_lock})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.llay_center_detail:
             case R.id.rlay_filterStatus:
-
+                if (mVerAirPurifier != null) {
+                    Intent filterIntent = new Intent(getContext(), AirVerFilterActivity.class);
+                    filterIntent.putExtra(Contacts.PARMS_MAC, mVerAirPurifier.Address());
+                    startActivity(filterIntent);
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
                 break;
             case R.id.iv_purifierSetBtn:
                 if (mVerAirPurifier != null) {

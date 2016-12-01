@@ -59,6 +59,8 @@
         </activity>
         <activity android:name=".Device.Cup.CupTempActivity">
         </activity>
+        <activity android:name=".Device.AirPurifier.AirVerFilterActivity">
+        </activity>
     </application>
 
 </manifest>

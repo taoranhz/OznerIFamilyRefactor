@@ -55,7 +55,7 @@ public class SetupWaterActivity extends BaseActivity {
 
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
-            url = getIntent().getStringExtra(Contacts.PARMS_URL);
+//            url = getIntent().getStringExtra(Contacts.PARMS_URL);
             Log.e(TAG, "onCreate: mac:" + mac);
             mWaterPurifier = (WaterPurifier) OznerDeviceManager.Instance().getDevice(mac);
             initViewData();
