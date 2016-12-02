@@ -25,6 +25,7 @@ import com.ozner.cup.CupRecord;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.WaterPurifierAttr;
 import com.ozner.cup.Device.DeviceFragment;
+import com.ozner.cup.Device.FilterStatusActivity;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.PurifierDetailProgress;
@@ -194,6 +195,14 @@ public class WaterPurifierFragment extends DeviceFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rlay_filter:
+                if (mWaterPurifer != null) {
+                    Intent filterIntent = new Intent(getContext(), FilterStatusActivity.class);
+                    filterIntent.putExtra(Contacts.PARMS_MAC, mWaterPurifer.Address());
+                    filterIntent.putExtra(FilterStatusActivity.PARMS_DEVICE_TYPE, FilterStatusActivity.TYPE_WATER_FILTER);
+                    startActivity(filterIntent);
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
                 break;
             case R.id.iv_setting:
                 if (mWaterPurifer != null) {
@@ -268,17 +277,6 @@ public class WaterPurifierFragment extends DeviceFragment {
         }
     }
 
-//
-//    /**
-//     * 在中间弹出提示信息
-//     *
-//     * @param resId
-//     */
-//    private void showCenterToast(int resId) {
-//        Toast toast = Toast.makeText(getContext(), resId, Toast.LENGTH_SHORT);
-//        toast.setGravity(Gravity.CENTER, 0, 0);
-//        toast.show();
-//    }
 
     /**
      * 是否已添加到View

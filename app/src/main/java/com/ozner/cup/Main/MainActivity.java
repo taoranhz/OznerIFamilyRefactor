@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -34,6 +35,8 @@ import com.ozner.device.OznerDevice;
 import com.ozner.tap.TapManager;
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -55,6 +58,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     private EShopFragment shopFragment;
     private ChatFragment chatFragment;
     private MyCenterFragment myCenterFragment;
+    public Boolean isExit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +147,27 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            exit();
+        }
+    }
+
+    //退出程序
+    private void exit() {
+        Timer tExit = null;
+        if (isExit == false) {
+            isExit = true; // 准备退出
+            Toast.makeText(this, getString(R.string.PressToExit), Toast.LENGTH_SHORT).show();
+            tExit = new Timer();
+            tExit.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    isExit = false; // 取消退出
+                }
+            }, 2000); // 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
+
+        } else {
+            finish();
+//            System.exit(0);
         }
     }
 

@@ -13,6 +13,7 @@
     <string name="navigation_drawer_open">打开侧边栏</string>
     <string name="navigation_drawer_close">关闭侧边栏</string>
     <string name="settings">设置</string>
+    <string name="PressToExit">再按一次退出程序</string>
 
     <!--底部菜单-->
     <string name="device">设备</string>
@@ -44,6 +45,32 @@
     <string name="tips_getcode">验证码将以短信的形式发送给您,请注意查收</string>
     <string name="tips_getvoice">您将会收到来自400电话语音，请注意接听。</string>
 
+    <string name="current_filter_state">当前滤芯状态</string>
+    <string name="filter_tips">温馨提醒：及时更换滤芯才能保证饮用水的安全</string>
+    <string name="left_replace_filter">离更换滤芯还剩</string>
+    <string name="scancode">扫描二维码</string>
+    <string name="scancode_text">扫描滤芯包装上的二维码，激活APP并启动滤芯复位。</string>
+    <string name="more_products">更多产品</string>
+    <string name="relieved_service">浩泽安心服务</string>
+
+    <string name="Filter_Project1">浩泽智能水探头</string>
+    <string name="Filter_Project2">金色伊泉系列</string>
+    <string name="Filter_Project3">浩泽智能杯</string>
+
+    <string name="Filter_Service_up_00">365天滤芯寿命</string>
+    <string name="Filter_Service_up_01">每年上门更换</string>
+    <string name="Filter_Service_up_10">10项智能</string>
+    <string name="Filter_Service_up_11">上门整机维修</string>
+    <string name="Filter_Service_up_20">安全断水</string>
+    <string name="Filter_Service_up_21">24小时客服咨询</string>
+    <string name="Filter_Service_up_30">定期水质监测</string>
+    <string name="Filter_Service_up_31">产品智能软件升级</string>
+
+    <string name="Filter_Service_down_00">监测与预警</string>
+    <string name="Filter_Service_down_01">标准滤芯材料一次</string>
+    <string name="Filter_Service_down_10">安全净水服务</string>
+    <string name="Filter_Service_down_11">零配件更换服务</string>
+    <string name="Filter_Service_down_20">更换滤芯提醒</string>
 
     <!--设备-->
     <string name="connected">已连接</string>
@@ -262,6 +289,7 @@
     <string name="set_remind_interval">设置饮水提醒间隔</string>
 
 
+    <string name="sky">天</string>
     <string name="month">月</string>
     <string name="week">周</string>
     <string name="day">日</string>
@@ -307,7 +335,6 @@
     <string name="voc_introduce_title">挥发性有机化合物 </string>
     <string name="voc_introduce_sub_title">Volatile Organic Comounds,缩写VOC</string>
     <string name="voc_introduce_content">\t\t通常指在常温下容易挥发的有机化物。较常见的苯 、甲苯、二甲苯、乙苯、苯乙烯、甲醛、TVOC(6-16个碳的烷烃）、酮类等。 这些化合物具有易挥发和亲油等特点，被广泛应用于鞋类、玩具、油漆和石墨、粘合剂、化妆品、室内和汽车装饰材料等工业领域。VOC对人体健康有巨大的影响，会伤害人的肝脏、肾脏、大脑和神经系统，造成记忆力减退等严重后果，甚至可能致癌。</string>
-
 
 
     <!--错误码-->
