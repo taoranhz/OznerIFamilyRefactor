@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 import rx.Observable;
 
@@ -88,4 +89,12 @@ public interface OznerHttpService {
     @POST("OznerDevice/FilterService")
     Observable<JsonObject> getTapFilterInfo(@Field("usertoken") String usertoken, @Field("mac") String mac);
 
+
+    /**
+     * 获取室外天气信息
+     *
+     * @return
+     */
+    @GET("OznerServer/GetWeather")
+    Observable<JsonObject> getWeather();
 }

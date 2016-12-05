@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 
 import com.ozner.AirPurifier.AirPurifier_MXChip;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Device.AirPurifier.bean.NetWeather;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.HttpHelper.NetState;
 import com.ozner.cup.Main.MainActivity;
@@ -42,6 +44,9 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 import static android.R.attr.mode;
+import static com.ozner.cup.R.color.air_soso_bg;
+import static com.ozner.cup.R.id.rlay_air_outside;
+import static com.ozner.cup.R.id.tv_air_quality;
 
 
 public class AirVerPurifierFragment extends DeviceFragment {
@@ -74,11 +79,11 @@ public class AirVerPurifierFragment extends DeviceFragment {
     ImageView ivPurifierSetBtn;
     @InjectView(R.id.tv_address)
     TextView tvAddress;
-    @InjectView(R.id.tv_air_quality)
+    @InjectView(tv_air_quality)
     TextView tvAirQuality;
     @InjectView(R.id.tv_outPM25)
     TextView tvOutPM25;
-    @InjectView(R.id.rlay_air_outside)
+    @InjectView(rlay_air_outside)
     RelativeLayout rlayAirOutside;
     @InjectView(R.id.tv_powerSwitch)
     TextView tvPowerSwitch;
@@ -111,6 +116,8 @@ public class AirVerPurifierFragment extends DeviceFragment {
     private String deviceNewName = "";
     private ProgressDialog progressDialog;
     private Handler mHandler = new Handler();
+    AirPurifierPresenter airPresenter;
+    private NetWeather netWeather;
 
     /**
      * 定义模式开关注解，限定设置模式方法的参数
@@ -157,7 +164,8 @@ public class AirVerPurifierFragment extends DeviceFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
+        airPresenter = new AirPurifierPresenter(getContext());
+        getOutDoorInfo();
         try {
             Bundle bundle = getArguments();
             mVerAirPurifier = (AirPurifier_MXChip) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
@@ -179,7 +187,8 @@ public class AirVerPurifierFragment extends DeviceFragment {
 
     @Override
     public void setDevice(OznerDevice device) {
-
+//        refreshMainOutDoorInfo();
+        getOutDoorInfo();
         deviceNewName = "";
 //        initColor();
         if (mVerAirPurifier != null) {
@@ -263,7 +272,91 @@ public class AirVerPurifierFragment extends DeviceFragment {
             Log.e(TAG, "onResume_Ex:" + ex.getMessage());
         }
         refreshUIData();
+        refreshMainOutDoorInfo();
         super.onResume();
+    }
+
+    /**
+     * 获取室外天气信息
+     */
+    private void getOutDoorInfo() {
+        try {
+            if (netWeather == null) {
+                airPresenter.getWeatherOutSide(new AirPurifierPresenter.NetWeatherResult() {
+                    @Override
+                    public void onResult(NetWeather weather) {
+                        netWeather = weather;
+                        if (isThisAdd()) {
+                            refreshMainOutDoorInfo();
+                        }
+                        Log.e(TAG, "getWeatherOutSide_onResult: " + weather.toString());
+                    }
+                });
+            } else {
+                refreshMainOutDoorInfo();
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "setDevice_Ex: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * 主页显示室外
+     */
+    private void refreshMainOutDoorInfo() {
+        try {
+            if (netWeather != null && isThisAdd()) {
+                tvOutPM25.setText(netWeather.getPm25());
+                tvAddress.setText(netWeather.getCity());
+                switch (netWeather.getQlty()) {
+                    case "优":
+                        tvAirQuality.setText(R.string.excellent);
+                        break;
+                    case "良":
+                        tvAirQuality.setText(R.string.good);
+                        break;
+                    case "差":
+                        tvAirQuality.setText(R.string.bads);
+                        break;
+                    default:
+                        tvAirQuality.setText(R.string.state_null);
+                        break;
+                }
+
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "refreshMainOutDoorInfo_Ex: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * 显示室外信息
+     */
+    private void showOutDoorInfo() {
+        final Dialog airDialog = new Dialog(getContext(), R.style.SelectPicBaseStyle);
+        airDialog.setContentView(R.layout.air_outside_details);
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        WindowManager.LayoutParams lp2 = airDialog.getWindow().getAttributes();
+        lp2.width = display.getWidth();
+        Window window2 = airDialog.getWindow();
+        window2.setGravity(Gravity.BOTTOM);
+        window2.setAttributes(lp2);
+        window2.setWindowAnimations(R.style.SelectPicAnimationStyle);
+        airDialog.findViewById(R.id.tv_air_know).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                airDialog.cancel();
+            }
+        });
+        if (netWeather != null) {
+            ((TextView) airDialog.findViewById(R.id.tv_outside_city)).setText(netWeather.getCity());
+            ((TextView) airDialog.findViewById(R.id.tv_outside_pm)).setText(netWeather.getPm25());
+            ((TextView) airDialog.findViewById(R.id.tv_outside_aqi)).setText(netWeather.getAqi());
+            ((TextView) airDialog.findViewById(R.id.tv_outside_temp)).setText(netWeather.getTmp());
+            ((TextView) airDialog.findViewById(R.id.tv_airOutside_humidity)).setText(netWeather.getHum());
+            ((TextView) airDialog.findViewById(R.id.tv_outside_data)).setText(netWeather.getWeatherform());
+        }
+        airDialog.show();
     }
 
     /**
@@ -329,7 +422,9 @@ public class AirVerPurifierFragment extends DeviceFragment {
         airDialog.show();
     }
 
-    @OnClick({R.id.llay_center_detail, R.id.rlay_filterStatus, R.id.iv_purifierSetBtn, R.id.llay_open, R.id.llay_mode, R.id.llay_lock})
+    @OnClick({R.id.llay_center_detail, R.id.rlay_filterStatus,
+            R.id.iv_purifierSetBtn, R.id.llay_open,
+            R.id.llay_mode, R.id.llay_lock, R.id.rlay_air_outside})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.llay_center_detail:
@@ -374,8 +469,12 @@ public class AirVerPurifierFragment extends DeviceFragment {
                     showCenterToast(R.string.Not_found_device);
                 }
                 break;
+            case R.id.rlay_air_outside:
+                showOutDoorInfo();
+                break;
         }
     }
+
 
     /**
      * 设置电源
@@ -633,24 +732,32 @@ public class AirVerPurifierFragment extends DeviceFragment {
      * 显示滤芯状态
      */
     private void showFilterStatus() {
-        if (mVerAirPurifier != null) {
-            Date proDate = mVerAirPurifier.sensor().FilterStatus().lastTime;
-            Date stopDate = mVerAirPurifier.sensor().FilterStatus().stopTime;
-            long proMill = proDate.getTime();
-            long stopMill = stopDate.getTime();
-            long currentMill = Calendar.getInstance().getTimeInMillis();
-            long totalTime = (stopMill - proMill) / (24 * 3600 * 1000);
-            long useTime = (currentMill - proMill) / (24 * 3600 * 1000);
-            int lvXin = 0;
-            try {
-                lvXin = Math.round((totalTime - useTime) * 100 / totalTime);
-                if (lvXin < 0 || lvXin > 100) {
+        try {
+            if (mVerAirPurifier != null) {
+                Date proDate = mVerAirPurifier.sensor().FilterStatus().lastTime;
+                Date stopDate = mVerAirPurifier.sensor().FilterStatus().stopTime;
+                long proMill = proDate.getTime();
+                long stopMill = stopDate.getTime();
+                long currentMill = Calendar.getInstance().getTimeInMillis();
+                long totalTime = (stopMill - proMill) / (24 * 3600 * 1000);
+                long useTime = (currentMill - proMill) / (24 * 3600 * 1000);
+                int lvXin = 0;
+                if (totalTime != 0) {
+                    try {
+                        lvXin = Math.round((totalTime - useTime) * 100 / totalTime);
+                        if (lvXin < 0 || lvXin > 100) {
+                            lvXin = 0;
+                        }
+                    } catch (Exception ex) {
+                        Log.e(TAG, "showFilterStatus_Ex: " + ex.getMessage());
+                    }
+                } else {
                     lvXin = 0;
                 }
-            } catch (Exception ex) {
-                Log.e(TAG, "showFilterStatus_Ex: " + ex.getMessage());
+                tvFilterValue.setText(String.format("%d%%", lvXin));
             }
-            tvFilterValue.setText(String.format("%d%%",lvXin));
+        } catch (Exception ex) {
+            Log.e(TAG, "showFilterStatus_Ex: " + ex.getMessage());
         }
     }
 
@@ -743,9 +850,9 @@ public class AirVerPurifierFragment extends DeviceFragment {
                     llayTop.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.air_good_bg));
                 } else if (pm25 >= 75 && pm25 < 150) {
                     tvPmState.setText(R.string.good);
-                    setBarColor(R.color.air_soso_bg);
-                    setToolbarColor(R.color.air_soso_bg);
-                    llayTop.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.air_soso_bg));
+                    setBarColor(air_soso_bg);
+                    setToolbarColor(air_soso_bg);
+                    llayTop.setBackgroundColor(ContextCompat.getColor(getContext(), air_soso_bg));
                 } else if (pm25 >= 150) {
                     tvPmState.setText(R.string.bads);
                     setBarColor(R.color.air_bad_bg);

@@ -1,5 +1,6 @@
 package com.ozner.cup.Device.AirPurifier;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,9 +11,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -21,6 +26,7 @@ import android.widget.TextView;
 import com.ozner.AirPurifier.AirPurifier_Bluetooth;
 import com.ozner.AirPurifier.AirPurifier_MXChip;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Device.AirPurifier.bean.NetWeather;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
@@ -89,6 +95,8 @@ public class AirDeskPurifierFragment extends DeviceFragment {
     private AirPurifierMonitor airMonitor;
     private String deviceNewName = "";
     private int oldSpeed = 0;
+    private NetWeather netWeather;
+    AirPurifierPresenter airPresenter;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -204,6 +212,8 @@ public class AirDeskPurifierFragment extends DeviceFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        airPresenter = new AirPurifierPresenter(getContext());
+        getOutDoorInfo();
         initAnimation();
         try {
             Bundle bundle = getArguments();
@@ -227,7 +237,8 @@ public class AirDeskPurifierFragment extends DeviceFragment {
 
     @Override
     public void setDevice(OznerDevice device) {
-
+//        refreshMainOutDoorInfo();
+        getOutDoorInfo();
         deviceNewName = "";
         if (mDeskAirPurifier != null) {
             if (mDeskAirPurifier.Address() != device.Address()) {
@@ -235,14 +246,16 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                 mDeskAirPurifier = null;
                 mDeskAirPurifier = (AirPurifier_Bluetooth) device;
                 refreshUIData();
+                showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
             }
         } else {
             mDeskAirPurifier = (AirPurifier_Bluetooth) device;
             refreshUIData();
+            showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
         }
     }
 
-    @OnClick({R.id.iv_purifierSetBtn, R.id.rlay_filterStatus, R.id.llay_center_detail})
+    @OnClick({R.id.iv_purifierSetBtn, R.id.rlay_filterStatus, R.id.llay_center_detail, R.id.rlay_air_outside})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_purifierSetBtn:
@@ -264,7 +277,93 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                     showCenterToast(R.string.Not_found_device);
                 }
                 break;
+            case R.id.rlay_air_outside:
+                showOutDoorInfo();
+                break;
         }
+    }
+
+    /**
+     * 获取室外天气信息
+     */
+    private void getOutDoorInfo() {
+        try {
+            if (netWeather == null) {
+                airPresenter.getWeatherOutSide(new AirPurifierPresenter.NetWeatherResult() {
+                    @Override
+                    public void onResult(NetWeather weather) {
+                        netWeather = weather;
+                        if (isThisAdd()) {
+                            refreshMainOutDoorInfo();
+                        }
+                        Log.e(TAG, "getWeatherOutSide_onResult: " + weather.toString());
+                    }
+                });
+            } else {
+                refreshMainOutDoorInfo();
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "setDevice_Ex: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * 主页显示室外
+     */
+    private void refreshMainOutDoorInfo() {
+        try {
+            if (netWeather != null && isThisAdd()) {
+                tvOutPM25.setText(netWeather.getPm25());
+                tvAddress.setText(netWeather.getCity());
+                switch (netWeather.getQlty()) {
+                    case "优":
+                        tvAirQuality.setText(R.string.excellent);
+                        break;
+                    case "良":
+                        tvAirQuality.setText(R.string.good);
+                        break;
+                    case "差":
+                        tvAirQuality.setText(R.string.bads);
+                        break;
+                    default:
+                        tvAirQuality.setText(R.string.state_null);
+                        break;
+                }
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "refreshMainOutDoorInfo_Ex: " + ex.getMessage());
+        }
+    }
+
+
+    /**
+     * 显示室外信息
+     */
+    private void showOutDoorInfo() {
+        final Dialog airDialog = new Dialog(getContext(), R.style.SelectPicBaseStyle);
+        airDialog.setContentView(R.layout.air_outside_details);
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        WindowManager.LayoutParams lp2 = airDialog.getWindow().getAttributes();
+        lp2.width = display.getWidth();
+        Window window2 = airDialog.getWindow();
+        window2.setGravity(Gravity.BOTTOM);
+        window2.setAttributes(lp2);
+        window2.setWindowAnimations(R.style.SelectPicAnimationStyle);
+        airDialog.findViewById(R.id.tv_air_know).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                airDialog.cancel();
+            }
+        });
+        if (netWeather != null) {
+            ((TextView) airDialog.findViewById(R.id.tv_outside_city)).setText(netWeather.getCity());
+            ((TextView) airDialog.findViewById(R.id.tv_outside_pm)).setText(netWeather.getPm25());
+            ((TextView) airDialog.findViewById(R.id.tv_outside_aqi)).setText(netWeather.getAqi());
+            ((TextView) airDialog.findViewById(R.id.tv_outside_temp)).setText(netWeather.getTmp());
+            ((TextView) airDialog.findViewById(R.id.tv_airOutside_humidity)).setText(netWeather.getHum());
+            ((TextView) airDialog.findViewById(R.id.tv_outside_data)).setText(netWeather.getWeatherform());
+        }
+        airDialog.show();
     }
 
 
@@ -333,7 +432,6 @@ public class AirDeskPurifierFragment extends DeviceFragment {
             showPM25(mDeskAirPurifier.sensor().PM25());
             showTemp(mDeskAirPurifier.sensor().Temperature());
             showHumidity(mDeskAirPurifier.sensor().Humidity());
-            showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
         }
     }
 
@@ -450,16 +548,24 @@ public class AirDeskPurifierFragment extends DeviceFragment {
      * 显示滤芯状态
      */
     private void showFilterStatus(float workTime) {
-        Log.e(TAG, "showFilterStatus:workTime: "+workTime);
-        float maxWorkTime = mDeskAirPurifier.sensor().FilterStatus().maxWorkTime;
-        if (maxWorkTime <= 0) {
-            maxWorkTime = FILTER_MAX_WORK_TIME;
+        try {
+            if (isThisAdd()) {
+                float maxWorkTime = mDeskAirPurifier.sensor().FilterStatus().maxWorkTime;
+                if (maxWorkTime <= 0) {
+                    maxWorkTime = FILTER_MAX_WORK_TIME;
+                }
+                if (workTime > maxWorkTime) {
+                    workTime = maxWorkTime;
+                }
+
+                int ret = 0;
+                if (maxWorkTime != 0)
+                    ret = Math.round((1 - (workTime / maxWorkTime)) * 100);
+                tvFilterValue.setText(String.format("%d%%", ret));
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "showFilterStatus_Ex: " + ex.getMessage());
         }
-        if (workTime > maxWorkTime) {
-            workTime = maxWorkTime;
-        }
-        int ret = Math.round((1 - (workTime / maxWorkTime)) * 100);
-        tvFilterValue.setText(String.format("%d%%", ret));
     }
 
     @Override
@@ -483,6 +589,9 @@ public class AirDeskPurifierFragment extends DeviceFragment {
             Log.e(TAG, "onResume_Ex:" + ex.getMessage());
         }
         refreshUIData();
+        refreshMainOutDoorInfo();
+        if (mDeskAirPurifier != null)
+            showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
         super.onResume();
     }
 
@@ -555,6 +664,11 @@ public class AirDeskPurifierFragment extends DeviceFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTED)
+                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTING)
+                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED)) {
+                showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
+            }
             refreshUIData();
         }
     }

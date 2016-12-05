@@ -141,4 +141,16 @@ public class HttpMethods {
                 .subscribe(subscriber);
     }
 
+
+    /**
+     * 获取室外天气信息
+     * @param subscriber
+     */
+    public void getWeatherOutSide(Subscriber<JsonObject> subscriber){
+        oznerHttpService.getWeather()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
 }
