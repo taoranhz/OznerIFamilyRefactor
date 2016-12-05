@@ -1,6 +1,7 @@
 package com.ozner.cup.UIView;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,6 +14,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+
+import com.ozner.cup.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -46,9 +49,13 @@ public class FilterProgressView extends View {
     private SimpleDateFormat yearFormat;
     private SimpleDateFormat monthDayFormat;
     private Bitmap thumb = null;
+    private boolean isShowTime = true;//是否显示时间
 
     public FilterProgressView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.FilterProgress);
+        isShowTime = array.getBoolean(R.styleable.FilterProgress_IsShowTime, true);
+        array.recycle();
         init();
     }
 
@@ -73,6 +80,11 @@ public class FilterProgressView extends View {
 
     public void setThumb(int id) {
         this.thumb = BitmapFactory.decodeResource(getResources(), id);
+        this.invalidate();
+    }
+
+    public void setShowTime(boolean isShow) {
+        this.isShowTime = isShow;
         this.invalidate();
     }
 
@@ -157,23 +169,24 @@ public class FilterProgressView extends View {
     }
 
     private void drawInitDate(Canvas canvas, RectF rect, Date startTime, Date endTime) {
-        String year1 = yearFormat.format(startTime);
-        String monthDay1 = monthDayFormat.format(startTime);
-        String year2 = yearFormat.format(endTime);
-        String monthDay2 = monthDayFormat.format(endTime);
+        if (isShowTime) {
+            String year1 = yearFormat.format(startTime);
+            String monthDay1 = monthDayFormat.format(startTime);
+            String year2 = yearFormat.format(endTime);
+            String monthDay2 = monthDayFormat.format(endTime);
 
-        float offset = Math.abs(textWidthMonth - textWidthYear) / 2;
-        float heightOffset = textHeightMonth + textHeightYear;
+            float offset = Math.abs(textWidthMonth - textWidthYear) / 2;
+            float heightOffset = textHeightMonth + textHeightYear;
 
 
-        textPaint.setTextSize(dpToPx(textSizeYear));
-        canvas.drawText(year1, rect.left + offset, rect.top + dpToPx(linwidth + 40) + heightOffset, textPaint);
-        canvas.drawText(year2, rect.right - textWidthYear - offset, rect.top + dpToPx(linwidth + 40) + heightOffset, textPaint);
+            textPaint.setTextSize(dpToPx(textSizeYear));
+            canvas.drawText(year1, rect.left + offset, rect.top + dpToPx(linwidth + 40) + heightOffset, textPaint);
+            canvas.drawText(year2, rect.right - textWidthYear - offset, rect.top + dpToPx(linwidth + 40) + heightOffset, textPaint);
 
-        textPaint.setTextSize(dpToPx(textSizeMonthDay));
-        canvas.drawText(monthDay1, rect.left, rect.top + dpToPx(linwidth + 55) + heightOffset, textPaint);
-        canvas.drawText(monthDay2, rect.right - textWidthMonth, rect.top + dpToPx(linwidth + 55) + heightOffset, textPaint);
-
+            textPaint.setTextSize(dpToPx(textSizeMonthDay));
+            canvas.drawText(monthDay1, rect.left, rect.top + dpToPx(linwidth + 55) + heightOffset, textPaint);
+            canvas.drawText(monthDay2, rect.right - textWidthMonth, rect.top + dpToPx(linwidth + 55) + heightOffset, textPaint);
+        }
     }
 
     private void drawVlueLine(Canvas canvas, RectF rect, float value) {
@@ -204,30 +217,19 @@ public class FilterProgressView extends View {
             canvas.drawPath(path, textPaint);
         }
 
-        //绘制滑动时间
-        gc.setTime(startTime);
-        gc.add(Calendar.DAY_OF_MONTH, (int) value);
-        Date nowDate = gc.getTime();
-        String year = yearFormat.format(nowDate);
-        String monthDay = monthDayFormat.format(nowDate);
+        if (isShowTime) {
+            //绘制滑动时间
+            gc.setTime(startTime);
+            gc.add(Calendar.DAY_OF_MONTH, (int) value);
+            Date nowDate = gc.getTime();
+            String year = yearFormat.format(nowDate);
+            String monthDay = monthDayFormat.format(nowDate);
 
-        textPaint.setTextSize(dpToPx(textSizeYear));
-        canvas.drawText(year, rect.left + offset + valueWidth - textWidthYear / 2, rect.top + dpToPx(linwidth + 15), textPaint);
-        textPaint.setTextSize(dpToPx(textSizeMonthDay));
-        canvas.drawText(monthDay, rect.left + offset + valueWidth - textWidthMonth / 2, rect.top + dpToPx(linwidth + 30), textPaint);
-
-//        if (valueWidth > textWidth && valueWidth < lineLenght - textWidth) {
-//            gc.setTime(startTime);
-//            gc.add(Calendar.DAY_OF_MONTH, (int) value);
-//            Date nowDate = gc.getTime();
-//            String year = yearFormat.format(nowDate);
-//            String monthDay = monthDayFormat.format(nowDate);
-//
-//            textPaint.setTextSize(dpToPx(textSizeYear));
-//            canvas.drawText(year, rect.left + offset + valueWidth - textWidthYear / 2, rect.top + dpToPx(linwidth + 40), textPaint);
-//            textPaint.setTextSize(dpToPx(textSizeMonthDay));
-//            canvas.drawText(monthDay, rect.left + offset + valueWidth - textWidthMonth / 2, rect.top + dpToPx(linwidth + 55), textPaint);
-//        }
+            textPaint.setTextSize(dpToPx(textSizeYear));
+            canvas.drawText(year, rect.left + offset + valueWidth - textWidthYear / 2, rect.top + dpToPx(linwidth + 15), textPaint);
+            textPaint.setTextSize(dpToPx(textSizeMonthDay));
+            canvas.drawText(monthDay, rect.left + offset + valueWidth - textWidthMonth / 2, rect.top + dpToPx(linwidth + 30), textPaint);
+        }
     }
 
     private void drawBackgroundLine(Canvas canvas, RectF rect) {
@@ -247,7 +249,6 @@ public class FilterProgressView extends View {
 
         drawBackgroundLine(canvas, rect);
         drawInitDate(canvas, rect, startTime, endTime);
-        // if (value > 0)
         drawVlueLine(canvas, rect, value);
     }
 

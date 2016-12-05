@@ -170,6 +170,7 @@
     <string name="command_sending">命令发送中</string>
     <string name="Iknow">我知道了</string>
     <string name="buy_filter">购买滤芯</string>
+    <string name="filter_reset">滤芯重置</string>
 
 
     <string name="device_dis_connect">设备已断开</string>
@@ -335,6 +336,8 @@
     <string name="voc_introduce_title">挥发性有机化合物 </string>
     <string name="voc_introduce_sub_title">Volatile Organic Comounds,缩写VOC</string>
     <string name="voc_introduce_content">\t\t通常指在常温下容易挥发的有机化物。较常见的苯 、甲苯、二甲苯、乙苯、苯乙烯、甲醛、TVOC(6-16个碳的烷烃）、酮类等。 这些化合物具有易挥发和亲油等特点，被广泛应用于鞋类、玩具、油漆和石墨、粘合剂、化妆品、室内和汽车装饰材料等工业领域。VOC对人体健康有巨大的影响，会伤害人的肝脏、肾脏、大脑和神经系统，造成记忆力减退等严重后果，甚至可能致癌。</string>
+    <string name="filter_reset_title">重置滤芯</string>
+    <string name="filter_reset_tips">重置后将对滤芯使用时间重新计时，这将会影响到空气净化效果。确认是否重置？</string>
 
 
     <!--错误码-->

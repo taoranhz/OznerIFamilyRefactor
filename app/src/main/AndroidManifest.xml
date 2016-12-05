@@ -67,6 +67,8 @@
         </activity>
         <activity android:name=".Device.FilterStatusActivity">
         </activity>
+        <activity android:name=".Device.AirPurifier.AirDeskFilterActivity">
+        </activity>
     </application>
 
 </manifest>

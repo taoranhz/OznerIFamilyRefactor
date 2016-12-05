@@ -31,7 +31,8 @@
             android:gravity="center"
             android:padding="10dp"
             android:text="@string/water_know"
-            android:textColor="@color/detail_textblue"/>
+            android:textColor="@color/detail_textblue"
+            android:textSize="18dp"/>
 
         <TextView
             android:id="@+id/tv_buy_water_purifier"
@@ -46,6 +47,7 @@
             android:gravity="center"
             android:padding="10dp"
             android:text="@string/buy_water_purifier"
-            android:textColor="@color/detail_textblue"/>
+            android:textColor="@color/detail_textblue"
+            android:textSize="18dp"/>
     </LinearLayout>
 </LinearLayout>

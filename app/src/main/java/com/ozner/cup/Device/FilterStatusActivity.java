@@ -98,6 +98,7 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
                 initWaterPurifierInfo();
             } else if (TYPE_TAP_FILTER == deviceType) {
                 Log.e(TAG, "onCreate: 水探头");
+                initTapInfo();
             }
         } catch (Exception ex) {
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -118,8 +119,15 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
      * 初始化净水器信息
      */
     private void initWaterPurifierInfo() {
-        // TODO: 2016/12/2 隐藏该隐藏的信息 
+        // TODO: 2016/12/2 隐藏该隐藏的信息
         initWaterPurifierFilter(mac);
+    }
+
+    /**
+     * 初始化水探头滤芯信息
+     */
+    private void initTapInfo(){
+
     }
 
     /**

@@ -34,6 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
+import static com.ozner.cup.R.id.rlay_filterStatus;
 import static com.ozner.device.BaseDeviceIO.ConnectStatus.Connected;
 
 
@@ -57,7 +58,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
     TextView tvFiliteState;
     @InjectView(R.id.tv_filterValue)
     TextView tvFilterValue;
-    @InjectView(R.id.rlay_filterStatus)
+    @InjectView(rlay_filterStatus)
     RelativeLayout rlayFilterStatus;
     @InjectView(R.id.iv_purifierSetBtn)
     ImageView ivPurifierSetBtn;
@@ -241,7 +242,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         }
     }
 
-    @OnClick({R.id.iv_purifierSetBtn})
+    @OnClick({R.id.iv_purifierSetBtn, R.id.rlay_filterStatus, R.id.llay_center_detail})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_purifierSetBtn:
@@ -249,6 +250,16 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                     Intent setupIntent = new Intent(getContext(), SetUpAirVerActivity.class);
                     setupIntent.putExtra(Contacts.PARMS_MAC, mDeskAirPurifier.Address());
                     startActivity(setupIntent);
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
+                break;
+            case R.id.llay_center_detail:
+            case R.id.rlay_filterStatus:
+                if (mDeskAirPurifier != null) {
+                    Intent filterIntent = new Intent(getContext(), AirDeskFilterActivity.class);
+                    filterIntent.putExtra(Contacts.PARMS_MAC, mDeskAirPurifier.Address());
+                    startActivity(filterIntent);
                 } else {
                     showCenterToast(R.string.Not_found_device);
                 }
@@ -402,6 +413,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         tvAirTemp.setText("-");
         tvAirShiDu.setText("-");
         cproessbarView.updateValue(0);
+        tvFilterValue.setText("0%");
     }
 
     /**
@@ -437,8 +449,9 @@ public class AirDeskPurifierFragment extends DeviceFragment {
     /**
      * 显示滤芯状态
      */
-    private void showFilterStatus(int workTime) {
-        int maxWorkTime = mDeskAirPurifier.sensor().FilterStatus().maxWorkTime;
+    private void showFilterStatus(float workTime) {
+        Log.e(TAG, "showFilterStatus:workTime: "+workTime);
+        float maxWorkTime = mDeskAirPurifier.sensor().FilterStatus().maxWorkTime;
         if (maxWorkTime <= 0) {
             maxWorkTime = FILTER_MAX_WORK_TIME;
         }
