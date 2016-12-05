@@ -34,6 +34,9 @@ import com.ozner.device.OperateCallback;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -618,10 +621,36 @@ public class AirVerPurifierFragment extends DeviceFragment {
             showTemp(mVerAirPurifier.sensor().Temperature());
             showVOCState(mVerAirPurifier.sensor().VOC());
             showHumidity(mVerAirPurifier.sensor().Humidity());
+            showFilterStatus();
         } else {
             llayDeviceConnectTip.setVisibility(View.VISIBLE);
             tvDeviceConnectTips.setText(R.string.device_disConnect);
             showDeviceDisConn();
+        }
+    }
+
+    /**
+     * 显示滤芯状态
+     */
+    private void showFilterStatus() {
+        if (mVerAirPurifier != null) {
+            Date proDate = mVerAirPurifier.sensor().FilterStatus().lastTime;
+            Date stopDate = mVerAirPurifier.sensor().FilterStatus().stopTime;
+            long proMill = proDate.getTime();
+            long stopMill = stopDate.getTime();
+            long currentMill = Calendar.getInstance().getTimeInMillis();
+            long totalTime = (stopMill - proMill) / (24 * 3600 * 1000);
+            long useTime = (currentMill - proMill) / (24 * 3600 * 1000);
+            int lvXin = 0;
+            try {
+                lvXin = Math.round((totalTime - useTime) * 100 / totalTime);
+                if (lvXin < 0 || lvXin > 100) {
+                    lvXin = 0;
+                }
+            } catch (Exception ex) {
+                Log.e(TAG, "showFilterStatus_Ex: " + ex.getMessage());
+            }
+            tvFilterValue.setText(String.format("%d%%",lvXin));
         }
     }
 
