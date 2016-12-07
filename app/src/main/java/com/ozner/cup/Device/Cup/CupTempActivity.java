@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.CupRecordList;
@@ -546,7 +547,7 @@ public class CupTempActivity extends BaseActivity implements RadioGroup.OnChecke
         }
     }
 
-    @OnClick({R.id.iv_left_btn, R.id.uixWaterDetailProgress, R.id.iv_right_btn, R.id.tdsChartView,R.id.tv_water_know,R.id.tv_buy_water_purifier})
+    @OnClick({R.id.iv_left_btn, R.id.uixWaterDetailProgress, R.id.iv_right_btn, R.id.tdsChartView, R.id.tv_water_know, R.id.tv_buy_water_purifier})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_left_btn:
@@ -579,6 +580,9 @@ public class CupTempActivity extends BaseActivity implements RadioGroup.OnChecke
                 startActivity(knowIntent);
                 break;
             case R.id.tv_buy_water_purifier:
+                Intent eshopIntent = new Intent(OznerBroadcastAction.OBA_SWITCH_ESHOP);
+                sendBroadcast(eshopIntent);
+                this.finish();
                 break;
 
         }

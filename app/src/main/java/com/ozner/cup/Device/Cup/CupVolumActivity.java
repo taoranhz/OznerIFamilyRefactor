@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.CupRecordList;
@@ -367,6 +368,9 @@ public class CupVolumActivity extends BaseActivity implements RadioGroup.OnCheck
                 startActivity(knowIntent);
                 break;
             case R.id.tv_buy_water_purifier:
+                Intent eshopIntent = new Intent(OznerBroadcastAction.OBA_SWITCH_ESHOP);
+                sendBroadcast(eshopIntent);
+                this.finish();
                 break;
         }
     }

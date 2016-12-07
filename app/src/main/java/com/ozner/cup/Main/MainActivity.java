@@ -1,8 +1,12 @@
 package com.ozner.cup.Main;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -20,6 +24,7 @@ import com.ozner.AirPurifier.AirPurifierManager;
 import com.ozner.WaterPurifier.WaterPurifierManager;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Chat.ChatFragment;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
@@ -60,6 +65,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     @InjectView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
 
+    MainReceiver mainMonitor;
     UserInfo userInfo;
     UserInfoManager userInfoManager;
     //以设备类型来保存相应的Fragment
@@ -84,19 +90,39 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
+        initBroadCastFilter();
         String userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
         if (userid != null && !userid.isEmpty()) {
             Log.e(TAG, "onCreate: userid:" + userid);
             userInfo = DBManager.getInstance(this).getUserInfo(userid);
-//            if(userInfo!=null){
-//                Log.e(TAG, "onCreate: " + userInfo.toString());
-//            }
             userInfoManager = new UserInfoManager(this);
             userInfoManager.loadUserInfo(null);
         } else {
             startActivity(new Intent(this, LoginActivity.class));
             this.finish();
         }
+
+    }
+
+    /**
+     * 初始化监听器
+     */
+    private void initBroadCastFilter() {
+        mainMonitor = new MainReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(OznerBroadcastAction.OBA_SWITCH_ESHOP);
+        this.registerReceiver(mainMonitor, filter);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        try {
+            unregisterReceiver(mainMonitor);
+        } catch (Exception ex) {
+
+        }
+        super.onDestroy();
     }
 
     /**
@@ -105,8 +131,12 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
      * @param title
      */
     public void setCustomTitle(String title) {
-        if (!isDestroyed())
-            customTitle.setText(title);
+        try {
+            if (!isDestroyed())
+                customTitle.setText(title);
+        } catch (Exception ex) {
+
+        }
     }
 
     /**
@@ -115,8 +145,12 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
      * @param resId
      */
     public void setCustomTitle(int resId) {
-        if (!isDestroyed())
-            customTitle.setText(resId);
+        try {
+            if (!isDestroyed())
+                customTitle.setText(resId);
+        } catch (Exception ex) {
+
+        }
     }
 
     /**
@@ -147,12 +181,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         } else {
             bnBootomNavBar.selectTab(0);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        bnBootomNavBar.selectTab(0);
     }
 
     /**
@@ -189,7 +217,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
         } else {
             finish();
-//            System.exit(0);
         }
     }
 
@@ -209,11 +236,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     public void onDeviceItemClick(OznerDevice device, String mac) {
         closeLeftMenu();
         UserDataPreference.SetUserData(this, UserDataPreference.SelMac, mac);//保存选中的设备mac
-//        if (device != null) {
-//            // TODO: 2016/11/9 显示相应的设备页
-//        } else {
-//            // TODO: 2016/11/9 显示NoDeviceFragment
-//        }
         Log.e(TAG, "onDeviceItemClick: " + mac);
         bnBootomNavBar.selectTab(0, true);
     }
@@ -249,7 +271,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
      * 显示设备
      */
     private void showDevice() {
-//        try {
         FragmentTransaction trans = this.getSupportFragmentManager().beginTransaction();
         OznerDevice device = ((LeftMenuFragment) (getSupportFragmentManager().findFragmentById(R.id.fg_left_menu))).getSelectedDevice();
         if (device != null) {
@@ -268,9 +289,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
             trans.replace(R.id.fg_content, devFragmentMap.get(NoDeviceTag));
         }
         trans.commitAllowingStateLoss();
-//        } catch (Exception ex) {
-//            Log.e(TAG, "showDevice_Ex: " + ex.getMessage());
-//        }
     }
 
     @Override
@@ -316,9 +334,26 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
     @Override
     public void onTabReselected(int position) {
-        Log.e(TAG, "onTabReselected: " + position);
         if (position == 0) {
             showDevice();
+        }
+    }
+
+    class MainReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case OznerBroadcastAction.OBA_SWITCH_ESHOP:
+                    //这里不用延时的话没有效果
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            bnBootomNavBar.selectTab(1);
+                        }
+                    }, 300);
+                    break;
+            }
         }
     }
 }

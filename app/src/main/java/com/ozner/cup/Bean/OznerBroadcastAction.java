@@ -10,4 +10,7 @@ package com.ozner.cup.Bean;
 public class OznerBroadcastAction {
     //后台服务初始化完成
     public static final String OBA_Service_Init = "ozner.service.init";
+
+    //切换到商城
+    public static final String OBA_SWITCH_ESHOP = "ozner.switch.eshop";
 }

@@ -136,7 +136,7 @@ public class EShopFragment extends BaseFragment {
 
     @Override
     public void onAttach(Context context) {
-        ((MainActivity) context).setCustomTitle(R.string.eshop);
+
         super.onAttach(context);
     }
 
@@ -145,6 +145,7 @@ public class EShopFragment extends BaseFragment {
         try {
             setBarColor(R.color.colorAccent);
             setToolbarColor(R.color.colorAccent);
+            ((MainActivity) getActivity()).setCustomTitle(R.string.ozner_eshop);
         } catch (Exception ex) {
 
         }

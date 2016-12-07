@@ -18,6 +18,7 @@ import com.ozner.WaterPurifier.WaterPurifier;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.UIZPurifierExpView;
@@ -304,6 +305,9 @@ public class WaterTDSActivity extends BaseActivity implements RadioGroup.OnCheck
                 startActivity(knowIntent);
                 break;
             case R.id.tv_buy_water_purifier:
+                Intent eshopIntent = new Intent(OznerBroadcastAction.OBA_SWITCH_ESHOP);
+                sendBroadcast(eshopIntent);
+                this.finish();
                 break;
             case R.id.tv_chat_btn:
                 break;

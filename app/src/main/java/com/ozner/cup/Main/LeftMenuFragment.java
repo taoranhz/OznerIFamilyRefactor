@@ -218,7 +218,12 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "LeftMonitor_onReceive: " + intent.getAction());
-            initDataList();
+            if (intent.getAction().equals(OznerDeviceManager.ACTION_OZNER_MANAGER_DEVICE_ADD)
+                    || intent.getAction().equals(OznerDeviceManager.ACTION_OZNER_MANAGER_DEVICE_CHANGE)
+                    || intent.getAction().equals(OznerDeviceManager.ACTION_OZNER_MANAGER_OWNER_CHANGE)
+                    || intent.getAction().equals(OznerDeviceManager.ACTION_OZNER_MANAGER_DEVICE_REMOVE)) {
+                initDataList();
+            }
         }
     }
 

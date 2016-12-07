@@ -21,6 +21,8 @@
     <string name="chat">咨询</string>
     <string name="mine">我的</string>
 
+    <string name="ozner_eshop">浩泽商城</string>
+
     <!--错误信息提示-->
     <string name="exception_tips">异常信息</string>
     <string name="err_net_outline">网络中断，请检查您的网络状态"</string>
