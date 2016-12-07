@@ -44,6 +44,9 @@ public class Contacts {
     public static String getRedPacUrl = "http://www.oznerwater.com/lktnew/wapnew/Member/GrapRedPackages.aspx";
     public static String getShareHBUrl = "http://www.oznerwater.com/lktnew/wap/wxoauth.aspx?gourl=http://www.oznerwater.com/lktnew/wap/Member/InvitedMemberBrand.aspx";
 
+    // 健康水知道
+    public static String waterHealthUrl = "http://cup.ozner.net/app/cn/jxszd.html";
+
     //我的券
     public static String myTicketUrl = "http://www.oznerwater.com/lktnew/wapnew/Member/AwardList.aspx";
     //分享礼卡

@@ -116,6 +116,22 @@ public class HttpMethods {
     }
 
     /**
+     * 获取用户信息
+     * <p>
+     * 注：和获取头像信息联合使用完成UserInfo对象
+     *
+     * @param usertoken
+     * @param subscriber
+     */
+    public void getUserInfo(String usertoken, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getUserInfo(usertoken)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
+    /**
      * 获取净水器属性信息
      *
      * @param mac

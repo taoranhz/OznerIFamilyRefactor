@@ -1,5 +1,6 @@
 package com.ozner.cup.Main;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -23,6 +24,8 @@ import com.ozner.cup.Chat.ChatFragment;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.Device.AirPurifier.AirDeskPurifierFragment;
 import com.ozner.cup.Device.AirPurifier.AirVerPurifierFragment;
 import com.ozner.cup.Device.Cup.CupFragment;
@@ -31,6 +34,7 @@ import com.ozner.cup.Device.NoDeviceFragment;
 import com.ozner.cup.Device.Tap.TapFragment;
 import com.ozner.cup.Device.WaterPurifier.WaterPurifierFragment;
 import com.ozner.cup.EShop.EShopFragment;
+import com.ozner.cup.LoginWelcom.View.LoginActivity;
 import com.ozner.cup.MyCenter.MyCenterFragment;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.WeChatUrlUtil;
@@ -56,6 +60,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     @InjectView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
 
+    UserInfo userInfo;
+    UserInfoManager userInfoManager;
     //以设备类型来保存相应的Fragment
     private HashMap<String, DeviceFragment> devFragmentMap;
     private EShopFragment shopFragment;
@@ -78,6 +84,19 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
+        String userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
+        if (userid != null && !userid.isEmpty()) {
+            Log.e(TAG, "onCreate: userid:" + userid);
+            userInfo = DBManager.getInstance(this).getUserInfo(userid);
+//            if(userInfo!=null){
+//                Log.e(TAG, "onCreate: " + userInfo.toString());
+//            }
+            userInfoManager = new UserInfoManager(this);
+            userInfoManager.loadUserInfo(null);
+        } else {
+            startActivity(new Intent(this, LoginActivity.class));
+            this.finish();
+        }
     }
 
     /**

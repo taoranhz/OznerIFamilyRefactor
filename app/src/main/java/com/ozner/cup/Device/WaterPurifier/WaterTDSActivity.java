@@ -1,5 +1,6 @@
 package com.ozner.cup.Device.WaterPurifier;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.ozner.WaterPurifier.WaterPurifier;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.R;
@@ -297,6 +299,9 @@ public class WaterTDSActivity extends BaseActivity implements RadioGroup.OnCheck
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_water_know:
+                Intent knowIntent = new Intent(this, WebActivity.class);
+                knowIntent.putExtra(Contacts.PARMS_URL, Contacts.waterHealthUrl);
+                startActivity(knowIntent);
                 break;
             case R.id.tv_buy_water_purifier:
                 break;

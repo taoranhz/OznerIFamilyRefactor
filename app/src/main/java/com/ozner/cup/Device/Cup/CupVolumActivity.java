@@ -1,17 +1,20 @@
 package com.ozner.cup.Device.Cup;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
@@ -25,11 +28,12 @@ import java.util.Calendar;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * Created by ozner_67 on 2016/11/30.
  * 邮箱：xinde.zhang@cftcn.com
- *
+ * <p>
  * 饮水量详情
  */
 public class CupVolumActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
@@ -350,5 +354,20 @@ public class CupVolumActivity extends BaseActivity implements RadioGroup.OnCheck
         uixVolumeChart.putTag(3000, "3000\nml");
         uixVolumeChart.setAdapter(adapterMonth);
         uixVolumeChart.startAnimation();
+    }
+
+    @OnClick({R.id.tv_chat_btn, R.id.tv_water_know, R.id.tv_buy_water_purifier})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.tv_chat_btn:
+                break;
+            case R.id.tv_water_know:
+                Intent knowIntent = new Intent(this, WebActivity.class);
+                knowIntent.putExtra(Contacts.PARMS_URL, Contacts.waterHealthUrl);
+                startActivity(knowIntent);
+                break;
+            case R.id.tv_buy_water_purifier:
+                break;
+        }
     }
 }

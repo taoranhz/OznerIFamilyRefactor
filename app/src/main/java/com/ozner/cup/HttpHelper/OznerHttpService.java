@@ -55,6 +55,20 @@ public interface OznerHttpService {
 
 
     /**
+     * 获取用户信息
+     *
+     * 注：和获取头像信息联合使用完成UserInfo对象
+     *
+     * @param usertoken
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/GetUserInfo")
+    Observable<JsonObject> getUserInfo(@Field("usertoken") String usertoken);
+
+
+    /**
      * 获取净水器属性信息
      *
      * @param mac
