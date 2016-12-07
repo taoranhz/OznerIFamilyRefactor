@@ -95,7 +95,6 @@ public class MatchTapActivity extends BaseActivity {
 //        showEditDeviceInfo();
     }
 
-
     /**
      * 初始化actionBar
      */

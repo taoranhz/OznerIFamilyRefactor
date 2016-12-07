@@ -36,6 +36,7 @@ public class VOCIntroduceActivity extends BaseActivity {
         }
     }
 
+
     /**
      * 初始化ToolBar
      */

@@ -89,6 +89,7 @@ public class CupVolumActivity extends BaseActivity implements RadioGroup.OnCheck
         }
     }
 
+
     @Override
     protected void onResume() {
         initViewData();

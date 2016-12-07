@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Cup;
 import com.ozner.cup.Device.SetDeviceNameActivity;
@@ -554,6 +555,13 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
                 showReIntervalDialog();
                 break;
             case R.id.rlay_about_cup:
+                if (mCup != null) {
+                    Intent webIntent = new Intent(this, WebActivity.class);
+                    webIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutCup);
+                    startActivity(webIntent);
+                }else {
+                    showToastCenter(R.string.Not_found_device);
+                }
                 break;
         }
     }

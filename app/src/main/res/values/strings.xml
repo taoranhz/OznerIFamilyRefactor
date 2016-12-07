@@ -340,7 +340,6 @@
     <string name="filter_reset_tips">重置后将对滤芯使用时间重新计时，这将会影响到空气净化效果。确认是否重置？</string>
 
 
-
     <string name="unknown">未知</string>
     <string name="out_door_air">室外空气</string>
     <string name="city_legend">城市：</string>
@@ -350,6 +349,9 @@
     <string name="humidity_legend">湿度：</string>
     <string name="data_from_legend">数据来源：</string>
     <string name="I_got_it">我知道了</string>
+
+
+    <string name="url_null">URL参数为空</string>
 
 
     <!--错误码-->

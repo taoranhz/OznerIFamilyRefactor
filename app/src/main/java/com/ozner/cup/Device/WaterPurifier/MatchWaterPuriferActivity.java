@@ -148,6 +148,8 @@ public class MatchWaterPuriferActivity extends BaseActivity {
         readyMatchDevice();
     }
 
+
+
     /**
      * 初始化actionBar
      */

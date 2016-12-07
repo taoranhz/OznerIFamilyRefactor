@@ -101,6 +101,7 @@ public class WaterTDSActivity extends BaseActivity implements RadioGroup.OnCheck
         }
     }
 
+
     /**
      * 初始化数组
      */

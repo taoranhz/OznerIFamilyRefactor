@@ -100,6 +100,7 @@ public class MatchDeskAirActivity extends BaseActivity {
         startFindDevice();
     }
 
+
     /**
      * 初始化基本信息
      */

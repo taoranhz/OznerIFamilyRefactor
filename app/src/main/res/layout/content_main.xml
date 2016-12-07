@@ -19,7 +19,7 @@
     <ImageView
         android:background="@color/font_gray"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"/>
+        android:layout_height="1px"/>
     <com.ashokvarma.bottomnavigation.BottomNavigationBar
         android:id="@+id/bn_bootom_nav_bar"
         android:layout_gravity="bottom"

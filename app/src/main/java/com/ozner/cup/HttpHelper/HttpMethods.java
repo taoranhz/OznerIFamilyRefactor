@@ -80,7 +80,7 @@ public class HttpMethods {
         oznerHttpService.getPhoneCode(phone)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-//                .map(new ResultTransFunc1())
+                .map(new ResultTransFunc1())
                 .subscribe(subscriber);
     }
 
@@ -94,7 +94,7 @@ public class HttpMethods {
         oznerHttpService.getVoicePhoneCode(phone)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-//                .map(new ResultTransFunc1())
+                .map(new ResultTransFunc1())
                 .subscribe(subscriber);
     }
 
@@ -111,7 +111,7 @@ public class HttpMethods {
         oznerHttpService.login(phone, verifyCode, miei, deviceName)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-//                .map(new ResultTransFunc1())
+                .map(new ResultTransFunc1())
                 .subscribe(subscriber);
     }
 
@@ -144,12 +144,28 @@ public class HttpMethods {
 
     /**
      * 获取室外天气信息
+     *
      * @param subscriber
      */
-    public void getWeatherOutSide(Subscriber<JsonObject> subscriber){
+    public void getWeatherOutSide(Subscriber<JsonObject> subscriber) {
         oznerHttpService.getWeather()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 获取水探头滤芯信息
+     *
+     * @param usertoken
+     * @param mac
+     * @param subscriber
+     */
+    public void getTapFilterInfo(String usertoken, String mac, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getTapFilterInfo(usertoken, mac)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
                 .subscribe(subscriber);
     }
 

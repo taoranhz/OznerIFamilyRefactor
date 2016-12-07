@@ -18,7 +18,9 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.ozner.AirPurifier.AirPurifierManager;
 import com.ozner.WaterPurifier.WaterPurifierManager;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Chat.ChatFragment;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
 import com.ozner.cup.Device.AirPurifier.AirDeskPurifierFragment;
@@ -31,6 +33,7 @@ import com.ozner.cup.Device.WaterPurifier.WaterPurifierFragment;
 import com.ozner.cup.EShop.EShopFragment;
 import com.ozner.cup.MyCenter.MyCenterFragment;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.WeChatUrlUtil;
 import com.ozner.device.OznerDevice;
 import com.ozner.tap.TapManager;
 
@@ -262,7 +265,11 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 break;
             case 1:
                 if (shopFragment == null) {
-                    shopFragment = EShopFragment.newInstance(null);
+                    Bundle bundle = new Bundle();
+                    String eshop_url = WeChatUrlUtil.getMallUrl("18655591525", OznerPreference.getUserToken(this), "zh", "zh");
+                    bundle.putString(Contacts.PARMS_URL, eshop_url);
+                    shopFragment = EShopFragment.newInstance(bundle);
+
                 }
                 transaction.replace(R.id.fg_content, shopFragment).commitAllowingStateLoss();
 

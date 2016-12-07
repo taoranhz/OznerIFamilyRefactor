@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.ozner.WaterPurifier.WaterPurifier;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Device.SetDeviceNameActivity;
 import com.ozner.cup.R;
@@ -65,6 +66,7 @@ public class SetupWaterActivity extends BaseActivity {
         }
     }
 
+
     /**
      * 初始化ToolBar
      */
@@ -104,7 +106,13 @@ public class SetupWaterActivity extends BaseActivity {
                 startActivityForResult(setNameIntent, SET_NAME_REQ_CODE);
                 break;
             case R.id.rlay_about_purifier:
-                // TODO: 2016/11/16 关于净水器 
+                if (mWaterPurifier != null) {
+                    Intent webIntent = new Intent(this, WebActivity.class);
+                    webIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutWaterPurifier);
+                    startActivity(webIntent);
+                } else {
+                    showToastCenter(R.string.Not_found_device);
+                }
                 break;
             case R.id.tv_delete_device:
                 new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT).setMessage(R.string.delete_this_device)

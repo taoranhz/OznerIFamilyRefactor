@@ -24,6 +24,11 @@ public class Contacts {
     public final static String DEV_USER_WATER_GOAL = "device_user_water_goal";
     //水杯今日状态
     public final static String Cup_Today_Status = "cup_today_status";
+    //水探头滤芯开始时间
+    public final static String TAP_START_TIME = "tap_start_time";
+    //水探头滤芯使用时间
+    public final static String TAP_FILTER_USEDAY = "tap_filter_useday";
+
 
     //网络请求基础url
     public final static String HttpBaseUrl = "http://app.ozner.net:888/";
@@ -66,6 +71,25 @@ public class Contacts {
     //台式净水器滤芯购买链接
 //    public static String deskPurifierUrl = "http://www.oznerwater.com/lktnew/wap/shopping/confirmOrderFromQrcode.aspx?gid=69";
     public static String deskPurifierUrl = "http://www.oznerwater.com/lktnew/wap/shopping/confirmOrderFromQrcode.aspx?gid=65";
+
+
+    //空净常见问题
+    public static String air_faq= "file:///android_asset/air_faq.html";
+
+    //关于水探头
+    public static String aboutTap = "http://cup.ozner.net/app/gystt/gystt.html";
+    //关于智能杯
+    public static String aboutCup = "http://cup.ozner.net/app/gyznb/gyznb.html";//http://cup.ozner.net/app/us/gyznb_us.html英文版
+    //关于净水器
+    public static String aboutWaterPurifier = "http://cup.ozner.net/app/gyysj/gyysj.html";
+    //关于补水仪
+    public static String aboutWRM = "http://app.ozner.net:888//Public/Index";
+    //关于立式空净
+    public static String aboutAirVer = "file:///android_asset/hz_l.html";
+    //关于台式空净
+    public static String aboutAirDesk = "file:///android_asset/hz_t.html";
+    //关于TDS笔
+    public static String aboutTdsPen = "file:///android_asset/hz_tdspen.html";
 
 //    /*
 //    *可单独使用链接

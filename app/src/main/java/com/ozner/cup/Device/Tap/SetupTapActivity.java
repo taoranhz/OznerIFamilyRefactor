@@ -19,6 +19,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Device.SetDeviceNameActivity;
 import com.ozner.cup.R;
@@ -85,6 +86,7 @@ public class SetupTapActivity extends BaseActivity {
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
         }
     }
+
 
     /**
      * 初始化ToolBar
@@ -188,9 +190,18 @@ public class SetupTapActivity extends BaseActivity {
         return true;
     }
 
-    @OnClick({R.id.rlay_device_name, R.id.llay_first_time, R.id.llay_second_time, R.id.tv_delete_device})
+    @OnClick({R.id.rlay_aboutTap, R.id.rlay_device_name, R.id.llay_first_time, R.id.llay_second_time, R.id.tv_delete_device})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.rlay_aboutTap:
+                if (mTap != null) {
+                    Intent webIntent = new Intent(this, WebActivity.class);
+                    webIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutTap);
+                    startActivity(webIntent);
+                }else {
+                    showToastCenter(R.string.Not_found_device);
+                }
+                break;
             case R.id.rlay_device_name:
                 Intent setNameIntent = new Intent(this, SetDeviceNameActivity.class);
                 setNameIntent.putExtra(PARMS_MAC, mac);

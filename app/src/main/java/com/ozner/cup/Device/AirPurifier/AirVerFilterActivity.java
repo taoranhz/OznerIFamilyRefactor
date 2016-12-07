@@ -84,6 +84,7 @@ public class AirVerFilterActivity extends BaseActivity {
         }
     }
 
+
     /**
      * 初始化ToolBar
      */

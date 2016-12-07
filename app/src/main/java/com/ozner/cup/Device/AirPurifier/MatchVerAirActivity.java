@@ -145,6 +145,7 @@ public class MatchVerAirActivity extends BaseActivity {
         readyMatchDevice();
     }
 
+
     /**
      * 初始化actionBar
      */

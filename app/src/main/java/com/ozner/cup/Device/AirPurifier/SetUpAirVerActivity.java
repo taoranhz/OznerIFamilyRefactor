@@ -12,7 +12,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.ozner.AirPurifier.AirPurifier;
+import com.ozner.AirPurifier.AirPurifier_MXChip;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Device.SetDeviceNameActivity;
 import com.ozner.cup.R;
@@ -57,6 +59,7 @@ public class SetUpAirVerActivity extends BaseActivity {
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
         }
     }
+
 
     /**
      * 初始化ToolBar
@@ -119,8 +122,26 @@ public class SetUpAirVerActivity extends BaseActivity {
                 startActivityForResult(setNameIntent, SET_NAME_REQ_CODE);
                 break;
             case R.id.rlay_introduct:
+                if (mAirPurifier != null) {
+                    Intent aboutIntent = new Intent(this, WebActivity.class);
+                    if (mAirPurifier instanceof AirPurifier_MXChip) {
+                        aboutIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutAirVer);
+                    } else {
+                        aboutIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutAirDesk);
+                    }
+                    startActivity(aboutIntent);
+                }else {
+                    showToastCenter(R.string.Not_found_device);
+                }
                 break;
             case R.id.llay_faq:
+                if(mAirPurifier!=null){
+                    Intent faqIntent = new Intent(this,WebActivity.class);
+                    faqIntent.putExtra(Contacts.PARMS_URL,Contacts.air_faq);
+                    startActivity(faqIntent);
+                }else {
+                    showToastCenter(R.string.Not_found_device);
+                }
                 break;
             case R.id.tv_delete_device:
                 new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT).setMessage(R.string.delete_this_device)

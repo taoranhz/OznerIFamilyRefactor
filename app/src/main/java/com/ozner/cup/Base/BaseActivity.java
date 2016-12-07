@@ -18,13 +18,17 @@ import com.ozner.cup.R;
  * 邮箱：xinde.zhang@cftcn.com
  */
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        initBarColor();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
+//
+//    public abstract void setCustomTitle(int titleResId);
+//
+//    public abstract void setCustomTitle(String title);
 
     /**
      * 初始化导航栏颜色

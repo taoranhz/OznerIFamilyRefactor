@@ -91,6 +91,7 @@ public class MatchCupActivity extends BaseActivity {
         startFindDevice();
     }
 
+
     /**
      * 初始化actionBar
      */

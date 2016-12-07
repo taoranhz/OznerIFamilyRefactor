@@ -1,6 +1,8 @@
 package com.ozner.cup.HttpHelper;
 
 import android.content.Context;
+import android.util.Log;
+import android.view.Gravity;
 import android.widget.Toast;
 
 import com.ozner.cup.R;
@@ -74,12 +76,18 @@ public class ProgressSubscriber<JsonObject> extends Subscriber<JsonObject> imple
             Toast.makeText(mContext, mContext.getString(R.string.err_net_outline), Toast.LENGTH_SHORT).show();
         } else if (e instanceof ConnectException) {
             Toast.makeText(mContext, mContext.getString(R.string.err_net_outline), Toast.LENGTH_SHORT).show();
+        } else {
+            try {
+                Log.e("ProgressSubscriber", "onError: " + e.getMessage());
+                Toast toast = Toast.makeText(mContext, "error:" + mContext.getString(ApiException.getErrResId(Integer.parseInt(e.getMessage()))), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+            } catch (Exception ex) {
+                Log.e("ProgressSubscriber", "onError_Ex: " + ex.getMessage());
+            }
         }
-//        else {
-//            Toast.makeText(mContext, "error:" + mContext.getString(Integer.parseInt(ApiException.getErrMsgResId(Integer.parseInt(e.getMessage())))), Toast.LENGTH_SHORT).show();
-//        }
-        dismissProgressDialog();
 
+        dismissProgressDialog();
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -19,24 +20,33 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.JsonObject;
+import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.Device.DeviceFragment;
+import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.ProgressSubscriber;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.ChartAdapter;
 import com.ozner.cup.UIView.TapTDSChartView;
 import com.ozner.cup.UIView.TdsDetailProgress;
+import com.ozner.cup.Utils.MobileInfoUtil;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 import com.ozner.tap.Tap;
 import com.ozner.tap.TapRecord;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import rx.functions.Action1;
 
 import static com.ozner.cup.R.string.bad;
 
@@ -47,6 +57,7 @@ import static com.ozner.cup.R.string.bad;
 
 public class TapFragment extends DeviceFragment {
     private static final String TAG = "TapFragment";
+    private static final int INIT_WARRANTY = 30;// 默认有效期
     private static final int TextSize = 45;
     private static final int NumSize = 60;
     @InjectView(R.id.iv_battery_icon)
@@ -91,6 +102,7 @@ public class TapFragment extends DeviceFragment {
     private TapMonitor tapMonitor;
     //    private RotateAnimation rotateAnimation;
     private int oldTdsValue;
+    SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     int[] tdsDatas = new int[31];
 
     ChartAdapter recordAdapter = new ChartAdapter() {
@@ -152,7 +164,7 @@ public class TapFragment extends DeviceFragment {
             mTap = (Tap) device;
             refreshUIData();
         }
-
+        refreshTapFilterInfo();
     }
 
     @Override
@@ -162,6 +174,7 @@ public class TapFragment extends DeviceFragment {
             Bundle bundle = getArguments();
             mTap = (Tap) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
             oldTdsValue = 0;
+            refreshTapFilterInfo();
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -198,8 +211,8 @@ public class TapFragment extends DeviceFragment {
     @Override
     public void onResume() {
         try {
-            setBarColor(R.color.colorAccent);
-            setToolbarColor(R.color.colorAccent);
+            setBarColor(R.color.cup_detail_bg);
+            setToolbarColor(R.color.cup_detail_bg);
         } catch (Exception ex) {
 
         }
@@ -209,25 +222,79 @@ public class TapFragment extends DeviceFragment {
         super.onResume();
     }
 
-//    /**
-//     * 设置状态栏颜色
-//     */
-//    private void setBarColor(int resId) {
-//        if (Build.VERSION.SDK_INT >= 21) {
-//            Window window = ((MainActivity) getActivity()).getWindow();
-//            //更改状态栏颜色
-//            window.setStatusBarColor(ContextCompat.getColor(getContext(), resId));
-//        }
-//    }
-//
-//    /**
-//     * 设置主界面toolbar背景色
-//     *
-//     * @param resId
-//     */
-//    private void setToolbarColor(int resId) {
-//        ((MainActivity) getActivity()).setToolBarColor(resId);
-//    }
+
+    /**
+     * 刷新水探头滤芯信息
+     */
+    private void refreshTapFilterInfo() {
+        String startTimeStr = (String) mTap.Setting().get(Contacts.TAP_START_TIME, null);
+        if (startTimeStr != null) {
+            try {
+                int useDay = (int) mTap.Setting().get(Contacts.TAP_FILTER_USEDAY, 0);
+                Date startTime = dataFormat.parse(startTimeStr);
+                long temUseDay = (Calendar.getInstance().getTimeInMillis() - startTime.getTime()) / (24 * 3600 * 1000);
+                Log.e(TAG, "refreshTapFilterInfo: temUseDay:" + temUseDay);
+                if (temUseDay != useDay) {
+                    loadTapFilterFromNet();
+                } else {
+                    if (useDay < INIT_WARRANTY) {
+                        int ret = (INIT_WARRANTY - useDay) / INIT_WARRANTY * 100;
+                        showFilterInfo(ret);
+                    } else {
+                        showFilterInfo(0);
+                    }
+                }
+            } catch (Exception ex) {
+                Log.e(TAG, "refreshTapFilterInfo_Ex: " + ex.getMessage());
+            }
+        } else {
+            loadTapFilterFromNet();
+        }
+    }
+
+    /**
+     * 从网络加载滤芯数据
+     * <p>
+     * 这里获取数据，需要在设备配对时，将设备同步到服务器
+     */
+    private void loadTapFilterFromNet() {
+        Log.e(TAG, "loadTapFilterFromNet: mime:" + MobileInfoUtil.getImie(getContext()) + " ,deviceName:" + Build.MANUFACTURER);
+        if (mTap != null) {
+            Log.e(TAG, "loadTapFilterFromNet_Usertoken: " + OznerPreference.getUserToken(getContext()));
+            Log.e(TAG, "loadTapFilterFromNet_Mac: " + mTap.Address());
+            HttpMethods.getInstance().getTapFilterInfo(OznerPreference.getUserToken(getContext()), mTap.Address(), new ProgressSubscriber<JsonObject>(getContext(), new Action1<JsonObject>() {
+                @Override
+                public void call(JsonObject jsonObject) {
+                    Log.e(TAG, "loadTapFilterFromNet: " + jsonObject.toString());
+                }
+            }));
+        }
+    }
+
+    /**
+     * 显示滤芯信息
+     */
+    private void showFilterInfo(int ret) {
+        if (isAdded()) {
+            if (ret > 100) ret = 100;
+            if (ret < 0) ret = 0;
+            if (ret == 0) {
+                ivFilterIcon.setImageResource(R.drawable.filter_state0);
+                tvFilterTips.setText(R.string.filter_need_change);
+            } else if (ret > 0 && ret < 30) {
+                ivFilterIcon.setImageResource(R.drawable.filter_state1);
+                tvFilterTips.setText(R.string.filter_need_change);
+            } else if (ret > 30 && ret < 60) {
+                ivFilterIcon.setImageResource(R.drawable.filter_state2);
+                tvFilterTips.setText(R.string.filter_status);
+            } else if (ret > 60) {
+                ivFilterIcon.setImageResource(R.drawable.filter_state3);
+                tvFilterTips.setText(R.string.filter_status);
+            }
+
+            tvFilterValue.setText(String.format("%d%%", ret));
+        }
+    }
 
 
     /**
@@ -316,27 +383,32 @@ public class TapFragment extends DeviceFragment {
             //数字跑马灯
             if (tdsValue != 0) {
 //                if (oldTdsValue != tdsValue) {
-                    tvTdsValue.setTextSize(NumSize);
-                    final ValueAnimator animator = ValueAnimator.ofInt(oldTdsValue, tdsValue);
-                    animator.setDuration(500);
-                    animator.setInterpolator(new LinearInterpolator());//线性效果变化
-                    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                            Integer value = (Integer) animator.getAnimatedValue();
-                            tvTdsValue.setText("" + value);
-
+                tvTdsValue.setTextSize(NumSize);
+                final ValueAnimator animator = ValueAnimator.ofInt(oldTdsValue, tdsValue);
+                animator.setDuration(500);
+                animator.setInterpolator(new LinearInterpolator());//线性效果变化
+                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                        Integer value = (Integer) animator.getAnimatedValue();
+                        try {
+                            if (isAdded())
+                                tvTdsValue.setText("" + value);
+                        } catch (Exception ex) {
+                            Log.e(TAG, "onAnimationUpdate_Ex: " + ex.getMessage());
                         }
-                    });
-                    animator.start();
-                    if (tdsValue > 250) {
-                        tdsDetailProgress.update(100);
-                    } else {
+
+                    }
+                });
+                animator.start();
+                if (tdsValue > 250) {
+                    tdsDetailProgress.update(100);
+                } else {
 //                    double s = (tdsValue / 250.00) * 100;
 //                    tdsDetailProgress.update((int) s);
-                        tdsDetailProgress.update((tdsValue << 1) / 5);
-                    }
-                    oldTdsValue = tdsValue;
+                    tdsDetailProgress.update((tdsValue << 1) / 5);
+                }
+                oldTdsValue = tdsValue;
 //                }
             } else {
                 tvTdsState.setText(R.string.state_null);
