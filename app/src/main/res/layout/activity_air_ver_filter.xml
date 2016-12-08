@@ -129,9 +129,9 @@
                         android:textSize="43dp"/>
 
                     <TextView
-                        android:layout_marginLeft="5dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
                         android:text="mg"
                         android:textColor="@color/detail_textblue"
                         android:textSize="14dp"/>
@@ -175,9 +175,9 @@
                         android:textSize="43dp"/>
 
                     <TextView
-                        android:layout_marginLeft="5dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
                         android:text="%"
                         android:textColor="@color/detail_textblue"
                         android:textSize="14dp"/>
@@ -227,7 +227,8 @@
                     android:paddingRight="15dp"
                     android:paddingTop="10dp"
                     android:text="@string/chat"
-                    android:textColor="@color/detail_textblue"/>
+                    android:textColor="@color/detail_textblue"
+                    android:textSize="18dp"/>
 
                 <TextView
                     android:id="@+id/tv_buy_filter_btn"
@@ -244,7 +245,8 @@
                     android:paddingRight="15dp"
                     android:paddingTop="10dp"
                     android:text="@string/buy_filter"
-                    android:textColor="@color/detail_textblue"/>
+                    android:textColor="@color/detail_textblue"
+                    android:textSize="18dp"/>
             </LinearLayout>
 
 

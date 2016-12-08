@@ -16,9 +16,16 @@ import android.widget.TextView;
 
 import com.ozner.AirPurifier.AirPurifier_MXChip;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Command.OznerPreference;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.FilterProgressView;
+import com.ozner.cup.Utils.WeChatUrlUtil;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDeviceManager;
 
@@ -50,12 +57,9 @@ public class AirVerFilterActivity extends BaseActivity {
     TextView tvFilterRemind;
     @InjectView(R.id.filterProgress)
     FilterProgressView filterProgress;
-    @InjectView(R.id.tv_chatbtn)
-    TextView tvChatbtn;
-    @InjectView(R.id.tv_buy_filter_btn)
-    TextView tvBuyFilterBtn;
-    AirPurifierMonitor airMonitor;
 
+    private UserInfo userInfo;
+    AirPurifierMonitor airMonitor;
     private AirPurifier_MXChip mAirPurifier;
 
     @Override
@@ -72,6 +76,11 @@ public class AirVerFilterActivity extends BaseActivity {
             window.setNavigationBarColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
         }
         filterProgress.setThumb(R.drawable.filter_status_thumb);
+
+        String userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
+        if (userid != null && !userid.isEmpty()) {
+            userInfo = DBManager.getInstance(this).getUserInfo(userid);
+        }
 
         try {
             String mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
@@ -233,7 +242,7 @@ public class AirVerFilterActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    @OnClick({R.id.tv_pmQuestion, R.id.tv_vocQuestion})
+    @OnClick({R.id.tv_pmQuestion, R.id.tv_vocQuestion,R.id.tv_buy_filter_btn,R.id.tv_chatbtn})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_pmQuestion:
@@ -243,6 +252,20 @@ public class AirVerFilterActivity extends BaseActivity {
             case R.id.tv_vocQuestion:
                 Intent vocIntnet = new Intent(this, VOCIntroduceActivity.class);
                 startActivity(vocIntnet);
+                break;
+            case R.id.tv_buy_filter_btn:
+                if (userInfo != null && userInfo.getMobile() != null && !userInfo.getMobile().isEmpty()) {
+                    String shopUrl = WeChatUrlUtil.formatKjShopUrl(userInfo.getMobile(), OznerPreference.getUserToken(this), "zh", "zh");
+                    Intent shopIntent = new Intent(this, WebActivity.class);
+                    shopIntent.putExtra(Contacts.PARMS_URL, shopUrl);
+                    startActivity(shopIntent);
+                } else {
+                    showToastCenter(R.string.userinfo_miss);
+                }
+                break;
+            case R.id.tv_chatbtn:
+                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+                this.finish();
                 break;
         }
     }

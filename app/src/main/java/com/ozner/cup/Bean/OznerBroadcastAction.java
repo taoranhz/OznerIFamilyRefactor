@@ -13,4 +13,7 @@ public class OznerBroadcastAction {
 
     //切换到商城
     public static final String OBA_SWITCH_ESHOP = "ozner.switch.eshop";
+
+    //切换到咨询
+    public static final String OBA_SWITCH_CHAT = "ozner.switch.chat";
 }

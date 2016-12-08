@@ -310,6 +310,8 @@ public class WaterTDSActivity extends BaseActivity implements RadioGroup.OnCheck
                 this.finish();
                 break;
             case R.id.tv_chat_btn:
+                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+                this.finish();
                 break;
         }
     }

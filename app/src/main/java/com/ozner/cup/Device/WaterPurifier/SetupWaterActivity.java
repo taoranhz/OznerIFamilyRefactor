@@ -18,6 +18,8 @@ import com.ozner.WaterPurifier.WaterPurifier;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.WaterPurifierAttr;
 import com.ozner.cup.Device.SetDeviceNameActivity;
 import com.ozner.cup.R;
 import com.ozner.device.OznerDeviceManager;
@@ -107,8 +109,13 @@ public class SetupWaterActivity extends BaseActivity {
                 break;
             case R.id.rlay_about_purifier:
                 if (mWaterPurifier != null) {
+                    WaterPurifierAttr waterPurifierAttr = DBManager.getInstance(this).getWaterAttr(mWaterPurifier.Address());
+                    String aboutUrl = Contacts.aboutWaterPurifier;
+                    if (waterPurifierAttr != null && waterPurifierAttr.getSmlinkurl() != null && !waterPurifierAttr.getSmlinkurl().isEmpty()) {
+                        aboutUrl = waterPurifierAttr.getSmlinkurl();
+                    }
                     Intent webIntent = new Intent(this, WebActivity.class);
-                    webIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutWaterPurifier);
+                    webIntent.putExtra(Contacts.PARMS_URL, aboutUrl);
                     startActivity(webIntent);
                 } else {
                     showToastCenter(R.string.Not_found_device);

@@ -111,6 +111,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         mainMonitor = new MainReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(OznerBroadcastAction.OBA_SWITCH_ESHOP);
+        filter.addAction(OznerBroadcastAction.OBA_SWITCH_CHAT);
         this.registerReceiver(mainMonitor, filter);
     }
 
@@ -344,14 +345,24 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
-                case OznerBroadcastAction.OBA_SWITCH_ESHOP:
+                case OznerBroadcastAction.OBA_SWITCH_ESHOP://切换到商城
                     //这里不用延时的话没有效果
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             bnBootomNavBar.selectTab(1);
                         }
-                    }, 300);
+                    }, 100);
+                    break;
+                case OznerBroadcastAction.OBA_SWITCH_CHAT://切换到咨询
+                    Log.e(TAG, "onReceive: 切换到咨询");
+                    //这里不用延时的话没有效果
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            bnBootomNavBar.selectTab(2);
+                        }
+                    }, 100);
                     break;
             }
         }

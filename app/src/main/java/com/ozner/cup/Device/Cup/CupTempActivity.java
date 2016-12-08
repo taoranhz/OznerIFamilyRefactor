@@ -547,7 +547,8 @@ public class CupTempActivity extends BaseActivity implements RadioGroup.OnChecke
         }
     }
 
-    @OnClick({R.id.iv_left_btn, R.id.uixWaterDetailProgress, R.id.iv_right_btn, R.id.tdsChartView, R.id.tv_water_know, R.id.tv_buy_water_purifier})
+    @OnClick({R.id.iv_left_btn, R.id.uixWaterDetailProgress, R.id.iv_right_btn,
+            R.id.tdsChartView, R.id.tv_water_know, R.id.tv_buy_water_purifier,R.id.tv_chat_btn})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_left_btn:
@@ -584,7 +585,10 @@ public class CupTempActivity extends BaseActivity implements RadioGroup.OnChecke
                 sendBroadcast(eshopIntent);
                 this.finish();
                 break;
-
+            case R.id.tv_chat_btn:
+                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+                this.finish();
+                break;
         }
     }
 

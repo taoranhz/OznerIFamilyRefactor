@@ -20,9 +20,16 @@ import android.widget.TextView;
 
 import com.ozner.AirPurifier.AirPurifier_Bluetooth;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Command.OznerPreference;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.IndicatorProgressBar;
+import com.ozner.cup.Utils.WeChatUrlUtil;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
 import com.ozner.device.OznerDeviceManager;
@@ -56,6 +63,7 @@ public class AirDeskFilterActivity extends BaseActivity {
 
     AirPurifierMonitor airMonitor;
     private AirPurifier_Bluetooth mDeskAirPurifier;
+    private UserInfo userInfo;
     private Handler mHandler = new Handler();
 
     @Override
@@ -70,6 +78,10 @@ public class AirDeskFilterActivity extends BaseActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
             //更改底部导航栏颜色(限有底部的手机)
             window.setNavigationBarColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
+        }
+        String userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
+        if (userid != null && !userid.isEmpty()) {
+            userInfo = DBManager.getInstance(this).getUserInfo(userid);
         }
 
         filterProgress.setThumb(R.drawable.filter_status_thumb);
@@ -127,8 +139,18 @@ public class AirDeskFilterActivity extends BaseActivity {
                 startActivity(pmIntent);
                 break;
             case R.id.tv_chat_btn:
+                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+                this.finish();
                 break;
             case R.id.tv_buy_purifier:
+                if (userInfo != null && userInfo.getMobile() != null && !userInfo.getMobile().isEmpty()) {
+                    String shopUrl = WeChatUrlUtil.formatKjShopUrl(userInfo.getMobile(), OznerPreference.getUserToken(this), "zh", "zh");
+                    Intent shopIntent = new Intent(this, WebActivity.class);
+                    shopIntent.putExtra(Contacts.PARMS_URL, shopUrl);
+                    startActivity(shopIntent);
+                } else {
+                    showToastCenter(R.string.userinfo_miss);
+                }
                 break;
             case R.id.tv_resetFilter:
                 new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
@@ -206,7 +228,7 @@ public class AirDeskFilterActivity extends BaseActivity {
      */
     private void showFilterStatus() {
         float workTime = mDeskAirPurifier.sensor().FilterStatus().workTime;
-        Log.e(TAG, "showFilterStatus:workTime: "+workTime);
+        Log.e(TAG, "showFilterStatus:workTime: " + workTime);
         float maxWorkTime = mDeskAirPurifier.sensor().FilterStatus().maxWorkTime;
         if (maxWorkTime <= 0) {
             maxWorkTime = FILTER_MAX_WORK_TIME;

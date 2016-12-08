@@ -1,6 +1,7 @@
 package com.ozner.cup.Device;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,13 +13,19 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Command.OznerPreference;
+import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.DBHelper.WaterPurifierAttr;
 import com.ozner.cup.Device.WaterPurifier.WaterNetInfoManager;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.FilterProgressView;
 import com.ozner.cup.UIView.UIZGridView;
+import com.ozner.cup.Utils.WeChatUrlUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,7 +43,6 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
     public static final int TYPE_WATER_FILTER = 0;
     public static final int TYPE_TAP_FILTER = 1;
     public static final String PARMS_DEVICE_TYPE = "parms_device_type";
-
 
     @InjectView(R.id.title)
     TextView title;
@@ -79,7 +85,7 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
     private String mac = "";
     private int deviceType = TYPE_WATER_FILTER;
     private ProgressDialog progressDialog;
-
+    UserInfo userInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +96,10 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
         uizMoreProject.setOnItemClickListener(this);
         initToolBar();
         initStaticData();
-
+        String userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
+        if (userid != null) {
+            userInfo = DBManager.getInstance(this).getUserInfo(userid);
+        }
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             deviceType = getIntent().getIntExtra(PARMS_DEVICE_TYPE, TYPE_WATER_FILTER);
@@ -127,7 +136,7 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
     /**
      * 初始化水探头滤芯信息
      */
-    private void initTapInfo(){
+    private void initTapInfo() {
 
     }
 
@@ -300,12 +309,29 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_chat_btn:
-                // TODO: 2016/12/2  
-                showToastCenter("咨询");
+//                // TODO: 2016/12/2
+//                showToastCenter("咨询");
+                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+                this.finish();
                 break;
             case R.id.tv_buy_water_purifier:
-                // TODO: 2016/12/2  
-                showToastCenter("购买滤芯");
+                if (userInfo != null && userInfo.getMobile() != null && !userInfo.getMobile().isEmpty()) {
+                    if (TYPE_TAP_FILTER == deviceType) {
+                        String tapUrl = WeChatUrlUtil.formatTapShopUrl(userInfo.getMobile()
+                                , OznerPreference.getUserToken(this), "zh", "zh");
+                        startWebActivity(tapUrl);
+                    } else if (TYPE_WATER_FILTER == deviceType) {
+                        String waterUrl = WeChatUrlUtil.formatSecurityServiceUrl(userInfo.getMobile(),
+                                OznerPreference.getUserToken(this), "zh", "zh");
+                        if (purifierAttr != null && purifierAttr.getBuylinkurl() != null && !purifierAttr.getBuylinkurl().isEmpty()) {
+                            waterUrl = WeChatUrlUtil.formatUrl(purifierAttr.getBuylinkurl(), userInfo.getMobile()
+                                    , OznerPreference.getUserToken(this), "zh", "zh");
+                        }
+                        startWebActivity(waterUrl);
+                    }
+                } else {
+                    showToastCenter(R.string.userinfo_miss);
+                }
                 break;
             case R.id.tv_scancode_btn:
                 // TODO: 2016/12/2  
@@ -318,6 +344,46 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // TODO: 2016/12/2
         showToastCenter("点击了：" + projectStr[position]);
+        switch (position) {
+            case 0:
+                if (userInfo != null && userInfo.getMobile() != null && !userInfo.getMobile().isEmpty()) {
+                    String tapUrl = WeChatUrlUtil.formatFilterTapUrl(userInfo.getMobile()
+                            , OznerPreference.getUserToken(FilterStatusActivity.this), "zh", "zh");
+                    startWebActivity(tapUrl);
+                } else {
+                    showToastCenter(R.string.userinfo_miss);
+                }
+                break;
+            case 1:
+                if (userInfo != null && userInfo.getMobile() != null && !userInfo.getMobile().isEmpty()) {
+                    String goldUrl = WeChatUrlUtil.formatFilterGoldSpringUrl(userInfo.getMobile()
+                            , OznerPreference.getUserToken(FilterStatusActivity.this), "zh", "zh");
+                    startWebActivity(goldUrl);
+                } else {
+                    showToastCenter(R.string.userinfo_miss);
+                }
+                break;
+            case 2:
+                if (userInfo != null && userInfo.getMobile() != null && !userInfo.getMobile().isEmpty()) {
+                    String cupUrl = WeChatUrlUtil.formatFilterCupUrl(userInfo.getMobile()
+                            , OznerPreference.getUserToken(FilterStatusActivity.this), "zh", "zh");
+                    startWebActivity(cupUrl);
+                } else {
+                    showToastCenter(R.string.userinfo_miss);
+                }
+                break;
+        }
+    }
+
+    /**
+     * 点击更多产品，跳转到指定商城页面
+     *
+     * @param url
+     */
+    private void startWebActivity(String url) {
+        Intent filterIntent = new Intent(FilterStatusActivity.this, WebActivity.class);
+        filterIntent.putExtra(Contacts.PARMS_URL, url);
+        startActivity(filterIntent);
     }
 
     @Override
