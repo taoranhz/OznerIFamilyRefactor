@@ -52,12 +52,18 @@ public class MyCenterFragment extends BaseFragment {
 
     @Override
     public void onAttach(Context context) {
-        try {
-            ((MainActivity) context).setCustomTitle(R.string.mine);
-        } catch (Exception ex) {
-
-        }
+//        try {
+//            ((MainActivity) context).setCustomTitle(R.string.mine);
+//        } catch (Exception ex) {
+//
+//        }
         super.onAttach(context);
+    }
+
+    @Override
+    public void onDetach() {
+        System.gc();
+        super.onDetach();
     }
 
     @Override

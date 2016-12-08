@@ -939,6 +939,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
         setToolbarColor(R.color.colorAccent);
         setBarColor(R.color.colorAccent);
 //        }
+        System.gc();
         super.onDetach();
     }
 

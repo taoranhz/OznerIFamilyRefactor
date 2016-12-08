@@ -530,6 +530,12 @@ public class TapFragment extends DeviceFragment {
         ButterKnife.reset(this);
     }
 
+    @Override
+    public void onDetach() {
+        System.gc();
+        super.onDetach();
+    }
+
     @OnClick({R.id.rlay_filter, R.id.iv_setting, R.id.llay_tds_detail})
     public void onClick(View view) {
         switch (view.getId()) {

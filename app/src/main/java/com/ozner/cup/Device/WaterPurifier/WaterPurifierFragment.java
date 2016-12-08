@@ -616,7 +616,7 @@ public class WaterPurifierFragment extends DeviceFragment {
             tdsPre = tdsThen = 0;
         }
 
-        Log.e(TAG, "showTdsState: oldPre:"+oldPreValue+" , oldThen:"+oldThenValue);
+        Log.e(TAG, "showTdsState: oldPre:" + oldPreValue + " , oldThen:" + oldThenValue);
         //只有当数据和上次不一样时才更新刷新
         if (oldPreValue != tdsPre || oldThenValue != tdsThen) {
 
@@ -748,6 +748,12 @@ public class WaterPurifierFragment extends DeviceFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
+    }
+
+    @Override
+    public void onDetach() {
+        System.gc();
+        super.onDetach();
     }
 
     Handler mHandler = new Handler();

@@ -499,6 +499,12 @@ public class CupFragment extends DeviceFragment {
         ButterKnife.reset(this);
     }
 
+    @Override
+    public void onDetach() {
+        System.gc();
+        super.onDetach();
+    }
+
     @OnClick({R.id.iv_setting, R.id.llay_tds_detail, R.id.rlay_water_volum, R.id.rlay_water_temp})
     public void onClick(View view) {
         switch (view.getId()) {

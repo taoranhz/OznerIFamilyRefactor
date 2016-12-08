@@ -19,6 +19,7 @@ public class ChatFragment extends BaseFragment {
     public ChatFragment() {
         // Required empty public constructor
     }
+
     /**
      * 实例化Fragment
      *
@@ -45,10 +46,21 @@ public class ChatFragment extends BaseFragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_chat, container, false);
     }
+
     @Override
     public void onAttach(Context context) {
-        ((MainActivity)context).setCustomTitle(R.string.chat);
+//        try {
+//            ((MainActivity) context).setCustomTitle(R.string.chat);
+//        } catch (Exception ex) {
+//
+//        }
         super.onAttach(context);
+    }
+
+    @Override
+    public void onDetach() {
+        System.gc();
+        super.onDetach();
     }
 
     @Override
@@ -56,7 +68,7 @@ public class ChatFragment extends BaseFragment {
         try {
             setBarColor(R.color.colorAccent);
             setToolbarColor(R.color.colorAccent);
-            ((MainActivity)getActivity()).setCustomTitle(R.string.chat);
+            ((MainActivity) getActivity()).setCustomTitle(R.string.chat);
         } catch (Exception ex) {
 
         }

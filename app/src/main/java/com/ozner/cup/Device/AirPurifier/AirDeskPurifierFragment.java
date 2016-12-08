@@ -642,6 +642,12 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         ButterKnife.reset(this);
     }
 
+    @Override
+    public void onDetach() {
+        System.gc();
+        super.onDetach();
+    }
+
 
     class ValueChangeListener implements CProessbarView.ValueChangeListener {
 
