@@ -20,6 +20,7 @@ import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.Device.DeviceFragment;
+import com.ozner.cup.Device.TDSSensorManager;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.TdsDetailProgress;
@@ -33,8 +34,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-import static com.ozner.cup.R.id.tv_tdsRank;
-import static com.ozner.cup.R.string.bad;
 
 public class CupFragment extends DeviceFragment {
     private static final String TAG = "CupFragment";
@@ -60,7 +59,7 @@ public class CupFragment extends DeviceFragment {
     TextView tvTdsState;
     @InjectView(R.id.tv_tdsValue)
     TextView tvTdsValue;
-    @InjectView(tv_tdsRank)
+    @InjectView(R.id.tv_tdsRank)
     TextView tvTdsRank;
     @InjectView(R.id.iv_volumIcon)
     ImageView ivVolumIcon;
@@ -84,9 +83,12 @@ public class CupFragment extends DeviceFragment {
     TextView tvTempTips;
 
     private Cup mCup;
-    //    private int oldTdsValue;
+    private int oldTdsValue, oldVolumeValue;
     private CupMonitor mMonitor;
     Calendar recordCal = Calendar.getInstance();
+    private TDSSensorManager tdsSensroManager;
+    private int beatPer = 0;
+    private int volumeRank = 0;
 
 
     /**
@@ -137,11 +139,13 @@ public class CupFragment extends DeviceFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        tdsSensroManager = new TDSSensorManager(getContext());
         initAnimation();
         try {
             Bundle bundle = getArguments();
             mCup = (Cup) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
-//            oldTdsValue = 0;
+            oldTdsValue = 0;
+            oldVolumeValue = 0;
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -293,7 +297,32 @@ public class CupFragment extends DeviceFragment {
                 } else {
                     ivVolumIcon.setImageResource(R.drawable.watervolum80);
                 }
+
+                if (oldVolumeValue != record.Volume) {
+                    oldVolumeValue = record.Volume;
+                    updateVolumeSensor(String.valueOf(record.Volume));
+                }
             }
+        }
+    }
+
+    /**
+     * 更新当天饮水量获取好友内排名
+     */
+    private void updateVolumeSensor(final String volume) {
+        if (mCup != null) {
+            tdsSensroManager = new TDSSensorManager(getContext());
+            tdsSensroManager.updateVolumeSensor(mCup.Address(), mCup.Type(), volume, new TDSSensorManager.TDSListener() {
+                @Override
+                public void onSuccess(int result) {
+                    volumeRank = result;
+                }
+
+                @Override
+                public void onFail(String msg) {
+                    Log.e(TAG, "loadTdsFriendRank_onFail: " + msg);
+                }
+            });
         }
     }
 
@@ -334,9 +363,9 @@ public class CupFragment extends DeviceFragment {
         if (tdsValue > 5000) {//传感器无数据
             showNoData();
         } else {
-            int beat = 68;
-            tvTdsRank.setText(String.format(getString(R.string.beat_users), beat));
             tvTdsRank.setVisibility(View.VISIBLE);
+            tvTdsRank.setText(String.format(getString(R.string.beat_users), beatPer));
+
             //显示tds对应状态
             if (tdsValue > 0 && tdsValue <= CupRecord.TDS_Good_Value) {
                 ivTdsState.setVisibility(View.VISIBLE);
@@ -349,12 +378,11 @@ public class CupFragment extends DeviceFragment {
             } else if (tdsValue > CupRecord.TDS_Bad_Value) {
                 ivTdsState.setVisibility(View.VISIBLE);
                 Glide.with(this).load(R.drawable.face_bad).asBitmap().into(ivTdsState);
-                tvTdsState.setText(bad);
+                tvTdsState.setText(R.string.bad);
             }
 
             //数字跑马灯
             if (tdsValue != 0) {
-//                if (oldTdsValue != tdsValue) {
                 tvTdsValue.setTextSize(NumSize);
                 tvTdsValue.setText(String.valueOf(tdsValue));
                 if (tdsValue > 250) {
@@ -362,11 +390,40 @@ public class CupFragment extends DeviceFragment {
                 } else {
                     tdsDetailProgress.update((tdsValue << 1) / 5);
                 }
-//                    oldTdsValue = tdsValue;
-//                }
+                if (oldTdsValue != tdsValue) {
+                    oldTdsValue = tdsValue;
+                    // TODO: 2016/12/8 updateTDSSensor
+                    updateTdsSensor(tdsValue);
+                }
             } else {
                 showNoData();
             }
+        }
+    }
+
+    /**
+     * 上传TDS获取排名
+     *
+     * @param tds
+     */
+    private void updateTdsSensor(int tds) {
+        if (tdsSensroManager != null && mCup != null) {
+            tdsSensroManager.updateTds(mCup.Address(), mCup.Type(), String.valueOf(tds), null, null, new TDSSensorManager.TDSListener() {
+                @Override
+                public void onSuccess(int result) {
+                    try {
+                        beatPer = result;
+                        refreshUIData();
+                    } catch (Exception ex) {
+                        Log.e(TAG, "onSuccess_Ex: " + ex.getMessage());
+                    }
+                }
+
+                @Override
+                public void onFail(String msg) {
+                    Log.e(TAG, "onFail: " + msg);
+                }
+            });
         }
     }
 
@@ -380,6 +437,8 @@ public class CupFragment extends DeviceFragment {
         tvTdsValue.setTextSize(TextSize);
         tvTdsRank.setVisibility(View.INVISIBLE);
         tdsDetailProgress.update(0);
+        ivBatteryIcon.setImageResource(R.drawable.battery0);
+        tvBatteryValue.setText(R.string.state_null);
     }
 
     /**
@@ -465,6 +524,7 @@ public class CupFragment extends DeviceFragment {
                 if (mCup != null) {
                     Intent volumIntent = new Intent(getContext(), CupVolumActivity.class);
                     volumIntent.putExtra(Contacts.PARMS_MAC, mCup.Address());
+                    volumIntent.putExtra(Contacts.PARMS_RANK, volumeRank);
                     startActivity(volumIntent);
                 } else {
                     Toast.makeText(getContext(), R.string.Not_found_device, Toast.LENGTH_SHORT).show();

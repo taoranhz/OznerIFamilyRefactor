@@ -12,6 +12,9 @@ public class Contacts {
     public final static String PARMS_MAC = "parms_mac";
     //传递参数url
     public final static String PARMS_URL = "parms_url";
+    //传递饮水量排名
+    public final static String PARMS_RANK = "parms_rank";
+
     //activity返回的设备名字
     public final static String RESULT_NAME = "result_name";
     //activity返回的设备位置

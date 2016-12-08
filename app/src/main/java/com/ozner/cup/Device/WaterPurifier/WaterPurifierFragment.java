@@ -20,19 +20,26 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ozner.WaterPurifier.WaterPurifier;
+import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.OznerPreference;
+import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.DBHelper.WaterPurifierAttr;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Device.FilterStatusActivity;
+import com.ozner.cup.Device.TDSSensorManager;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.PurifierDetailProgress;
+import com.ozner.cup.Utils.WeChatUrlUtil;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
+import com.ozner.wifi.ayla.AylaIO;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -119,6 +126,8 @@ public class WaterPurifierFragment extends DeviceFragment {
     private boolean hasHot = false;
     private boolean hasCool = false;
     private boolean isShowFilterTips = false;
+    private String dsn = "";
+    private TDSSensorManager tdsSensorManager;
 
     /**
      * 实例化Fragment
@@ -147,6 +156,7 @@ public class WaterPurifierFragment extends DeviceFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        tdsSensorManager = new TDSSensorManager(getContext());
         initAnimation();
         try {
             Bundle bundle = getArguments();
@@ -449,6 +459,8 @@ public class WaterPurifierFragment extends DeviceFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // TODO: 2016/11/16 购买滤芯逻辑处理
+                        buyFilter();
+                        dialog.cancel();
                     }
                 });
                 builer.show();
@@ -456,18 +468,25 @@ public class WaterPurifierFragment extends DeviceFragment {
         });
     }
 
-//    /**
-//     * 初始化动画
-//     */
-//
-//    private void initAnimation() {
-//        rotateAnimation = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-//        rotateAnimation.setRepeatCount(-1);
-//        LinearInterpolator li = new LinearInterpolator();
-//        rotateAnimation.setInterpolator(li);
-//        rotateAnimation.setFillAfter(false);
-//        rotateAnimation.setDuration(1000);
-//    }
+    /**
+     * 购买滤芯
+     */
+    private void buyFilter() {
+        String userid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, null);
+        if (userid != null) {
+            UserInfo info = DBManager.getInstance(getContext()).getUserInfo(userid);
+            if (info != null && info.getMobile() != null && !info.getMobile().isEmpty()) {
+                String url = WeChatUrlUtil.formatTapShopUrl(info.getMobile(), OznerPreference.getUserToken(getContext()), "zh", "zh");
+                if (purifierAttr != null && purifierAttr.getBuylinkurl() != null && !purifierAttr.getBuylinkurl().isEmpty()) {
+                    url = purifierAttr.getBuylinkurl();
+                }
+                Intent buyFilterIntent = new Intent(getContext(), WebActivity.class);
+                buyFilterIntent.putExtra(Contacts.PARMS_URL, url);
+                startActivity(buyFilterIntent);
+            }
+        }
+    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -496,10 +515,8 @@ public class WaterPurifierFragment extends DeviceFragment {
 
     @Override
     protected void refreshUIData() {
-        // TODO: 2016/11/11 加载数据，并填充页面 
         if (isWaterPuriferAdd()) {
             if (mWaterPurifer != null && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
-                // TODO: 2016/11/7 加载数据，并填充页面
                 Log.e(TAG, "refreshUIData: ");
                 refreshConnectState();
                 refreshSensorData();
@@ -599,6 +616,7 @@ public class WaterPurifierFragment extends DeviceFragment {
             tdsPre = tdsThen = 0;
         }
 
+        Log.e(TAG, "showTdsState: oldPre:"+oldPreValue+" , oldThen:"+oldThenValue);
         //只有当数据和上次不一样时才更新刷新
         if (oldPreValue != tdsPre || oldThenValue != tdsThen) {
 
@@ -611,6 +629,7 @@ public class WaterPurifierFragment extends DeviceFragment {
                 tvAfterValue.setText(String.valueOf(tdsThen));
                 tvPreValue.setTextSize(NumSize);
                 tvAfterValue.setTextSize(NumSize);
+                updateTdsSensor(String.valueOf(tdsThen), String.valueOf(tdsPre));
             } else {
                 tvPreValue.setText(R.string.state_null);
                 tvAfterValue.setText(R.string.state_null);
@@ -659,6 +678,25 @@ public class WaterPurifierFragment extends DeviceFragment {
                 Glide.with(this).load(R.drawable.face_bad).into(ivTdsStateIcon);
             }
             tvTdsStateText.setText(R.string.bad);
+        }
+    }
+
+    /**
+     * 上传TDS
+     *
+     * @param tds
+     * @param beforeTds
+     */
+    private void updateTdsSensor(String tds, String beforeTds) {
+        if (mWaterPurifer != null) {
+            try {
+                if (mWaterPurifer.IO() instanceof AylaIO) {
+                    dsn = ((AylaIO) mWaterPurifer.IO()).DSN();
+                }
+            } catch (Exception ex) {
+
+            }
+            tdsSensorManager.updateTds(mWaterPurifer.Address(), mWaterPurifer.Type(), tds, beforeTds, dsn, null);
         }
     }
 

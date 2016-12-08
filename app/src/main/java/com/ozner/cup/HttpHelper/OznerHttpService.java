@@ -56,7 +56,7 @@ public interface OznerHttpService {
 
     /**
      * 获取用户信息
-     *
+     * <p>
      * 注：和获取头像信息联合使用完成UserInfo对象
      *
      * @param usertoken
@@ -111,4 +111,62 @@ public interface OznerHttpService {
      */
     @GET("OznerServer/GetWeather")
     Observable<JsonObject> getWeather();
+
+    /**
+     * 上传TDS获取排名
+     *
+     * @param usertoken
+     * @param mac
+     * @param type
+     * @param tds
+     * @param beforetds 水机必须字段 TDS 净化前的值 针对水机
+     * @param dsn       Ayla 设备标识 String
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/TDSSensor")
+    Observable<JsonObject> updateTDSSensor(@Field("usertoken") String usertoken, @Field("mac") String mac
+            , @Field("type") String type, @Field("tds") String tds
+            , @Field("beforetds") String beforetds, @Field("dsn") String dsn);
+
+    /**
+     * 获取朋友圈TDS排名
+     *
+     * @param usertoken
+     * @param type
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/TdsFriendRank")
+    Observable<JsonObject> getTdsFriendRank(@Field("usertoken") String usertoken, @Field("type") String type);
+
+
+    /**
+     * 获取朋友圈饮水量排名
+     *
+     * @param usertoken
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/VolumeFriendRank")
+    Observable<JsonObject> getVolumeFriendRank(@Field("usertoken") String usertoken);
+
+    /**
+     * 更新当天饮水量获取好友内排名
+     *
+     * @param usertoken
+     * @param mac
+     * @param type
+     * @param volume
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/VolumeSensor")
+    Observable<JsonObject> updateVolumeSensor(@Field("usertoken") String usertoken,@Field("mac") String mac
+    ,@Field("type") String type,@Field("volume") String volume);
+
 }

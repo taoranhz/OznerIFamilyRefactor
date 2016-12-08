@@ -20,6 +20,8 @@ import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.CupRecord;
+import com.ozner.cup.Device.RankType;
+import com.ozner.cup.Device.TDSSensorManager;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.UIZPurifierExpView;
 import com.ozner.device.OznerDeviceManager;
@@ -74,6 +76,7 @@ public class WaterTDSActivity extends BaseActivity implements RadioGroup.OnCheck
     private WaterPurifier mWaterPurifier;
     private int oldPreValue, oldThenValue;
     int[] mon_predata, mon_afterdata, week_predata, week_afterdata;
+    private TDSSensorManager tdsSensorManager;
 
 
     @Override
@@ -102,8 +105,26 @@ public class WaterTDSActivity extends BaseActivity implements RadioGroup.OnCheck
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
         }
+        loadTdsFriendRank();
     }
 
+    /**
+     * 获取朋友圈tds排名
+     */
+    private void loadTdsFriendRank() {
+        tdsSensorManager = new TDSSensorManager(this);
+        tdsSensorManager.getTdsFriendRank(RankType.WaterType, new TDSSensorManager.TDSListener() {
+            @Override
+            public void onSuccess(int result) {
+                tvTdsRankValue.setText(String.valueOf(result));
+            }
+
+            @Override
+            public void onFail(String msg) {
+                Log.e(TAG, "getTdsFriendRank_onFail: " + msg);
+            }
+        });
+    }
 
     /**
      * 初始化数组

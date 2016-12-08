@@ -185,4 +185,69 @@ public class HttpMethods {
                 .subscribe(subscriber);
     }
 
+
+    /**
+     * @param usertoken
+     * @param mac
+     * @param type
+     * @param tds
+     * @param beforetds  水机必须字段 TDS 净化前的值 针对水机
+     * @param dsn        Ayla 设备标识 String
+     * @param subscriber
+     */
+    public void updateTDSSensor(String usertoken, String mac, String type, String tds
+            , String beforetds, String dsn, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.updateTDSSensor(usertoken, mac, type, tds, beforetds, dsn)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 获取朋友圈TDS排名
+     *
+     * @param usertoken
+     * @param type
+     * @param subscriber
+     */
+    public void getTdsFriendRank(String usertoken, String type, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getTdsFriendRank(usertoken, type)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 获取朋友圈饮水量排名
+     *
+     * @param usertoken
+     * @param subscriber
+     */
+    public void getVolumeFriendRank(String usertoken, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getVolumeFriendRank(usertoken)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 更新当天饮水量获取好友内排名
+     *
+     * @param usertoken
+     * @param mac
+     * @param type
+     * @param volume
+     * @param subscriber
+     */
+    public void updateVolumeSensor(String usertoken, String mac, String type, String volume, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.updateVolumeSensor(usertoken, mac, type, volume)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
 }

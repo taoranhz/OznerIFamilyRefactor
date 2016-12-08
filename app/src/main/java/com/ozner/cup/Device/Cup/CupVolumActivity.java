@@ -63,6 +63,7 @@ public class CupVolumActivity extends BaseActivity implements RadioGroup.OnCheck
     TextView tvBuyWaterPurifier;
 
     private String mac = "";
+    private int volumeRank = 0;
     private Cup mCup;
     private int[] dataDay, dataWeek, dataMonth;
     private ChartAdapter adapterDay, adapterWeek, adapterMonth;
@@ -86,6 +87,7 @@ public class CupVolumActivity extends BaseActivity implements RadioGroup.OnCheck
         initRecordCal();
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
+            volumeRank = getIntent().getIntExtra(Contacts.PARMS_RANK, 0);
             Log.e(TAG, "onCreate: mac:" + mac);
             mCup = (Cup) OznerDeviceManager.Instance().getDevice(mac);
         } catch (Exception ex) {
@@ -225,16 +227,20 @@ public class CupVolumActivity extends BaseActivity implements RadioGroup.OnCheck
      */
     private void initWterVolum() {
         if (mCup != null) {
+            tvTdsRankValue.setText(String.valueOf(volumeRank));
             int waterGoal = (int) mCup.Setting().get(Contacts.DEV_USER_WATER_GOAL, -1);
             if (-1 == waterGoal) {
                 waterGoal = 2000;
             }
             CupRecord record = mCup.Volume().getRecordByDate(recordCal.getTime());
-
-            if (record.Volume < waterGoal) {
-                tvWaterVolum.setText(String.valueOf(record.Volume * 100 / waterGoal));
+            if (record != null) {
+                if (record.Volume < waterGoal) {
+                    tvWaterVolum.setText(String.valueOf(record.Volume * 100 / waterGoal));
+                } else {
+                    tvWaterVolum.setText("100");
+                }
             } else {
-                tvWaterVolum.setText("100");
+                tvWaterVolum.setText("0");
             }
         }
     }

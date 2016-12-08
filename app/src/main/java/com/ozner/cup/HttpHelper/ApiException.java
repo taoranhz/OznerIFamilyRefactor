@@ -51,17 +51,17 @@ public class ApiException extends RuntimeException {
         ErrMap.put(-10023, R.string.Code_Login_Error);
     }
 
-    public static String getErrMsgResId(int errCode) {
-        if (ErrMap.containsKey(errCode)) {
-            try {
-                return String.valueOf(ErrMap.get(errCode));
-            } catch (Exception ex) {
-                return String.valueOf(R.string.Code_Failed);
-            }
-        } else {
-            return String.valueOf(R.string.Code_Failed);
-        }
-    }
+//    public static String getErrMsgResId(int errCode) {
+//        if (ErrMap.containsKey(errCode)) {
+//            try {
+//                return String.valueOf(ErrMap.get(errCode));
+//            } catch (Exception ex) {
+//                return String.valueOf(R.string.Code_Failed);
+//            }
+//        } else {
+//            return String.valueOf(R.string.Code_Failed);
+//        }
+//    }
 
     public static int getErrResId(int errCode) {
         if (ErrMap.containsKey(errCode)) {

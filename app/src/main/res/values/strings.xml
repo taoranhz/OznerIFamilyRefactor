@@ -365,7 +365,7 @@
     <string name="Code_Code_Wrong">验证码错误</string>
     <string name="Code_Device_Notfound">设备没有发现</string>
     <string name="Code_Exception">异常错误</string>
-    <string name="Code_Failed">失败</string>
+    <string name="Code_Failed">未获取到数据</string>
     <string name="Code_Friend_NoGx">和目标用户没有好友关系</string>
     <string name="Code_Friend_NoUser">对方不是浩泽用户</string>
     <string name="Code_P_NotNull">参数不能为空</string>

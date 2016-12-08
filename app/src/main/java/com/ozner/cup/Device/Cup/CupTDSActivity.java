@@ -25,6 +25,8 @@ import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.CupRecordList;
+import com.ozner.cup.Device.RankType;
+import com.ozner.cup.Device.TDSSensorManager;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.ChartAdapter;
 import com.ozner.cup.UIView.TDSChartView;
@@ -101,6 +103,7 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
     private int monthGood, monthSoSo, monthBad, monthCount;
     private boolean isProgress = true;
     private int chartIndex = 0;//日图表
+    private TDSSensorManager tdsSensorManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +135,7 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
         }
+        loadTdsFriendRank();
     }
 
 
@@ -231,6 +235,30 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
     }
 
     /**
+     * 加载朋友圈tds排名
+     */
+    private void loadTdsFriendRank() {
+        if (mCup != null) {
+            tdsSensorManager = new TDSSensorManager(this);
+            tdsSensorManager.getTdsFriendRank(RankType.CupType, new TDSSensorManager.TDSListener() {
+                @Override
+                public void onSuccess(int result) {
+                    try {
+                        tvTdsRankValue.setText(String.valueOf(result));
+                    } catch (Exception ex) {
+                        Log.e(TAG, "onSuccess_Ex: " + ex.getMessage());
+                    }
+                }
+
+                @Override
+                public void onFail(String msg) {
+                    Log.e(TAG, "loadTdsFriendRank_onFail: " + msg);
+                }
+            });
+        }
+    }
+
+    /**
      * 初始化页面数据
      */
     private void initViewData() {
@@ -254,15 +282,17 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
                 dayCal.set(Calendar.SECOND, 0);
                 dayCal.set(Calendar.MILLISECOND, 0);
                 CupRecord dayRecord = mCup.Volume().getRecordByDate(dayCal.getTime());
-                dayGood = dayRecord.TDS_Good;
-                daySoSo = dayRecord.TDS_Mid;
-                dayBad = dayRecord.TDS_Bad;
-                dayCount = dayRecord.Count;
-                Log.e(TAG, "initDayData: good:" + dayGood + " ,soso:" + daySoSo + " , bad:" + dayBad + " , count:" + dayCount);
+                if (dayRecord != null) {
+                    dayGood = dayRecord.TDS_Good;
+                    daySoSo = dayRecord.TDS_Mid;
+                    dayBad = dayRecord.TDS_Bad;
+                    dayCount = dayRecord.Count;
+                    Log.e(TAG, "initDayData: good:" + dayGood + " ,soso:" + daySoSo + " , bad:" + dayBad + " , count:" + dayCount);
 
-                CupRecord[] records = mCup.Volume().getRecordByDate(dayCal.getTime(), CupRecordList.QueryInterval.Hour);
-                for (int i = 0; i < records.length; i++) {
-                    dataDay[records[i].start.getHours()] = records[i].TDS_High;
+                    CupRecord[] records = mCup.Volume().getRecordByDate(dayCal.getTime(), CupRecordList.QueryInterval.Hour);
+                    for (int i = 0; i < records.length; i++) {
+                        dataDay[records[i].start.getHours()] = records[i].TDS_High;
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -342,15 +372,16 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
         tvChartTitle.setText(R.string.tds_exp);
         llayTdsChart.setVisibility(View.GONE);
         llayWaterDetail.setVisibility(View.VISIBLE);
+        int badPre = 0;
+        int sosoPre = 0;
         if (dayCount > 0) {
-            int badPre = dayBad * 100 / dayCount;
-            int sosoPre = daySoSo * 100 / dayCount;
-
-            uixWaterDetailProgress.set_good_progress(100 - badPre - sosoPre);
-            uixWaterDetailProgress.set_normal_progress(sosoPre);
-            uixWaterDetailProgress.set_bad_progress(badPre);
-            uixWaterDetailProgress.startAnimation();
+            badPre = dayBad * 100 / dayCount;
+            sosoPre = daySoSo * 100 / dayCount;
         }
+        uixWaterDetailProgress.set_good_progress(100 - badPre - sosoPre);
+        uixWaterDetailProgress.set_normal_progress(sosoPre);
+        uixWaterDetailProgress.set_bad_progress(badPre);
+        uixWaterDetailProgress.startAnimation();
     }
 
     /**
@@ -525,7 +556,7 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
     }
 
     @OnClick({R.id.iv_left_btn, R.id.uixWaterDetailProgress, R.id.iv_right_btn,
-            R.id.tdsChartView, R.id.tv_water_know, R.id.tv_buy_water_purifier,R.id.tv_chat_btn})
+            R.id.tdsChartView, R.id.tv_water_know, R.id.tv_buy_water_purifier, R.id.tv_chat_btn})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_left_btn:
