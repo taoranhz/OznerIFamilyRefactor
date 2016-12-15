@@ -166,7 +166,20 @@ public interface OznerHttpService {
      */
     @FormUrlEncoded
     @POST("OznerDevice/VolumeSensor")
-    Observable<JsonObject> updateVolumeSensor(@Field("usertoken") String usertoken,@Field("mac") String mac
-    ,@Field("type") String type,@Field("volume") String volume);
+    Observable<JsonObject> updateVolumeSensor(@Field("usertoken") String usertoken, @Field("mac") String mac
+            , @Field("type") String type, @Field("volume") String volume);
 
+
+    /**
+     * 绑定百度推送设备id
+     *
+     * @param usertoken
+     * @param channelId
+     * @param deviceId
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/UpdateUserInfo")
+    Observable<JsonObject> updateUserInfoBD(@Field("usertoken") String usertoken, @Field("channel_id") String channelId, @Field("device_id") String deviceId);
 }

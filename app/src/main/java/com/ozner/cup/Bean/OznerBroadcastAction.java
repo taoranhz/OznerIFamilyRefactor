@@ -16,4 +16,8 @@ public class OznerBroadcastAction {
 
     //切换到咨询
     public static final String OBA_SWITCH_CHAT = "ozner.switch.chat";
+
+    //绑定百度推送设备id
+    public static final String OBA_BDBind = "ozner_bdpush_bind";
+
 }

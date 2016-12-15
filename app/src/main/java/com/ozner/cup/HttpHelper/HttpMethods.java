@@ -250,4 +250,18 @@ public class HttpMethods {
                 .subscribe(subscriber);
     }
 
+    /**
+     * 绑定百度推送设备
+     * @param usertoken
+     * @param deviceId
+     * @param subscriber
+     */
+    public void updateUserInfoBD(String usertoken,String deviceId,Subscriber<JsonObject> subscriber){
+        oznerHttpService.updateUserInfoBD(usertoken,"5",deviceId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
 }

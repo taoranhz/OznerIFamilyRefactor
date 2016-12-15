@@ -21,6 +21,9 @@ import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
+import com.baidu.android.pushservice.PushConstants;
+import com.baidu.android.pushservice.PushManager;
+import com.google.gson.JsonObject;
 import com.ozner.AirPurifier.AirPurifierManager;
 import com.ozner.WaterPurifier.WaterPurifierManager;
 import com.ozner.cup.Base.BaseActivity;
@@ -40,6 +43,7 @@ import com.ozner.cup.Device.NoDeviceFragment;
 import com.ozner.cup.Device.Tap.TapFragment;
 import com.ozner.cup.Device.WaterPurifier.WaterPurifierFragment;
 import com.ozner.cup.EShop.EShopFragment;
+import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.LoginWelcom.View.LoginActivity;
 import com.ozner.cup.MyCenter.MyCenterFragment;
 import com.ozner.cup.R;
@@ -53,6 +57,7 @@ import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import rx.Subscriber;
 
 public class MainActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener, ILeftMenu {
     private static final String TAG = "MainActivity";
@@ -104,6 +109,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
             this.finish();
         }
 
+        //启动百度云推送
+        PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, getString(R.string.Baidu_Push_ApiKey));
+
     }
 
     /**
@@ -144,6 +152,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         IntentFilter filter = new IntentFilter();
         filter.addAction(OznerBroadcastAction.OBA_SWITCH_ESHOP);
         filter.addAction(OznerBroadcastAction.OBA_SWITCH_CHAT);
+        filter.addAction(OznerBroadcastAction.OBA_BDBind);
         this.registerReceiver(mainMonitor, filter);
     }
 
@@ -414,6 +423,33 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                             bnBootomNavBar.selectTab(2);
                         }
                     }, 100);
+                    break;
+                case OznerBroadcastAction.OBA_BDBind:
+                    String usertoken = OznerPreference.getUserToken(MainActivity.this);
+                    String deviceid = OznerPreference.GetValue(MainActivity.this, OznerPreference.BDDeivceID, "");
+                    HttpMethods.getInstance().updateUserInfoBD(usertoken, deviceid, new Subscriber<JsonObject>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e(TAG, "onError: " + e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(JsonObject jsonObject) {
+                            Log.e(TAG, "onNext: " + jsonObject.toString());
+                            int state = jsonObject.get("state").getAsInt();
+                            if (state > 0) {
+                                Log.e(TAG, "onNext: success");
+                                OznerPreference.SetValue(MainActivity.this, OznerPreference.ISBDBind, String.valueOf(true));
+                            } else {
+                                Toast.makeText(MainActivity.this, "百度推送绑定失败", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                     break;
             }
         }
