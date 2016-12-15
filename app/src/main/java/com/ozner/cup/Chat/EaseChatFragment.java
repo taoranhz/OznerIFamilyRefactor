@@ -42,6 +42,7 @@ import com.ozner.cup.Chat.EaseUI.widget.EaseChatExtendMenu;
 import com.ozner.cup.Chat.EaseUI.widget.EaseChatInputMenu;
 import com.ozner.cup.Chat.EaseUI.widget.EaseChatMessageList;
 import com.ozner.cup.Chat.EaseUI.widget.chartrow.EaseCustomChatRowProvider;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.EMMessage;
@@ -98,7 +99,7 @@ public class EaseChatFragment extends EaseBaseFragment {
     private boolean isMessageListInited;
     protected MyItemClickListener extendMenuItemClickListener;
     private String userid;
-    private String mMobile;
+    private String mMobile, mDeviceId;
 
     private FuckChatHttpClient fuckChatHttpClient;
 
@@ -122,6 +123,7 @@ public class EaseChatFragment extends EaseBaseFragment {
         userid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, null);
         UserInfo userInfo = DBManager.getInstance(getContext()).getUserInfo(userid);
         mMobile = userInfo.getMobile();
+        mDeviceId = OznerPreference.GetValue(getContext(), OznerPreference.BDDeivceID, "");
         fuckChatHttpClient = new FuckChatHttpClient();
         fuckChatHttpClient.setChatHttpListener(new MyChatHttpListener());
         super.onCreate(savedInstanceState);
@@ -349,7 +351,7 @@ public class EaseChatFragment extends EaseBaseFragment {
         try {
             Log.e(TAG, "onStart: " + mMobile);
 //        chatOkManager.initChat(mMobile,"");
-            fuckChatHttpClient.getAccessToken(mMobile, "");
+            fuckChatHttpClient.getAccessToken(mMobile, mDeviceId);
 //            ChatHttpMethods.getInstance().initChat(mMobile, new ChatHttpMethods.ChatResultListener() {
 //                @Override
 //                public void onSuccess() {
@@ -813,13 +815,13 @@ public class EaseChatFragment extends EaseBaseFragment {
     public class MyChatHttpListener implements FuckChatHttpClient.FuckChatHttpListener {
 
         @Override
-        public void initChatSuccess() {
-
+        public void onLoginSuccess(String kfid, String kfname) {
+//            showChatroomToast(kfid + " : " + kfname);
         }
 
         @Override
         public void onFail(int code, String msg) {
-
+            showChatroomToast(code + " : " + msg);
         }
     }
 

@@ -9,13 +9,9 @@ import com.ozner.cup.Utils.SecurityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URLEncoder;
-import java.util.HashMap;
-
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.client.config.RequestConfig;
 import cz.msebera.android.httpclient.client.methods.CloseableHttpResponse;
-import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
@@ -33,17 +29,22 @@ public class FuckChatHttpClient {
     private static final int HANDLER_TOKEN_RESULT = 1;
     private static final int HANDLER_USERINFO_RESULT = 2;
     private static final int HANDLER_LOGIN_RESULT = 3;
-    private String mMobile, mDeviceid, customerid;
-//    private static FuckChatHttpClient ourInstance;
+    private String mMobile, mDeviceid, mToken;
     private FuckChatHttpListener chatListener;
 
     public interface FuckChatHttpListener {
-        void initChatSuccess();
+        void onLoginSuccess(String kfid, String kfname);
 
         void onFail(int code, String msg);
     }
 
-    public FuckChatHttpClient(){
+    public interface SendMessageListener {
+        void onSuccess(long messageTime);
+
+        void onFail(long messageTime);
+    }
+
+    public FuckChatHttpClient() {
 
     }
 
@@ -60,17 +61,23 @@ public class FuckChatHttpClient {
                     String tokenResult = (String) msg.obj;
                     Log.e(TAG, "HANDLER_TOKEN_RESULT: " + tokenResult);
                     try {
-                        JSONObject jsonObject = new JSONObject(tokenResult);
-                        int code = jsonObject.getInt("code");
-                        if (0 == code) {
-                            JSONObject result = jsonObject.getJSONObject("result");
-                            if (result != null) {
-                                String token = result.getString("access_token");
-                                getUserInfo(token, mMobile);
+                        if (tokenResult != null) {
+                            JSONObject jsonObject = new JSONObject(tokenResult);
+                            int code = jsonObject.getInt("code");
+                            if (0 == code) {
+                                JSONObject result = jsonObject.getJSONObject("result");
+                                if (result != null) {
+                                    mToken = result.getString("access_token");
+                                    getUserInfo(mToken, mMobile);
+                                }
+                            } else {
+                                if (chatListener != null) {
+                                    chatListener.onFail(code, "token:" + jsonObject.getString("msg"));
+                                }
                             }
                         } else {
                             if (chatListener != null) {
-                                chatListener.onFail(code, "token:" + jsonObject.getString("msg"));
+                                chatListener.onFail(-1, "咨询:获取token失败");
                             }
                         }
                     } catch (JSONException e) {
@@ -84,22 +91,30 @@ public class FuckChatHttpClient {
                 case HANDLER_USERINFO_RESULT:
                     try {
                         String userInfoResult = (String) msg.obj;
-                        JSONObject userJson = new JSONObject(userInfoResult);
-                        int code = userJson.getInt("code");
-                        if (code == 0) {
-                            JSONObject resJson = userJson.getJSONObject("result");
-                            int count = resJson.getInt("count");
-                            if (count > 0) {
-                                JSONObject userInfoJson = resJson.getJSONArray("list").optJSONObject(0);
-                                Log.e(TAG, "customerid: " + userInfoJson.getString("customer_id"));
+                        if (userInfoResult != null) {
+                            JSONObject userJson = new JSONObject(userInfoResult);
+                            int code = userJson.getInt("code");
+                            if (code == 0) {
+                                JSONObject resJson = userJson.getJSONObject("result");
+                                int count = resJson.getInt("count");
+                                if (count > 0) {
+                                    JSONObject userInfoJson = resJson.getJSONArray("list").optJSONObject(0);
+                                    Log.e(TAG, "customerid: " + userInfoJson.getString("customer_id"));
+                                    String customerid = userInfoJson.getString("customer_id");
+                                    chatLogin(mToken, customerid, mDeviceid);
+                                } else {
+                                    if (chatListener != null) {
+                                        chatListener.onFail(-1, "咨询:用户信息为空");
+                                    }
+                                }
                             } else {
                                 if (chatListener != null) {
-                                    chatListener.onFail(-1, "用户信息为空");
+                                    chatListener.onFail(code, ChatErrDecoder.getInstance().getErrMsg(code));
                                 }
                             }
                         } else {
                             if (chatListener != null) {
-                                chatListener.onFail(code, ChatErrDecoder.getInstance().getErrMsg(code));
+                                chatListener.onFail(-1, "咨询:获取用户信息失败");
                             }
                         }
                         Log.e(TAG, "ChatUserInfo: " + userInfoResult);
@@ -111,7 +126,35 @@ public class FuckChatHttpClient {
                     }
                     break;
                 case HANDLER_LOGIN_RESULT:
+                    try {
+                        String loginResult = (String) msg.obj;
+                        if (loginResult != null) {
+                            JSONObject loginJson = new JSONObject(loginResult);
+                            int code = loginJson.getInt("code");
+                            if (code == 0) {
+                                JSONObject resJson = loginJson.getJSONObject("result");
+                                if (chatListener != null) {
+                                    chatListener.onLoginSuccess(resJson.getString("kfid"), resJson.getString("kfname"));
+                                }
+                            } else {
+                                if (chatListener != null) {
+                                    chatListener.onFail(code, ChatErrDecoder.getInstance().getErrMsg(code));
+                                }
+                            }
+                        } else {
+                            if (chatListener != null) {
+                                chatListener.onFail(-1, "咨询:登录失败");
+                            }
+                        }
+                        Log.e(TAG, "HANDLER_LOGIN_RESULT: " + loginResult);
+//                        JSONObject loginJson = new JSONObject(loginResult);
 
+                    } catch (Exception ex) {
+                        Log.e(TAG, "HANDLER_LOGIN_RESULT_Ex: " + ex.getMessage());
+                        if (chatListener != null) {
+                            chatListener.onFail(-1, ex.getMessage());
+                        }
+                    }
                     break;
             }
             super.handleMessage(msg);
@@ -145,6 +188,12 @@ public class FuckChatHttpClient {
         }).start();
     }
 
+    /**
+     * 获取用户信息
+     *
+     * @param accesstoken
+     * @param mobile
+     */
     private void getUserInfo(String accesstoken, String mobile) {
         try {
             String queryParams = getSysQueryParams(accesstoken);
@@ -162,56 +211,51 @@ public class FuckChatHttpClient {
                 }
             }).start();
         } catch (Exception ex) {
+            if (chatListener != null) {
+                chatListener.onFail(-1, ex.getMessage());
+            }
             Log.e(TAG, "getUserInfo_ex: " + ex.getMessage());
         }
     }
 
-
     /**
-     * @param actionUrl
-     * @param paramsMap
+     * 咨询登录
      *
-     * @return
+     * @param token
+     * @param customerid
+     * @param deviceId
      */
-    private String httpGet(String actionUrl, HashMap<String, String> paramsMap) {
+    private void chatLogin(String token, String customerid, String deviceId) {
         try {
-            StringBuffer tempParams = new StringBuffer();
-            int pos = 0;
-            for (String key : paramsMap.keySet()) {
-                if (pos > 0) {
-                    tempParams.append("&");
+            String queryParams = getSysQueryParams(token);
+            final String queryUrl = String.format("%s/%s?%s", ChatHttpBean.ChatBaseUrl, ChatHttpBean.LoginActionUrl, queryParams);
+            final JSONObject paramsJson = new JSONObject();
+            paramsJson.put("customer_id", customerid);
+            paramsJson.put("device_id", deviceId);
+            paramsJson.put("channel_id", "5");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String result = basePostString(queryUrl, paramsJson.toString());
+                    mHandler.removeMessages(HANDLER_LOGIN_RESULT);
+                    Message message = mHandler.obtainMessage(HANDLER_LOGIN_RESULT);
+                    message.obj = result;
+                    mHandler.sendMessage(message);
                 }
-                tempParams.append(String.format("%s=%s", key, URLEncoder.encode(paramsMap.get(key), "utf-8")));
-                pos++;
-            }
-            String queryUrl = String.format("%s/%s?%s", ChatHttpBean.ChatBaseUrl, actionUrl, tempParams.toString());
-            Log.e(TAG, "httpGet: queryUrl:" + queryUrl);
+            }).start();
 
-            RequestConfig requestConfig = RequestConfig.custom()
-                    .setSocketTimeout(DEFAULT_READ_TIMEOUT)
-                    .setConnectTimeout(DEFAULT_READ_TIMEOUT)
-                    .build();//设置请求和传输超时时间
-
-            //声明HttpClient对象
-            CloseableHttpClient httpclient = HttpClients.createDefault();
-            HttpGet httpGet = new HttpGet(queryUrl);
-            httpGet.setConfig(requestConfig);
-            CloseableHttpResponse response2 = httpclient.execute(httpGet);
-            try {
-                if (response2.getStatusLine().getStatusCode() == 200) {
-                    HttpEntity entity2 = response2.getEntity();
-                    String strResult = EntityUtils.toString(entity2);
-                    return strResult;
-                }
-
-            } finally {
-                response2.close();
-            }
         } catch (Exception ex) {
-            Log.e(TAG, "httpGet_ex: " + ex.getMessage());
+            Log.e(TAG, "chatLogin_Ex: " + ex.getMessage());
+            if (chatListener != null) {
+                chatListener.onFail(-1, ex.getMessage());
+            }
         }
-        return null;
     }
+
+
+//    public void chatSendMessage(String kfid,String )
+    
+
 
     /**
      * 获取系统查询参数
@@ -266,6 +310,53 @@ public class FuckChatHttpClient {
         }
         return null;
     }
+
+
+//    /**
+//     * @param actionUrl
+//     * @param paramsMap
+//     *
+//     * @return
+//     */
+//    private String httpGet(String actionUrl, HashMap<String, String> paramsMap) {
+//        try {
+//            StringBuffer tempParams = new StringBuffer();
+//            int pos = 0;
+//            for (String key : paramsMap.keySet()) {
+//                if (pos > 0) {
+//                    tempParams.append("&");
+//                }
+//                tempParams.append(String.format("%s=%s", key, URLEncoder.encode(paramsMap.get(key), "utf-8")));
+//                pos++;
+//            }
+//            String queryUrl = String.format("%s/%s?%s", ChatHttpBean.ChatBaseUrl, actionUrl, tempParams.toString());
+//            Log.e(TAG, "httpGet: queryUrl:" + queryUrl);
+//
+//            RequestConfig requestConfig = RequestConfig.custom()
+//                    .setSocketTimeout(DEFAULT_READ_TIMEOUT)
+//                    .setConnectTimeout(DEFAULT_READ_TIMEOUT)
+//                    .build();//设置请求和传输超时时间
+//
+//            //声明HttpClient对象
+//            CloseableHttpClient httpclient = HttpClients.createDefault();
+//            HttpGet httpGet = new HttpGet(queryUrl);
+//            httpGet.setConfig(requestConfig);
+//            CloseableHttpResponse response2 = httpclient.execute(httpGet);
+//            try {
+//                if (response2.getStatusLine().getStatusCode() == 200) {
+//                    HttpEntity entity2 = response2.getEntity();
+//                    String strResult = EntityUtils.toString(entity2);
+//                    return strResult;
+//                }
+//
+//            } finally {
+//                response2.close();
+//            }
+//        } catch (Exception ex) {
+//            Log.e(TAG, "httpGet_ex: " + ex.getMessage());
+//        }
+//        return null;
+//    }
 
 
 //    @Deprecated
