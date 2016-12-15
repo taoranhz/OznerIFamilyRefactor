@@ -8,5 +8,5 @@ import com.ozner.device.OznerDevice;
  */
 
 public interface ILeftMenu {
-    public void onDeviceItemClick(OznerDevice device, String mac);
+    public void onDeviceItemClick(OznerDevice device, String mac,boolean isAuto);
 }

@@ -29,7 +29,7 @@ import com.ozner.cup.Device.SetDeviceNameActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.ColorPickerBaseView;
 import com.ozner.cup.UIView.ColorPickerView;
-import com.ozner.cup.Utils.DateFormatUtils;
+import com.ozner.cup.Utils.DateUtils;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDeviceManager;
 import com.zcw.togglebutton.ToggleButton;
@@ -356,8 +356,8 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
             tipEndCal.set(Calendar.HOUR_OF_DAY, endHour);
             tipEndCal.set(Calendar.MINUTE, 0);
             tipEndCal.set(Calendar.SECOND, 0);
-            tvRemindStarttime.setText(DateFormatUtils.hourMinFormt(tipStartCal.getTime()));
-            tvRemindEndtime.setText(DateFormatUtils.hourMinFormt(tipEndCal.getTime()));
+            tvRemindStarttime.setText(DateUtils.hourMinFormt(tipStartCal.getTime()));
+            tvRemindEndtime.setText(DateUtils.hourMinFormt(tipEndCal.getTime()));
 
             //初始化灯带颜色
             if (mCup.Setting().haloColor() != 0) {
@@ -515,7 +515,7 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
                                         }
                                         tipStartCal.set(Calendar.HOUR_OF_DAY, startTimePicker.getCurrentHour());
                                         tipStartCal.set(Calendar.MINUTE, startTimePicker.getCurrentMinute());
-                                        tvRemindStarttime.setText(DateFormatUtils.hourMinFormt(tipStartCal.getTime()));
+                                        tvRemindStarttime.setText(DateUtils.hourMinFormt(tipStartCal.getTime()));
                                     }
                                 });
                             }
@@ -545,7 +545,7 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
 
                                         tipEndCal.set(Calendar.HOUR_OF_DAY, endTimePicker.getCurrentHour());
                                         tipEndCal.set(Calendar.MINUTE, endTimePicker.getCurrentMinute());
-                                        tvRemindEndtime.setText(DateFormatUtils.hourMinFormt(tipEndCal.getTime()));
+                                        tvRemindEndtime.setText(DateUtils.hourMinFormt(tipEndCal.getTime()));
                                     }
                                 });
                             }

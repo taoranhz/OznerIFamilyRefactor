@@ -94,13 +94,13 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
      *
      * @param position
      */
-    public void selectDevice(int position) {
+    public void selectDevice(int position, boolean isAuto) {
 //        if (!mLeftAdapter.getItem(position).Address().equals(UserDataPreference.GetUserData(getContext(), UserDataPreference.SelMac, ""))) {
 //            UserDataPreference.SetUserData(getContext(), UserDataPreference.SelMac, mLeftAdapter.getItem(position).Address());
         mLeftAdapter.setSelectPosition(position);
         if (position >= 0 && position < lvMyDevice.getCount()) {
             lvMyDevice.setItemChecked(position, true);
-            ((MainActivity) getActivity()).onDeviceItemClick(mLeftAdapter.getItem(position), mLeftAdapter.getItem(position).Address());
+            ((MainActivity) getActivity()).onDeviceItemClick(mLeftAdapter.getItem(position), mLeftAdapter.getItem(position).Address(), isAuto);
         }
 //        }
     }
@@ -196,13 +196,13 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
             String selMac = UserDataPreference.GetUserData(getContext(), UserDataPreference.SelMac, null);
             int selPos = mLeftAdapter.getSelectItemPos(selMac);
             if (selPos >= 0) {
-                selectDevice(selPos);
+                selectDevice(selPos, true);
             } else {
                 if (mLeftAdapter.getCount() > 0) {
-                    selectDevice(0);
+                    selectDevice(0, true);
                 } else {
-                    selectDevice(-1);
-                    ((MainActivity) getActivity()).onDeviceItemClick(null, null);
+                    selectDevice(-1, true);
+                    ((MainActivity) getActivity()).onDeviceItemClick(null, null, true);
                 }
             }
         }
@@ -210,7 +210,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        selectDevice(position);
+        selectDevice(position, false);
     }
 
     public class LeftMonitor extends BroadcastReceiver {

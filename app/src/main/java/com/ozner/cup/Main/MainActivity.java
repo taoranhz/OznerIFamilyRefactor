@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -15,6 +14,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +26,7 @@ import com.ozner.WaterPurifier.WaterPurifierManager;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
-import com.ozner.cup.Chat.ChatFragment;
+import com.ozner.cup.Chat.EaseChatFragment;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
@@ -71,9 +72,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     //以设备类型来保存相应的Fragment
     private HashMap<String, DeviceFragment> devFragmentMap;
     private EShopFragment shopFragment;
-    private ChatFragment chatFragment;
+    private EaseChatFragment chatFragment;
     private MyCenterFragment myCenterFragment;
     public Boolean isExit = false;
+    private int curBottomIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,8 +107,38 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     }
 
     /**
+     * 隐藏底部菜单
+     */
+    public void hideBottomNav() {
+        try {
+            if (!bnBootomNavBar.isHidden()) {
+                bnBootomNavBar.hide();//隐藏
+                bnBootomNavBar.hide(true);//隐藏是否启动动画，这里并不能自定义动画
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "hideBottomNav_Ex: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * 显示底部菜单
+     */
+
+    public void showBottomNav() {
+        try {
+            if (!bnBootomNavBar.isShown()) {
+                bnBootomNavBar.show();//显示
+                bnBootomNavBar.show(true);//隐藏是否启动动画，这里并不能自定义动画
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "showBottomNav_Ex: " + ex.getMessage());
+        }
+    }
+
+    /**
      * 初始化监听器
      */
+
     private void initBroadCastFilter() {
         mainMonitor = new MainReceiver();
         IntentFilter filter = new IntentFilter();
@@ -179,16 +211,14 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         bnBootomNavBar.setTabSelectedListener(this);
         if (Build.VERSION.SDK_INT >= 21) {
             bnBootomNavBar.setElevation(0);
-        } else {
-            bnBootomNavBar.selectTab(0);
         }
+        bnBootomNavBar.selectTab(0);
     }
 
     /**
      * 设置默认页面
      */
     private void setDefaultFragment() {
-        FragmentManager fm = getSupportFragmentManager();
         NoDeviceFragment noDeviceFragment = new NoDeviceFragment();
         devFragmentMap.put(NoDeviceTag, noDeviceFragment);
     }
@@ -234,11 +264,13 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
      * @param mac
      */
     @Override
-    public void onDeviceItemClick(OznerDevice device, String mac) {
-        closeLeftMenu();
-        UserDataPreference.SetUserData(this, UserDataPreference.SelMac, mac);//保存选中的设备mac
-        Log.e(TAG, "onDeviceItemClick: " + mac);
-        bnBootomNavBar.selectTab(0, true);
+    public void onDeviceItemClick(OznerDevice device, String mac, boolean isAuto) {
+        if (!isAuto || curBottomIndex == 0) {
+            closeLeftMenu();
+            UserDataPreference.SetUserData(this, UserDataPreference.SelMac, mac);//保存选中的设备mac
+            Log.e(TAG, "onDeviceItemClick: " + mac);
+            bnBootomNavBar.selectTab(0, true);
+        }
     }
 
     /**
@@ -294,9 +326,15 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
     @Override
     public void onTabSelected(int position) {
+        curBottomIndex = position;
         System.gc();
         Log.d(TAG, "onTabSelected() called with: " + "position = [" + position + "]");
         FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+        if (2 != position) {
+            hideKeyboard();
+
+        }
+
         switch (position) {
             case 0://设备
                 showDevice();
@@ -314,7 +352,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 break;
             case 2:
                 if (chatFragment == null) {
-                    chatFragment = ChatFragment.newInstance(null);
+                    chatFragment = EaseChatFragment.newInstance(null);
                 }
                 transaction.replace(R.id.fg_content, chatFragment).commitAllowingStateLoss();
                 break;
@@ -337,6 +375,19 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     public void onTabReselected(int position) {
         if (position == 0) {
             showDevice();
+        }
+    }
+
+
+    /**
+     * hide
+     */
+    protected void hideKeyboard() {
+        if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+            if (getCurrentFocus() != null)
+                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+
         }
     }
 

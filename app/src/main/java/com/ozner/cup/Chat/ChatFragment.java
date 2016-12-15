@@ -1,6 +1,5 @@
 package com.ozner.cup.Chat;
 
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -45,16 +44,6 @@ public class ChatFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_chat, container, false);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-//        try {
-//            ((MainActivity) context).setCustomTitle(R.string.chat);
-//        } catch (Exception ex) {
-//
-//        }
-        super.onAttach(context);
     }
 
     @Override

@@ -8,9 +8,11 @@ import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.identityscope.IdentityScopeType;
 import org.greenrobot.greendao.internal.DaoConfig;
 
+import com.ozner.cup.DBHelper.EMMessage;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.DBHelper.WaterPurifierAttr;
 
+import com.ozner.cup.DBHelper.EMMessageDao;
 import com.ozner.cup.DBHelper.UserInfoDao;
 import com.ozner.cup.DBHelper.WaterPurifierAttrDao;
 
@@ -23,9 +25,11 @@ import com.ozner.cup.DBHelper.WaterPurifierAttrDao;
  */
 public class DaoSession extends AbstractDaoSession {
 
+    private final DaoConfig eMMessageDaoConfig;
     private final DaoConfig userInfoDaoConfig;
     private final DaoConfig waterPurifierAttrDaoConfig;
 
+    private final EMMessageDao eMMessageDao;
     private final UserInfoDao userInfoDao;
     private final WaterPurifierAttrDao waterPurifierAttrDao;
 
@@ -33,22 +37,32 @@ public class DaoSession extends AbstractDaoSession {
             daoConfigMap) {
         super(db);
 
+        eMMessageDaoConfig = daoConfigMap.get(EMMessageDao.class).clone();
+        eMMessageDaoConfig.initIdentityScope(type);
+
         userInfoDaoConfig = daoConfigMap.get(UserInfoDao.class).clone();
         userInfoDaoConfig.initIdentityScope(type);
 
         waterPurifierAttrDaoConfig = daoConfigMap.get(WaterPurifierAttrDao.class).clone();
         waterPurifierAttrDaoConfig.initIdentityScope(type);
 
+        eMMessageDao = new EMMessageDao(eMMessageDaoConfig, this);
         userInfoDao = new UserInfoDao(userInfoDaoConfig, this);
         waterPurifierAttrDao = new WaterPurifierAttrDao(waterPurifierAttrDaoConfig, this);
 
+        registerDao(EMMessage.class, eMMessageDao);
         registerDao(UserInfo.class, userInfoDao);
         registerDao(WaterPurifierAttr.class, waterPurifierAttrDao);
     }
     
     public void clear() {
+        eMMessageDaoConfig.clearIdentityScope();
         userInfoDaoConfig.clearIdentityScope();
         waterPurifierAttrDaoConfig.clearIdentityScope();
+    }
+
+    public EMMessageDao getEMMessageDao() {
+        return eMMessageDao;
     }
 
     public UserInfoDao getUserInfoDao() {

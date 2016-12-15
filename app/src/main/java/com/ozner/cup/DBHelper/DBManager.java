@@ -2,8 +2,11 @@ package com.ozner.cup.DBHelper;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.greenrobot.greendao.query.QueryBuilder;
+
+import java.util.List;
 
 /**
  * Created by ozner_67 on 2016/11/10.
@@ -11,6 +14,7 @@ import org.greenrobot.greendao.query.QueryBuilder;
  */
 
 public class DBManager {
+    private static final String TAG = "DBManager";
     private static final String dbName = "ozner_cup_db";
     private static DBManager mInstance;
     private DaoMaster.DevOpenHelper openHelper;
@@ -151,12 +155,126 @@ public class DBManager {
      * @return
      */
     public UserInfo getUserInfo(String userid) {
-        DaoMaster daoMaster = new DaoMaster(getReadableDatabase());
-        DaoSession daoSession = daoMaster.newSession();
-        UserInfoDao tapDao = daoSession.getUserInfoDao();
-        QueryBuilder<UserInfo> qb = tapDao.queryBuilder();
-        return qb.where(UserInfoDao.Properties.UserId.eq(userid)).unique();
+        if (userid != null && !userid.isEmpty()) {
+            DaoMaster daoMaster = new DaoMaster(getReadableDatabase());
+            DaoSession daoSession = daoMaster.newSession();
+            UserInfoDao tapDao = daoSession.getUserInfoDao();
+            QueryBuilder<UserInfo> qb = tapDao.queryBuilder();
+            return qb.where(UserInfoDao.Properties.UserId.eq(userid)).unique();
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * 获取消息记录
+     *
+     * @param userid
+     * @param startTime
+     * @param endTime
+     *
+     * @return
+     */
+    public List<EMMessage> getChatMessageList(String userid, long startTime, long endTime) {
+        try {
+            DaoMaster daoMaster = new DaoMaster(getReadableDatabase());
+            DaoSession daoSession = daoMaster.newSession();
+            EMMessageDao msgDao = daoSession.getEMMessageDao();
+            QueryBuilder<EMMessage> qb = msgDao.queryBuilder();
+            return qb.where(qb.and(EMMessageDao.Properties.Userid.eq(userid)
+                    , EMMessageDao.Properties.Time.gt(startTime)
+                    , EMMessageDao.Properties.Time.lt(endTime)))
+                    .orderAsc(EMMessageDao.Properties.Time)
+                    .list();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
 
+    /**
+     * 获取全部消息记录
+     *
+     * @param userid
+     *
+     * @return
+     */
+    public List<EMMessage> getAllChatMessage(String userid) {
+        try {
+            DaoMaster daoMaster = new DaoMaster(getReadableDatabase());
+            DaoSession daoSession = daoMaster.newSession();
+            EMMessageDao msgDao = daoSession.getEMMessageDao();
+            QueryBuilder<EMMessage> qb = msgDao.queryBuilder();
+            return qb.where(EMMessageDao.Properties.Userid.eq(userid))
+                    .orderAsc(EMMessageDao.Properties.Time)
+                    .list();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    /**
+     * 更新插入消息
+     *
+     * @param msg
+     */
+    public void updateEMMessage(EMMessage msg) {
+        try {
+            if (msg != null) {
+                DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
+                DaoSession daoSession = daoMaster.newSession();
+                EMMessageDao msgDao = daoSession.getEMMessageDao();
+                QueryBuilder<EMMessage> qb = msgDao.queryBuilder();
+                if (qb.where(qb.and(EMMessageDao.Properties.Userid.eq(msg.getUserid()), EMMessageDao.Properties.Time.eq(msg.getTime()))).count() > 0) {
+                    msgDao.update(msg);
+                } else {
+                    msgDao.insert(msg);
+                }
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "updateEMMessage_Ex: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * 删除信息
+     *
+     * @param msg
+     */
+    public void deleteEMMessage(EMMessage msg) {
+        try {
+            DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
+            DaoSession daoSession = daoMaster.newSession();
+            EMMessageDao msgDao = daoSession.getEMMessageDao();
+            QueryBuilder<EMMessage> qurResQb = msgDao.queryBuilder().where(UserInfoDao.Properties.UserId.eq(msg.getUserid()));
+            if (qurResQb.count() > 0) {
+                msgDao.delete(qurResQb.unique());
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "deleteEMMessage_Ex: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * 清空消息记录
+     *
+     * @param userid
+     */
+    public void clearEMMessage(String userid) {
+        try {
+            DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
+            DaoSession daoSession = daoMaster.newSession();
+            final EMMessageDao msgDao = daoSession.getEMMessageDao();
+            QueryBuilder<EMMessage> qurResQb = msgDao.queryBuilder().where(UserInfoDao.Properties.UserId.eq(userid));
+            if (qurResQb.count() > 0) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        msgDao.deleteAll();
+                    }
+                }).start();
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "clearEMMessage_Ex: " + ex.getMessage());
+        }
+    }
 }

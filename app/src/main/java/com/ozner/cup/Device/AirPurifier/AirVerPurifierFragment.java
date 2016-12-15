@@ -744,6 +744,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
                 int lvXin = 0;
                 if (totalTime != 0) {
                     try {
+                        Log.e(TAG, "showFilterStatus_remain: " + (totalTime - useTime)+" , totalTime:"+totalTime);
                         lvXin = Math.round((totalTime - useTime) * 100 / totalTime);
                         if (lvXin < 0 || lvXin > 100) {
                             lvXin = 0;
