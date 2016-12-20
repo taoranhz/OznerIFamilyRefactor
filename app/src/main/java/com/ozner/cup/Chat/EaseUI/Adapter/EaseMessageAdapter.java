@@ -28,6 +28,7 @@ import com.ozner.cup.Chat.EaseUI.model.MessageDirect;
 import com.ozner.cup.Chat.EaseUI.model.MessageType;
 import com.ozner.cup.Chat.EaseUI.widget.EaseChatMessageList;
 import com.ozner.cup.Chat.EaseUI.widget.chartrow.EaseChatRow;
+import com.ozner.cup.Chat.EaseUI.widget.chartrow.EaseChatRowImage;
 import com.ozner.cup.Chat.EaseUI.widget.chartrow.EaseChatRowText;
 import com.ozner.cup.Chat.EaseUI.widget.chartrow.EaseCustomChatRowProvider;
 import com.ozner.cup.DBHelper.DBManager;
@@ -233,27 +234,27 @@ public class EaseMessageAdapter extends BaseAdapter {
             return customRowProvider.getCustomChatRowType(message) + 13;
         }
 
-        if (message.getmType() == MessageType.TXT) {
+        if (message.getMType() == MessageType.TXT) {
 //		    if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)){
-//		        return message.getmDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_EXPRESSION : MESSAGE_TYPE_SENT_EXPRESSION;
+//		        return message.getMDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_EXPRESSION : MESSAGE_TYPE_SENT_EXPRESSION;
 //		    }
-            return message.getmDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_TXT : MESSAGE_TYPE_SENT_TXT;
+            return message.getMDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_TXT : MESSAGE_TYPE_SENT_TXT;
         }
-        if (message.getmType() == IMAGE) {
-            return message.getmDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_IMAGE : MESSAGE_TYPE_SENT_IMAGE;
+        if (message.getMType() == IMAGE) {
+            return message.getMDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_IMAGE : MESSAGE_TYPE_SENT_IMAGE;
 
         }
-        if (message.getmType() == MessageType.LOCATION) {
-            return message.getmDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_LOCATION : MESSAGE_TYPE_SENT_LOCATION;
+        if (message.getMType() == MessageType.LOCATION) {
+            return message.getMDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_LOCATION : MESSAGE_TYPE_SENT_LOCATION;
         }
-        if (message.getmType() == VOICE) {
-            return message.getmDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_VOICE : MESSAGE_TYPE_SENT_VOICE;
+        if (message.getMType() == VOICE) {
+            return message.getMDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_VOICE : MESSAGE_TYPE_SENT_VOICE;
         }
-        if (message.getmType() == VIDEO) {
-            return message.getmDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_VIDEO : MESSAGE_TYPE_SENT_VIDEO;
+        if (message.getMType() == VIDEO) {
+            return message.getMDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_VIDEO : MESSAGE_TYPE_SENT_VIDEO;
         }
-        if (message.getmType() == FILE) {
-            return message.getmDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_FILE : MESSAGE_TYPE_SENT_FILE;
+        if (message.getMType() == FILE) {
+            return message.getMDirect() == MessageDirect.RECEIVE ? MESSAGE_TYPE_RECV_FILE : MESSAGE_TYPE_SENT_FILE;
         }
 
         return -1;// invalid
@@ -264,7 +265,7 @@ public class EaseMessageAdapter extends BaseAdapter {
         if (customRowProvider != null && customRowProvider.getCustomChatRow(message, position, this) != null) {
             return customRowProvider.getCustomChatRow(message, position, this);
         }
-        switch (message.getmType()) {
+        switch (message.getMType()) {
             case MessageType.TXT:
 //            if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)){
 //                chatRow = new EaseChatRowBigExpression(context, message, position, this);
@@ -279,7 +280,7 @@ public class EaseMessageAdapter extends BaseAdapter {
 //            chatRow = new EaseChatRowFile(context, message, position, this);
                 break;
             case MessageType.IMAGE:
-//            chatRow = new EaseChatRowImage(context, message, position, this);
+            chatRow = new EaseChatRowImage(context, message, position, this);
                 break;
             case MessageType.VOICE:
 //            chatRow = new EaseChatRowVoice(context, message, position, this);

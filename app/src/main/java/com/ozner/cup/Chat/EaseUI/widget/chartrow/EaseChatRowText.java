@@ -23,7 +23,7 @@ public class EaseChatRowText extends EaseChatRow {
 
     @Override
     protected void onInflateView() {
-        inflater.inflate(message.getmDirect() == MessageDirect.RECEIVE ?
+        inflater.inflate(message.getMDirect() == MessageDirect.RECEIVE ?
                 R.layout.ease_row_received_message : R.layout.ease_row_sent_message, this);
     }
 
@@ -43,7 +43,7 @@ public class EaseChatRowText extends EaseChatRow {
     }
 
     protected void handleTextMessage() {
-        if (message.getmDirect() == MessageDirect.SEND) {
+        if (message.getMDirect() == MessageDirect.SEND) {
             setMessageSendCallback();
             switch (message.getStatus()) {
                 case MessageStatus.CREATE:

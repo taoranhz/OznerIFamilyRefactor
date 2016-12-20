@@ -11,7 +11,8 @@ public class ChatHttpBean {
     public static final String ChatAppid = "hzapi";
     public static final String ChatAppsecret = "8af0134asdffe12";
 
-    public static final String ChatBaseUrl = "http://dkf.ozner.net";
+//    public static final String ChatBaseUrl = "http://dkf.ozner.net";
+    public static final String ChatBaseUrl = "http://192.168.172.21";
     public static final String TokenActionUrl = "api/token.ashx";//获取token
     public static final String UserInfoActionUrl = "api/member.ashx";//获取用户信息
     public static final String LoginActionUrl = "api/customerlogin.ashx";//登录

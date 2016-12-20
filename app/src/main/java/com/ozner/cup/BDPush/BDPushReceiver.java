@@ -6,7 +6,11 @@ import android.util.Log;
 
 import com.baidu.android.pushservice.PushMessageReceiver;
 import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Chat.EaseUI.utils.MessageCreator;
 import com.ozner.cup.Command.OznerPreference;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.EMMessage;
 
 import org.json.JSONObject;
 
@@ -59,7 +63,7 @@ public class BDPushReceiver extends PushMessageReceiver {
     public void onMessage(Context context, String message,
                           String customContentString) {
         Log.e(TAG, "onMessage: message->" + message + ", customContentString->" + customContentString);
-        handleMessage(message);
+        handleMessage(context, message);
     }
 
     @Override
@@ -80,12 +84,26 @@ public class BDPushReceiver extends PushMessageReceiver {
      *
      * @param message
      */
-    private void handleMessage(String message) {
+    private void handleMessage(Context context, String message) {
         try {
             JSONObject jsonObj = new JSONObject(message);
             String action = jsonObj.getJSONObject("custom_content").getString("action");
-            switch (action){
+            switch (action) {
                 case PushOperationAction.Operation_Chat:
+                    String msg;
+                    if (jsonObj.has("custom_content")) {
+                        msg = jsonObj.getJSONObject("custom_content").getString("data");
+                    } else {
+                        msg = jsonObj.getString("data");
+                    }
+                    String userid = UserDataPreference.GetUserData(context, UserDataPreference.UserId, "");
+                    boolean isLogin = OznerPreference.IsLogin(context);
+
+                    if (isLogin && !msg.isEmpty()) {
+                        EMMessage emMessage = MessageCreator.transMsgNetToLocal(userid, msg);
+                        DBManager.getInstance(context).updateEMMessage(emMessage);
+                        context.sendBroadcast(new Intent(OznerBroadcastAction.OBA_RECEIVE_CHAT_MSG));
+                    }
                     break;
                 case PushOperationAction.Operation_LoginNotify:
                     break;

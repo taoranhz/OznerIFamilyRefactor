@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_big_image_detail"
+    android:layout_width="match_parent"
+    android:background="@color/translucent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!--<include layout="@layout/toolbar"/>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/llay_center"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+    <ImageView
+        android:layout_margin="20dp"
+        android:id="@+id/iv_showImg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

@@ -20,4 +20,6 @@ public class OznerBroadcastAction {
     //绑定百度推送设备id
     public static final String OBA_BDBind = "ozner_bdpush_bind";
 
+    //接收到咨询消息
+    public static final String OBA_RECEIVE_CHAT_MSG="ozner_recieve_chat_msg";
 }

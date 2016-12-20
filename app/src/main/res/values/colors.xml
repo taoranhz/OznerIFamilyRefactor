@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="showmethod_start_color">#FFFFFF</color>
+    <color name="showmethod_end_color">#C8C8C8</color>
+
     <!--系统颜色设置-->
     <color name="colorPrimary">@color/theme_blue</color>
     <color name="colorPrimaryDark">@color/theme_blue</color>
@@ -40,4 +43,8 @@
     <color name="generic">#ff7d58e7</color>
     <color name="purifier_before">#ffba52a7</color>
     <color name="tdsBuybg">#e7f1fe</color>
+
+    <color name="translucent">#00000000</color>
+    <color name="translucent_background">#80000000</color>
+    <color name="translucent_PrimaryDark">#2f677f</color>
 </resources>

@@ -70,21 +70,21 @@ public class EMMessage {
         this.time = time;
     }
 
-    public int getmType() {
-        return mType;
-    }
+//    public int getmType() {
+//        return mType;
+//    }
 
-    public void setmType(int mType) {
-        this.mType = mType;
-    }
+//    public void setmType(int mType) {
+//        this.mType = mType;
+//    }
 
-    public int getmDirect() {
-        return mDirect;
-    }
-
-    public void setmDirect(int mDirect) {
-        this.mDirect = mDirect;
-    }
+//    public int getmDirect() {
+//        return mDirect;
+//    }
+//
+//    public void setmDirect(int mDirect) {
+//        this.mDirect = mDirect;
+//    }
 
     public int getMType() {
         return this.mType;

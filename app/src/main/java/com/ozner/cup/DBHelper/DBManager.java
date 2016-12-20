@@ -213,6 +213,26 @@ public class DBManager {
     }
 
     /**
+     * 获取指定消息
+     *
+     * @param userid
+     * @param msgTime
+     *
+     * @return
+     */
+    public EMMessage getChatMessage(String userid, long msgTime) {
+        try {
+            DaoMaster daoMaster = new DaoMaster(getReadableDatabase());
+            DaoSession daoSession = daoMaster.newSession();
+            EMMessageDao msgDao = daoSession.getEMMessageDao();
+            QueryBuilder<EMMessage> qb = msgDao.queryBuilder();
+            return qb.where(qb.and(EMMessageDao.Properties.Userid.eq(userid), EMMessageDao.Properties.Time.eq(msgTime))).unique();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    /**
      * 更新插入消息
      *
      * @param msg

@@ -60,4 +60,5 @@ dependencies {
     compile 'com.zcw:togglebutton-library:1.0.0'
     testCompile 'junit:junit:4.12'
     compile 'cz.msebera.android:httpclient:4.4.1.2'
+//    compile 'org.jsoup:jsoup:1.10.1'
 }

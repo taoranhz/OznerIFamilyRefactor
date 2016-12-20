@@ -74,9 +74,9 @@ public class EaseCommonUtils {
      */
     public static String getMessageDigest(EMMessage message, Context context) {
         String digest = "";
-        switch (message.getmType()) {
+        switch (message.getMType()) {
         case MessageType.LOCATION:
-            if (message.getmDirect() == MessageDirect.RECEIVE) {
+            if (message.getMDirect() == MessageDirect.RECEIVE) {
                 digest = getString(context, R.string.location_recv);
 //                digest = String.format(digest, message.getFrom());
                 return digest;

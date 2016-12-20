@@ -94,7 +94,7 @@ public class EaseChatInputMenu extends LinearLayout {
             emojiconMenu = (EaseEmojiconMenu) layoutInflater.inflate(R.layout.ease_layout_emojicon_menu, null);
             if (emojiconGroupList == null) {
                 emojiconGroupList = new ArrayList<EaseEmojiconGroupEntity>();
-                emojiconGroupList.add(new EaseEmojiconGroupEntity(R.drawable.ee_1, Arrays.asList(EaseDefaultEmojiconDatas.getData())));
+                emojiconGroupList.add(new EaseEmojiconGroupEntity(R.drawable.f_static_000, Arrays.asList(EaseDefaultEmojiconDatas.getData())));
             }
             ((EaseEmojiconMenu) emojiconMenu).init(emojiconGroupList);
         }

@@ -40,7 +40,7 @@ public abstract class EaseChatRow extends LinearLayout {
     protected TextView timeStampView;
     protected ImageView userAvatarView;
     protected View bubbleLayout;
-    protected TextView usernickView;
+//    protected TextView usernickView;
 
     protected TextView percentageView;
     protected ProgressBar progressBar;
@@ -73,7 +73,7 @@ public abstract class EaseChatRow extends LinearLayout {
         timeStampView = (TextView) findViewById(R.id.timestamp);
         userAvatarView = (ImageView) findViewById(R.id.iv_userhead);
         bubbleLayout = findViewById(R.id.bubble);
-        usernickView = (TextView) findViewById(R.id.tv_userid);
+//        usernickView = (TextView) findViewById(R.id.tv_userid);
 
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         statusView = (ImageView) findViewById(R.id.msg_status);
@@ -123,14 +123,14 @@ public abstract class EaseChatRow extends LinearLayout {
 
         //set nickname and avatar
         // TODO: 2016/12/12 设置头像和昵称
-//        if(message.getmDirect() == MessageDirect.SEND){
+//        if(message.getMDirect() == MessageDirect.SEND){
 //            EaseUserUtils.setUserAvatar(context, EMClient.getInstance().getCurrentUser(), userAvatarView);
 //        }else{
 //            EaseUserUtils.setUserAvatar(context, message.getFrom(), userAvatarView);
 //            EaseUserUtils.setUserNick(message.getFrom(), usernickView);
 //        }
 
-        if (message.getmDirect() == MessageDirect.SEND) {
+        if (message.getMDirect() == MessageDirect.SEND) {
             Glide.with(context).load(headImgUrl).asBitmap().placeholder(R.drawable.customer).centerCrop().into(new BitmapImageViewTarget(userAvatarView) {
                 @Override
                 protected void setResource(Bitmap resource) {
@@ -140,17 +140,18 @@ public abstract class EaseChatRow extends LinearLayout {
                     userAvatarView.setImageDrawable(circularBitmapDrawable);
                 }
             });
-        } else {
-            Glide.with(context).load(headImgUrl).asBitmap().placeholder(R.drawable.ozner).centerCrop().into(new BitmapImageViewTarget(userAvatarView) {
-                @Override
-                protected void setResource(Bitmap resource) {
-                    RoundedBitmapDrawable circularBitmapDrawable =
-                            RoundedBitmapDrawableFactory.create(context.getResources(), resource);
-                    circularBitmapDrawable.setCircular(true);
-                    userAvatarView.setImageDrawable(circularBitmapDrawable);
-                }
-            });
         }
+//        else {
+//            Glide.with(context).load(headImgUrl).asBitmap().placeholder(R.drawable.ozner).centerCrop().into(new BitmapImageViewTarget(userAvatarView) {
+//                @Override
+//                protected void setResource(Bitmap resource) {
+//                    RoundedBitmapDrawable circularBitmapDrawable =
+//                            RoundedBitmapDrawableFactory.create(context.getResources(), resource);
+//                    circularBitmapDrawable.setCircular(true);
+//                    userAvatarView.setImageDrawable(circularBitmapDrawable);
+//                }
+//            });
+//        }
 
 //        if(deliveredView != null){
 //            if (message.isDelivered()) {
@@ -177,17 +178,17 @@ public abstract class EaseChatRow extends LinearLayout {
                 userAvatarView.setVisibility(View.VISIBLE);
             else
                 userAvatarView.setVisibility(View.GONE);
-            if (usernickView != null) {
-                if (((EaseMessageAdapter) adapter).isShowUserNick())
-                    usernickView.setVisibility(View.VISIBLE);
-                else
-                    usernickView.setVisibility(View.GONE);
-            }
-            if (message.getmDirect() == MessageDirect.SEND) {
+//            if (usernickView != null) {
+//                if (((EaseMessageAdapter) adapter).isShowUserNick())
+//                    usernickView.setVisibility(View.VISIBLE);
+//                else
+//                    usernickView.setVisibility(View.GONE);
+//            }
+            if (message.getMDirect() == MessageDirect.SEND) {
                 if (((EaseMessageAdapter) adapter).getMyBubbleBg() != null) {
                     bubbleLayout.setBackgroundDrawable(((EaseMessageAdapter) adapter).getMyBubbleBg());
                 }
-            } else if (message.getmDirect() == MessageDirect.RECEIVE) {
+            } else if (message.getMDirect() == MessageDirect.RECEIVE) {
                 if (((EaseMessageAdapter) adapter).getOtherBuddleBg() != null) {
                     bubbleLayout.setBackgroundDrawable(((EaseMessageAdapter) adapter).getOtherBuddleBg());
                 }

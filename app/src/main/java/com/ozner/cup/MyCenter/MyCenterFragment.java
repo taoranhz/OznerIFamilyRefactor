@@ -4,12 +4,16 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
 import com.ozner.cup.Base.BaseFragment;
+import com.ozner.cup.Chat.EaseUI.utils.MessageCreator;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.DBHelper.EMMessage;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
 
@@ -19,6 +23,12 @@ import com.ozner.cup.R;
  */
 
 public class MyCenterFragment extends BaseFragment {
+    private static final String TAG = "MyCenterFragment";
+//    String testHtml = "<div style=\"font-size:14px;font-family:微软雅黑\">\\n<img class=\"imgEmotion\" src=\"http://192.168.172.21/templates/common/images/64.gif\" data-title=\"凋谢\">测试<img class=\"imgEmotion\" src=\"http://192.168.172.21/templates/common/images/22.gif\" data-title=\"白眼\"></div>";
+    String testHtml = "<div style=\"font-size:14px;font-family:微软雅黑\"><img id=\"imgUpload\" src=\"http://192.168.172.21//upload/6F8X_1481867987.PNG_600_600.PNG\"></div>";
+    EMMessage testEmsg;
+    String userid;
+
     public MyCenterFragment() {
         // Required empty public constructor
     }
@@ -40,6 +50,7 @@ public class MyCenterFragment extends BaseFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        userid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
         super.onCreate(savedInstanceState);
     }
 
@@ -72,6 +83,9 @@ public class MyCenterFragment extends BaseFragment {
             setBarColor(R.color.colorAccent);
             setToolbarColor(R.color.colorAccent);
             ((MainActivity) getActivity()).setCustomTitle(R.string.mine);
+
+            testEmsg = MessageCreator.transMsgNetToLocal(userid, testHtml);
+            Log.e(TAG, "onResume:TestEMsg: " + testEmsg.getContent());
         } catch (Exception ex) {
 
         }

@@ -29,7 +29,7 @@ public class FuckChatHttpClient {
     private static final int HANDLER_TOKEN_RESULT = 1;
     private static final int HANDLER_USERINFO_RESULT = 2;
     private static final int HANDLER_LOGIN_RESULT = 3;
-    private String mMobile, mDeviceid, mToken;
+    private String mMobile, mDeviceid, mToken, mCustomerId;
     private FuckChatHttpListener chatListener;
 
     public interface FuckChatHttpListener {
@@ -41,7 +41,7 @@ public class FuckChatHttpClient {
     public interface SendMessageListener {
         void onSuccess(long messageTime);
 
-        void onFail(long messageTime);
+        void onFail(long messageTime, int errCode, String errMsg);
     }
 
     public FuckChatHttpClient() {
@@ -100,8 +100,8 @@ public class FuckChatHttpClient {
                                 if (count > 0) {
                                     JSONObject userInfoJson = resJson.getJSONArray("list").optJSONObject(0);
                                     Log.e(TAG, "customerid: " + userInfoJson.getString("customer_id"));
-                                    String customerid = userInfoJson.getString("customer_id");
-                                    chatLogin(mToken, customerid, mDeviceid);
+                                    mCustomerId = userInfoJson.getString("customer_id");
+                                    chatLogin(mToken, mCustomerId, mDeviceid);
                                 } else {
                                     if (chatListener != null) {
                                         chatListener.onFail(-1, "咨询:用户信息为空");
@@ -253,8 +253,54 @@ public class FuckChatHttpClient {
     }
 
 
-//    public void chatSendMessage(String kfid,String )
-    
+    /**
+     * 发送信息
+     *
+     * @param msgContent
+     * @param msgTime        信息唯一性标识
+     * @param messageListner
+     */
+    public void chatSendMessage(String msgContent, final long msgTime, final SendMessageListener messageListner) {
+        try {
+            String queyParams = getSysQueryParams(mToken);
+            final JSONObject paramsJson = new JSONObject();
+            paramsJson.put("device_id", mDeviceid);
+            paramsJson.put("customer_id", mCustomerId);
+            paramsJson.put("msg", msgContent);
+            paramsJson.put("channel_id", "5");
+
+            final String queryUrl = String.format("%s/%s?%s", ChatHttpBean.ChatBaseUrl, ChatHttpBean.SendMsgActionUrl, queyParams);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String result = basePostString(queryUrl, paramsJson.toString());
+//                    Log.e(TAG, "chatSendMessage_result: " + result);
+                    try {
+                        if (result != null) {
+                            JSONObject resJson = new JSONObject(result);
+                            int code = resJson.getInt("code");
+                            if (0 == code) {
+                                messageListner.onSuccess(msgTime);
+                            } else {
+                                messageListner.onFail(msgTime, code, resJson.getString("msg"));
+                            }
+                        } else {
+                            if (messageListner != null) {
+                                messageListner.onFail(msgTime, -1, "发送失败");
+                            }
+                        }
+                    } catch (Exception ex) {
+                        if (messageListner != null) {
+                            messageListner.onFail(msgTime, -1, ex.getMessage());
+                        }
+                        Log.e(TAG, "run_ex: " + ex.getMessage());
+                    }
+                }
+            }).start();
+        } catch (Exception ex) {
+            Log.e(TAG, "chatSendMessage_Ex: " + ex.getMessage());
+        }
+    }
 
 
     /**

@@ -1,9 +1,12 @@
 package com.ozner.cup.Chat;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -28,9 +31,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Chat.ChatHttpUtils.FuckChatHttpClient;
 import com.ozner.cup.Chat.EaseUI.UI.EaseBaseFragment;
-import com.ozner.cup.Chat.EaseUI.controller.EaseUI;
 import com.ozner.cup.Chat.EaseUI.domain.EaseEmojicon;
 import com.ozner.cup.Chat.EaseUI.model.MessageDirect;
 import com.ozner.cup.Chat.EaseUI.model.MessageStatus;
@@ -100,8 +103,10 @@ public class EaseChatFragment extends EaseBaseFragment {
     protected MyItemClickListener extendMenuItemClickListener;
     private String userid;
     private String mMobile, mDeviceId;
+    private boolean isSending = false;
 
     private FuckChatHttpClient fuckChatHttpClient;
+    private ChatMessageReciever chatMonitor;
 
     /**
      * 实例化Fragment
@@ -120,6 +125,7 @@ public class EaseChatFragment extends EaseBaseFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        isSending = false;
         userid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, null);
         UserInfo userInfo = DBManager.getInstance(getContext()).getUserInfo(userid);
         mMobile = userInfo.getMobile();
@@ -136,6 +142,26 @@ public class EaseChatFragment extends EaseBaseFragment {
         super.onDetach();
     }
 
+    /**
+     * 注册广播接收器
+     */
+    private void registerReceiver() {
+        chatMonitor = new ChatMessageReciever();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(OznerBroadcastAction.OBA_RECEIVE_CHAT_MSG);
+        getActivity().registerReceiver(chatMonitor, filter);
+    }
+
+    /**
+     * 注销广播接收器
+     */
+    private void unRegisterReceiver() {
+        try {
+            getActivity().unregisterReceiver(chatMonitor);
+        } catch (Exception ex) {
+
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -150,6 +176,7 @@ public class EaseChatFragment extends EaseBaseFragment {
         toChatUsername = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
         super.onActivityCreated(savedInstanceState);
     }
+
 
     /**
      * init view
@@ -174,7 +201,9 @@ public class EaseChatFragment extends EaseBaseFragment {
 
             @Override
             public void onSendMessage(String content) {
+//                if (isSending) {
                 sendTextMessage(content);
+//                }
             }
 
 
@@ -348,8 +377,9 @@ public class EaseChatFragment extends EaseBaseFragment {
 
     @Override
     public void onStart() {
+        registerReceiver();
         try {
-            Log.e(TAG, "onStart: " + mMobile);
+            Log.e(TAG, "onStart: mobile:" + mMobile + " , deviceId:" + mDeviceId);
 //        chatOkManager.initChat(mMobile,"");
             fuckChatHttpClient.getAccessToken(mMobile, mDeviceId);
 //            ChatHttpMethods.getInstance().initChat(mMobile, new ChatHttpMethods.ChatResultListener() {
@@ -375,12 +405,21 @@ public class EaseChatFragment extends EaseBaseFragment {
             setBarColor(R.color.colorAccent);
             setToolbarColor(R.color.colorAccent);
             ((MainActivity) getActivity()).setCustomTitle(R.string.chat);
+            clearNotifaction();
         } catch (Exception ex) {
 
         }
         super.onResume();
         if (isMessageListInited)
             messageList.refresh();
+    }
+
+    /**
+     * 清除通知
+     */
+    private void clearNotifaction() {
+        NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 
     /**
@@ -405,13 +444,14 @@ public class EaseChatFragment extends EaseBaseFragment {
 
     @Override
     public void onStop() {
+        unRegisterReceiver();
         super.onStop();
         // unregister this event listener when this activity enters the
         // background
 //        EMClient.getInstance().chatManager().removeMessageListener(this);
 
         // remove activity from foreground activity list
-        EaseUI.getInstance().popActivity(getActivity());
+//        EaseUI.getInstance().popActivity(getActivity());
     }
 
     @Override
@@ -500,7 +540,7 @@ public class EaseChatFragment extends EaseBaseFragment {
      * @return
      */
     private boolean isUserIDisEmpty() {
-        return userid != null && !userid.isEmpty();
+        return userid == null || userid.isEmpty();
     }
 
     /**
@@ -510,17 +550,16 @@ public class EaseChatFragment extends EaseBaseFragment {
      */
     //send message
     protected void sendTextMessage(String content) {
-        Log.e(TAG, "sendTextMessage: " + content);
-        if (isUserIDisEmpty()) {
-            String sendMsg = MessageCreator.createTextMessage(content);
+//        Log.e(TAG, "sendTextMessage: " + content);
+        if (!isUserIDisEmpty()) {
             EMMessage message = new EMMessage();
             message.setContent(content);
-            message.setmType(MessageType.TXT);
-            message.setmDirect(MessageDirect.SEND);
+            message.setMType(MessageType.TXT);
+            message.setMDirect(MessageDirect.SEND);
             message.setUserid(userid);
             message.setTime(Calendar.getInstance().getTimeInMillis());
-            message.setStatus(MessageStatus.SUCCESS);
-            sendMessage(sendMsg, message);
+            message.setStatus(MessageStatus.INPROGRESS);
+            sendMessage(message);
         }
 //        if (EaseAtMessageHelper.get().containsAtUsername(content)) {
 //            sendAtMessage(content);
@@ -539,8 +578,8 @@ public class EaseChatFragment extends EaseBaseFragment {
      */
     protected void sendBigExpressionMessage(String name, String identityCode) {
 //        EMMessage message = EaseCommonUtils.createExpressionMessage(toChatUsername, name, identityCode);
-        String message = "";
-        sendMessage(message, null);
+//        String message = "";
+//        sendMessage(message, null);
     }
 
 //    protected void sendVoiceMessage(String filePath, int length) {
@@ -579,31 +618,19 @@ public class EaseChatFragment extends EaseBaseFragment {
     /**
      * 真正的发送信息,并将信息实体保存到本地数据库
      *
-     * @param sendMessage
      * @param saveMessage
      */
-    protected void sendMessage(String sendMessage, EMMessage saveMessage) {
+    protected void sendMessage(EMMessage saveMessage) {
 
         if (saveMessage != null) {
             DBManager.getInstance(getContext()).updateEMMessage(saveMessage);
         }
-//        if (sendMessage == null) {
-//
-//            //发送信息，并更新本地信息发送状态
-//            return;
-//        }
+        String sendMsg = MessageCreator.createTextMessage(saveMessage.getContent());
+        chatSendMsg(sendMsg, saveMessage.getTime());
 
-//        if (chatFragmentHelper != null) {
-//            //set extension
-//            chatFragmentHelper.onSetMessageAttributes(message);
-//        }
-
-        //send message
-//        EMClient.getInstance().chatManager().sendMessage(message);
         // TODO: 2016/12/12 发送信息
         //刷新UI
         if (isMessageListInited) {
-//            Log.e(TAG, "sendMessage: refreshSelectLast");
             messageList.refreshSelectLast();
         }
     }
@@ -703,6 +730,60 @@ public class EaseChatFragment extends EaseBaseFragment {
     }
 
     /**
+     * 咨询发送信息，网络任务
+     *
+     * @param msgContent 要发送的消息内容，已经处理成需要的格式
+     * @param msgTime
+     */
+    private void chatSendMsg(String msgContent, long msgTime) {
+        if (!EaseCommonUtils.isNetWorkConnected(getContext())) {
+//            isSending = false;
+            showChatroomToast("网络未连接");
+            EMMessage msg = DBManager.getInstance(getContext()).getChatMessage(userid, msgTime);
+            msg.setStatus(MessageStatus.FAIL);
+            DBManager.getInstance(getContext()).updateEMMessage(msg);
+            return;
+        }
+
+//        isSending = true;
+        fuckChatHttpClient.chatSendMessage(msgContent, msgTime, new FuckChatHttpClient.SendMessageListener() {
+            @Override
+            public void onSuccess(long messageTime) {
+//                isSending = false;
+                // TODO: 2016/12/15 处理信息发送成功
+                //更新消息数据库
+                EMMessage msg = DBManager.getInstance(getContext()).getChatMessage(userid, messageTime);
+                msg.setStatus(MessageStatus.SUCCESS);
+                DBManager.getInstance(getContext()).updateEMMessage(msg);
+
+                if (EaseChatFragment.this.isAdded()) {
+                    //刷新UI
+                    if (isMessageListInited) {
+                        messageList.refreshSelectLast();
+                    }
+                }
+            }
+
+            @Override
+            public void onFail(long messageTime, int errCode, String errMsg) {
+                Log.e(TAG, "onFail: errcode:" + errCode + " , errMsg:" + errMsg);
+//                isSending = false;
+                //更新消息数据库
+                EMMessage msg = DBManager.getInstance(getContext()).getChatMessage(userid, messageTime);
+                msg.setStatus(MessageStatus.FAIL);
+                DBManager.getInstance(getContext()).updateEMMessage(msg);
+
+                if (EaseChatFragment.this.isAdded()) {
+                    //刷新UI
+                    if (isMessageListInited) {
+                        messageList.refreshSelectLast();
+                    }
+                }
+            }
+        });
+    }
+
+    /**
      * capture new image
      */
     protected void selectPicFromCamera() {
@@ -776,7 +857,7 @@ public class EaseChatFragment extends EaseBaseFragment {
      */
     protected void forwardMessage(String forward_msg_id) {
         final EMMessage forward_msg = null;
-        int msgtype = forward_msg.getmType();
+        int msgtype = forward_msg.getMType();
         switch (msgtype) {
             case MessageType.TXT:
 //                if (forward_msg.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)) {
@@ -876,6 +957,21 @@ public class EaseChatFragment extends EaseBaseFragment {
          * @return
          */
         EaseCustomChatRowProvider onSetCustomChatRowProvider();
+    }
+
+    class ChatMessageReciever extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+           switch (intent.getAction()){
+               case  OznerBroadcastAction.OBA_RECEIVE_CHAT_MSG:
+                   //刷新UI
+                   if (isMessageListInited) {
+                       messageList.refreshSelectLast();
+                   }
+               break;
+           }
+        }
     }
 
 }
