@@ -267,28 +267,13 @@ public class EaseMessageAdapter extends BaseAdapter {
         }
         switch (message.getMType()) {
             case MessageType.TXT:
-//            if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)){
-//                chatRow = new EaseChatRowBigExpression(context, message, position, this);
-//            }else{
                 chatRow = new EaseChatRowText(context, message, position, this);
-//            }
-                break;
-            case MessageType.LOCATION:
-//            chatRow = new EaseChatRowLocation(context, message, position, this);
-                break;
-            case MessageType.FILE:
-//            chatRow = new EaseChatRowFile(context, message, position, this);
                 break;
             case MessageType.IMAGE:
             chatRow = new EaseChatRowImage(context, message, position, this);
                 break;
-            case MessageType.VOICE:
-//            chatRow = new EaseChatRowVoice(context, message, position, this);
-                break;
-            case MessageType.VIDEO:
-//            chatRow = new EaseChatRowVideo(context, message, position, this);
-                break;
             default:
+                chatRow = new EaseChatRowText(context, message, position, this);
                 break;
         }
 

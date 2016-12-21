@@ -265,7 +265,8 @@ public class DBManager {
             DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
             DaoSession daoSession = daoMaster.newSession();
             EMMessageDao msgDao = daoSession.getEMMessageDao();
-            QueryBuilder<EMMessage> qurResQb = msgDao.queryBuilder().where(UserInfoDao.Properties.UserId.eq(msg.getUserid()));
+            QueryBuilder<EMMessage> qurResQb = msgDao.queryBuilder();
+            qurResQb = qurResQb.where(qurResQb.and(EMMessageDao.Properties.Userid.eq(msg.getUserid()),EMMessageDao.Properties.Time.eq(msg.getTime())));
             if (qurResQb.count() > 0) {
                 msgDao.delete(qurResQb.unique());
             }

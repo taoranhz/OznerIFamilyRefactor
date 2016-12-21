@@ -105,10 +105,8 @@ public class MessageCreator {
                     } else {
                         Log.e("match", "m is null");
                     }
-                } else if (tempMsg.contains(".PNG")
-                        ||tempMsg.contains(".JPEG")
-                        ||tempMsg.contains(".jpg")
-                        ||tempMsg.contains(".JPG")){
+                } else if (tempMsg.contains(".PNG")||tempMsg.contains(".png")
+                        || tempMsg.contains(".JPEG") || tempMsg.contains(".jpg") || tempMsg.contains(".JPG")) {
                     eMsg.setMType(MessageType.IMAGE);
                     Pattern p = Pattern.compile("<img.*?src=\\\"(.*).*\\\"");
                     Matcher m = p.matcher(tempMsg);
@@ -167,5 +165,21 @@ public class MessageCreator {
         Log.e(TAG, "createTextMessage: " + tempMsg);
 
         return tempMsg;
+    }
+
+    /**
+     * 创建图片信息
+     *
+     * @param imgUrl
+     *
+     * @return
+     */
+    public static String createImageMessae(String imgUrl) {
+        StringBuilder imgStrBuilder = new StringBuilder();
+        imgStrBuilder.append("<img id=\"imgUpload\" src=\"")
+                .append(imgUrl)
+                .append("\">");
+        Log.e(TAG, "createImageMessae: " + imgStrBuilder.toString());
+        return imgStrBuilder.toString();
     }
 }

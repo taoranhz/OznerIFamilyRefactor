@@ -9,11 +9,14 @@ import com.ozner.cup.Utils.SecurityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.client.config.RequestConfig;
 import cz.msebera.android.httpclient.client.methods.CloseableHttpResponse;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
 import cz.msebera.android.httpclient.protocol.HTTP;
@@ -40,6 +43,12 @@ public class FuckChatHttpClient {
 
     public interface SendMessageListener {
         void onSuccess(long messageTime);
+
+        void onFail(long messageTime, int errCode, String errMsg);
+    }
+
+    public interface UploadImageListener {
+        void onSuccess(long messageTime, String imgUrl);
 
         void onFail(long messageTime, int errCode, String errMsg);
     }
@@ -162,7 +171,13 @@ public class FuckChatHttpClient {
     };
 
 
-    public void getAccessToken(String mobile, String deviceid) {
+    /**
+     * 初始化登录
+     *
+     * @param mobile
+     * @param deviceid
+     */
+    public void initChat(String mobile, String deviceid) {
         this.mMobile = mobile;
         this.mDeviceid = deviceid;
 
@@ -300,6 +315,83 @@ public class FuckChatHttpClient {
         } catch (Exception ex) {
             Log.e(TAG, "chatSendMessage_Ex: " + ex.getMessage());
         }
+    }
+
+    /**
+     * 咨询上传图片
+     *
+     * @param msgTime
+     * @param imgPath
+     * @param imageListener
+     */
+    public void chatUploadImage(final long msgTime, final String imgPath, final UploadImageListener imageListener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String queyParams = getSysQueryParams(mToken);
+                    Log.e(TAG, "chatUploadImage:queyParams: " + queyParams);
+                    String queryurl = String.format("%s/%s?%s", ChatHttpBean.ChatBaseUrl, ChatHttpBean.UploadImgActionUrl, queyParams);
+                    Log.e(TAG, "chatUploadImage: queryurl:" + queryurl);
+                    RequestConfig requestConfig = RequestConfig.custom()
+                            .setConnectionRequestTimeout(DEFAULT_READ_TIMEOUT)
+                            .setSocketTimeout(DEFAULT_READ_TIMEOUT)
+                            .build();
+                    //声明HttpClient对象
+                    CloseableHttpClient httpclient = HttpClients.createDefault();
+                    HttpPost httpPost = new HttpPost(queryurl);
+                    httpPost.setConfig(requestConfig);
+                    MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                    builder.addBinaryBody("photo", new File(imgPath));
+                    httpPost.setEntity(builder.build());
+
+                    CloseableHttpResponse response2 = httpclient.execute(httpPost);
+                    try {
+                        if (response2.getStatusLine().getStatusCode() == 200) {
+                            HttpEntity entity2 = response2.getEntity();
+                            String strResult = EntityUtils.toString(entity2);
+                            Log.e(TAG, "chatUploadImage: strResult:" + strResult);
+                            try {
+                                if (strResult != null) {
+                                    JSONObject resJson = new JSONObject(strResult);
+                                    int code = resJson.getInt("code");
+                                    if (0 == code) {
+                                        JSONObject resultJson = resJson.getJSONObject("result");
+                                        String imgUrl = "";
+                                        if (resultJson != null) {
+                                            imgUrl = resultJson.getString("picpath");
+                                        }
+                                        if (imageListener != null)
+                                            imageListener.onSuccess(msgTime, imgUrl);
+                                    } else {
+                                        if (imageListener != null) {
+                                            imageListener.onFail(msgTime, code, resJson.getString("msg"));
+                                        }
+                                    }
+                                } else {
+                                    if (imageListener != null) {
+                                        imageListener.onFail(msgTime, -1, "发送失败");
+                                    }
+                                }
+                            } catch (Exception ex) {
+                                if (imageListener != null) {
+                                    imageListener.onFail(msgTime, -1, ex.getMessage());
+                                }
+                                Log.e(TAG, "run_ex: " + ex.getMessage());
+                            }
+                        }
+                    } catch (Exception ex) {
+                    } finally {
+                        response2.close();
+                    }
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+//            return null;
+                }
+            }
+        }).start();
+//        return null;
     }
 
 

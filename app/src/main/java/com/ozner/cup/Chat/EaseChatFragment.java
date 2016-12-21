@@ -13,7 +13,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -52,9 +54,11 @@ import com.ozner.cup.DBHelper.EMMessage;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.OznerFileImageHelper;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -69,6 +73,7 @@ public class EaseChatFragment extends EaseBaseFragment {
     protected static final int REQUEST_CODE_MAP = 1;
     protected static final int REQUEST_CODE_CAMERA = 2;
     protected static final int REQUEST_CODE_LOCAL = 3;
+    protected static final int UploadImg_Success = 4;
 //    private ChatOkManager chatOkManager;
 
     /**
@@ -83,7 +88,6 @@ public class EaseChatFragment extends EaseBaseFragment {
     protected InputMethodManager inputManager;
     protected ClipboardManager clipboard;
 
-    protected Handler handler = new Handler();
     protected File cameraFile;
     protected SwipeRefreshLayout swipeRefreshLayout;
     protected ListView listView;
@@ -107,6 +111,8 @@ public class EaseChatFragment extends EaseBaseFragment {
 
     private FuckChatHttpClient fuckChatHttpClient;
     private ChatMessageReciever chatMonitor;
+
+    private HashMap<Long, EMMessage> waitSendMsg = new HashMap<>();
 
     /**
      * 实例化Fragment
@@ -138,9 +144,41 @@ public class EaseChatFragment extends EaseBaseFragment {
 
     @Override
     public void onDetach() {
+        Log.e(TAG, "onDetach: ");
+        //将未发送的信息设置为发送失败
+        for (long key : waitSendMsg.keySet()) {
+            final long removtime = waitSendMsg.get(key).getTime();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    EMMessage msg = DBManager.getInstance(getContext()).getChatMessage(userid, removtime);
+                    msg.setStatus(MessageStatus.FAIL);
+                    DBManager.getInstance(getContext()).updateEMMessage(msg);
+                }
+            }).start();
+            waitSendMsg.remove(key);
+            Log.e(TAG, "onDetach: 移除：" + key);
+        }
         System.gc();
         super.onDetach();
     }
+
+    protected Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case UploadImg_Success:
+                    Log.e(TAG, "handleMessage: 图片上传成功");
+                    EMMessage chatMsg = (EMMessage) msg.obj;
+                    String sendMsg = MessageCreator.createImageMessae(chatMsg.getContent());
+                    Log.e(TAG, "handleMessage: imgUrl:" + sendMsg);
+                    waitSendMsg.put(chatMsg.getTime(), chatMsg);
+                    chatSendMsg(sendMsg, chatMsg.getTime());
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
 
     /**
      * 注册广播接收器
@@ -380,19 +418,7 @@ public class EaseChatFragment extends EaseBaseFragment {
         registerReceiver();
         try {
             Log.e(TAG, "onStart: mobile:" + mMobile + " , deviceId:" + mDeviceId);
-//        chatOkManager.initChat(mMobile,"");
-            fuckChatHttpClient.getAccessToken(mMobile, mDeviceId);
-//            ChatHttpMethods.getInstance().initChat(mMobile, new ChatHttpMethods.ChatResultListener() {
-//                @Override
-//                public void onSuccess() {
-//                    Log.e(TAG, "initChat_onSuccess: ");
-//                }
-//
-//                @Override
-//                public void onFail(int state, String msg) {
-//                    Log.e(TAG, "initChat_onFail: state:" + state + " , msg:" + msg);
-//                }
-//            });
+            fuckChatHttpClient.initChat(mMobile, mDeviceId);
         } catch (Exception ex) {
             Log.e(TAG, "onStart_ex: " + ex.getMessage());
         }
@@ -444,14 +470,9 @@ public class EaseChatFragment extends EaseBaseFragment {
 
     @Override
     public void onStop() {
+
         unRegisterReceiver();
         super.onStop();
-        // unregister this event listener when this activity enters the
-        // background
-//        EMClient.getInstance().chatManager().removeMessageListener(this);
-
-        // remove activity from foreground activity list
-//        EaseUI.getInstance().popActivity(getActivity());
     }
 
     @Override
@@ -468,11 +489,13 @@ public class EaseChatFragment extends EaseBaseFragment {
 
 
     protected void showChatroomToast(final String toastContent) {
-        getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                Toast.makeText(getActivity(), toastContent, Toast.LENGTH_SHORT).show();
-            }
-        });
+        if (EaseChatFragment.this.isAdded()) {
+            getActivity().runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(getActivity(), toastContent, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
 
@@ -550,7 +573,7 @@ public class EaseChatFragment extends EaseBaseFragment {
      */
     //send message
     protected void sendTextMessage(String content) {
-//        Log.e(TAG, "sendTextMessage: " + content);
+
         if (!isUserIDisEmpty()) {
             EMMessage message = new EMMessage();
             message.setContent(content);
@@ -561,12 +584,7 @@ public class EaseChatFragment extends EaseBaseFragment {
             message.setStatus(MessageStatus.INPROGRESS);
             sendMessage(message);
         }
-//        if (EaseAtMessageHelper.get().containsAtUsername(content)) {
-//            sendAtMessage(content);
-//        } else {
-//            EMMessage message = EMMessage.createTxtSendMessage(content, toChatUsername);
-//            sendMessage(message);
-//        }
+
     }
 
 
@@ -593,10 +611,34 @@ public class EaseChatFragment extends EaseBaseFragment {
      * @param imagePath
      */
     protected void sendImageMessage(String imagePath) {
-        // TODO: 2016/12/12 发送图片信息 
-        Log.e(TAG, "sendImageMessage: 发送图片信息");
-//        EMMessage message = EMMessage.createImageSendMessage(imagePath, false, toChatUsername);
-//        sendMessage(message);
+        // TODO: 2016/12/12 发送图片信息
+        Log.e(TAG, "sendImageMessage: 发送图片信息:" + imagePath);
+
+        EMMessage imgMsg = new EMMessage();
+        imgMsg.setUserid(userid);
+        imgMsg.setStatus(MessageStatus.INPROGRESS);
+        imgMsg.setMDirect(MessageDirect.SEND);
+        imgMsg.setMType(MessageType.IMAGE);
+        imgMsg.setTime(Calendar.getInstance().getTimeInMillis());
+
+        if (imagePath.contains("http:") || imagePath.contains("https:")) {
+            String sendPath = OznerFileImageHelper.getSmallBitmapPath(getContext(), imagePath);
+            imgMsg.setContent(sendPath);
+            //保存信息
+            if (imgMsg != null) {
+                DBManager.getInstance(getContext()).updateEMMessage(imgMsg);
+            }
+            waitSendMsg.put(imgMsg.getTime(), imgMsg);
+            chatSendMsg(MessageCreator.createImageMessae(sendPath), imgMsg.getTime());
+        } else {
+            imgMsg.setContent(imagePath);
+            //保存信息
+            if (imgMsg != null) {
+                DBManager.getInstance(getContext()).updateEMMessage(imgMsg);
+            }
+            chatUploadImage(imgMsg);
+        }
+
     }
 
 //    protected void sendLocationMessage(double latitude, double longitude, String locationAddress) {
@@ -620,11 +662,9 @@ public class EaseChatFragment extends EaseBaseFragment {
      *
      * @param saveMessage
      */
-    protected void sendMessage(EMMessage saveMessage) {
-
-        if (saveMessage != null) {
-            DBManager.getInstance(getContext()).updateEMMessage(saveMessage);
-        }
+    protected void sendMessage(@NonNull EMMessage saveMessage) {
+        DBManager.getInstance(getContext()).updateEMMessage(saveMessage);
+        waitSendMsg.put(saveMessage.getTime(), saveMessage);
         String sendMsg = MessageCreator.createTextMessage(saveMessage.getContent());
         chatSendMsg(sendMsg, saveMessage.getTime());
 
@@ -642,8 +682,17 @@ public class EaseChatFragment extends EaseBaseFragment {
      * @param message
      */
     public void resendMessage(EMMessage message) {
-//        message.setStatus(EMMessage.Status.CREATE);
-//        EMClient.getInstance().chatManager().sendMessage(message);
+        DBManager.getInstance(getContext()).deleteEMMessage(message);
+        switch (message.getMType()) {
+            case MessageType.TXT:
+                sendTextMessage(message.getContent());
+                break;
+            case MessageType.IMAGE:
+                sendImageMessage(message.getContent());
+                break;
+            default:
+                break;
+        }
         messageList.refresh();
     }
 
@@ -685,49 +734,49 @@ public class EaseChatFragment extends EaseBaseFragment {
         }
 
     }
-
-    /**
-     * send file
-     *
-     * @param uri
-     */
-    protected void sendFileByUri(Uri uri) {
-        String filePath = null;
-        if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Cursor cursor = null;
-
-            try {
-                cursor = getActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
-                int column_index = cursor.getColumnIndexOrThrow("_data");
-                if (cursor.moveToFirst()) {
-                    filePath = cursor.getString(column_index);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (cursor != null) {
-                    cursor.close();
-                }
-            }
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            filePath = uri.getPath();
-        }
-        if (filePath == null) {
-            return;
-        }
-        File file = new File(filePath);
-        if (!file.exists()) {
-            Toast.makeText(getActivity(), R.string.File_does_not_exist, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        //limit the size < 10M
-        if (file.length() > 10 * 1024 * 1024) {
-            Toast.makeText(getActivity(), R.string.The_file_is_not_greater_than_10_m, Toast.LENGTH_SHORT).show();
-            return;
-        }
-//        sendFileMessage(filePath);
-    }
+//
+//    /**
+//     * send file
+//     *
+//     * @param uri
+//     */
+//    protected void sendFileByUri(Uri uri) {
+//        String filePath = null;
+//        if ("content".equalsIgnoreCase(uri.getScheme())) {
+//            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+//            Cursor cursor = null;
+//
+//            try {
+//                cursor = getActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
+//                int column_index = cursor.getColumnIndexOrThrow("_data");
+//                if (cursor.moveToFirst()) {
+//                    filePath = cursor.getString(column_index);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            } finally {
+//                if (cursor != null) {
+//                    cursor.close();
+//                }
+//            }
+//        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+//            filePath = uri.getPath();
+//        }
+//        if (filePath == null) {
+//            return;
+//        }
+//        File file = new File(filePath);
+//        if (!file.exists()) {
+//            Toast.makeText(getActivity(), R.string.File_does_not_exist, Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//        //limit the size < 10M
+//        if (file.length() > 10 * 1024 * 1024) {
+//            Toast.makeText(getActivity(), R.string.The_file_is_not_greater_than_10_m, Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+////        sendFileMessage(filePath);
+//    }
 
     /**
      * 咨询发送信息，网络任务
@@ -740,8 +789,13 @@ public class EaseChatFragment extends EaseBaseFragment {
 //            isSending = false;
             showChatroomToast("网络未连接");
             EMMessage msg = DBManager.getInstance(getContext()).getChatMessage(userid, msgTime);
-            msg.setStatus(MessageStatus.FAIL);
-            DBManager.getInstance(getContext()).updateEMMessage(msg);
+            if (msg != null) {
+                msg.setStatus(MessageStatus.FAIL);
+                DBManager.getInstance(getContext()).updateEMMessage(msg);
+            }
+            if (waitSendMsg.containsKey(msgTime)) {
+                waitSendMsg.remove(msgTime);
+            }
             return;
         }
 
@@ -753,9 +807,13 @@ public class EaseChatFragment extends EaseBaseFragment {
                 // TODO: 2016/12/15 处理信息发送成功
                 //更新消息数据库
                 EMMessage msg = DBManager.getInstance(getContext()).getChatMessage(userid, messageTime);
-                msg.setStatus(MessageStatus.SUCCESS);
-                DBManager.getInstance(getContext()).updateEMMessage(msg);
-
+                if (msg != null) {
+                    msg.setStatus(MessageStatus.SUCCESS);
+                    DBManager.getInstance(getContext()).updateEMMessage(msg);
+                }
+                if (waitSendMsg.containsKey(messageTime)) {
+                    waitSendMsg.remove(messageTime);
+                }
                 if (EaseChatFragment.this.isAdded()) {
                     //刷新UI
                     if (isMessageListInited) {
@@ -770,9 +828,13 @@ public class EaseChatFragment extends EaseBaseFragment {
 //                isSending = false;
                 //更新消息数据库
                 EMMessage msg = DBManager.getInstance(getContext()).getChatMessage(userid, messageTime);
-                msg.setStatus(MessageStatus.FAIL);
-                DBManager.getInstance(getContext()).updateEMMessage(msg);
-
+                if (msg != null) {
+                    msg.setStatus(MessageStatus.FAIL);
+                    DBManager.getInstance(getContext()).updateEMMessage(msg);
+                }
+                if (waitSendMsg.containsKey(messageTime)) {
+                    waitSendMsg.remove(messageTime);
+                }
                 if (EaseChatFragment.this.isAdded()) {
                     //刷新UI
                     if (isMessageListInited) {
@@ -784,8 +846,87 @@ public class EaseChatFragment extends EaseBaseFragment {
     }
 
     /**
+     * 上传图片
+     *
+     * @param emMessage
+     */
+    private void chatUploadImage(EMMessage emMessage) {
+        waitSendMsg.put(emMessage.getTime(), emMessage);
+        Log.e(TAG, "chatUploadImage: 发送图片：" + emMessage.getContent());
+        if (!EaseCommonUtils.isNetWorkConnected(getContext())) {
+            Log.e(TAG, "chatUploadImage: 网络未连接");
+
+            showChatroomToast("网络未连接");
+            EMMessage msg = DBManager.getInstance(getContext()).getChatMessage(userid, emMessage.getTime());
+            if (msg != null) {
+                msg.setStatus(MessageStatus.FAIL);
+                DBManager.getInstance(getContext()).updateEMMessage(msg);
+            }
+            if (waitSendMsg.containsKey(emMessage.getTime())) {
+                waitSendMsg.remove(emMessage.getTime());
+            }
+            return;
+        }
+
+        fuckChatHttpClient.chatUploadImage(emMessage.getTime(), emMessage.getContent(), new FuckChatHttpClient.UploadImageListener() {
+            @Override
+            public void onSuccess(final long messageTime, final String imgUrl) {
+                //更新消息数据库
+                Log.e(TAG, "onSuccess: 上传成功:" + imgUrl);
+                EMMessage msg = DBManager.getInstance(getContext()).getChatMessage(userid, messageTime);
+                if (msg != null) {
+                    msg.setStatus(MessageStatus.INPROGRESS);
+                    msg.setContent(imgUrl);
+                    DBManager.getInstance(getContext()).updateEMMessage(msg);
+                    Message message = handler.obtainMessage(UploadImg_Success);
+                    message.obj = msg;
+                    handler.sendMessage(message);
+                }
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        EMMessage msg = DBManager.getInstance(getContext()).getChatMessage(userid, messageTime);
+//                        msg.setStatus(MessageStatus.SUCCESS);
+//                        msg.setContent(imgUrl);
+//                        DBManager.getInstance(getContext()).updateEMMessage(msg);
+//
+//                    }
+//                });
+//                EMMessage msg = DBManager.getInstance(getContext()).getChatMessage(userid, messageTime);
+//                msg.setStatus(MessageStatus.SUCCESS);
+//                DBManager.getInstance(getContext()).updateEMMessage(msg);
+//
+//                if (EaseChatFragment.this.isAdded()) {
+//                    //刷新UI
+//                    if (isMessageListInited) {
+//                        messageList.refreshSelectLast();
+//                    }
+//                }
+            }
+
+            @Override
+            public void onFail(long messageTime, int errCode, String errMsg) {
+                EMMessage msg = DBManager.getInstance(getContext()).getChatMessage(userid, messageTime);
+                msg.setStatus(MessageStatus.FAIL);
+                DBManager.getInstance(getContext()).updateEMMessage(msg);
+                if (waitSendMsg.containsKey(messageTime)) {
+                    waitSendMsg.remove(messageTime);
+                }
+                if (EaseChatFragment.this.isAdded()) {
+                    //刷新UI
+                    if (isMessageListInited) {
+                        messageList.refreshSelectLast();
+                    }
+                }
+            }
+        });
+
+    }
+
+    /**
      * capture new image
      */
+
     protected void selectPicFromCamera() {
         try {
             if (!EaseCommonUtils.isSdcardExist()) {
@@ -963,14 +1104,14 @@ public class EaseChatFragment extends EaseBaseFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-           switch (intent.getAction()){
-               case  OznerBroadcastAction.OBA_RECEIVE_CHAT_MSG:
-                   //刷新UI
-                   if (isMessageListInited) {
-                       messageList.refreshSelectLast();
-                   }
-               break;
-           }
+            switch (intent.getAction()) {
+                case OznerBroadcastAction.OBA_RECEIVE_CHAT_MSG:
+                    //刷新UI
+                    if (isMessageListInited) {
+                        messageList.refreshSelectLast();
+                    }
+                    break;
+            }
         }
     }
 
