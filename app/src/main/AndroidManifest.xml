@@ -173,6 +173,8 @@
             </intent-filter>
         </receiver>
         <!-- 以上是百度云推送相关设置 -->
+        <activity android:name=".MyCenter.MyFriendsActivity">
+        </activity>
     </application>
 
 </manifest>

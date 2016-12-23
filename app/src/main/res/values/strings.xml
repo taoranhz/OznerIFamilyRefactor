@@ -377,6 +377,14 @@
 
     <string name="act_member">代理会员</string>
 
+    <string name="rank_tap_tds">水探头水质纯净值TDS</string>
+    <string name="rank_water_purifier_tds">净水器水质纯净值TDS</string>
+    <string name="rank_cup_tds">智能杯水质纯净值TDS</string>
+    <string name="rank_cup_vol">智能杯饮水量</string>
+    <string name="rank">排名</string>
+    <string name="today_best_tds">您今日最佳(TDS)</string>
+    <string name="get_mark">获得点赞</string>
+
 
     <!--错误码-->
     <string name="Code_Accept_nofound">没有发现对应请求</string>

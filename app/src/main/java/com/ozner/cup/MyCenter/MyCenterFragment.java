@@ -1,6 +1,7 @@
 package com.ozner.cup.MyCenter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -130,10 +131,12 @@ public class MyCenterFragment extends BaseFragment {
             Glide.with(getContext()).load(mUserInfo.getHeadimg()).asBitmap().placeholder(R.drawable.icon_default_headimage).centerCrop().into(new BitmapImageViewTarget(ivHeadImg) {
                 @Override
                 protected void setResource(Bitmap resource) {
-                    RoundedBitmapDrawable circularBitmapDrawable =
-                            RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
-                    circularBitmapDrawable.setCircular(true);
-                    ivHeadImg.setImageDrawable(circularBitmapDrawable);
+                    if (MyCenterFragment.this.isAdded()) {
+                        RoundedBitmapDrawable circularBitmapDrawable =
+                                RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                        circularBitmapDrawable.setCircular(true);
+                        ivHeadImg.setImageDrawable(circularBitmapDrawable);
+                    }
                 }
             });
         }
@@ -198,6 +201,7 @@ public class MyCenterFragment extends BaseFragment {
             case R.id.rlay_my_ticket:
                 break;
             case R.id.rlay_my_friend:
+                startActivity(new Intent(getContext(), MyFriendsActivity.class));
                 break;
             case R.id.rlay_report:
                 break;

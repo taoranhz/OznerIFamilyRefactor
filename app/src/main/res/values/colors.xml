@@ -47,4 +47,7 @@
     <color name="translucent">#00000000</color>
     <color name="translucent_background">#80000000</color>
     <color name="translucent_PrimaryDark">#2f677f</color>
+
+    <color name="new_message_red">#fffe3c00</color>
+    <color name="friend_rank_card_bg">#fff1f4f9</color>
 </resources>

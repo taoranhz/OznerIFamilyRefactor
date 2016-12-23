@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.AppBarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:elevation="0dp">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:theme="@style/MyToolBarStyle">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:gravity="center_horizontal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/llay_friend_rank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_friend_rank"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@string/friend_rank"
+                        android:textColor="@color/my_friend_tab_text_selector"
+                        android:textSize="16dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_rank_bottom"
+                        android:layout_width="65dp"
+                        android:layout_height="1.5dp"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/detail_textblue"
+                        android:visibility="invisible"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rlay_my_friend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_my_friend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@string/my_friend"
+                        android:textColor="@color/my_friend_tab_text_selector"
+                        android:textSize="16dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_friend_bottom"
+                        android:layout_width="65dp"
+                        android:layout_height="1.5dp"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/detail_textblue"
+                        android:visibility="invisible"/>
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llay_friend_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <RelativeLayout
+                    android:layout_width="35dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="15dp">
+
+                    <ImageView
+                        android:id="@+id/iv_newMsg"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/friend_msg"/>
+
+                    <ImageView
+                        android:id="@+id/iv_newMsgTips"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="1dp"
+                        android:layout_marginTop="1dp"
+                        android:background="@drawable/new_friends_circle"
+                        android:visibility="visible"/>
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/iv_add_friend"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/add_friend"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+
+</android.support.design.widget.AppBarLayout>
