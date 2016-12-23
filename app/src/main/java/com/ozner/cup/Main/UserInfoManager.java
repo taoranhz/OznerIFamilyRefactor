@@ -10,6 +10,7 @@ import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.HttpHelper.ApiException;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
+import com.ozner.cup.R;
 
 import java.lang.ref.WeakReference;
 
@@ -24,7 +25,7 @@ public class UserInfoManager {
     private static final String TAG = "UserInfoManager";
     private WeakReference<Context> mContext;
 
-    interface LoadUserInfoListener {
+    public interface LoadUserInfoListener {
         void onSuccess(UserInfo userInfo);
 
         void onFail(String msg);
@@ -78,6 +79,61 @@ public class UserInfoManager {
                             }
                         } catch (Exception ex) {
                             Log.e(TAG, "loadUserInfo_Ex: " + ex.getMessage());
+                            if (listener != null) {
+                                listener.onFail(ex.getMessage());
+                            }
+                        }
+                    }
+                }));
+    }
+
+    /**
+     * 加载用户头像积分信息
+     *
+     * @param listener
+     */
+    public void loadUserNickImage(final UserInfo userinfo, final LoadUserInfoListener listener) {
+        HttpMethods.getInstance().getUserNickImage(OznerPreference.getUserToken(mContext.get()), userinfo.getMobile(),
+                new ProgressSubscriber<JsonObject>(mContext.get(), new Action1<JsonObject>() {
+                    @Override
+                    public void call(JsonObject jsonObject) {
+                        Log.e(TAG, "loadUserNickImage: " + jsonObject.toString());
+                        try {
+                            if(jsonObject!=null){
+                                if(jsonObject.get("state").getAsInt()>0){
+                                    JsonObject data = jsonObject.get("data").getAsJsonArray().get(0).getAsJsonObject();
+                                    if(!data.get("mobile").isJsonNull()){
+                                        userinfo.setMobile(data.get("mobile").getAsString());
+                                    }
+                                    if(!data.get("nickname").isJsonNull()){
+                                        userinfo.setNickname(data.get("nickname").getAsString());
+                                    }
+                                    if(!data.get("headimg").isJsonNull()){
+                                        userinfo.setHeadimg(data.get("headimg").getAsString());
+                                    }
+                                    if(!data.get("GradeName").isJsonNull()){
+                                        userinfo.setGradeName(data.get("GradeName").getAsString());
+                                    }
+                                    if(!data.get("Score").isJsonNull()){
+                                        userinfo.setScore(data.get("Score").getAsString());
+                                    }
+
+                                    DBManager.getInstance(mContext.get()).updateUserInfo(userinfo);
+                                    if(listener!=null){
+                                        listener.onSuccess(userinfo);
+                                    }
+                                }else {
+                                    if(listener!=null){
+                                        listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
+                                    }
+                                }
+                            }else {
+                                if (listener != null) {
+                                    listener.onFail(mContext.get().getString(R.string.err_net_outline));
+                                }
+                            }
+                        } catch (Exception ex) {
+                            Log.e(TAG, "loadUserNickImage_Ex: " + ex.getMessage());
                             if (listener != null) {
                                 listener.onFail(ex.getMessage());
                             }

@@ -1,5 +1,6 @@
 package com.ozner.cup.Chat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -20,9 +21,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -31,8 +36,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.kayvannj.permission_utils.Func;
+import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Chat.ChatHttpUtils.FuckChatHttpClient;
 import com.ozner.cup.Chat.EaseUI.UI.EaseBaseFragment;
@@ -60,6 +68,9 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 /**
  * you can new an EaseChatFragment to use or you can inherit it to expand.
@@ -103,6 +114,10 @@ public class EaseChatFragment extends EaseBaseFragment {
     protected int[] itemStrings = {R.string.attach_take_pic, R.string.attach_picture};
     protected int[] itemdrawables = {R.drawable.camera, R.drawable.picture};
     protected int[] itemIds = {ITEM_TAKE_PICTURE, ITEM_PICTURE};
+    @InjectView(R.id.title)
+    TextView title;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
     private boolean isMessageListInited;
     protected MyItemClickListener extendMenuItemClickListener;
     private String userid;
@@ -111,7 +126,7 @@ public class EaseChatFragment extends EaseBaseFragment {
 
     private FuckChatHttpClient fuckChatHttpClient;
     private ChatMessageReciever chatMonitor;
-
+    PermissionUtil.PermissionRequestObject perReqResult;//, picReqResult, cameraReqResult;
     private HashMap<Long, EMMessage> waitSendMsg = new HashMap<>();
 
     /**
@@ -141,6 +156,19 @@ public class EaseChatFragment extends EaseBaseFragment {
         super.onCreate(savedInstanceState);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (perReqResult != null) {
+            perReqResult.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+//        if (picReqResult != null) {
+//            picReqResult.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        }
+//        if (cameraReqResult != null) {
+//            cameraReqResult.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
     @Override
     public void onDetach() {
@@ -203,7 +231,13 @@ public class EaseChatFragment extends EaseBaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.ease_fragment_chat, container, false);
+        View view = inflater.inflate(R.layout.ease_fragment_chat, container, false);
+        ButterKnife.inject(this, view);
+        toolbar.setTitle("");
+        title.setTextColor(ContextCompat.getColor(getContext(), R.color.light_black));
+        setHasOptionsMenu(true);
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        return view;
     }
 
     @Override
@@ -215,6 +249,44 @@ public class EaseChatFragment extends EaseBaseFragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // TODO Auto-generated method stub
+        MenuItem item = menu.add(0, 0, 0, R.string.chat_call);
+        item.setIcon(R.mipmap.chat_call);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 0:
+//                Toast.makeText(getContext(), "打电话", Toast.LENGTH_SHORT).show();
+                takePhone();
+                break;
+        }
+        return true;
+    }
+
+    /**
+     * 拨打客服电话
+     */
+    private void takePhone() {
+        perReqResult = PermissionUtil.with(this).request(Manifest.permission.CALL_PHONE)
+                .onAllGranted(new Func() {
+                    @Override
+                    protected void call() {
+                        Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:4008202667"));
+                        startActivity(callIntent);
+                    }
+                }).onAnyDenied(new Func() {
+                    @Override
+                    protected void call() {
+                        Toast.makeText(getContext(), R.string.permission_call_phone_denied, Toast.LENGTH_SHORT).show();
+                    }
+                }).ask(1);
+    }
 
     /**
      * init view
@@ -429,8 +501,8 @@ public class EaseChatFragment extends EaseBaseFragment {
     public void onResume() {
         try {
             setBarColor(R.color.colorAccent);
-            setToolbarColor(R.color.colorAccent);
-            ((MainActivity) getActivity()).setCustomTitle(R.string.chat);
+            setToolbarColor(R.color.white);
+            title.setText(R.string.chat);
             clearNotifaction();
         } catch (Exception ex) {
 
@@ -460,12 +532,12 @@ public class EaseChatFragment extends EaseBaseFragment {
     }
 
     /**
-     * 设置主界面toolbar背景色
+     * 设置toolbar背景色
      *
      * @param resId
      */
     protected void setToolbarColor(int resId) {
-        ((MainActivity) getActivity()).setToolBarColor(resId);
+        toolbar.setBackgroundColor(ContextCompat.getColor(getContext(), resId));
     }
 
     @Override
@@ -496,6 +568,12 @@ public class EaseChatFragment extends EaseBaseFragment {
                 }
             });
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
     }
 
 
@@ -933,14 +1011,34 @@ public class EaseChatFragment extends EaseBaseFragment {
                 Toast.makeText(getActivity(), R.string.sd_card_does_not_exist, Toast.LENGTH_SHORT).show();
                 return;
             }
+            perReqResult = PermissionUtil.with((MainActivity)getActivity()).request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+                    .onAllGranted(new Func() {
+                        @Override
+                        protected void call() {
+                            cameraFile = new File(Environment.getExternalStorageDirectory().getPath() + "/OnzerCache/", UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "ozner")
+                                    + System.currentTimeMillis() + ".jpg");
+                            //noinspection ResultOfMethodCallIgnored
+                            cameraFile.getParentFile().mkdirs();
+                            startActivityForResult(
+                                    new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraFile)),
+                                    REQUEST_CODE_CAMERA);
+                        }
+                    }).onAnyDenied(new Func() {
+                        @Override
+                        protected void call() {
+                            Log.e(TAG, "call: 权限被拒绝");
 
-            cameraFile = new File(Environment.getExternalStorageDirectory().getPath() + "/OnzerCache/", UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "ozner")
-                    + System.currentTimeMillis() + ".jpg");
-            //noinspection ResultOfMethodCallIgnored
-            cameraFile.getParentFile().mkdirs();
-            startActivityForResult(
-                    new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraFile)),
-                    REQUEST_CODE_CAMERA);
+                            if (EaseChatFragment.this.isAdded())
+                                Toast.makeText(getContext(), R.string.no_permission, Toast.LENGTH_SHORT).show();
+                        }
+                    }).ask(2);
+//            cameraFile = new File(Environment.getExternalStorageDirectory().getPath() + "/OnzerCache/", UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "ozner")
+//                    + System.currentTimeMillis() + ".jpg");
+//            //noinspection ResultOfMethodCallIgnored
+//            cameraFile.getParentFile().mkdirs();
+//            startActivityForResult(
+//                    new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraFile)),
+//                    REQUEST_CODE_CAMERA);
         } catch (Exception ex) {
             Log.e(TAG, "selectPicFromCamera_Ex: " + ex.getMessage());
         }
@@ -950,15 +1048,30 @@ public class EaseChatFragment extends EaseBaseFragment {
      * select local image
      */
     protected void selectPicFromLocal() {
-        Intent intent;
-        if (Build.VERSION.SDK_INT < 19) {
-            intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-
-        } else {
-            intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        try {
+            perReqResult = PermissionUtil.with((MainActivity) getActivity()).request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .onAllGranted(new Func() {
+                        @Override
+                        protected void call() {
+                            Intent intent;
+                            if (Build.VERSION.SDK_INT < 19) {
+                                intent = new Intent(Intent.ACTION_GET_CONTENT);
+                                intent.setType("image/*");
+                            } else {
+                                intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            }
+                            startActivityForResult(intent, REQUEST_CODE_LOCAL);
+                        }
+                    }).onAnyDenied(new Func() {
+                        @Override
+                        protected void call() {
+                            if (EaseChatFragment.this.isAdded())
+                                Toast.makeText(getContext(), R.string.no_permission, Toast.LENGTH_SHORT).show();
+                        }
+                    }).ask(3);
+        } catch (Exception ex) {
+            Log.e(TAG, "selectPicFromLocal_Ex: " + ex.getMessage());
         }
-        startActivityForResult(intent, REQUEST_CODE_LOCAL);
     }
 
 

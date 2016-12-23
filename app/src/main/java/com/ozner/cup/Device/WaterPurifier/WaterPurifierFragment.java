@@ -9,6 +9,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -118,6 +120,10 @@ public class WaterPurifierFragment extends DeviceFragment {
     TextView tvSpec;
     @InjectView(R.id.llay_tds_detail)
     LinearLayout llayTdsDetail;
+    @InjectView(R.id.title)
+    TextView title;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
     private WaterPurifier mWaterPurifer;
     WaterPurifierMonitor waterMonitor;
     private int oldPreValue, oldThenValue;
@@ -151,8 +157,29 @@ public class WaterPurifierFragment extends DeviceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_water_purifier, container, false);
         ButterKnife.inject(this, view);
+        toolbar.setTitle("");
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         return view;
     }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        ((MainActivity) getActivity()).initActionBarToggle(toolbar);
+
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    /**
+     * 设置toolbar背景色
+     *
+     * @param resId
+     */
+    protected void setToolbarColor(int resId) {
+        if (isAdded())
+            toolbar.setBackgroundColor(ContextCompat.getColor(getContext(), resId));
+    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -489,23 +516,11 @@ public class WaterPurifierFragment extends DeviceFragment {
 
 
     @Override
-    public void onAttach(Context context) {
-        isShowFilterTips = true;
-        try {
-            if (WaterPurifierFragment.this.isAdded() && !WaterPurifierFragment.this.isRemoving() && !WaterPurifierFragment.this.isDetached())
-                ((MainActivity) context).setCustomTitle(getString(R.string.water_purifier));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Log.e(TAG, "onAttach_Ex: " + ex.getMessage());
-        }
-        super.onAttach(context);
-    }
-
-    @Override
     public void onResume() {
         try {
             setBarColor(R.color.cup_detail_bg);
             setToolbarColor(R.color.cup_detail_bg);
+            title.setText(R.string.water_purifier);
         } catch (Exception ex) {
 
         }
@@ -589,7 +604,7 @@ public class WaterPurifierFragment extends DeviceFragment {
      */
     private void refreshSensorData() {
         if (mWaterPurifer != null) {
-            ((MainActivity) getActivity()).setCustomTitle(mWaterPurifer.getName());
+            title.setText(mWaterPurifer.getName());
             showTdsState();
         }
     }

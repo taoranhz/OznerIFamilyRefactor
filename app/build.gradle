@@ -35,6 +35,7 @@ greendao {
     schemaVersion 2
 }
 dependencies {
+    testCompile 'junit:junit:4.12'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -43,8 +44,7 @@ dependencies {
     //    compile 'io.reactivex.rxjava2:rxandroid:2.0.0'
     compile project(path: ':OznerLibrary')
     compile project(':xzy_ui_lib')
-    //    compile 'org.greenrobot:greendao-gradle-plugin:3.2.0'
-    //滑动开关
+
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'com.ashokvarma.android:bottom-navigation-bar:1.3.1'
@@ -55,10 +55,15 @@ dependencies {
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
     compile 'io.reactivex:rxjava:1.2.1'
     compile 'io.reactivex:rxandroid:1.2.1'
+    //图片加载工具
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    //数据库管理工具
     compile 'org.greenrobot:greendao:3.2.0'
+    //滑动开关
     compile 'com.zcw:togglebutton-library:1.0.0'
-    testCompile 'junit:junit:4.12'
+    //网络请求框架
     compile 'cz.msebera.android:httpclient:4.4.1.2'
+    //权限管理工具
+    compile 'com.github.kayvannj:PermissionUtils:1.0.3'
 //    compile 'org.jsoup:jsoup:1.10.1'
 }

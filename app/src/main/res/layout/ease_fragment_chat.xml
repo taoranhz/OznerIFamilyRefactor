@@ -4,9 +4,11 @@
                 android:layout_height="match_parent"
                 android:animateLayoutChanges="true"
                 android:background="#f2f0eb">
+    <include android:id="@+id/top_toolbar" layout="@layout/toolbar"/>
 
 
     <com.ozner.cup.Chat.EaseUI.widget.EaseChatMessageList
+        android:layout_below="@+id/top_toolbar"
         android:id="@+id/message_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

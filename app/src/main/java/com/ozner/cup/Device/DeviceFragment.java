@@ -62,13 +62,13 @@ public abstract class DeviceFragment extends BaseFragment {
         }
     }
 
-    /**
-     * 设置主界面toolbar背景色
-     *
-     * @param resId
-     */
-    protected void setToolbarColor(int resId) {
-        ((MainActivity) getActivity()).setToolBarColor(resId);
-    }
+//    /**
+//     * 设置主界面toolbar背景色
+//     *
+//     * @param resId
+//     */
+//    protected void setToolbarColor(int resId) {
+//        ((MainActivity) getActivity()).setToolBarColor(resId);
+//    }
 
 }

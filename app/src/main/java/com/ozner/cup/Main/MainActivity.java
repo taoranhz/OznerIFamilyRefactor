@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
@@ -62,10 +60,10 @@ import rx.Subscriber;
 public class MainActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener, ILeftMenu {
     private static final String TAG = "MainActivity";
     private static final String NoDeviceTag = "nodevicetag";
-    @InjectView(R.id.title)
-    TextView customTitle;
-    @InjectView(R.id.toolbar)
-    Toolbar toolbar;
+//    @InjectView(R.id.title)
+//    TextView customTitle;
+//    @InjectView(R.id.toolbar)
+//    Toolbar toolbar;
     @InjectView(R.id.bn_bootom_nav_bar)
     BottomNavigationBar bnBootomNavBar;
     @InjectView(R.id.drawer_layout)
@@ -87,16 +85,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
         devFragmentMap = new HashMap<>();
         setDefaultFragment();
         initNavBar();
-        setCustomTitle(R.string.device);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.setDrawerListener(toggle);
-        toggle.syncState();
         initBroadCastFilter();
         String userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
         if (userid != null && !userid.isEmpty()) {
@@ -112,6 +103,18 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         //启动百度云推送
         PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, getString(R.string.Baidu_Push_ApiKey));
 
+    }
+
+
+    /**
+     * 初始化toolbar切换按钮
+     * @param toolbar
+     */
+    public void initActionBarToggle(Toolbar toolbar){
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.setDrawerListener(toggle);
+        toggle.syncState();
     }
 
     /**
@@ -167,43 +170,43 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         super.onDestroy();
     }
 
-    /**
-     * 设置主页的标题
-     *
-     * @param title
-     */
-    public void setCustomTitle(String title) {
-        try {
-            if (!isDestroyed())
-                customTitle.setText(title);
-        } catch (Exception ex) {
+//    /**
+//     * 设置主页的标题
+//     *
+//     * @param title
+//     */
+//    public void setCustomTitle(String title) {
+////        try {
+////            if (!isDestroyed())
+////                customTitle.setText(title);
+////        } catch (Exception ex) {
+////
+////        }
+//    }
+//
+//    /**
+//     * 设置主页的标题
+//     *
+//     * @param resId
+//     */
+//    public void setCustomTitle(int resId) {
+////        try {
+////            if (!isDestroyed())
+////                customTitle.setText(resId);
+////        } catch (Exception ex) {
+////
+////        }
+//    }
 
-        }
-    }
-
-    /**
-     * 设置主页的标题
-     *
-     * @param resId
-     */
-    public void setCustomTitle(int resId) {
-        try {
-            if (!isDestroyed())
-                customTitle.setText(resId);
-        } catch (Exception ex) {
-
-        }
-    }
-
-    /**
-     * 设置toolbar背景色
-     *
-     * @param resId
-     */
-    public void setToolBarColor(int resId) {
-        if (!isDestroyed())
-            toolbar.setBackgroundColor(ContextCompat.getColor(this, resId));
-    }
+//    /**
+//     * 设置toolbar背景色
+//     *
+//     * @param resId
+//     */
+//    public void setToolBarColor(int resId) {
+////        if (!isDestroyed())
+////            toolbar.setBackgroundColor(ContextCompat.getColor(this, resId));
+//    }
 
     /**
      * 初始化底部菜单

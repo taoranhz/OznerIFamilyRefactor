@@ -67,6 +67,20 @@ public interface OznerHttpService {
     @POST("OznerServer/GetUserInfo")
     Observable<JsonObject> getUserInfo(@Field("usertoken") String usertoken);
 
+    /**
+     * 获取用户头像信息和积分信息
+     * <p>
+     * 注：和获取用户信息联合使用完成UserInfo对象
+     *
+     * @param usertoken
+     * @param mobile
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/GetUserNickImage")
+    Observable<JsonObject> getUserNickImage(@Field("usertoken") String usertoken, @Field("jsonmobile") String mobile);
+
 
     /**
      * 获取净水器属性信息

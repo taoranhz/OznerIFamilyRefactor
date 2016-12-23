@@ -10,7 +10,9 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -111,6 +113,10 @@ public class AirVerPurifierFragment extends DeviceFragment {
     RelativeLayout rlayLockSwitch;
     @InjectView(R.id.llay_lock)
     LinearLayout llayLock;
+    @InjectView(R.id.title)
+    TextView title;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
     private AirPurifier_MXChip mVerAirPurifier;
     AirPurifierMonitor airMonitor;
     private String deviceNewName = "";
@@ -182,7 +188,15 @@ public class AirVerPurifierFragment extends DeviceFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_air_ver_purifier, container, false);
         ButterKnife.inject(this, view);
+        toolbar.setTitle("");
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        ((MainActivity) getActivity()).initActionBarToggle(toolbar);
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -251,22 +265,11 @@ public class AirVerPurifierFragment extends DeviceFragment {
         return AirVerPurifierFragment.this.isAdded() && !AirVerPurifierFragment.this.isRemoving() && !AirVerPurifierFragment.this.isDetached();
     }
 
-    @Override
-    public void onAttach(Context context) {
-        try {
-            if (isThisAdd())
-                ((MainActivity) context).setCustomTitle(R.string.air_purifier);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Log.e(TAG, "onAttach_Ex: " + ex.getMessage());
-        }
-        super.onAttach(context);
-    }
-
 
     @Override
     public void onResume() {
         try {
+            title.setText(R.string.air_purifier);
             initBgColor();
         } catch (Exception ex) {
             Log.e(TAG, "onResume_Ex:" + ex.getMessage());
@@ -472,6 +475,17 @@ public class AirVerPurifierFragment extends DeviceFragment {
             case R.id.rlay_air_outside:
                 showOutDoorInfo();
                 break;
+        }
+    }
+
+    /**
+     * 设置toolbar背景色
+     *
+     * @param resId
+     */
+    protected void setToolbarColor(int resId) {
+        if (isThisAdd()) {
+            toolbar.setBackgroundColor(ContextCompat.getColor(getContext(), resId));
         }
     }
 
@@ -697,7 +711,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
                 //设置设备名字
                 if (!deviceNewName.equals(mVerAirPurifier.getName())) {
                     deviceNewName = mVerAirPurifier.getName();
-                    ((MainActivity) getActivity()).setCustomTitle(mVerAirPurifier.getName());
+                    title.setText(mVerAirPurifier.getName());
                 }
                 refreshSensorData();
             }
@@ -744,7 +758,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
                 int lvXin = 0;
                 if (totalTime != 0) {
                     try {
-                        Log.e(TAG, "showFilterStatus_remain: " + (totalTime - useTime)+" , totalTime:"+totalTime);
+                        Log.e(TAG, "showFilterStatus_remain: " + (totalTime - useTime) + " , totalTime:" + totalTime);
                         lvXin = Math.round((totalTime - useTime) * 100 / totalTime);
                         if (lvXin < 0 || lvXin > 100) {
                             lvXin = 0;

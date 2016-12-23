@@ -8,6 +8,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.HttpHelper.ApiException;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
@@ -93,6 +95,17 @@ public class LoginPresenter {
                                         OznerPreference.setUserToken(loginContext.get(), jsonObject.get("usertoken").getAsString());
                                         OznerPreference.setIsLogin(loginContext.get(), true);
                                         UserDataPreference.SetUserData(loginContext.get(), UserDataPreference.UserId, jsonObject.get("userid").getAsString());
+                                        try {
+                                            UserInfo userInfo = DBManager.getInstance(loginContext.get()).getUserInfo(jsonObject.get("userid").getAsString());
+                                            if(userInfo==null){
+                                                userInfo = new UserInfo();
+                                                userInfo.setUserId(jsonObject.get("userid").getAsString());
+                                            }
+                                            userInfo.setMobile(loginView.getUserPhone());
+                                            DBManager.getInstance(loginContext.get()).updateUserInfo(userInfo);
+                                        } catch (Exception ex) {
+
+                                        }
                                         loginView.loginSuccess();
                                     } else {
                                         try {

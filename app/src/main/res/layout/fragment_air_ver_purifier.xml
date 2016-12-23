@@ -4,7 +4,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical"
               tools:context="com.ozner.cup.Device.AirPurifier.AirVerPurifierFragment">
-
+    <include layout="@layout/toolbar"/>
     <LinearLayout
         android:id="@+id/llay_top"
         android:layout_width="match_parent"

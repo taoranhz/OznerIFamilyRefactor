@@ -9,7 +9,9 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -90,6 +92,10 @@ public class AirDeskPurifierFragment extends DeviceFragment {
     LinearLayout llayDeviceConnectTip;
     @InjectView(R.id.cproessbarView)
     CProessbarView cproessbarView;
+    @InjectView(R.id.title)
+    TextView title;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
 
     private AirPurifier_Bluetooth mDeskAirPurifier;
     private AirPurifierMonitor airMonitor;
@@ -230,9 +236,16 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_air_desk_purifier, container, false);
         ButterKnife.inject(this, view);
-
+        toolbar.setTitle("");
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         cproessbarView.setOnValueChangeListener(new ValueChangeListener());
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        ((MainActivity) getActivity()).initActionBarToggle(toolbar);
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -420,7 +433,8 @@ public class AirDeskPurifierFragment extends DeviceFragment {
     private void showDeviceName() {
         if (!deviceNewName.equals(mDeskAirPurifier.getName())) {
             deviceNewName = mDeskAirPurifier.getName();
-            ((MainActivity) getActivity()).setCustomTitle(mDeskAirPurifier.getName());
+
+//            ((MainActivity) getActivity()).setCustomTitle(mDeskAirPurifier.getName());
         }
     }
 
@@ -464,6 +478,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                         tvPmState.setText(R.string.excellent);
                         setBarColor(R.color.air_good_bg);
                         setToolbarColor(R.color.air_good_bg);
+//                        toolbar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.air_good_bg));
                         llayTop.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.air_good_bg));
                     } else if (pm25 >= 75 && pm25 < 150) {
                         tvPmState.setText(R.string.good);
@@ -583,7 +598,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
     @Override
     public void onResume() {
         try {
-            ((MainActivity) getActivity()).setCustomTitle(R.string.air_purifier);
+            title.setText(R.string.air_purifier);
             initBgColor();
         } catch (Exception ex) {
             Log.e(TAG, "onResume_Ex:" + ex.getMessage());
@@ -593,6 +608,16 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         if (mDeskAirPurifier != null)
             showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
         super.onResume();
+    }
+
+    /**
+     * 设置toolbar背景色
+     *
+     * @param resId
+     */
+    protected void setToolbarColor(int resId) {
+        if (isThisAdd())
+            toolbar.setBackgroundColor(ContextCompat.getColor(getContext(), resId));
     }
 
 

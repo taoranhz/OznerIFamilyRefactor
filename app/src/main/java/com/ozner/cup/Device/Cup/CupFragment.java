@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,6 +83,10 @@ public class CupFragment extends DeviceFragment {
     TextView tvGoalTips;
     @InjectView(R.id.tv_tempTips)
     TextView tvTempTips;
+    @InjectView(R.id.title)
+    TextView title;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
 
     private Cup mCup;
     private int oldTdsValue, oldVolumeValue;
@@ -158,8 +164,28 @@ public class CupFragment extends DeviceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cup, container, false);
         ButterKnife.inject(this, view);
+        toolbar.setTitle("");
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         return view;
     }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        ((MainActivity) getActivity()).initActionBarToggle(toolbar);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    /**
+     * 设置toolbar背景色
+     *
+     * @param resId
+     */
+    protected void setToolbarColor(int resId) {
+        if (isThisAdd())
+            toolbar.setBackgroundColor(ContextCompat.getColor(getContext(), resId));
+    }
+
 
     @Override
     public void onStart() {
@@ -181,26 +207,25 @@ public class CupFragment extends DeviceFragment {
         } catch (Exception ex) {
             Log.e(TAG, "onResume_Ex: " + ex.getMessage());
         }
-        if (isThisAdd())
-            ((MainActivity) getActivity()).setCustomTitle(getString(R.string.smart_glass));
+        title.setText(getString(R.string.smart_glass));
         initRecordCal();
         refreshUIData();
         super.onResume();
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        Log.e(TAG, "onAttach: ");
-        try {
-            if (isThisAdd())
-                ((MainActivity) context).setCustomTitle(getString(R.string.smart_glass));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Log.e(TAG, "onAttach_Ex: " + ex.getMessage());
-        }
-        super.onAttach(context);
-    }
+//
+//    @Override
+//    public void onAttach(Context context) {
+//        Log.e(TAG, "onAttach: ");
+//        try {
+//            if (isThisAdd())
+//                title.setText(getString(R.string.smart_glass));
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            Log.e(TAG, "onAttach_Ex: " + ex.getMessage());
+//        }
+//        super.onAttach(context);
+//    }
 
     private boolean isThisAdd() {
         return CupFragment.this.isAdded() && !CupFragment.this.isRemoving();
@@ -213,7 +238,7 @@ public class CupFragment extends DeviceFragment {
     protected void refreshUIData() {
         if (isThisAdd() && mCup != null) {
             Log.e(TAG, "refreshUIData: " + mCup.Sensor().toString());
-            ((MainActivity) getActivity()).setCustomTitle(mCup.getName());
+            title.setText(mCup.getName());
             refreshConnectState();
             refreshWaterGoal();
             showWaterTarget();

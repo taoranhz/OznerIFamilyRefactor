@@ -8,6 +8,8 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,6 +100,10 @@ public class TapFragment extends DeviceFragment {
     TextView tvTapBadPre;
     @InjectView(R.id.tdsChartView)
     TapTDSChartView tdsChartView;
+    @InjectView(R.id.title)
+    TextView title;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
     private Tap mTap;
     private TapMonitor tapMonitor;
     //    private RotateAnimation rotateAnimation;
@@ -199,13 +205,27 @@ public class TapFragment extends DeviceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_device_tap, container, false);
         ButterKnife.inject(this, view);
+        toolbar.setTitle("");
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        ((MainActivity) getActivity()).initActionBarToggle(toolbar);
         tdsChartView.setAdapter(recordAdapter);
         super.onActivityCreated(savedInstanceState);
+    }
+
+
+    /**
+     * 设置toolbar背景色
+     *
+     * @param resId
+     */
+    protected void setToolbarColor(int resId) {
+        if (isAdded())
+            toolbar.setBackgroundColor(ContextCompat.getColor(getContext(), resId));
     }
 
     @Override
@@ -217,7 +237,7 @@ public class TapFragment extends DeviceFragment {
 
         }
         if (TapFragment.this.isAdded())
-            ((MainActivity) getActivity()).setCustomTitle(getString(R.string.water_probe));
+            title.setText(getString(R.string.water_probe));
         refreshUIData();
         super.onResume();
     }
@@ -345,7 +365,7 @@ public class TapFragment extends DeviceFragment {
      */
     private void refreshSensorData() {
         if (mTap != null) {
-            ((MainActivity) getActivity()).setCustomTitle(mTap.getName());
+            title.setText(mTap.getName());
             showTdsState(mTap.Sensor().TDSFix);
             showPowerState();
             showTdsRecords();
@@ -510,18 +530,6 @@ public class TapFragment extends DeviceFragment {
         if (TapFragment.this.isAdded() && !TapFragment.this.isRemoving() && !TapFragment.this.isDetached() && tapMonitor != null) {
             getContext().unregisterReceiver(tapMonitor);
         }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        try {
-            if (TapFragment.this.isAdded() && !TapFragment.this.isRemoving() && !TapFragment.this.isDetached())
-                ((MainActivity) context).setCustomTitle(getString(R.string.water_probe));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Log.e(TAG, "onAttach_Ex: " + ex.getMessage());
-        }
-        super.onAttach(context);
     }
 
     @Override

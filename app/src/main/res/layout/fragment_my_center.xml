@@ -1,13 +1,248 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.ozner.cup.MyCenter.MyCenterFragment">
+       xmlns:tools="http://schemas.android.com/tools"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       tools:context="com.ozner.cup.MyCenter.MyCenterFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="我的"/>
+        android:background="@color/white"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cup_detail_bg"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingBottom="17dp"
+                android:paddingTop="25dp">
+
+                <LinearLayout
+                    android:id="@+id/llay_headImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/personal_user_header_backgroud"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/iv_headImg"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/icon_default_headimage"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="11dp"
+                    android:text="@string/click_to_login"
+                    android:textColor="@color/light_black"
+                    android:textSize="18dp"/>
+
+                <TextView
+                    android:id="@+id/tv_grade"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="银卡代理会员"
+                    android:textSize="14dp"
+                    android:visibility="invisible"/>
+            </LinearLayout>
+
+            <TextView style="@style/HaLineView" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    style="@style/item_click_ripple"
+                    android:id="@+id/llay_myDevice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/my_device"
+                        android:textColor="@color/light_black"
+                        android:textSize="14dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_myDevice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="0"
+                        android:textColor="@color/detail_textblue"
+                        android:textSize="28dp"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorLine"/>
+
+                <LinearLayout
+                    style="@style/item_click_ripple"
+                    android:id="@+id/llay_myBurse"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/my_burse"
+                        android:textColor="@color/light_black"
+                        android:textSize="14dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_myMoney"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="0"
+                        android:textColor="@color/detail_textblue"
+                        android:textSize="28dp"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView style="@style/HaLineView"/>
+
+            <RelativeLayout
+                style="@style/item_click_ripple"
+                android:id="@+id/rlay_my_order"
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <TextView
+                    style="@style/CenterFragmentItemTextStyle"
+                    android:drawableLeft="@mipmap/center_myorder"
+                    android:text="@string/my_order" />
+
+                <ImageView style="@style/ArrowView" />
+
+            </RelativeLayout>
+            <TextView style="@style/HaLineMarginLeftView"/>
+
+            <RelativeLayout
+                style="@style/item_click_ripple"
+                android:id="@+id/rlay_redbag"
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <TextView
+                    style="@style/CenterFragmentItemTextStyle"
+                    android:drawableLeft="@mipmap/center_redbag"
+                    android:text="@string/cathc_redbag" />
+
+                <ImageView style="@style/ArrowView" />
+
+            </RelativeLayout>
+            <TextView style="@style/HaLineMarginLeftView"/>
+
+            <RelativeLayout
+                style="@style/item_click_ripple"
+                android:id="@+id/rlay_my_ticket"
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <TextView
+                    style="@style/CenterFragmentItemTextStyle"
+                    android:drawableLeft="@mipmap/center_myticket"
+                    android:text="@string/my_ticket" />
+
+                <ImageView style="@style/ArrowView" />
+
+            </RelativeLayout>
+            <TextView style="@style/HaLineMarginLeftView"/>
+
+            <RelativeLayout
+                style="@style/item_click_ripple"
+                android:id="@+id/rlay_my_friend"
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <TextView
+                    style="@style/CenterFragmentItemTextStyle"
+                    android:drawableLeft="@mipmap/icon_my_friend"
+                    android:text="@string/my_friend" />
+
+                <ImageView style="@style/ArrowView" />
+
+            </RelativeLayout>
+            <TextView style="@style/HaLineMarginLeftView"/>
+
+            <RelativeLayout
+                style="@style/item_click_ripple"
+                android:id="@+id/rlay_report"
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <TextView
+                    style="@style/CenterFragmentItemTextStyle"
+                    android:drawableLeft="@mipmap/icon_view_report"
+                    android:text="@string/view_report" />
+
+                <ImageView style="@style/ArrowView" />
+
+            </RelativeLayout>
+            <TextView style="@style/HaLineMarginLeftView"/>
+
+            <RelativeLayout
+                style="@style/item_click_ripple"
+                android:id="@+id/rlay_feedback"
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <TextView
+                    style="@style/CenterFragmentItemTextStyle"
+                    android:drawableLeft="@mipmap/icon_feedback_comment"
+                    android:text="@string/my_feedback" />
+
+                <ImageView style="@style/ArrowView" />
+
+            </RelativeLayout>
+            <TextView style="@style/HaLineMarginLeftView"/>
+
+            <RelativeLayout
+                style="@style/item_click_ripple"
+                android:id="@+id/rlay_settings"
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <TextView
+                    style="@style/CenterFragmentItemTextStyle"
+                    android:drawableLeft="@mipmap/icon_setting"
+                    android:text="@string/settings" />
+
+                <ImageView style="@style/ArrowView" />
+
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>

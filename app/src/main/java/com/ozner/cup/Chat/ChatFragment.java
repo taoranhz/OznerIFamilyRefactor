@@ -57,7 +57,7 @@ public class ChatFragment extends BaseFragment {
         try {
             setBarColor(R.color.colorAccent);
             setToolbarColor(R.color.colorAccent);
-            ((MainActivity) getActivity()).setCustomTitle(R.string.chat);
+//            (R.string.chat);
         } catch (Exception ex) {
 
         }
@@ -81,6 +81,6 @@ public class ChatFragment extends BaseFragment {
      * @param resId
      */
     protected void setToolbarColor(int resId) {
-        ((MainActivity) getActivity()).setToolBarColor(resId);
+//        ((MainActivity) getActivity()).setToolBarColor(resId);
     }
 }

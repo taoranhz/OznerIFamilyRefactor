@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     tools:context=".Main.MainActivity">
     <!--ToolBar-->
-    <include layout="@layout/toolbar"/>
+    <!--<include layout="@layout/toolbar"/>-->
 
     <include layout="@layout/content_main"/>
 

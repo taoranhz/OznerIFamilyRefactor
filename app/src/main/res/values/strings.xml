@@ -7,7 +7,7 @@
     <!--<string name="action_settings">Settings</string>-->
 
     <string name="shoujihao">13166398575</string>
-    <string name="yanzhengma">9685</string>
+    <string name="yanzhengma">4553</string>
     <string name="app_name">浩泽净水家</string>
     <string name="Baidu_Push_ApiKey">0si8AI4XyFKDbK7dWGIZG424</string>
 
@@ -356,6 +356,26 @@
 
     <string name="url_null">URL参数为空</string>
     <string name="userinfo_miss">用户信息不全</string>
+
+
+    <string name="click_to_login">点击登录</string>
+    <string name="my_device">我的设备</string>
+    <string name="cathc_redbag">领红包</string>
+    <string name="my_order">我的订单</string>
+    <string name="my_ticket">我的券</string>
+    <string name="my_burse">我的小金库</string>
+    <string name="share_card">分享礼卡</string>
+    <string name="invite_member">邀请代理会员</string>
+    <string name="win_infor">中奖信息</string>
+    <string name="my_friend">我的好友</string>
+    <string name="view_report">查看水质检测报告</string>
+    <string name="my_feedback">我要提意见</string>
+    <string name="chat_call">客服</string>
+    <string name="permission_call_phone_denied">电话权限被拒绝</string>
+    <string name="permission_storage_denied">没有数据访问权限</string>
+    <string name="no_permission">没有相应的访问权限</string>
+
+    <string name="act_member">代理会员</string>
 
 
     <!--错误码-->

@@ -132,6 +132,23 @@ public class HttpMethods {
     }
 
     /**
+     * 获取用户头像信息和积分信息
+     * <p>
+     * 注：和获取用户信息联合使用完成UserInfo对象
+     *
+     * @param usertoken
+     * @param mobile
+     * @param subscriber
+     */
+    public void getUserNickImage(String usertoken, String mobile, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getUserNickImage(usertoken, mobile)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
+    /**
      * 获取净水器属性信息
      *
      * @param mac
@@ -252,12 +269,13 @@ public class HttpMethods {
 
     /**
      * 绑定百度推送设备
+     *
      * @param usertoken
      * @param deviceId
      * @param subscriber
      */
-    public void updateUserInfoBD(String usertoken,String deviceId,Subscriber<JsonObject> subscriber){
-        oznerHttpService.updateUserInfoBD(usertoken,"5",deviceId)
+    public void updateUserInfoBD(String usertoken, String deviceId, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.updateUserInfoBD(usertoken, "5", deviceId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
 //                .map(new ResultTransFunc1())

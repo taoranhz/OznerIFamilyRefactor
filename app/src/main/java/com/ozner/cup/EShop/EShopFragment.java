@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -18,6 +19,8 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.ozner.cup.Base.BaseFragment;
 import com.ozner.cup.Bean.Contacts;
@@ -38,6 +41,12 @@ public class EShopFragment extends BaseFragment {
     WebView wvWebView;
 
     WebSettings settings;
+    @InjectView(R.id.pb_progress)
+    ProgressBar pbProgress;
+    @InjectView(R.id.title)
+    TextView title;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
     private String url = "http://www.ozner.net";
 
     public EShopFragment() {
@@ -73,7 +82,7 @@ public class EShopFragment extends BaseFragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+        ((MainActivity) getActivity()).initActionBarToggle(toolbar);
         initSetting();
 
         if (null != url && "" != url) {
@@ -89,6 +98,7 @@ public class EShopFragment extends BaseFragment {
                         }
                     }).show();
         }
+        super.onActivityCreated(savedInstanceState);
     }
 
     /**
@@ -131,7 +141,21 @@ public class EShopFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_eshop, container, false);
         ButterKnife.inject(this, view);
+        toolbar.setTitle("");
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         return view;
+    }
+
+
+    /**
+     * 设置toolbar背景色
+     *
+     * @param resId
+     */
+    protected void setToolbarColor(int resId) {
+        if (isAdded()) {
+            toolbar.setBackgroundColor(ContextCompat.getColor(getContext(), resId));
+        }
     }
 
     @Override
@@ -145,7 +169,7 @@ public class EShopFragment extends BaseFragment {
         try {
             setBarColor(R.color.colorAccent);
             setToolbarColor(R.color.colorAccent);
-            ((MainActivity) getActivity()).setCustomTitle(R.string.ozner_eshop);
+            title.setText(R.string.ozner_eshop);
         } catch (Exception ex) {
 
         }
@@ -161,15 +185,6 @@ public class EShopFragment extends BaseFragment {
             //更改状态栏颜色
             window.setStatusBarColor(ContextCompat.getColor(getContext(), resId));
         }
-    }
-
-    /**
-     * 设置主界面toolbar背景色
-     *
-     * @param resId
-     */
-    protected void setToolbarColor(int resId) {
-        ((MainActivity) getActivity()).setToolBarColor(resId);
     }
 
     @Override
@@ -193,6 +208,9 @@ public class EShopFragment extends BaseFragment {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            if (EShopFragment.this.isAdded()) {
+                pbProgress.setVisibility(View.VISIBLE);
+            }
             settings.setBlockNetworkImage(true);
 //            pb_progress.setVisibility(View.VISIBLE);
             super.onPageStarted(view, url, favicon);
@@ -200,6 +218,9 @@ public class EShopFragment extends BaseFragment {
 
         @Override
         public void onPageFinished(WebView view, String url) {
+            if (EShopFragment.this.isAdded()) {
+                pbProgress.setVisibility(View.GONE);
+            }
             settings.setBlockNetworkImage(false);
 //            pb_progress.setVisibility(View.GONE);
             super.onPageFinished(view, url);
@@ -209,17 +230,18 @@ public class EShopFragment extends BaseFragment {
     WebChromeClient webChromeClient = new WebChromeClient() {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
-
-//            pb_progress.setProgress(newProgress);
+            if (EShopFragment.this.isAdded()) {
+                pbProgress.setProgress(newProgress);
+            }
             super.onProgressChanged(view, newProgress);
         }
 
         @Override
-        public void onReceivedTitle(WebView view, String title) {
-            if (title != null && title != "" && isAdded()) {
-                ((MainActivity) getActivity()).setCustomTitle(title);
+        public void onReceivedTitle(WebView view, String webTitle) {
+            if (webTitle != null && webTitle != "" && isAdded()) {
+                title.setText(webTitle);
             }
-            super.onReceivedTitle(view, title);
+            super.onReceivedTitle(view, webTitle);
         }
     };
 }
