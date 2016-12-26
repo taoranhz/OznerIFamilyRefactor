@@ -25,25 +25,27 @@ public class FriendRankItem {
      * Icon : null
      * Score : null
      */
-    @Id
+    @Id(autoincrement = true)
+    private long addId;
     private String id;
     private String rank;
     private String max;
     private String likenumaber;
-    @Id
     private String userid;
     private String vuserid;
     private String type;
     private String notify;
-    private long notime;
+    private String notime;
     private String Nickname;
     private String Icon;
     private String Score;
 
-    @Generated(hash = 468449123)
-    public FriendRankItem(String id, String rank, String max, String likenumaber,
-            String userid, String vuserid, String type, String notify, long notime,
+
+    @Generated(hash = 1673606843)
+    public FriendRankItem(long addId, String id, String rank, String max, String likenumaber,
+            String userid, String vuserid, String type, String notify, String notime,
             String Nickname, String Icon, String Score) {
+        this.addId = addId;
         this.id = id;
         this.rank = rank;
         this.max = max;
@@ -60,6 +62,15 @@ public class FriendRankItem {
 
     @Generated(hash = 579252413)
     public FriendRankItem() {
+    }
+
+
+    public long getAddId() {
+        return addId;
+    }
+
+    public void setAddId(long addId) {
+        this.addId = addId;
     }
 
     public String getId() {
@@ -126,16 +137,17 @@ public class FriendRankItem {
         this.notify = notify;
     }
 
-    public long getNotime() {
+    public String getNotime() {
         return notime;
     }
 
     public void setNotime(String notime) {
-        try {
-            this.notime = Long.parseLong(notime.replace("/Date(", "").replace(")/", ""));
-        } catch (Exception ex) {
-            this.notime = 0;
-        }
+        this.notime = notime;
+//        try {
+//            this.notime = Long.parseLong(notime.replace("/Date(", "").replace(")/", ""));
+//        } catch (Exception ex) {
+//            this.notime = 0;
+//        }
     }
 
     public String getNickname() {
@@ -160,9 +172,5 @@ public class FriendRankItem {
 
     public void setScore(String Score) {
         this.Score = Score;
-    }
-
-    public void setNotime(long notime) {
-        this.notime = notime;
     }
 }

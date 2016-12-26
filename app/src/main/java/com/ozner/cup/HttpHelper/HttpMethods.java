@@ -282,4 +282,19 @@ public class HttpMethods {
                 .subscribe(subscriber);
     }
 
+    /**
+     * 获取未读排名通知
+     * 注意此接口获取的是未读通知，调用后会统一标示已读。因此第一调用后把数据保存到本地供再次展示和其他操作
+     *
+     * @param usertoken
+     * @param subscriber
+     */
+    public void getRankNotify(String usertoken, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getRankNotify(usertoken)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
 }

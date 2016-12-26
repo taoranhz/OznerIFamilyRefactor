@@ -384,7 +384,9 @@
     <string name="rank">排名</string>
     <string name="today_best_tds">您今日最佳(TDS)</string>
     <string name="get_mark">获得点赞</string>
-
+    <string name="rank_data_is_empty">暂无排名数据</string>
+    <string name="nin">您</string>
+    <string name="obtainChamp">%1$s夺得%2$s月排行榜冠军</string>
 
     <!--错误码-->
     <string name="Code_Accept_nofound">没有发现对应请求</string>

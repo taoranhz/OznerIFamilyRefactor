@@ -196,4 +196,16 @@ public interface OznerHttpService {
     @FormUrlEncoded
     @POST("OznerServer/UpdateUserInfo")
     Observable<JsonObject> updateUserInfoBD(@Field("usertoken") String usertoken, @Field("channel_id") String channelId, @Field("device_id") String deviceId);
+
+    /**
+     * 获取未读排名通知
+     * 注意此接口获取的是未读通知，调用后会统一标示已读。因此第一调用后把数据保存到本地供再次展示和其他操作
+     *
+     * @param usertoken
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/GetRankNotify")
+    Observable<JsonObject> getRankNotify(@Field("usertoken") String usertoken);
 }

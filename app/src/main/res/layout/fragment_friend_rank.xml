@@ -11,5 +11,14 @@
         android:layout_height="match_parent">
 
     </ListView>
+    
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/tv_data_empty"
+        android:textSize="18dp"
+        android:text="@string/rank_data_is_empty"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </FrameLayout>

@@ -1,4 +1,4 @@
-package com.ozner.cup.MyCenter;
+package com.ozner.cup.MyCenter.MyFriend;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

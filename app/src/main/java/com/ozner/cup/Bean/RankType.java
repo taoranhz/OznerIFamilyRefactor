@@ -1,4 +1,4 @@
-package com.ozner.cup.Device;
+package com.ozner.cup.Bean;
 
 /**
  * Created by ozner_67 on 2016/12/8.

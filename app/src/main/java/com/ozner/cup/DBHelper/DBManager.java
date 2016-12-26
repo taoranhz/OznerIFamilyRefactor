@@ -21,6 +21,12 @@ public class DBManager {
     private DaoMaster.DevOpenHelper openHelper;
     private Context mContext;
 
+    public interface DBRxListener {
+        void onSuccess();
+
+        void onFail();
+    }
+
     public DBManager(Context context) {
         this.mContext = context;
         openHelper = new DaoMaster.DevOpenHelper(context, dbName, null);
@@ -311,7 +317,7 @@ public class DBManager {
      *
      * @param rankList
      */
-    public void insertFriendRank(final List<FriendRankItem> rankList) {
+    public void insertFriendRank(final List<FriendRankItem> rankList, final DBRxListener listener) {
         try {
             if (rankList == null || rankList.isEmpty()) {
                 return;
@@ -326,10 +332,16 @@ public class DBManager {
                     for (FriendRankItem item : rankList) {
                         rankDao.insertOrReplace(item);
                     }
+                    if (listener != null) {
+                        listener.onSuccess();
+                    }
                 }
             });
         } catch (Exception ex) {
             Log.e(TAG, "updateFriendRank_Ex: " + ex.getMessage());
+            if (listener != null) {
+                listener.onFail();
+            }
         }
     }
 

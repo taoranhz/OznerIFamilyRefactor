@@ -72,6 +72,7 @@ public class CommonViewHolder {
         return (T) view;
     }
 
+
     /**
      * 为TextView设置字符串
      *
@@ -88,6 +89,7 @@ public class CommonViewHolder {
 
     /**
      * 为TextView设置字符串
+     *
      * @param viewId
      * @param textResId
      *
@@ -96,6 +98,20 @@ public class CommonViewHolder {
     public CommonViewHolder setText(int viewId, int textResId) {
         TextView view = getView(viewId);
         view.setText(mWeakContext.get().getString(textResId));
+        return this;
+    }
+
+    /**
+     * 设置背景色
+     *
+     * @param viewId
+     * @param color
+     *
+     * @return
+     */
+    public CommonViewHolder setTextColor(int viewId, int color) {
+        TextView view = getView(viewId);
+        view.setTextColor(color);
         return this;
     }
 

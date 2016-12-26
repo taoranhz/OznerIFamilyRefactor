@@ -20,7 +20,7 @@ import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.CupRecord;
-import com.ozner.cup.Device.RankType;
+import com.ozner.cup.Bean.RankType;
 import com.ozner.cup.Device.TDSSensorManager;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.UIZPurifierExpView;

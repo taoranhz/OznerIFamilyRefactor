@@ -25,6 +25,7 @@ import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.Main.UserInfoManager;
+import com.ozner.cup.MyCenter.MyFriend.MyFriendsActivity;
 import com.ozner.cup.R;
 
 import butterknife.ButterKnife;
