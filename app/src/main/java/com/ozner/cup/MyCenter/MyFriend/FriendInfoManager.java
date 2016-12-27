@@ -13,6 +13,7 @@ import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.FriendRankItem;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
+import com.ozner.cup.Utils.LCLogUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -42,6 +43,8 @@ public class FriendInfoManager implements IFriendInfoManager {
                         try {
                             if (jsonObject != null) {
                                 if (jsonObject.get("state").getAsInt() > 0) {
+//                                    String data = jsonObject.get("data").getAsString();
+//                                    List<FriendRankItem> resultList = JSON.parseArray(data, FriendRankItem.class);
                                     JsonArray array = jsonObject.getAsJsonArray("data");
                                     List<FriendRankItem> resultList = new Gson().fromJson(array, new TypeToken<List<FriendRankItem>>() {
                                     }.getType());
@@ -69,7 +72,7 @@ public class FriendInfoManager implements IFriendInfoManager {
 
                             }
                         } catch (Exception ex) {
-                            Log.e(TAG, "loadFriendRank_Ex: "+ex.getMessage());
+                            Log.e(TAG, "loadFriendRank_Ex: " + ex.getMessage());
                         }
                     }
                 }));

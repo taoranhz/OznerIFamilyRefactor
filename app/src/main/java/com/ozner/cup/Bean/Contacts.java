@@ -14,7 +14,8 @@ public class Contacts {
     public final static String PARMS_URL = "parms_url";
     //传递饮水量排名
     public final static String PARMS_RANK = "parms_rank";
-
+    //排名类型
+    public final static String PARMS_RANK_TYPE = "parms_rank_type";
     //activity返回的设备名字
     public final static String RESULT_NAME = "result_name";
     //activity返回的设备位置
@@ -80,7 +81,7 @@ public class Contacts {
 
 
     //空净常见问题
-    public static String air_faq= "file:///android_asset/air_faq.html";
+    public static String air_faq = "file:///android_asset/air_faq.html";
 
     //关于水探头
     public static String aboutTap = "http://cup.ozner.net/app/gystt/gystt.html";

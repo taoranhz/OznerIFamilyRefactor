@@ -25,8 +25,6 @@ public class FriendRankItem {
      * Icon : null
      * Score : null
      */
-    @Id(autoincrement = true)
-    private long addId;
     private String id;
     private String rank;
     private String max;
@@ -35,17 +33,18 @@ public class FriendRankItem {
     private String vuserid;
     private String type;
     private String notify;
+    @Id
     private String notime;
     private String Nickname;
     private String Icon;
     private String Score;
 
 
-    @Generated(hash = 1673606843)
-    public FriendRankItem(long addId, String id, String rank, String max, String likenumaber,
+
+    @Generated(hash = 535154253)
+    public FriendRankItem(String id, String rank, String max, String likenumaber,
             String userid, String vuserid, String type, String notify, String notime,
             String Nickname, String Icon, String Score) {
-        this.addId = addId;
         this.id = id;
         this.rank = rank;
         this.max = max;
@@ -63,15 +62,8 @@ public class FriendRankItem {
     @Generated(hash = 579252413)
     public FriendRankItem() {
     }
+    
 
-
-    public long getAddId() {
-        return addId;
-    }
-
-    public void setAddId(long addId) {
-        this.addId = addId;
-    }
 
     public String getId() {
         return id;

@@ -33,6 +33,18 @@ public abstract class CommonAdapter<T> extends BaseAdapter {
         this.notifyDataSetChanged();
     }
 
+    /**
+     * 移除指定数据
+     * @param index
+     */
+    public void removeData(int index) {
+        if (index < mDatas.size()) {
+            mDatas.remove(index);
+            this.notifyDataSetChanged();
+        }
+
+    }
+
     public void addData(T data) {
         this.mDatas.add(data);
         this.notifyDataSetChanged();

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="80dp"
+              android:orientation="horizontal"
+              android:paddingBottom="5dp"
+              android:paddingTop="5dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.75"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/tv_rankValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2"
+            android:textSize="29dp"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3">
+
+        <ImageView
+            android:id="@+id/iv_crown"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/crown_1"/>
+
+        <ImageView
+            android:id="@+id/iv_headImg"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/icon_default_headimage"/>
+
+        <TextView
+            android:id="@+id/tv_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="3"
+            android:textSize="15dp"/>
+
+        <TextView
+            android:id="@+id/tds_dec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/tv_value"
+            android:text="TDS"/>
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@+id/tds_dec"
+            android:layout_toRightOf="@+id/iv_headImg"
+            android:maxLines="2"
+            android:text="zach"
+            android:textSize="16dp"/>
+
+        <ProgressBar
+            android:id="@+id/pb_Value"
+            style="@style/Center_Rank_ProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="3dp"
+            android:max="100"
+            android:progress="0"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.75"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_likeImg"
+            android:layout_width="23dp"
+            android:layout_height="19dp"
+            android:src="@drawable/heart_red"/>
+
+        <TextView
+            android:id="@+id/tv_lickNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="2"
+            android:textSize="15dp"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -175,6 +175,10 @@
         <!-- 以上是百度云推送相关设置 -->
         <activity android:name=".MyCenter.MyFriend.MyFriendsActivity">
         </activity>
+        <activity android:name=".MyCenter.MyFriend.LikeMeActivity">
+        </activity>
+        <activity android:name=".MyCenter.MyFriend.RankActivity">
+        </activity>
     </application>
 
 </manifest>

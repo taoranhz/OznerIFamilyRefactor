@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Utils.LCLogUtils;
 
 /**
  * Created by ozner_67 on 2016/11/1.
@@ -12,6 +13,12 @@ import com.ozner.cup.Command.UserDataPreference;
  */
 
 public class OznerApplication extends OznerBaseApplication {
+    @Override
+    public void onCreate() {
+        LCLogUtils.init(getApplicationContext());
+        super.onCreate();
+    }
+
     @Override
     protected void onBindService() {
         String userid = UserDataPreference.GetUserData(getBaseContext(), UserDataPreference.UserId, "Ozner");
