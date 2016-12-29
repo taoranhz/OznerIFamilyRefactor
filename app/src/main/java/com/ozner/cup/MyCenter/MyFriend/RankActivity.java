@@ -4,16 +4,20 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -28,7 +32,6 @@ import com.ozner.cup.Utils.LCLogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -47,12 +50,24 @@ public class RankActivity extends BaseActivity {
     private String mRankType;
     private RankAdapter mAdapter;
     private String userid;
+    private FriendInfoManager infoManager;
+    private List<CenterRankItem> dataList;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+
+            }
+            super.handleMessage(msg);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rank);
         ButterKnife.inject(this);
+        dataList = new ArrayList<>();
         initToolBar();
         try {
             userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
@@ -69,8 +84,20 @@ public class RankActivity extends BaseActivity {
         } catch (Exception ex) {
             LCLogUtils.E(TAG, "onCreate_Ex:" + ex.getMessage());
         }
+        infoManager = new FriendInfoManager(this, null);
+        infoManager.getTdsFriendRank(mRankType, new FriendInfoManager.RankListener() {
+            @Override
+            public void onSuccess(List<CenterRankItem> result) {
+                dataList = result;
+                mAdapter.loadData(dataList);
+            }
 
-        initTestData();
+            @Override
+            public void onFail(String msg) {
+                Toast.makeText(RankActivity.this, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
+//        initTestData();
     }
 
     /**
@@ -82,23 +109,6 @@ public class RankActivity extends BaseActivity {
         toolbar.setNavigationIcon(R.drawable.back);
     }
 
-    private void initTestData() {
-        Random random = new Random();
-        List<CenterRankItem> dataList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            CenterRankItem item = new CenterRankItem();
-            item.setUserid(userid);
-            item.setIcon("http://d.hiphotos.baidu.com/zhidao/pic/item/bf096b63f6246b60474b7d5fe8f81a4c510fa250.jpg");
-            item.setIsLike(i % 2);
-            item.setLikeCount(i * 4 + 3);
-//            item.setNickname("凌晨 " + i);
-            item.setMobile("13166398575");
-            item.setRank(i + 1);
-            item.setVolume(random.nextInt(400));
-            dataList.add(item);
-        }
-        mAdapter.loadData(dataList);
-    }
 
     /**
      * 加载标题
@@ -134,6 +144,7 @@ public class RankActivity extends BaseActivity {
         }
         return true;
     }
+
 
     class RankAdapter extends CommonAdapter<CenterRankItem> {
 
@@ -186,19 +197,52 @@ public class RankActivity extends BaseActivity {
             if (item.getNickname() != null && !item.getNickname().isEmpty()) {
                 holder.setText(R.id.tv_name, item.getNickname());
             } else {
-                holder.setText(R.id.tv_name, item.getMobile());
+                holder.setText(R.id.tv_name, item.getUserid());
             }
 
+
             holder.setText(R.id.tv_value, String.valueOf(item.getVolume()));
-//            holder.setText(R.id.pb_Value, String.valueOf(item.getVolume() / 4));
-            ((ProgressBar)holder.getView(R.id.pb_Value)).setProgress(item.getVolume()/4);
+            ((ProgressBar) holder.getView(R.id.pb_Value)).setProgress(item.getVolume() / 4);
             holder.setText(R.id.tv_lickNum, String.valueOf(item.getLikeCount()));
+            Log.e(TAG, "LikeCount: "+item.getLikeCount());
             if (item.getIsLike() == 1) {
                 holder.setImageResource(R.id.iv_likeImg, R.drawable.heart_red);
             } else {
+                holder.getView(R.id.llay_likeNum).setOnClickListener(new LikeClickListener(position));
                 holder.setImageResource(R.id.iv_likeImg, R.drawable.heart_gray);
             }
 
+        }
+
+        class LikeClickListener implements View.OnClickListener {
+            private int likePos;
+
+            public LikeClickListener(int pos) {
+                this.likePos = pos;
+            }
+
+            @Override
+            public void onClick(View v) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        CenterRankItem likeItem = getItem(likePos);
+                        infoManager.likeOhterUser(likeItem.getUserid(), mRankType, likePos, new FriendInfoManager.LikeOhterListener() {
+                            @Override
+                            public void onSuccess(int pos) {
+                                dataList.get(pos).setLikeCount(dataList.get(pos).getLikeCount() + 1);
+                                dataList.get(pos).setIsLike(1);
+                                mAdapter.loadData(dataList);
+                            }
+
+                            @Override
+                            public void onFail(String msg) {
+                                Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+            }
         }
     }
 }

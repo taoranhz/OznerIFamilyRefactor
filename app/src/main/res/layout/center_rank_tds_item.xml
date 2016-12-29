@@ -82,6 +82,7 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/llay_likeNum"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.75"

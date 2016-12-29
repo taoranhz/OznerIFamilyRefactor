@@ -4,7 +4,7 @@ package com.ozner.cup.MyCenter.MyFriend;
  * Created by ozner_67 on 2016/12/27.
  * 邮箱：xinde.zhang@cftcn.com
  *
- * 个人中心排名数据
+ * 个人中心tds排名数据
  */
 
 public class CenterRankItem {
@@ -13,9 +13,9 @@ public class CenterRankItem {
     private int volume;
     private String Nickname;
     private String Icon;
+    private String Score;
     private int isLike;
-    private int likeCount;
-    private String Mobile;
+    private int LikeCount;
 
     public int getRank() {
         return rank;
@@ -66,18 +66,18 @@ public class CenterRankItem {
     }
 
     public int getLikeCount() {
-        return likeCount;
+        return LikeCount;
     }
 
     public void setLikeCount(int likeCount) {
-        this.likeCount = likeCount;
+        this.LikeCount = likeCount;
     }
 
-    public String getMobile() {
-        return Mobile;
+    public String getScore() {
+        return Score;
     }
 
-    public void setMobile(String mobile) {
-        Mobile = mobile;
+    public void setScore(String score) {
+        Score = score;
     }
 }

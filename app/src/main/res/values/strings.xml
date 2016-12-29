@@ -393,6 +393,7 @@
     <string name="tap_tds_rank">水探头TDS排行</string>
     <string name="cup_tds_rank">智能杯TDS排行</string>
     <string name="cup_volume_rank">智能杯饮水量排行</string>
+    <string name="montyDayTime">%1$d月%2$d日</string>
 
     <!--错误码-->
     <string name="Code_Accept_nofound">没有发现对应请求</string>

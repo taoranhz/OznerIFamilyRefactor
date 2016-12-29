@@ -297,4 +297,35 @@ public class HttpMethods {
                 .subscribe(subscriber);
     }
 
+    /**
+     * 获取赞我的人
+     *
+     * @param usertoken
+     * @param type
+     *
+     * @return
+     */
+    public void getWhoLikeMe(String usertoken, String type, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getWhoLikeMe(usertoken, type)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 对其他用户点赞
+     * @param usertoken
+     * @param likeuserid
+     * @param type
+     * @param subscriber
+     */
+    public void likeOtherUser(String usertoken, String likeuserid, String type, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.likeOtherUser(usertoken, likeuserid, type)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
 }

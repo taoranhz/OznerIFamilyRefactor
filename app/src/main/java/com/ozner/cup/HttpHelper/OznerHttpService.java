@@ -208,4 +208,29 @@ public interface OznerHttpService {
     @FormUrlEncoded
     @POST("OznerDevice/GetRankNotify")
     Observable<JsonObject> getRankNotify(@Field("usertoken") String usertoken);
+
+    /**
+     * 获取赞我的人
+     *
+     * @param usertoken
+     * @param type
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/WhoLikeMe")
+    Observable<JsonObject> getWhoLikeMe(@Field("usertoken") String usertoken, @Field("type") String type);
+
+    /**
+     * 对其他用户点赞
+     *
+     * @param usertoken
+     * @param likeUserid
+     * @param type
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/LikeOtherUser")
+    Observable<JsonObject> likeOtherUser(@Field("usertoken") String usertoken, @Field("likeuserid") String likeUserid, @Field("type") String type);
 }
