@@ -14,6 +14,8 @@ public class DateUtils {
     private static final String TAG = "DateUtils";
     private static final long Default_Close_Time = 30000;//30s
     static SimpleDateFormat shortFormt = new SimpleDateFormat("HH:mm");
+    public static SimpleDateFormat yearTimeFormat = new SimpleDateFormat("yyyy-MM-dd");
+    public static SimpleDateFormat monthTimeFormat = new SimpleDateFormat("MM-dd HH:mm");
 
     public static String hourMinFormt(Date date) {
         return shortFormt.format(date);

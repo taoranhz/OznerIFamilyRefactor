@@ -98,28 +98,28 @@ public class FriendRankFragment extends BaseFragment implements IRankView, Adapt
         super.onActivityCreated(savedInstanceState);
     }
 
-    /**
-     * 测试数据
-     */
-    private void initTestData() {
-
-        dataList.clear();
-        for (int i = 0; i < 10; i++) {
-            FriendRankItem item = new FriendRankItem();
-            item.setType(RankType.CupType);
-            item.setIcon("http://e.hiphotos.baidu.com/zhidao/wh%3D450%2C600/sign=bd008c2468061d957d133f3c4ec426e7/dcc451da81cb39dba2fc924ad6160924ab1830e9.jpg");
-            item.setId(String.valueOf(i));
-            item.setLikenumaber(String.valueOf(i));
-            item.setMax(String.valueOf(i * 5 + 3));
-            item.setNotime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
-            item.setUserid(userid);
-            item.setVuserid(userid);
-            item.setRank(String.valueOf(i));
-            item.setNotify("1");
-            dataList.add(item);
-        }
-        rankAdapter.loadData(dataList);
-    }
+//    /**
+//     * 测试数据
+//     */
+//    private void initTestData() {
+//
+//        dataList.clear();
+//        for (int i = 0; i < 10; i++) {
+//            FriendRankItem item = new FriendRankItem();
+//            item.setType(RankType.CupType);
+//            item.setIcon("http://e.hiphotos.baidu.com/zhidao/wh%3D450%2C600/sign=bd008c2468061d957d133f3c4ec426e7/dcc451da81cb39dba2fc924ad6160924ab1830e9.jpg");
+//            item.setId(String.valueOf(i));
+//            item.setLikenumaber(String.valueOf(i));
+//            item.setMax(String.valueOf(i * 5 + 3));
+//            item.setNotime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
+//            item.setUserid(userid);
+//            item.setVuserid(userid);
+//            item.setRank(String.valueOf(i));
+//            item.setNotify("1");
+//            dataList.add(item);
+//        }
+//        rankAdapter.loadData(dataList);
+//    }
 
     @Override
     public void onDestroyView() {
@@ -225,6 +225,12 @@ public class FriendRankFragment extends BaseFragment implements IRankView, Adapt
             }
         });
 
+    }
+
+    @Override
+    public void onDetach() {
+        System.gc();
+        super.onDetach();
     }
 
 

@@ -315,6 +315,7 @@ public class HttpMethods {
 
     /**
      * 对其他用户点赞
+     *
      * @param usertoken
      * @param likeuserid
      * @param type
@@ -328,4 +329,48 @@ public class HttpMethods {
                 .subscribe(subscriber);
     }
 
+    /**
+     * 获取朋友列表
+     *
+     * @param usertoken
+     * @param subscriber
+     */
+    public void getFriendList(String usertoken, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getFriendList(usertoken)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 获取历史留言
+     *
+     * @param usertoken
+     * @param otherUserid
+     * @param subscriber
+     */
+    public void getHistoryMessage(String usertoken, String otherUserid, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getHistoryMessage(usertoken, otherUserid)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 留言
+     *
+     * @param usertoken
+     * @param otherUserid
+     * @param msg
+     * @param subscriber
+     */
+    public void leaveMessage(String usertoken, String otherUserid, String msg, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.leaveMessage(usertoken, otherUserid, msg)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
 }

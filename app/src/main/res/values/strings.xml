@@ -394,6 +394,16 @@
     <string name="cup_tds_rank">智能杯TDS排行</string>
     <string name="cup_volume_rank">智能杯饮水量排行</string>
     <string name="montyDayTime">%1$d月%2$d日</string>
+    <string name="immediately_add">立即添加</string>
+    <string name="device_friend">设备好友</string>
+    <string name="no_friend_tip_up">与好友一起开始体验</string>
+    <string name="no_friend_tip_down">浩泽智能化生活服务</string>
+    <string name="number_message">条留言</string>
+    <string name="send">发送</string>
+    <string name="replay">回复 %s:</string>
+    <string name="no_leave_msg">没有留言</string>
+    <string name="sending">正在发送</string>
+    <string name="submiting">正在提交</string>
 
     <!--错误码-->
     <string name="Code_Accept_nofound">没有发现对应请求</string>
@@ -415,7 +425,7 @@
     <string name="Code_W_Uname">用户名错误</string>
     <string name="Code_Baidu_idwrong">用户没有绑定baidu设备id或者手机类型</string>
     <string name="Code_Baidu_nouser">没有此用户</string>
-    <string name="Code_Like_Liked">已经点过赞</string>
+    <string name="Code_Like_Liked">已经点过赞了</string>
     <string name="Code_Fiflter_CodeNotfound">二维码无效</string>
     <string name="Code_Fiflter_CodeUsed">二维码已经使用过了</string>
     <string name="Code_Fiflter_DeviceNotfound">设备未绑定</string>

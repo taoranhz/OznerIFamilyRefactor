@@ -1,10 +1,12 @@
 package com.ozner.cup.MyCenter.MyFriend;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,6 +20,8 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 public class MyFriendsActivity extends BaseActivity {
+    private final String RankTag = "rank";
+    private final String FriendTag = "friend";
 
     @InjectView(R.id.tv_friend_rank)
     TextView tvFriendRank;
@@ -41,16 +45,18 @@ public class MyFriendsActivity extends BaseActivity {
     FrameLayout flayContainer;
     FriendRankFragment rankFragment;
     FriendsFragment friendsFragment;
-    FragmentTransaction framTrans;
+    private Fragment mCurrentFragment;
     private boolean isRank = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_friends);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         ButterKnife.inject(this);
-        framTrans = getSupportFragmentManager().beginTransaction();
         initView();
+//        rankFragment = new FriendRankFragment();
+//        friendsFragment = new FriendsFragment();
     }
 
     /**
@@ -94,10 +100,29 @@ public class MyFriendsActivity extends BaseActivity {
             tvMyFriend.setSelected(false);
             tvFriendBottom.setVisibility(View.INVISIBLE);
             llayFriendRight.setVisibility(View.INVISIBLE);
-            if (rankFragment == null) {
-                rankFragment = FriendRankFragment.newInstance(null);
+            FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+            if (friendsFragment != null && friendsFragment.isAdded()) {
+                trans.hide(friendsFragment);
             }
-            getSupportFragmentManager().beginTransaction().replace(R.id.flay_container, rankFragment).commitAllowingStateLoss();
+            if(rankFragment == null){
+                rankFragment = new FriendRankFragment();
+            }
+
+            if (!rankFragment.isAdded()) {
+                trans.add(R.id.flay_container, rankFragment, RankTag);
+            }
+            trans.show(rankFragment);
+            trans.commit();
+//            rankFragment = (FriendRankFragment) getSupportFragmentManager().findFragmentByTag(RankTag);
+//            if (rankFragment == null) {
+//                rankFragment = FriendRankFragment.newInstance(null);
+//                trans.add(R.id.flay_container, rankFragment, RankTag).commitAllowingStateLoss();
+//            }
+////            getSupportFragmentManager().beginTransaction().replace(R.id.flay_container, rankFragment).commitAllowingStateLoss();
+//            if (friendsFragment != null) {
+//                trans.hide(friendsFragment);
+//            }
+//            trans.show(rankFragment);
         }
     }
 
@@ -112,11 +137,30 @@ public class MyFriendsActivity extends BaseActivity {
             tvMyFriend.setSelected(true);
             tvFriendBottom.setVisibility(View.VISIBLE);
             llayFriendRight.setVisibility(View.VISIBLE);
-            if (friendsFragment == null) {
-                friendsFragment = FriendsFragment.newInstance(null);
+            FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+
+            if (rankFragment != null && rankFragment.isAdded()) {
+                trans.hide(rankFragment);
             }
 
-            getSupportFragmentManager().beginTransaction().replace(R.id.flay_container, friendsFragment).commitAllowingStateLoss();
+            if(friendsFragment == null){
+                friendsFragment = new FriendsFragment();
+            }
+            if (!friendsFragment.isAdded()) {
+                trans.add(R.id.flay_container, friendsFragment, FriendTag);
+            }
+            trans.show(friendsFragment);
+            trans.commit();
+//            friendsFragment = (FriendsFragment) getSupportFragmentManager().findFragmentByTag(FriendTag);
+//            if (friendsFragment == null) {
+//                friendsFragment = FriendsFragment.newInstance(null);
+//                trans.add(R.id.flay_container, friendsFragment, FriendTag).commitAllowingStateLoss();
+//            }
+//            if (rankFragment != null) {
+//                trans.hide(rankFragment);
+//            }
+//            trans.show(friendsFragment);
+//            getSupportFragmentManager().beginTransaction().replace(R.id.flay_container, friendsFragment).commitAllowingStateLoss();
         }
     }
 

@@ -55,6 +55,7 @@ public class FriendInfoManager implements IFriendInfoManager {
 //                                    String data = jsonObject.get("data").getAsString();
 //                                    List<FriendRankItem> resultList = JSON.parseArray(data, FriendRankItem.class);
                                     JsonArray array = jsonObject.getAsJsonArray("data");
+                                    LCLogUtils.E(TAG, "loadFriendRank:" + array.toString());
                                     List<FriendRankItem> resultList = new Gson().fromJson(array, new TypeToken<List<FriendRankItem>>() {
                                     }.getType());
                                     DBManager.getInstance(mContext.get()).insertFriendRank(resultList, new DBManager.DBRxListener() {
@@ -106,7 +107,7 @@ public class FriendInfoManager implements IFriendInfoManager {
                                     if (jsonObject != null) {
                                         if (jsonObject.get("state").getAsInt() > 0) {
                                             JsonArray array = jsonObject.get("data").getAsJsonArray();
-                                            LCLogUtils.E(TAG,"result:"+array.toString());
+                                            LCLogUtils.E(TAG, "result:" + array.toString());
                                             List<CenterRankItem> result = new Gson().fromJson(array, new TypeToken<List<CenterRankItem>>() {
                                             }.getType());
 //                                            List<CenterRankItem> result = JSON.parseArray(array, CenterRankItem.class);
@@ -200,7 +201,7 @@ public class FriendInfoManager implements IFriendInfoManager {
     public void likeOhterUser(String likeuserid, String type, final int position, final LikeOhterListener listener) {
         HttpMethods.getInstance().likeOtherUser(OznerPreference.getUserToken(mContext.get()), likeuserid, type
                 , new ProgressSubscriber<JsonObject>(mContext.get(),
-                        mContext.get().getString(R.string.data_loading),
+                        mContext.get().getString(R.string.submiting),
                         false,
                         new Action1<JsonObject>() {
                             @Override
@@ -224,6 +225,150 @@ public class FriendInfoManager implements IFriendInfoManager {
                                     }
                                 } catch (Exception ex) {
                                     Log.e(TAG, "getTdsFriendRank_Ex: " + ex.getMessage());
+                                    if (listener != null) {
+                                        listener.onFail(ex.getMessage());
+                                    }
+                                }
+                            }
+                        }));
+    }
+
+    public interface FriendListListener {
+        void onSuccess(List<FriendItem> result);
+
+        void onFail(String msg);
+    }
+
+    /**
+     * 获取好友列表
+     *
+     * @param listener
+     */
+    public void getFriendList(final FriendListListener listener) {
+        HttpMethods.getInstance().getFriendList(OznerPreference.getUserToken(mContext.get()),
+                new ProgressSubscriber<JsonObject>(mContext.get(),
+                        mContext.get().getString(R.string.data_loading),
+                        false,
+                        new Action1<JsonObject>() {
+                            @Override
+                            public void call(JsonObject jsonObject) {
+                                try {
+                                    if (jsonObject != null) {
+                                        LCLogUtils.E(TAG, "getFriendList:" + jsonObject.toString());
+                                        if (jsonObject.get("state").getAsInt() > 0) {
+                                            if (listener != null) {
+                                                JsonArray array = jsonObject.getAsJsonArray("friendlist");
+                                                List<FriendItem> result = new Gson().fromJson(array, new TypeToken<List<FriendItem>>() {
+                                                }.getType());
+                                                listener.onSuccess(result);
+                                            }
+                                        } else {
+                                            if (listener != null) {
+                                                listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
+                                            }
+                                        }
+                                    } else {
+                                        if (listener != null) {
+                                            listener.onFail("result is null");
+                                        }
+                                    }
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                    if (listener != null) {
+                                        listener.onFail(ex.getMessage());
+                                    }
+                                }
+                            }
+                        }));
+    }
+
+    public interface HistoryMsgListener {
+        void onSuccess(List<LeaveMessageItem> result);
+
+        void onFail(String msg);
+    }
+
+    /**
+     * 获取历史留言
+     */
+    public void getHistoryMessage(String otherUserid, final HistoryMsgListener listener) {
+        HttpMethods.getInstance().getHistoryMessage(OznerPreference.getUserToken(mContext.get()), otherUserid,
+                new ProgressSubscriber<JsonObject>(mContext.get(),
+                        mContext.get().getString(R.string.data_loading),
+                        false,
+                        new Action1<JsonObject>() {
+                            @Override
+                            public void call(JsonObject jsonObject) {
+                                try {
+                                    if (jsonObject != null) {
+                                        LCLogUtils.E(TAG, "getFriendList:" + jsonObject.toString());
+                                        if (jsonObject.get("state").getAsInt() > 0) {
+                                            if (listener != null) {
+                                                JsonArray array = jsonObject.getAsJsonArray("data");
+                                                List<LeaveMessageItem> result = new Gson().fromJson(array, new TypeToken<List<LeaveMessageItem>>() {
+                                                }.getType());
+                                                listener.onSuccess(result);
+                                            }
+                                        } else {
+                                            if (listener != null) {
+                                                listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
+                                            }
+                                        }
+                                    } else {
+                                        if (listener != null) {
+                                            listener.onFail("result is null");
+                                        }
+                                    }
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                    if (listener != null) {
+                                        listener.onFail(ex.getMessage());
+                                    }
+                                }
+                            }
+                        }
+                ));
+    }
+
+    public interface LeaveMsgListener {
+        void onSuccess();
+
+        void onFail(String msg);
+    }
+
+    /**
+     * 留言
+     *
+     * @param otherUserid
+     * @param msg
+     * @param listener
+     */
+    public void leaveMessage(String otherUserid, String msg, final LeaveMsgListener listener) {
+        HttpMethods.getInstance().leaveMessage(OznerPreference.getUserToken(mContext.get()), otherUserid, msg,
+                new ProgressSubscriber<JsonObject>(mContext.get(),
+                        mContext.get().getString(R.string.sending),
+                        false,
+                        new Action1<JsonObject>() {
+                            @Override
+                            public void call(JsonObject jsonObject) {
+                                try {
+                                    if (jsonObject != null) {
+                                        if (jsonObject.get("state").getAsInt() > 0) {
+                                            if (listener != null) {
+                                                listener.onSuccess();
+                                            }
+                                        } else {
+                                            if (listener != null) {
+                                                listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
+                                            }
+                                        }
+                                    } else {
+                                        if (listener != null) {
+                                            listener.onFail("result is null");
+                                        }
+                                    }
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
                                     if (listener != null) {
                                         listener.onFail(ex.getMessage());
                                     }

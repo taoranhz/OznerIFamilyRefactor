@@ -2,12 +2,114 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.ozner.cup.MyCenter.FriendsFragment">
+             tools:context="com.ozner.cup.MyCenter.MyFriend.MyFriendsActivity">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="我的好友"/>
+        android:orientation="vertical">
+
+        <ExpandableListView
+            android:id="@+id/elv_friend"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:groupIndicator="@null"
+            android:scrollbars="none">
+
+        </ExpandableListView>
+
+        <LinearLayout
+            android:id="@+id/llay_sendMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/et_msg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:gravity="top|left"
+                android:maxLines="3"/>
+
+            <Button
+                android:id="@+id/btn_sendMsg"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:background="@drawable/btn_click_selector"
+                android:enabled="false"
+                android:text="@string/send"
+                android:textAllCaps="false"
+                android:textColor="@color/white_gray_selector"
+                android:textSize="15dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/llay_noFriend"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/no_fiend_bg"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="110dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/addfriends_tips"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/immediately_add"
+                android:textColor="@color/white"
+                android:textSize="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/device_friend"
+                android:textColor="@color/white"
+                android:textSize="16dp"/>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/no_friends_bg"/>
+
+        <TextView
+            android:id="@+id/tipbottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:text="@string/no_friend_tip_down"
+            android:textColor="@color/text_dark_blue"
+            android:textSize="24dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/tipbottom"
+            android:layout_centerHorizontal="true"
+            android:text="@string/no_friend_tip_up"
+            android:textColor="@color/text_dark_blue"
+            android:textSize="24dp"/>
+    </RelativeLayout>
 
 </FrameLayout>

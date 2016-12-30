@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ozner.cup.MyCenter.MyFriendsActivity">
+    tools:context="com.ozner.cup.MyCenter.MyFriend.MyFriendsActivity">
+
     <include layout="@layout/my_friend_toolbar"/>
 
     <FrameLayout
@@ -15,5 +16,4 @@
         android:layout_height="match_parent">
 
     </FrameLayout>
-
 </LinearLayout>

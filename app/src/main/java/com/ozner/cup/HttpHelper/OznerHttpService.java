@@ -233,4 +233,39 @@ public interface OznerHttpService {
     @FormUrlEncoded
     @POST("OznerDevice/LikeOtherUser")
     Observable<JsonObject> likeOtherUser(@Field("usertoken") String usertoken, @Field("likeuserid") String likeUserid, @Field("type") String type);
+
+    /**
+     * 获取朋友列表
+     *
+     * @param usertoken
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/GetFriendList")
+    Observable<JsonObject> getFriendList(@Field("usertoken") String usertoken);
+
+    /**
+     * 获取历史留言
+     *
+     * @param usertoken
+     * @param otherUserid
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/GetHistoryMessage")
+    Observable<JsonObject> getHistoryMessage(@Field("usertoken") String usertoken, @Field("otheruserid") String otherUserid);
+
+    /**
+     * 留言
+     * @param usertoken
+     * @param otherUserid
+     * @param leaveMsg
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/LeaveMessage")
+    Observable<JsonObject> leaveMessage(@Field("usertoken") String usertoken,@Field("otheruserid") String otherUserid,@Field("message") String leaveMsg);
 }

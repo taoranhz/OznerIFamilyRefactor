@@ -53,4 +53,5 @@
     <color name="MyCenter_ProgressBarBg">#ffe5edf8</color>
     <color name="MyCenter_ProgressStart">#ff3387f9</color>
     <color name="MyCenter_ProgressEnd">#fff83636</color>
+    <color name="no_fiend_bg">#ffafe0ff</color>
 </resources>
