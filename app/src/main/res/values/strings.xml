@@ -405,6 +405,8 @@
     <string name="sending">正在发送</string>
     <string name="submiting">正在提交</string>
     <string name="no_verify_msg">没有验证信息</string>
+    <string name="submit">提交</string>
+    <string name="adsive">我要提意见</string>
 
     <string name="verify_msg">验证消息</string>
     <string name="add_friend">添加朋友</string>
@@ -419,6 +421,13 @@
     <string name="input_friend_phone">请输入好友手机号</string>
     <string name="send_verify_tips">您需要发送验证申请，等待对方通过</string>
     <string name="user_deny_red_contacts">用户拒绝访问通讯录</string>
+
+    <string name="feed_back_tips">如果您在使用过程中，有任何问题或建议，请留下你宝贵的意见与建议，我们会努力解决您的问题。</string>
+    <string name="need_login_first">请先登录</string>
+    <string name="input_advise">请输入要提交的意见</string>
+    <string name="submit_fail">提交失败</string>
+    <string name="advise_result_up">感谢您的宝贵意见</string>
+    <string name="advise_result_down">我们会尽快处理</string>
 
     <!--错误码-->
     <string name="Code_Accept_nofound">没有发现对应请求</string>

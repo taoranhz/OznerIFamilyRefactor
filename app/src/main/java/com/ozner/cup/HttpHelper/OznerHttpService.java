@@ -305,4 +305,15 @@ public interface OznerHttpService {
     @FormUrlEncoded
     @POST("OznerServer/AddFriend")
     Observable<JsonObject> addFriend(@Field("usertoken") String usertoken, @Field("mobile") String mobile, @Field("content") String content);
+
+    /**
+     * 提交意见
+     * @param usertoken
+     * @param message
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/SubmitOpinion")
+    Observable<JsonObject> submitOption(@Field("usertoken") String usertoken,@Field("message") String message);
 }

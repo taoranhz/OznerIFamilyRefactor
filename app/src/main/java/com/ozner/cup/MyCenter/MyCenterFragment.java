@@ -20,13 +20,19 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.ozner.cup.Base.BaseFragment;
+import com.ozner.cup.Base.WebActivity;
+import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.UserInfo;
+import com.ozner.cup.LoginWelcom.View.LoginActivity;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.Main.UserInfoManager;
 import com.ozner.cup.MyCenter.MyFriend.MyFriendsActivity;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.LCLogUtils;
+import com.ozner.cup.Utils.WeChatUrlUtil;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -51,9 +57,10 @@ public class MyCenterFragment extends BaseFragment {
     @InjectView(R.id.tv_myMoney)
     TextView tvMyMoney;
 
-    UserInfoManager userInfoManager;
-    String userid;
-    UserInfo mUserInfo;
+    private UserInfoManager userInfoManager;
+    private String userid;
+    private UserInfo mUserInfo;
+    private String userToken;
 
     public MyCenterFragment() {
         // Required empty public constructor
@@ -76,6 +83,7 @@ public class MyCenterFragment extends BaseFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        userToken = OznerPreference.getUserToken(getContext());
         userInfoManager = new UserInfoManager(getContext());
         userid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
         mUserInfo = DBManager.getInstance(getContext()).getUserInfo(userid);
@@ -189,24 +197,52 @@ public class MyCenterFragment extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.llay_headImg:
-
+                if (userid == null || userid.isEmpty()) {
+                    startActivity(new Intent(getContext(), LoginActivity.class));
+                    getActivity().finish();
+                }
                 break;
             case R.id.llay_myDevice:
                 break;
             case R.id.llay_myBurse:
+                Intent burseIntent = new Intent(getContext(), WebActivity.class);
+                String burseUrl = WeChatUrlUtil.formatMyMoneyUrl(mUserInfo.getMobile(), userToken, "zh", "zh");
+                LCLogUtils.E(TAG, "burseUrl:" + burseUrl);
+                burseIntent.putExtra(Contacts.PARMS_URL, burseUrl);
+                startActivity(burseIntent);
                 break;
             case R.id.rlay_my_order:
+                Intent orderIntent = new Intent(getContext(), WebActivity.class);
+                String orderUrl = WeChatUrlUtil.formatMyOrderUrl(mUserInfo.getMobile(), userToken, "zh", "zh");
+                LCLogUtils.E(TAG, "OrderUrl:" + orderUrl);
+                orderIntent.putExtra(Contacts.PARMS_URL, orderUrl);
+                startActivity(orderIntent);
                 break;
             case R.id.rlay_redbag:
+                Intent redBagIntnet = new Intent(getContext(), WebActivity.class);
+                String redPacUrl = WeChatUrlUtil.formatRedPacUrl(mUserInfo.getMobile(), userToken, "zh", "zh");
+                LCLogUtils.E(TAG, "redPacUrl:" + redPacUrl);
+                redBagIntnet.putExtra(Contacts.PARMS_URL, redPacUrl);
+                startActivity(redBagIntnet);
                 break;
             case R.id.rlay_my_ticket:
+                Intent ticketIntent = new Intent(getContext(), WebActivity.class);
+                String myTicketUrl = WeChatUrlUtil.formatMyTicketUrl(mUserInfo.getMobile(), userToken, "zh", "zh");
+                LCLogUtils.E(TAG, "myTicketUrl:" + myTicketUrl);
+                ticketIntent.putExtra(Contacts.PARMS_URL, myTicketUrl);
+                startActivity(ticketIntent);
                 break;
             case R.id.rlay_my_friend:
                 startActivity(new Intent(getContext(), MyFriendsActivity.class));
                 break;
             case R.id.rlay_report:
+                Intent reportIntent = new Intent(getContext(), WebActivity.class);
+                String reportUrl = String.format(Contacts.Water_Analysis, mUserInfo.getMobile());
+                reportIntent.putExtra(Contacts.PARMS_URL, reportUrl);
+                startActivity(reportIntent);
                 break;
-            case R.id.rlay_feedback:
+            case R.id.rlay_feedback://我要提意见
+                startActivity(new Intent(getContext(), FeedBackActivity.class));
                 break;
             case R.id.rlay_settings:
                 break;

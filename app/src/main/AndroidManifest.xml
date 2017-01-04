@@ -186,6 +186,8 @@
         </activity>
         <activity android:name=".MyCenter.MyFriend.SendVerifyActivity">
         </activity>
+        <activity android:name=".MyCenter.FeedBackActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -376,10 +376,11 @@ public class HttpMethods {
 
     /**
      * 获取验证消息列表
+     *
      * @param usertoken
      * @param subscriber
      */
-    public void getVerifyMessage(String usertoken,Subscriber<JsonObject> subscriber){
+    public void getVerifyMessage(String usertoken, Subscriber<JsonObject> subscriber) {
         oznerHttpService.getVerifyMessage(usertoken)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -389,12 +390,13 @@ public class HttpMethods {
 
     /**
      * 接受验证请求
+     *
      * @param usertoken
      * @param id
      * @param subscriber
      */
-    public void acceptUserVerify(String usertoken,String id,Subscriber<JsonObject> subscriber){
-        oznerHttpService.acceptUserVerify(usertoken,id)
+    public void acceptUserVerify(String usertoken, String id, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.acceptUserVerify(usertoken, id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
 //                .map(new ResultTransFunc1())
@@ -403,13 +405,29 @@ public class HttpMethods {
 
     /**
      * 发送添加验证信息
+     *
      * @param usertoken
      * @param mobile
      * @param content
      * @param subscriber
      */
-    public void addFriend(String usertoken,String mobile,String content,Subscriber<JsonObject> subscriber){
-        oznerHttpService.addFriend(usertoken,mobile,content)
+    public void addFriend(String usertoken, String mobile, String content, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.addFriend(usertoken, mobile, content)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 提交意见
+     *
+     * @param usertoken
+     * @param message
+     * @param subscriber
+     */
+    public void submitOption(String usertoken, String message, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.submitOption(usertoken, message)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
 //                .map(new ResultTransFunc1())

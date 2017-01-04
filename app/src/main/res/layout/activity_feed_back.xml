@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_feed_back"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_bg"
+    android:orientation="vertical"
+    tools:context="com.ozner.cup.MyCenter.FeedBackActivity">
+
+    <include layout="@layout/toolbar"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingBottom="0dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="15dp">
+
+        <EditText
+            android:id="@+id/et_adviseText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/advise_edittext_bg"
+            android:gravity="top|left"
+            android:hint="@string/feed_back_tips"
+            android:maxLength="300"
+            android:padding="20dp"
+            android:textSize="16dp"/>
+
+        <TextView
+            android:id="@+id/tv_length"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:layout_toLeftOf="@+id/tv_maxLength"
+            android:text="0"/>
+
+        <TextView
+            android:id="@+id/tv_maxLength"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="15dp"
+            android:text="/300"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_Submit"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:background="@drawable/center_advise_btn_bg"
+            android:text="@string/submit"
+            android:textColor="@color/white"
+            android:textSize="16dp"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -52,6 +52,10 @@ public class Contacts {
     public static String getRedPacUrl = "http://www.oznerwater.com/lktnew/wapnew/Member/GrapRedPackages.aspx";
     public static String getShareHBUrl = "http://www.oznerwater.com/lktnew/wap/wxoauth.aspx?gourl=http://www.oznerwater.com/lktnew/wap/Member/InvitedMemberBrand.aspx";
 
+
+    //水质检测
+    public static String Water_Analysis = "http://erweima.ozner.net:85/index.aspx?tel=%s";
+
     // 健康水知道
     public static String waterHealthUrl = "http://cup.ozner.net/app/cn/jxszd.html";
 
