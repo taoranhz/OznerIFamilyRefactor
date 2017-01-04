@@ -106,6 +106,10 @@ public class Contacts {
     //关于TDS笔
     public static String aboutTdsPen = "file:///android_asset/hz_tdspen.html";
 
+    // 免责条款
+//    public static String URL_BASE_EXCEPTIONS = "http://cup.ozner.net/app/cn/";
+    public static String exceptions_url = "http://cup.ozner.net/app/cn/mzsm.html";
+
 //    /*
 //    *可单独使用链接
 //     */

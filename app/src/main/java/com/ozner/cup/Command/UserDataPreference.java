@@ -12,6 +12,7 @@ import android.support.annotation.StringDef;
 public class UserDataPreference {
     public final static String UserId = "UserId";
     public final static String SelMac = "SelMac";
+    public final static String IsAllowPushMessage = "isAllowPushMsg";//允许推送消息
     public final static String TapPosSaveTag = "TapPosSave";//水探头
     public final static String CupPosSaveTag = "CupPosSave";//水杯
     public final static String WaterPosSaveTag = "WaterPosSave";//水机

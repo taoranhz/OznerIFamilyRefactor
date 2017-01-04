@@ -429,6 +429,15 @@
     <string name="advise_result_up">感谢您的宝贵意见</string>
     <string name="advise_result_down">我们会尽快处理</string>
 
+    <string name="allow_push_msg">允许推送消息</string>
+    <string name="unit">计量单位</string>
+    <string name="about_ozner">关于浩泽净水家</string>
+    <string name="logout">退出登录</string>
+    <string name="setting">设置</string>
+    <string name="check_version">检查更新新版本</string>
+    <string name="current_version">当前版本</string>
+    <string name="rate_ozner">评个分吧</string>
+
     <!--错误码-->
     <string name="Code_Accept_nofound">没有发现对应请求</string>
     <string name="Code_AddFriend_exists">已经发送过请求</string>

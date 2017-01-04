@@ -245,6 +245,7 @@ public class MyCenterFragment extends BaseFragment {
                 startActivity(new Intent(getContext(), FeedBackActivity.class));
                 break;
             case R.id.rlay_settings:
+                startActivity(new Intent(getContext(), SettingsActivity.class));
                 break;
         }
     }
