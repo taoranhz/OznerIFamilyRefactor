@@ -14,6 +14,11 @@ import com.ozner.cup.DBHelper.FriendRankItem;
 import com.ozner.cup.HttpHelper.ApiException;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
+import com.ozner.cup.MyCenter.MyFriend.bean.CenterRankItem;
+import com.ozner.cup.MyCenter.MyFriend.bean.FriendItem;
+import com.ozner.cup.MyCenter.MyFriend.bean.LeaveMessageItem;
+import com.ozner.cup.MyCenter.MyFriend.bean.LikeMeItem;
+import com.ozner.cup.MyCenter.MyFriend.bean.VerifyMessageItem;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
 
@@ -375,5 +380,91 @@ public class FriendInfoManager implements IFriendInfoManager {
                                 }
                             }
                         }));
+    }
+
+    public interface LoadVerifyListener {
+        void onSuccess(List<VerifyMessageItem> result);
+
+        void onFail(String msg);
+    }
+
+    /**
+     * 获取验证消息列表
+     *
+     * @param listener
+     */
+    public void getVerifyMessage(final LoadVerifyListener listener) {
+        HttpMethods.getInstance().getVerifyMessage(OznerPreference.getUserToken(mContext.get()),
+                new ProgressSubscriber<JsonObject>(mContext.get(),
+                        mContext.get().getString(R.string.data_loading), false, new Action1<JsonObject>() {
+                    @Override
+                    public void call(JsonObject jsonObject) {
+                        try {
+                            if (jsonObject != null) {
+                                if (jsonObject.get("state").getAsInt() > 0) {
+                                    JsonArray array = jsonObject.getAsJsonArray("msglist");
+                                    List<VerifyMessageItem> result = new Gson().fromJson(array, new TypeToken<List<VerifyMessageItem>>() {
+                                    }.getType());
+                                    if (listener != null) {
+                                        listener.onSuccess(result);
+                                    }
+                                } else {
+                                    if (listener != null) {
+                                        listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
+                                    }
+                                }
+                            } else {
+                                if (listener != null) {
+                                    listener.onFail("result is null");
+                                }
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            if (listener != null) {
+                                listener.onFail(ex.getMessage());
+                            }
+                        }
+                    }
+                }));
+    }
+
+    /**
+     * 接受验证请求
+     *
+     * @param id
+     * @param listener
+     */
+    public void acceptUserVerify(String id, final LeaveMsgListener listener) {
+        HttpMethods.getInstance().acceptUserVerify(OznerPreference.getUserToken(mContext.get()),
+                id,
+                new ProgressSubscriber<JsonObject>(mContext.get(),
+                        mContext.get().getString(R.string.submiting),
+                        false, new Action1<JsonObject>() {
+                    @Override
+                    public void call(JsonObject jsonObject) {
+                        try {
+                            if (jsonObject != null) {
+                                if (jsonObject.get("state").getAsInt() > 0) {
+                                    if (listener != null) {
+                                        listener.onSuccess();
+                                    }
+                                } else {
+                                    if (listener != null) {
+                                        listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
+                                    }
+                                }
+                            } else {
+                                if (listener != null) {
+                                    listener.onFail("result is null");
+                                }
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            if (listener != null) {
+                                listener.onFail(ex.getMessage());
+                            }
+                        }
+                    }
+                }));
     }
 }

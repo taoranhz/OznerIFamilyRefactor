@@ -1,4 +1,4 @@
-package com.ozner.cup.MyCenter.MyFriend;
+package com.ozner.cup.MyCenter.MyFriend.bean;
 
 /**
  * Created by ozner_67 on 2016/12/27.

@@ -404,6 +404,21 @@
     <string name="no_leave_msg">没有留言</string>
     <string name="sending">正在发送</string>
     <string name="submiting">正在提交</string>
+    <string name="no_verify_msg">没有验证信息</string>
+
+    <string name="verify_msg">验证消息</string>
+    <string name="add_friend">添加朋友</string>
+    <string name="added">已添加</string>
+    <string name="loading">正在加载...</string>
+    <string name="no_contacts_friend">没有通讯录好友</string>
+    <string name="wait_verify">等待验证</string>
+    <string name="friend_search_fail">没有搜索到好友</string>
+    <string name="is_not_ozner_user">不是浩泽用户</string>
+    <string name="input_right_phone">请输入正确的手机号</string>
+    <string name="searching">正在查找</string>
+    <string name="input_friend_phone">请输入好友手机号</string>
+    <string name="send_verify_tips">您需要发送验证申请，等待对方通过</string>
+    <string name="user_deny_red_contacts">用户拒绝访问通讯录</string>
 
     <!--错误码-->
     <string name="Code_Accept_nofound">没有发现对应请求</string>

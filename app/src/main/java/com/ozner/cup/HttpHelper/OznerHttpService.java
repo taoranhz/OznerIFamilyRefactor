@@ -259,6 +259,7 @@ public interface OznerHttpService {
 
     /**
      * 留言
+     *
      * @param usertoken
      * @param otherUserid
      * @param leaveMsg
@@ -267,5 +268,41 @@ public interface OznerHttpService {
      */
     @FormUrlEncoded
     @POST("OznerDevice/LeaveMessage")
-    Observable<JsonObject> leaveMessage(@Field("usertoken") String usertoken,@Field("otheruserid") String otherUserid,@Field("message") String leaveMsg);
+    Observable<JsonObject> leaveMessage(@Field("usertoken") String usertoken, @Field("otheruserid") String otherUserid, @Field("message") String leaveMsg);
+
+    /**
+     * 获取验证消息列表
+     *
+     * @param usertoken
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/GetUserVerifMessage")
+    Observable<JsonObject> getVerifyMessage(@Field("usertoken") String usertoken);
+
+    /**
+     * 接受验证请求
+     *
+     * @param usertoken
+     * @param id
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/AcceptUserVerif")
+    Observable<JsonObject> acceptUserVerify(@Field("usertoken") String usertoken, @Field("id") String id);
+
+    /**
+     * 发送添加验证信息
+     *
+     * @param usertoken
+     * @param mobile
+     * @param content
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/AddFriend")
+    Observable<JsonObject> addFriend(@Field("usertoken") String usertoken, @Field("mobile") String mobile, @Field("content") String content);
 }

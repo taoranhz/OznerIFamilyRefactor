@@ -1,34 +1,38 @@
-package com.ozner.cup.MyCenter.MyFriend;
+package com.ozner.cup.MyCenter.MyFriend.bean;
 
 /**
- * Created by ozner_67 on 2016/12/29.
+ * Created by ozner_67 on 2017/1/3.
  * 邮箱：xinde.zhang@cftcn.com
- *
- * 好友列表实体
  */
 
-public class FriendItem {
-    private int Id;
-    private String Mobile;
-    private String FriendMobile;
-    private String RequestContent;
-    private int Status;
-    private int Disabled;
-    private String CreateBy;
-    private String CreateTime;
-    private String ModifyBy;
-    private String ModifyTime;
-    private String Nickname;
-    private String Icon;
-    private int Score;
-    private int MessageCount;
+public class VerifyMessageItem {
+    //主键ID
+    public String ID;
+    //发送者手机号
+    public String Mobile;
+    //接收者手机号
+    public String FriendMobile;
+    //请求的消息内容
+    public String RequestContent;
+    //状态 1正在申请，2已经是好友
+    public int Status;
+    public int Disabled;
+    //创建者
+    public String CreateBy;
+    //创建时间
+    public String CreateTime;
+    //昵称
+    public String Nickname;
+    public String Icon;
+    public String OtherMobile;
+    public int Score;
 
-    public int getId() {
-        return Id;
+    public String getID() {
+        return ID;
     }
 
-    public void setId(int id) {
-        Id = id;
+    public void setID(String ID) {
+        this.ID = ID;
     }
 
     public String getMobile() {
@@ -87,22 +91,6 @@ public class FriendItem {
         CreateTime = createTime;
     }
 
-    public String getModifyBy() {
-        return ModifyBy;
-    }
-
-    public void setModifyBy(String modifyBy) {
-        ModifyBy = modifyBy;
-    }
-
-    public String getModifyTime() {
-        return ModifyTime;
-    }
-
-    public void setModifyTime(String modifyTime) {
-        ModifyTime = modifyTime;
-    }
-
     public String getNickname() {
         return Nickname;
     }
@@ -119,19 +107,19 @@ public class FriendItem {
         Icon = icon;
     }
 
+    public String getOtherMobile() {
+        return OtherMobile;
+    }
+
+    public void setOtherMobile(String otherMobile) {
+        OtherMobile = otherMobile;
+    }
+
     public int getScore() {
         return Score;
     }
 
     public void setScore(int score) {
         Score = score;
-    }
-
-    public int getMessageCount() {
-        return MessageCount;
-    }
-
-    public void setMessageCount(int messageCount) {
-        MessageCount = messageCount;
     }
 }

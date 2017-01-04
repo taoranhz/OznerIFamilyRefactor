@@ -20,6 +20,8 @@ import android.widget.Toast;
 import com.ozner.cup.Base.BaseFragment;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.MyCenter.MyFriend.bean.FriendItem;
+import com.ozner.cup.MyCenter.MyFriend.bean.LeaveMessageItem;
 import com.ozner.cup.R;
 
 import java.util.ArrayList;

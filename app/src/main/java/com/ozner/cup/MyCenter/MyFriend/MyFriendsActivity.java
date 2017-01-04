@@ -1,5 +1,6 @@
 package com.ozner.cup.MyCenter.MyFriend;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -55,8 +56,6 @@ public class MyFriendsActivity extends BaseActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         ButterKnife.inject(this);
         initView();
-//        rankFragment = new FriendRankFragment();
-//        friendsFragment = new FriendsFragment();
     }
 
     /**
@@ -76,7 +75,7 @@ public class MyFriendsActivity extends BaseActivity {
         setRankSelected();
     }
 
-    @OnClick({R.id.llay_friend_rank, R.id.rlay_my_friend})
+    @OnClick({R.id.llay_friend_rank, R.id.rlay_my_friend, R.id.iv_newMsg, R.id.iv_add_friend})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.llay_friend_rank:
@@ -84,6 +83,14 @@ public class MyFriendsActivity extends BaseActivity {
                 break;
             case R.id.rlay_my_friend:
                 setFriendSelected();
+                break;
+            case R.id.iv_newMsg:
+                Intent dealVerifyIntent = new Intent(MyFriendsActivity.this, DealVerifyActivity.class);
+                startActivity(dealVerifyIntent);
+                break;
+            case R.id.iv_add_friend:
+                Intent addFriendintent = new Intent(MyFriendsActivity.this, AddFriendActivity.class);
+                startActivity(addFriendintent);
                 break;
         }
     }
@@ -104,7 +111,7 @@ public class MyFriendsActivity extends BaseActivity {
             if (friendsFragment != null && friendsFragment.isAdded()) {
                 trans.hide(friendsFragment);
             }
-            if(rankFragment == null){
+            if (rankFragment == null) {
                 rankFragment = new FriendRankFragment();
             }
 
@@ -113,16 +120,6 @@ public class MyFriendsActivity extends BaseActivity {
             }
             trans.show(rankFragment);
             trans.commit();
-//            rankFragment = (FriendRankFragment) getSupportFragmentManager().findFragmentByTag(RankTag);
-//            if (rankFragment == null) {
-//                rankFragment = FriendRankFragment.newInstance(null);
-//                trans.add(R.id.flay_container, rankFragment, RankTag).commitAllowingStateLoss();
-//            }
-////            getSupportFragmentManager().beginTransaction().replace(R.id.flay_container, rankFragment).commitAllowingStateLoss();
-//            if (friendsFragment != null) {
-//                trans.hide(friendsFragment);
-//            }
-//            trans.show(rankFragment);
         }
     }
 
@@ -143,7 +140,7 @@ public class MyFriendsActivity extends BaseActivity {
                 trans.hide(rankFragment);
             }
 
-            if(friendsFragment == null){
+            if (friendsFragment == null) {
                 friendsFragment = new FriendsFragment();
             }
             if (!friendsFragment.isAdded()) {
@@ -151,16 +148,6 @@ public class MyFriendsActivity extends BaseActivity {
             }
             trans.show(friendsFragment);
             trans.commit();
-//            friendsFragment = (FriendsFragment) getSupportFragmentManager().findFragmentByTag(FriendTag);
-//            if (friendsFragment == null) {
-//                friendsFragment = FriendsFragment.newInstance(null);
-//                trans.add(R.id.flay_container, friendsFragment, FriendTag).commitAllowingStateLoss();
-//            }
-//            if (rankFragment != null) {
-//                trans.hide(rankFragment);
-//            }
-//            trans.show(friendsFragment);
-//            getSupportFragmentManager().beginTransaction().replace(R.id.flay_container, friendsFragment).commitAllowingStateLoss();
         }
     }
 

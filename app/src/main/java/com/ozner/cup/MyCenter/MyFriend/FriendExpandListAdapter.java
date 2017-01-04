@@ -19,6 +19,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.MyCenter.MyFriend.bean.FriendItem;
+import com.ozner.cup.MyCenter.MyFriend.bean.LeaveMessageItem;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.DateUtils;
 import com.ozner.cup.Utils.LCLogUtils;

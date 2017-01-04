@@ -373,4 +373,46 @@ public class HttpMethods {
 //                .map(new ResultTransFunc1())
                 .subscribe(subscriber);
     }
+
+    /**
+     * 获取验证消息列表
+     * @param usertoken
+     * @param subscriber
+     */
+    public void getVerifyMessage(String usertoken,Subscriber<JsonObject> subscriber){
+        oznerHttpService.getVerifyMessage(usertoken)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 接受验证请求
+     * @param usertoken
+     * @param id
+     * @param subscriber
+     */
+    public void acceptUserVerify(String usertoken,String id,Subscriber<JsonObject> subscriber){
+        oznerHttpService.acceptUserVerify(usertoken,id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 发送添加验证信息
+     * @param usertoken
+     * @param mobile
+     * @param content
+     * @param subscriber
+     */
+    public void addFriend(String usertoken,String mobile,String content,Subscriber<JsonObject> subscriber){
+        oznerHttpService.addFriend(usertoken,mobile,content)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
 }

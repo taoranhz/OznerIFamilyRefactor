@@ -14,6 +14,10 @@ public class Contacts {
     public final static String PARMS_URL = "parms_url";
     //传递饮水量排名
     public final static String PARMS_RANK = "parms_rank";
+    //传递手机号
+    public final static String PARMS_PHONE = "parms_phone";
+    //传递点击位置
+    public final static String PARMS_CLICK_POS = "parms_click_pos";
     //排名类型
     public final static String PARMS_RANK_TYPE = "parms_rank_type";
     //activity返回的设备名字

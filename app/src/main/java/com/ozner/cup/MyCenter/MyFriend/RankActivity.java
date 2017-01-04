@@ -27,6 +27,7 @@ import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.RankType;
 import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.MyCenter.MyFriend.bean.CenterRankItem;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
 
