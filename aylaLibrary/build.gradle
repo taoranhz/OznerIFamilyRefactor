@@ -48,14 +48,11 @@ android {
 }
 
 dependencies {
-	compile fileTree(
-		dir: 'libs', 
-		include:['*.jar'], 
-		exclude:['*support-v4.jar'])   
-	// hardcode manner 
+	compile fileTree(include: ['*.jar'], exclude: ['*support-v4.jar'], dir: 'libs')
+	// hardcode manner
 	// compile 'com.google.code.gson:gson:2.2.4'
 	// compile files('libs/android-logging-log4j-1.0.3.jar')
-	// compile files('libs/log4j-1.2.17.jar')    
+	// compile files('libs/log4j-1.2.17.jar')
 }
 
 

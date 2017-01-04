@@ -56,7 +56,7 @@
         </activity>
 
         <service android:name="com.ozner.application.OznerBLEService"/>
-        <service android:name="com.aylanetworks.aaml.AylaExecuteRequest"/>
+        <!--<service android:name="com.aylanetworks.aaml.AylaExecuteRequest"/>-->
 
         <activity android:name=".Device.AddDevice.AddDeviceActivity">
         </activity>

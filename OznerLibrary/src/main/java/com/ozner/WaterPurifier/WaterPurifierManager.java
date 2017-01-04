@@ -10,9 +10,6 @@ import com.ozner.device.BaseDeviceManager;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 
-import java.util.Arrays;
-import java.util.Date;
-
 /**
  * Created by xzyxd on 2015/11/2.
  */
@@ -70,11 +67,11 @@ public class WaterPurifierManager extends BaseDeviceManager {
                         .createMXChipDevice(waterPurifier.Address(), waterPurifier.Type());
             return waterPurifier;
         }
-        if (type.trim().equals("AY001MAB1"))
-        {
-            WaterPurifier waterPurifier = new WaterPurifier_Ayla(context(), address, type, settings);
-            return waterPurifier;
-        }else
+//        if (type.trim().equals("AY001MAB1"))
+//        {
+//            WaterPurifier waterPurifier = new WaterPurifier_Ayla(context(), address, type, settings);
+//            return waterPurifier;
+//        }else
         if (type.trim().equals("Ozner RO"))
         {
             WaterPurifier waterPurifier = new WaterPurifier_RO_BLE(context(), address, type, settings);

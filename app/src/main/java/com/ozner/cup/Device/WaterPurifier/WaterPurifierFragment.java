@@ -41,7 +41,6 @@ import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
-import com.ozner.wifi.ayla.AylaIO;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -705,9 +704,9 @@ public class WaterPurifierFragment extends DeviceFragment {
     private void updateTdsSensor(String tds, String beforeTds) {
         if (mWaterPurifer != null) {
             try {
-                if (mWaterPurifer.IO() instanceof AylaIO) {
-                    dsn = ((AylaIO) mWaterPurifer.IO()).DSN();
-                }
+//                if (mWaterPurifer.IO() instanceof AylaIO) {
+//                    dsn = ((AylaIO) mWaterPurifer.IO()).DSN();
+//                }
             } catch (Exception ex) {
 
             }
