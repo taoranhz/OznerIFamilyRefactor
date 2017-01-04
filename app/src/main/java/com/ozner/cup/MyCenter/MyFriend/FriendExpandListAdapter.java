@@ -168,45 +168,47 @@ public class FriendExpandListAdapter extends BaseExpandableListAdapter {
             childHolder = (ChildHolder) convertView.getTag();
         }
 
-        long time = DateUtils.formatDateFromString(leMsgList.get(childPosition).getStime());
-        cal.setTimeInMillis(time);
-        int year = cal.get(Calendar.YEAR);
-        if (year < theYear) {
-            childHolder.tv_time.setText(DateUtils.yearTimeFormat.format(cal.getTime()));
+        if (leMsgList.get(childPosition).getStime() != null) {
+            long time = DateUtils.formatDateFromString(leMsgList.get(childPosition).getStime());
+            cal.setTimeInMillis(time);
+            int year = cal.get(Calendar.YEAR);
+            if (year < theYear) {
+                childHolder.tv_time.setText(DateUtils.yearTimeFormat.format(cal.getTime()));
+            } else {
+                childHolder.tv_time.setText(DateUtils.monthTimeFormat.format(cal.getTime()));
+            }
+
+            String from = "";
+            String to = "";
+            if (leMsgList.get(childPosition).getSenduserid() != null &&
+                    leMsgList.get(childPosition).getSenduserid().equals(mUserid)) {
+                from = "我";
+                to = friendList.get(groupPosition).getNickname() != null &&
+                        !friendList.get(groupPosition).getNickname().isEmpty()
+                        ? friendList.get(groupPosition).getNickname() : leMsgList.get(childPosition).getMobile();
+            } else {
+                from = friendList.get(groupPosition).getNickname() != null &&
+                        !friendList.get(groupPosition).getNickname().isEmpty()
+                        ? friendList.get(groupPosition).getNickname() : leMsgList.get(childPosition).getMobile();
+            }
+
+            SpannableStringBuilder span_Desc = new SpannableStringBuilder();
+            span_Desc.append(from);
+            if (to != null && !to.isEmpty()) {
+                span_Desc.append("回复");
+            }
+            to += ":";
+            span_Desc.append(to);
+            span_Desc.append(leMsgList.get(childPosition).getMessage());
+            ForegroundColorSpan fromSpan = new ForegroundColorSpan(ContextCompat.getColor(mContext.get(), R.color.faq_text_blue));
+            span_Desc.setSpan(fromSpan, 0, from.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            ForegroundColorSpan toSpan = new ForegroundColorSpan(ContextCompat.getColor(mContext.get(), R.color.faq_text_blue));
+            int toStart = span_Desc.toString().indexOf(to);
+            span_Desc.setSpan(toSpan, toStart, toStart + to.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            childHolder.tv_message.setText(span_Desc);
         } else {
-            childHolder.tv_time.setText(DateUtils.monthTimeFormat.format(cal.getTime()));
+            childHolder.tv_message.setText(leMsgList.get(childPosition).getMessage());
         }
-
-        childHolder.tv_message.setText(leMsgList.get(childPosition).getMessage());
-        String from = "";
-        String to = "";
-        if (leMsgList.get(childPosition).getSenduserid() != null &&
-                leMsgList.get(childPosition).getSenduserid().equals(mUserid)) {
-            from = "我";
-            to = friendList.get(groupPosition).getNickname() != null &&
-                    !friendList.get(groupPosition).getNickname().isEmpty()
-                    ? friendList.get(groupPosition).getNickname() : leMsgList.get(childPosition).getMobile();
-        } else {
-            from = friendList.get(groupPosition).getNickname() != null &&
-                    !friendList.get(groupPosition).getNickname().isEmpty()
-                    ? friendList.get(groupPosition).getNickname() : leMsgList.get(childPosition).getMobile();
-        }
-
-        SpannableStringBuilder span_Desc = new SpannableStringBuilder();
-        span_Desc.append(from);
-        if (to != null && !to.isEmpty()) {
-            span_Desc.append("回复");
-        }
-        to += ":";
-        span_Desc.append(to);
-        span_Desc.append(leMsgList.get(childPosition).getMessage());
-        ForegroundColorSpan fromSpan = new ForegroundColorSpan(ContextCompat.getColor(mContext.get(), R.color.faq_text_blue));
-        span_Desc.setSpan(fromSpan, 0, from.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        ForegroundColorSpan toSpan = new ForegroundColorSpan(ContextCompat.getColor(mContext.get(), R.color.faq_text_blue));
-        int toStart = span_Desc.toString().indexOf(to);
-        span_Desc.setSpan(toSpan, toStart, toStart + to.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        childHolder.tv_message.setText(span_Desc);
-
         return convertView;
     }
 

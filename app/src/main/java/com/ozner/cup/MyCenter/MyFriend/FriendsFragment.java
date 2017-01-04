@@ -134,21 +134,21 @@ public class FriendsFragment extends BaseFragment implements ExpandableListView.
 //        initChildTest();
     }
 
-    private void initGroupTest() {
-//        List<FriendItem> friendlist = new ArrayList<>();
-        friendList.clear();
-        for (int i = 0; i < 20; i++) {
-            FriendItem item = new FriendItem();
-            item.setMobile("13166398575");
-            item.setFriendMobile("15236193732");
-            item.setNickname("凌晨 " + i);
-            item.setId(i);
-            item.setMessageCount(i);
-            item.setIcon("http://h.hiphotos.baidu.com/image/pic/item/a8ec8a13632762d0600802bfa2ec08fa513dc6f8.jpg");
-            friendList.add(item);
-        }
-        mFriendAdapter.loadGroupData(friendList);
-    }
+//    private void initGroupTest() {
+////        List<FriendItem> friendlist = new ArrayList<>();
+//        friendList.clear();
+//        for (int i = 0; i < 20; i++) {
+//            FriendItem item = new FriendItem();
+//            item.setMobile("13166398575");
+//            item.setFriendMobile("15236193732");
+//            item.setNickname("凌晨 " + i);
+//            item.setId(i);
+//            item.setMessageCount(i);
+//            item.setIcon("http://h.hiphotos.baidu.com/image/pic/item/a8ec8a13632762d0600802bfa2ec08fa513dc6f8.jpg");
+//            friendList.add(item);
+//        }
+//        mFriendAdapter.loadGroupData(friendList);
+//    }
 //
 //    String[] testStr = new String[]{
 //            "熟悉的巷弄间 记忆中的经典",
@@ -249,22 +249,35 @@ public class FriendsFragment extends BaseFragment implements ExpandableListView.
                         elvFriend.expandGroup(curGroupPos, true);
                     }
                 } else {
-                    List<LeaveMessageItem> msgList = new ArrayList<LeaveMessageItem>();
-                    LeaveMessageItem item = new LeaveMessageItem();
-                    item.setMessage(getString(R.string.no_leave_msg));
-                    msgList.add(item);
-                    mFriendAdapter.loadChildData(curGroupPos,msgList);
-                    if (!elvFriend.isGroupExpanded(curGroupPos)) {
-                        elvFriend.expandGroup(curGroupPos, true);
-                    }
+                    showNoLeaveMessage();
+//                    List<LeaveMessageItem> msgList = new ArrayList<LeaveMessageItem>();
+//                    LeaveMessageItem item = new LeaveMessageItem();
+//                    item.setMessage(getString(R.string.no_leave_msg));
+//                    msgList.add(item);
+//                    mFriendAdapter.loadChildData(curGroupPos,msgList);
+//                    if (!elvFriend.isGroupExpanded(curGroupPos)) {
+//                        elvFriend.expandGroup(curGroupPos, true);
+//                    }
                 }
             }
 
             @Override
             public void onFail(String msg) {
                 Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                showNoLeaveMessage();
             }
         });
+    }
+
+    private void showNoLeaveMessage(){
+        List<LeaveMessageItem> msgList = new ArrayList<LeaveMessageItem>();
+        LeaveMessageItem item = new LeaveMessageItem();
+        item.setMessage(getString(R.string.no_leave_msg));
+        msgList.add(item);
+        mFriendAdapter.loadChildData(curGroupPos,msgList);
+        if (!elvFriend.isGroupExpanded(curGroupPos)) {
+            elvFriend.expandGroup(curGroupPos, true);
+        }
     }
 
     /**
