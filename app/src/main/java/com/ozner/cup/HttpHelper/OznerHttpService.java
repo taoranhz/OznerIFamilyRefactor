@@ -316,4 +316,15 @@ public interface OznerHttpService {
     @FormUrlEncoded
     @POST("OznerServer/SubmitOpinion")
     Observable<JsonObject> submitOption(@Field("usertoken") String usertoken,@Field("message") String message);
+
+    /**
+     * 获取最新版本号
+     * @param os
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/GetNewVersion")
+    Observable<JsonObject> getNewVersion(@Field("os") String os);
+
 }

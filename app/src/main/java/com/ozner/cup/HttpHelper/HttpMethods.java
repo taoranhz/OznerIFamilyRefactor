@@ -433,4 +433,18 @@ public class HttpMethods {
 //                .map(new ResultTransFunc1())
                 .subscribe(subscriber);
     }
+
+    /**
+     * 获取最新版本号
+     *
+     * @param os
+     * @param subscriber
+     */
+    public void getNewVersion(String os, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getNewVersion(os)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
 }

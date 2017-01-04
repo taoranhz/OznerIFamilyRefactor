@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -199,7 +198,7 @@ public class AddFriendActivity extends BaseActivity implements TextView.OnEditor
                 }).onAnyDenied(new Func() {
                     @Override
                     protected void call() {
-                        Toast.makeText(AddFriendActivity.this, R.string.user_deny_red_contacts, Toast.LENGTH_SHORT).show();
+                        showToastCenter(R.string.user_deny_red_contacts);
                         showNoContactFriend();
                     }
                 }).ask(1);

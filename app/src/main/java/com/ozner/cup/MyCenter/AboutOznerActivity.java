@@ -1,16 +1,20 @@
 package com.ozner.cup.MyCenter;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.github.kayvannj.permission_utils.Func;
+import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
@@ -28,6 +32,8 @@ public class AboutOznerActivity extends BaseActivity {
     Toolbar toolbar;
     @InjectView(R.id.tv_version)
     TextView tvVersion;
+    private OznerUpdateManager updateManager;
+    private PermissionUtil.PermissionRequestObject perReqResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +41,7 @@ public class AboutOznerActivity extends BaseActivity {
         setContentView(R.layout.activity_about_ozner);
         ButterKnife.inject(this);
         initToolBar();
-
+        updateManager = new OznerUpdateManager(this, true);
         tvVersion.setText(getVersion());
     }
 
@@ -52,6 +58,7 @@ public class AboutOznerActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.llay_checkVersion:
+                checkUpdate();
                 break;
             case R.id.llay_rate_ozner:
                 String rateStr = "market://details?id=" + getPackageName();
@@ -74,6 +81,25 @@ public class AboutOznerActivity extends BaseActivity {
                 break;
         }
     }
+
+    /**
+     * 检查更新
+     */
+    private void checkUpdate() {
+        perReqResult = PermissionUtil.with(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .onAllGranted(new Func() {
+                    @Override
+                    protected void call() {
+                        updateManager.checkUpdate();
+                    }
+                }).onAnyDenied(new Func() {
+                    @Override
+                    protected void call() {
+                        showToastCenter(R.string.user_deny_write_storge);
+                    }
+                }).ask(1);
+    }
+
 
     /**
      * 获取当前版本名称
@@ -101,4 +127,11 @@ public class AboutOznerActivity extends BaseActivity {
         return true;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (perReqResult != null) {
+            perReqResult.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }
