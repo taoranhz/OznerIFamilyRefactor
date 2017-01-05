@@ -34,10 +34,13 @@ import com.ozner.cup.MyCenter.Settings.SettingsActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.WeChatUrlUtil;
+import com.ozner.device.OznerDeviceManager;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+
+import static com.ozner.cup.R.id.tv_myMoney;
 
 /**
  * Created by ozner_67 on 2016/11/1.
@@ -55,7 +58,7 @@ public class MyCenterFragment extends BaseFragment {
     TextView tvGrade;
     @InjectView(R.id.tv_myDevice)
     TextView tvMyDevice;
-    @InjectView(R.id.tv_myMoney)
+    @InjectView(tv_myMoney)
     TextView tvMyMoney;
 
     private UserInfoManager userInfoManager;
@@ -115,6 +118,7 @@ public class MyCenterFragment extends BaseFragment {
         return view;
     }
 
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         if (mUserInfo != null) {
@@ -138,6 +142,9 @@ public class MyCenterFragment extends BaseFragment {
                 tvGrade.setVisibility(View.VISIBLE);
                 tvGrade.setText(gradeName);
             }
+
+            tvMyMoney.setText(String.valueOf(userinfo.getScore()));
+
             Glide.with(getContext()).load(mUserInfo.getHeadimg()).asBitmap().placeholder(R.drawable.icon_default_headimage).centerCrop().into(new BitmapImageViewTarget(ivHeadImg) {
                 @Override
                 protected void setResource(Bitmap resource) {
@@ -168,9 +175,7 @@ public class MyCenterFragment extends BaseFragment {
     public void onResume() {
         try {
             setBarColor(R.color.cup_detail_bg);
-//            setToolbarColor(R.color.colorAccent);
-//            ((MainActivity) getActivity()).setCustomTitle(R.string.mine);
-
+            tvMyDevice.setText(String.valueOf(OznerDeviceManager.Instance().getDevices().length));
         } catch (Exception ex) {
 
         }
@@ -204,6 +209,7 @@ public class MyCenterFragment extends BaseFragment {
                 }
                 break;
             case R.id.llay_myDevice:
+                startActivity(new Intent(getContext(), MyDeviceActivity.class));
                 break;
             case R.id.llay_myBurse:
                 Intent burseIntent = new Intent(getContext(), WebActivity.class);

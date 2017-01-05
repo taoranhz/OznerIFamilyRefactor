@@ -321,13 +321,13 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         OznerDevice device = ((LeftMenuFragment) (getSupportFragmentManager().findFragmentById(R.id.fg_left_menu))).getSelectedDevice();
         if (device != null) {
             Log.e(TAG, "showDevice: " + device.Address() + " , deviceType:" + device.Type());
-            if (devFragmentMap.containsKey(device.Type())) {
-                DeviceFragment df = devFragmentMap.get(device.Type());
-                trans.replace(R.id.fg_content, df);
+            if (devFragmentMap.containsKey(device.Address())) {
+                DeviceFragment df = devFragmentMap.get(device.Address());
                 df.setDevice(device);
+                trans.replace(R.id.fg_content, df);
             } else {
                 DeviceFragment newDef = getDeviceFragment(device);
-                devFragmentMap.put(device.Type(), newDef);
+                devFragmentMap.put(device.Address(), newDef);
                 trans.replace(R.id.fg_content, newDef);
             }
         } else {
@@ -341,7 +341,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     public void onTabSelected(int position) {
         curBottomIndex = position;
         System.gc();
-        Log.d(TAG, "onTabSelected() called with: " + "position = [" + position + "]");
+        Log.e(TAG, "onTabSelected() called with: " + "position = [" + position + "]");
         FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
         if (2 != position) {
             hideKeyboard();

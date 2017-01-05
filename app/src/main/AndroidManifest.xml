@@ -47,9 +47,7 @@
             android:name=".Main.MainActivity"
             android:launchMode="singleTask">
         </activity>
-        <activity
-            android:name=".LoginWelcom.View.LoginActivity"
-            android:launchMode="singleTask">
+        <activity android:name=".LoginWelcom.View.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -195,6 +193,8 @@
         <activity android:name=".MyCenter.Settings.AboutOznerActivity">
         </activity>
         <activity android:name=".MyCenter.Settings.UnitSettingsActivity">
+        </activity>
+        <activity android:name=".MyCenter.MyDeviceActivity">
         </activity>
     </application>
 

@@ -118,8 +118,9 @@ public class CupFragment extends DeviceFragment {
 
     @Override
     public void setDevice(OznerDevice device) {
+        Log.e(TAG, "setDevice: "+device.Address());
         if (mCup != null) {
-            if (mCup.Address() != device.Address()) {
+            if (!mCup.Address().equals(device.Address())) {
                 mCup.release();
                 mCup = null;
                 mCup = (Cup) device;
@@ -237,7 +238,7 @@ public class CupFragment extends DeviceFragment {
     @Override
     protected void refreshUIData() {
         if (isThisAdd() && mCup != null) {
-            Log.e(TAG, "refreshUIData: " + mCup.Sensor().toString());
+//            Log.e(TAG, "refreshUIData: " + mCup.Sensor().toString());
             title.setText(mCup.getName());
             refreshConnectState();
             refreshWaterGoal();
@@ -284,7 +285,7 @@ public class CupFragment extends DeviceFragment {
      */
     private void refreshSensorData() {
         if (mCup != null) {
-            Log.e(TAG, "refreshSensorData: " + mCup.toString());
+//            Log.e(TAG, "refreshSensorData: " + mCup.toString());
             showTdsState(mCup.Sensor().TDSFix);
             showPowerState();
             showWaterTemp();
