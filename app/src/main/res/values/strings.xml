@@ -234,6 +234,7 @@
     <string name="water_goal_cannot_empty">饮水目标不能为空</string>
 
     <string name="save">保存</string>
+    <string name="save_successful">保存成功</string>
     <string name="detection_time">检测时间</string>
     <string name="detection_time1">检测时间1</string>
     <string name="detection_time2">检测时间2</string>
@@ -447,6 +448,19 @@
     <string name="soft_update_later">稍后更新</string>
     <string name="soft_updating">正在更新</string>
     <string name="soft_update_cancel">取消</string>
+
+    <string name="Center_Temp">温度</string>
+    <string name="Center_Volumn">水量</string>
+    <string name="Center_Centigrade">摄氏度</string>
+    <string name="Center_Centigrade_Unit">(℃)</string>
+    <string name="Center_Fahrenheit">华氏度</string>
+    <string name="Center_fahrenheit_Unit">(℉)</string>
+    <string name="Center_ML">毫升</string>
+    <string name="Center_ML_Unit">(ML)</string>
+    <string name="Center_DL">分升</string>
+    <string name="Center_DL_Unit">(DL)</string>
+    <string name="Center_OZ">盎司</string>
+    <string name="Center_OZ_Unit">(OZ)</string>
 
     <!--错误码-->
     <string name="Code_Accept_nofound">没有发现对应请求</string>

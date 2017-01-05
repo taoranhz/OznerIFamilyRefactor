@@ -1,4 +1,4 @@
-package com.ozner.cup.MyCenter;
+package com.ozner.cup.MyCenter.Settings;
 
 import android.Manifest;
 import android.content.Intent;
@@ -18,6 +18,7 @@ import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.MyCenter.OznerUpdateManager;
 import com.ozner.cup.R;
 
 import butterknife.ButterKnife;

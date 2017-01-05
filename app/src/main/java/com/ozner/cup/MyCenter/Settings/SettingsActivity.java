@@ -1,4 +1,4 @@
-package com.ozner.cup.MyCenter;
+package com.ozner.cup.MyCenter.Settings;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -63,6 +63,7 @@ public class SettingsActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.llay_unit:
+                startActivity(new Intent(this,UnitSettingsActivity.class));
                 break;
             case R.id.llay_about_ozner:
                 startActivity(new Intent(this, AboutOznerActivity.class));

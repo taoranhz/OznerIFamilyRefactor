@@ -30,6 +30,7 @@ import com.ozner.cup.LoginWelcom.View.LoginActivity;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.Main.UserInfoManager;
 import com.ozner.cup.MyCenter.MyFriend.MyFriendsActivity;
+import com.ozner.cup.MyCenter.Settings.SettingsActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.WeChatUrlUtil;

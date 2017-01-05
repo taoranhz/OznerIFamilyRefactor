@@ -17,6 +17,8 @@ public class UserDataPreference {
     public final static String CupPosSaveTag = "CupPosSave";//水杯
     public final static String WaterPosSaveTag = "WaterPosSave";//水机
     public final static String AirSaveTag = "AirPosSave";//空净
+    public final static String TempUnit = "tempUnit";//温度计量单位
+    public final static String VolUnit = "volUnit";//水量计量单位
 
 
     @StringDef({TapPosSaveTag, CupPosSaveTag, WaterPosSaveTag, AirSaveTag})

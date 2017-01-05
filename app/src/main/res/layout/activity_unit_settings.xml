@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_unit_settings"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_bg"
+    android:orientation="vertical"
+    tools:context="com.ozner.cup.MyCenter.Settings.UnitSettingsActivity">
+
+    <!--<include layout="@layout/toolbar"/>-->
+
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize">
+        <LinearLayout
+            android:id="@+id/llay_back"
+            style="@style/item_click_ripple"
+            android:gravity="center"
+            android:layout_width="45dp"
+            android:layout_height="?android:attr/actionBarSize">
+            <ImageView
+                android:src="@drawable/back"
+                android:layout_width="22dp"
+                android:layout_height="22dp"/>
+        </LinearLayout>
+        <TextView
+            android:textSize="18dp"
+            android:textColor="@color/light_black"
+            android:gravity="center"
+            android:text="@string/unit"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:id="@+id/llay_save"
+            style="@style/item_click_ripple"
+            android:gravity="center"
+            android:layout_width="45dp"
+            android:layout_height="?android:attr/actionBarSize">
+            <TextView
+                android:textColor="@color/faq_text_blue"
+                android:text="@string/save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:textSize="14dp"
+        android:text="@string/Center_Temp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            style="@style/item_click_ripple"
+            android:id="@+id/rlay_centigrade"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
+
+            <TextView
+                android:textColor="@color/light_black"
+                android:id="@+id/tv_centigrade"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="@string/Center_Centigrade"
+                android:textSize="16dp"/>
+
+            <TextView
+                android:textColor="@color/light_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@+id/tv_centigrade"
+                android:text="@string/Center_Centigrade_Unit"
+                android:textSize="16dp"/>
+
+            <ImageView
+                android:id="@+id/iv_tempSelect1"
+                android:layout_width="20dp"
+                android:layout_height="15dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/center_unit_selector"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="15dp"
+            android:background="@color/colorLine"/>
+
+        <RelativeLayout
+            style="@style/item_click_ripple"
+            android:id="@+id/rlay_fahrenheit"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
+
+            <TextView
+                android:textColor="@color/light_black"
+                android:id="@+id/tv_fahrenheit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="@string/Center_Fahrenheit"
+                android:textSize="16dp"/>
+
+            <TextView
+                android:textColor="@color/light_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@+id/tv_fahrenheit"
+                android:text="@string/Center_fahrenheit_Unit"
+                android:textSize="16dp"/>
+
+            <ImageView
+                android:id="@+id/iv_tempSelect2"
+                android:layout_width="20dp"
+                android:layout_height="15dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/center_unit_selector"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:textSize="14dp"
+        android:text="@string/Center_Volumn"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            style="@style/item_click_ripple"
+            android:id="@+id/rlay_Unit_ML"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
+
+            <TextView
+                android:textColor="@color/light_black"
+                android:id="@+id/tv_Unit_ML"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="@string/Center_ML"
+                android:textSize="16dp"/>
+
+            <TextView
+                android:textColor="@color/light_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@+id/tv_Unit_ML"
+                android:text="@string/Center_ML_Unit"
+                android:textSize="16dp"/>
+
+            <ImageView
+                android:id="@+id/iv_MLSelect"
+                android:layout_width="20dp"
+                android:layout_height="15dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/center_unit_selector"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="15dp"
+            android:background="@color/colorLine"/>
+
+        <RelativeLayout
+            style="@style/item_click_ripple"
+            android:id="@+id/rlay_Unit_DL"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
+
+            <TextView
+                android:textColor="@color/light_black"
+                android:id="@+id/tv_Unit_DL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="@string/Center_DL"
+                android:textSize="16dp"/>
+
+            <TextView
+                android:textColor="@color/light_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@+id/tv_Unit_DL"
+                android:text="@string/Center_DL_Unit"
+                android:textSize="16dp"/>
+
+            <ImageView
+                android:id="@+id/iv_DLSelect"
+                android:layout_width="20dp"
+                android:layout_height="15dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/center_unit_selector"/>
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="15dp"
+            android:background="@color/colorLine"/>
+
+        <RelativeLayout
+            style="@style/item_click_ripple"
+            android:id="@+id/rlay_Unit_OZ"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
+
+            <TextView
+                android:textColor="@color/light_black"
+                android:id="@+id/tv_Unit_OZ"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="@string/Center_OZ"
+                android:textSize="16dp"/>
+
+            <TextView
+                android:textColor="@color/light_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@+id/tv_Unit_OZ"
+                android:text="@string/Center_OZ_Unit"
+                android:textSize="16dp"/>
+
+            <ImageView
+                android:id="@+id/iv_OZSelect"
+                android:layout_width="20dp"
+                android:layout_height="15dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/center_unit_selector"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
