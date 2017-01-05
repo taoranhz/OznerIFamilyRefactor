@@ -435,6 +435,7 @@
     <string name="unit">计量单位</string>
     <string name="about_ozner">关于浩泽净水家</string>
     <string name="logout">退出登录</string>
+    <string name="islogout">是否退出登录？</string>
     <string name="setting">设置</string>
     <string name="check_version">检查更新新版本</string>
     <string name="current_version">当前版本</string>

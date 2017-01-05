@@ -1,5 +1,7 @@
 package com.ozner.cup.MyCenter.Settings;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,7 +11,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.LoginWelcom.View.LoginActivity;
 import com.ozner.cup.R;
 import com.zcw.togglebutton.ToggleButton;
 
@@ -63,14 +67,38 @@ public class SettingsActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.llay_unit:
-                startActivity(new Intent(this,UnitSettingsActivity.class));
+                startActivity(new Intent(this, UnitSettingsActivity.class));
                 break;
             case R.id.llay_about_ozner:
                 startActivity(new Intent(this, AboutOznerActivity.class));
                 break;
             case R.id.tv_logout:
+                logout();
                 break;
         }
+    }
+
+    /**
+     * 退出登录
+     */
+    private void logout() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
+        builder.setTitle(R.string.logout)
+                .setMessage(R.string.islogout)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        UserDataPreference.SetUserData(SettingsActivity.this,UserDataPreference.UserId,"");
+                        OznerPreference.setUserToken(SettingsActivity.this,"");
+                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                        finishAffinity();
+                    }
+                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        }).show();
     }
 
     @Override

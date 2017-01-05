@@ -47,7 +47,9 @@
             android:name=".Main.MainActivity"
             android:launchMode="singleTask">
         </activity>
-        <activity android:name=".LoginWelcom.View.LoginActivity">
+        <activity
+            android:name=".LoginWelcom.View.LoginActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
