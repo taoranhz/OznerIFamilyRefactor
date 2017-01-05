@@ -79,6 +79,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     private MyCenterFragment myCenterFragment;
     public Boolean isExit = false;
     private int curBottomIndex = 0;
+    private String mUserid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,10 +90,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         setDefaultFragment();
         initNavBar();
         initBroadCastFilter();
-        String userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
-        if (userid != null && !userid.isEmpty()) {
-            Log.e(TAG, "onCreate: userid:" + userid);
-            userInfo = DBManager.getInstance(this).getUserInfo(userid);
+        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
+        if (mUserid != null && !mUserid.isEmpty()) {
+            Log.e(TAG, "onCreate: mUserid:" + mUserid);
+            userInfo = DBManager.getInstance(this).getUserInfo(mUserid);
             userInfoManager = new UserInfoManager(this);
             userInfoManager.loadUserInfo(null);
         } else {
@@ -354,7 +355,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
             case 1:
                 if (shopFragment == null) {
                     Bundle bundle = new Bundle();
-                    String eshop_url = WeChatUrlUtil.getMallUrl("18655591525", OznerPreference.getUserToken(this), "zh", "zh");
+                    userInfo = DBManager.getInstance(this).getUserInfo(mUserid);
+                    String eshop_url = WeChatUrlUtil.getMallUrl(userInfo.getMobile(), OznerPreference.getUserToken(this), "zh", "zh");
                     bundle.putString(Contacts.PARMS_URL, eshop_url);
                     shopFragment = EShopFragment.newInstance(bundle);
 
