@@ -17,9 +17,12 @@ import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.CupRecordList;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.ChartAdapter;
 import com.ozner.cup.UIView.UIXVolumeChartView;
@@ -68,6 +71,8 @@ public class CupVolumActivity extends BaseActivity implements RadioGroup.OnCheck
     private int[] dataDay, dataWeek, dataMonth;
     private ChartAdapter adapterDay, adapterWeek, adapterMonth;
     Calendar recordCal = Calendar.getInstance();
+    private String mUserid;
+    private int waterGoal = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,18 +87,25 @@ public class CupVolumActivity extends BaseActivity implements RadioGroup.OnCheck
             //更改底部导航栏颜色(限有底部的手机)
             window.setNavigationBarColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
         }
-        initToolBar();
-        initDataAdater();
-        initRecordCal();
         try {
+            mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             volumeRank = getIntent().getIntExtra(Contacts.PARMS_RANK, 0);
             Log.e(TAG, "onCreate: mac:" + mac);
             mCup = (Cup) OznerDeviceManager.Instance().getDevice(mac);
+            OznerDeviceSettings oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid, mCup.Address());
+            if (oznerSetting != null) {
+                if (oznerSetting.getAppData(Contacts.DEV_USER_WATER_GOAL) != null) {
+                    waterGoal = Integer.parseInt((String) oznerSetting.getAppData(Contacts.DEV_USER_WATER_GOAL));
+                }
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
         }
+        initToolBar();
+        initDataAdater();
+        initRecordCal();
     }
 
 
@@ -228,10 +240,10 @@ public class CupVolumActivity extends BaseActivity implements RadioGroup.OnCheck
     private void initWterVolum() {
         if (mCup != null) {
             tvTdsRankValue.setText(String.valueOf(volumeRank));
-            int waterGoal = (int) mCup.Setting().get(Contacts.DEV_USER_WATER_GOAL, -1);
-            if (-1 == waterGoal) {
-                waterGoal = 2000;
-            }
+//            int waterGoal = (int) mCup.Setting().get(Contacts.DEV_USER_WATER_GOAL, -1);
+//            if (-1 == waterGoal) {
+//                waterGoal = 2000;
+//            }
             CupRecord record = mCup.Volume().getRecordByDate(recordCal.getTime());
             if (record != null) {
                 if (record.Volume < waterGoal) {

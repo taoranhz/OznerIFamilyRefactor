@@ -23,6 +23,7 @@ public class EMMessage {
     private int mType = MessageType.TXT;
     private int mDirect = MessageDirect.RECEIVE;//消息方向
 
+
     @Generated(hash = 269596009)
     public EMMessage(long time, String userid, String content, int status,
             int mType, int mDirect) {
@@ -37,6 +38,7 @@ public class EMMessage {
     @Generated(hash = 652031958)
     public EMMessage() {
     }
+
 
     public String getUserid() {
         return userid;

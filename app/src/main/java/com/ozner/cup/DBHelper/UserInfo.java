@@ -36,8 +36,6 @@ public class UserInfo {
     private String channelId;
     private String sex;
 
-    public UserInfo() {
-    }
 
     @Generated(hash = 97911111)
     public UserInfo(String userId, String mobile, String nickname, String headimg, String GradeName, String Score, int Status, String deviceId,
@@ -53,6 +51,11 @@ public class UserInfo {
         this.channelId = channelId;
         this.sex = sex;
     }
+
+    @Generated(hash = 1279772520)
+    public UserInfo() {
+    }
+
 
     public String getUserId() {
         return userId;

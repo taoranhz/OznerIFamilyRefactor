@@ -19,11 +19,15 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Device.TDSSensorManager;
 import com.ozner.cup.Main.MainActivity;
+import com.ozner.cup.MyCenter.Settings.MeasurementUnit;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.TdsDetailProgress;
 import com.ozner.device.BaseDeviceIO;
@@ -95,6 +99,8 @@ public class CupFragment extends DeviceFragment {
     private TDSSensorManager tdsSensroManager;
     private int beatPer = 0;
     private int volumeRank = 0;
+    private OznerDeviceSettings oznerSetting;
+    private String mUserid;
 
 
     /**
@@ -112,13 +118,15 @@ public class CupFragment extends DeviceFragment {
         if (bundle != null) {
             fragment.setArguments(bundle);
         }
+
         return fragment;
     }
 
 
     @Override
     public void setDevice(OznerDevice device) {
-        Log.e(TAG, "setDevice: "+device.Address());
+        Log.e(TAG, "setDevice: " + device.Address());
+        oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, device.Address());
         if (mCup != null) {
             if (!mCup.Address().equals(device.Address())) {
                 mCup.release();
@@ -130,6 +138,7 @@ public class CupFragment extends DeviceFragment {
             mCup = (Cup) device;
             refreshUIData();
         }
+
     }
 
     /**
@@ -146,6 +155,7 @@ public class CupFragment extends DeviceFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
         tdsSensroManager = new TDSSensorManager(getContext());
         initAnimation();
         try {
@@ -153,6 +163,7 @@ public class CupFragment extends DeviceFragment {
             mCup = (Cup) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
             oldTdsValue = 0;
             oldVolumeValue = 0;
+            oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mCup.Address());
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -239,7 +250,11 @@ public class CupFragment extends DeviceFragment {
     protected void refreshUIData() {
         if (isThisAdd() && mCup != null) {
 //            Log.e(TAG, "refreshUIData: " + mCup.Sensor().toString());
-            title.setText(mCup.getName());
+            if (oznerSetting != null && oznerSetting.getName() != null && !oznerSetting.getName().isEmpty()) {
+                title.setText(oznerSetting.getName());
+            } else {
+                title.setText(mCup.getName());
+            }
             refreshConnectState();
             refreshWaterGoal();
             showWaterTarget();
@@ -297,12 +312,32 @@ public class CupFragment extends DeviceFragment {
      */
     private void refreshWaterGoal() {
         if (mCup != null) {
-            int waterGoal = (int) mCup.Setting().get(Contacts.DEV_USER_WATER_GOAL, -1);
-            if (-1 == waterGoal) {
-                waterGoal = 2000;
+            int waterGoal = 2000;// = (int) mCup.Setting().get(Contacts.DEV_USER_WATER_GOAL, -1);
+//            if (-1 == waterGoal) {
+//                waterGoal = 2000;
+//            }
+            try {
+                if (oznerSetting != null && oznerSetting.getAppData(Contacts.DEV_USER_WATER_GOAL) != null) {
+                    waterGoal = Integer.parseInt((String) oznerSetting.getAppData(Contacts.DEV_USER_WATER_GOAL));
+                }
+            } catch (Exception ex) {
             }
-
-            tvWaterGoal.setText(waterGoal + "ml");
+            int unit = Integer.parseInt(UserDataPreference.GetUserData(getContext(),
+                    UserDataPreference.VolUnit, String.valueOf(MeasurementUnit.VolumUnit.ML)));
+            switch (unit) {
+                case MeasurementUnit.VolumUnit.ML:
+                    tvWaterGoal.setText(waterGoal + "ml");
+                    break;
+                case MeasurementUnit.VolumUnit.OZ:
+                    tvWaterGoal.setText(String.format("%.2foz", waterGoal / MeasurementUnit.OZ_TO_G));
+                    break;
+                case MeasurementUnit.VolumUnit.DL:
+                    tvWaterGoal.setText(String.format("%.2fdl", waterGoal / 100.f));
+                    break;
+                default:
+                    tvWaterGoal.setText(waterGoal + "ml");
+                    break;
+            }
         }
     }
 

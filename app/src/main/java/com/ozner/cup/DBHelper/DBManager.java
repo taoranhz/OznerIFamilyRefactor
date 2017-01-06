@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.ozner.cup.Utils.LCLogUtils;
+
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
@@ -377,4 +379,68 @@ public class DBManager {
         FriendRankItemDao rankDao = daoSession.getFriendRankItemDao();
         rankDao.delete(item);
     }
+
+    /**
+     * 保存设备设置
+     *
+     * @param settings
+     */
+    public void updateDeviceSettings(OznerDeviceSettings settings) {
+        if (settings == null) {
+            return;
+        }
+
+        DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
+        DaoSession daoSession = daoMaster.newSession();
+        OznerDeviceSettingsDao msgDao = daoSession.getOznerDeviceSettingsDao();
+        QueryBuilder<OznerDeviceSettings> qb = msgDao.queryBuilder();
+        msgDao.insertOrReplace(settings);
+    }
+
+    /**
+     * 获取指定设备的设置
+     *
+     * @param userid
+     * @param mac
+     *
+     * @return
+     */
+    public OznerDeviceSettings getDeviceSettings(String userid, String mac) {
+        try {
+            DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
+            DaoSession daoSession = daoMaster.newSession();
+            OznerDeviceSettingsDao settingsDao = daoSession.getOznerDeviceSettingsDao();
+            QueryBuilder<OznerDeviceSettings> qb = settingsDao.queryBuilder();
+            return qb.where(qb.and(OznerDeviceSettingsDao.Properties.UserId.eq(userid),
+                    OznerDeviceSettingsDao.Properties.Mac.eq(mac))).uniqueOrThrow();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LCLogUtils.E(TAG, "getDeviceSettings_Ex:" + ex.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 删除设备设置
+     *
+     * @param userid
+     * @param mac
+     */
+    public void deleteDeviceSettings(String userid, String mac) {
+        try {
+            DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
+            DaoSession daoSession = daoMaster.newSession();
+            OznerDeviceSettingsDao settingsDao = daoSession.getOznerDeviceSettingsDao();
+            QueryBuilder<OznerDeviceSettings> qb = settingsDao.queryBuilder();
+            OznerDeviceSettings settings = qb.where(qb.and(OznerDeviceSettingsDao.Properties.UserId.eq(userid),
+                    OznerDeviceSettingsDao.Properties.Mac.eq(mac))).uniqueOrThrow();
+            if (settings != null) {
+                settingsDao.delete(settings);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LCLogUtils.E(TAG, "deleteDeviceSettings_Ex:" + ex.getMessage());
+        }
+    }
+
 }

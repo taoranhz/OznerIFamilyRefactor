@@ -10,11 +10,13 @@ import org.greenrobot.greendao.internal.DaoConfig;
 
 import com.ozner.cup.DBHelper.EMMessage;
 import com.ozner.cup.DBHelper.FriendRankItem;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.DBHelper.WaterPurifierAttr;
 
 import com.ozner.cup.DBHelper.EMMessageDao;
 import com.ozner.cup.DBHelper.FriendRankItemDao;
+import com.ozner.cup.DBHelper.OznerDeviceSettingsDao;
 import com.ozner.cup.DBHelper.UserInfoDao;
 import com.ozner.cup.DBHelper.WaterPurifierAttrDao;
 
@@ -29,11 +31,13 @@ public class DaoSession extends AbstractDaoSession {
 
     private final DaoConfig eMMessageDaoConfig;
     private final DaoConfig friendRankItemDaoConfig;
+    private final DaoConfig oznerDeviceSettingsDaoConfig;
     private final DaoConfig userInfoDaoConfig;
     private final DaoConfig waterPurifierAttrDaoConfig;
 
     private final EMMessageDao eMMessageDao;
     private final FriendRankItemDao friendRankItemDao;
+    private final OznerDeviceSettingsDao oznerDeviceSettingsDao;
     private final UserInfoDao userInfoDao;
     private final WaterPurifierAttrDao waterPurifierAttrDao;
 
@@ -47,6 +51,9 @@ public class DaoSession extends AbstractDaoSession {
         friendRankItemDaoConfig = daoConfigMap.get(FriendRankItemDao.class).clone();
         friendRankItemDaoConfig.initIdentityScope(type);
 
+        oznerDeviceSettingsDaoConfig = daoConfigMap.get(OznerDeviceSettingsDao.class).clone();
+        oznerDeviceSettingsDaoConfig.initIdentityScope(type);
+
         userInfoDaoConfig = daoConfigMap.get(UserInfoDao.class).clone();
         userInfoDaoConfig.initIdentityScope(type);
 
@@ -55,11 +62,13 @@ public class DaoSession extends AbstractDaoSession {
 
         eMMessageDao = new EMMessageDao(eMMessageDaoConfig, this);
         friendRankItemDao = new FriendRankItemDao(friendRankItemDaoConfig, this);
+        oznerDeviceSettingsDao = new OznerDeviceSettingsDao(oznerDeviceSettingsDaoConfig, this);
         userInfoDao = new UserInfoDao(userInfoDaoConfig, this);
         waterPurifierAttrDao = new WaterPurifierAttrDao(waterPurifierAttrDaoConfig, this);
 
         registerDao(EMMessage.class, eMMessageDao);
         registerDao(FriendRankItem.class, friendRankItemDao);
+        registerDao(OznerDeviceSettings.class, oznerDeviceSettingsDao);
         registerDao(UserInfo.class, userInfoDao);
         registerDao(WaterPurifierAttr.class, waterPurifierAttrDao);
     }
@@ -67,6 +76,7 @@ public class DaoSession extends AbstractDaoSession {
     public void clear() {
         eMMessageDaoConfig.clearIdentityScope();
         friendRankItemDaoConfig.clearIdentityScope();
+        oznerDeviceSettingsDaoConfig.clearIdentityScope();
         userInfoDaoConfig.clearIdentityScope();
         waterPurifierAttrDaoConfig.clearIdentityScope();
     }
@@ -77,6 +87,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public FriendRankItemDao getFriendRankItemDao() {
         return friendRankItemDao;
+    }
+
+    public OznerDeviceSettingsDao getOznerDeviceSettingsDao() {
+        return oznerDeviceSettingsDao;
     }
 
     public UserInfoDao getUserInfoDao() {

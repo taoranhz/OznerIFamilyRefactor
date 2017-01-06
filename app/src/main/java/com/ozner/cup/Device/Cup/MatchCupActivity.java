@@ -25,13 +25,19 @@ import android.widget.Toast;
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScan;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupManager;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.Adapter.FoundDevcieAdapter;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
+
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -79,12 +85,14 @@ public class MatchCupActivity extends BaseActivity {
     private FoundDevcieAdapter mDevAdpater;
     TimerCount timerCount;
     private BaseDeviceIO selDeviceIo;
+    private String mUserid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_cup);
         ButterKnife.inject(this);
+        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
         initActionBar();
         initNormalInfo();
         initFoundDeviceView();
@@ -224,6 +232,8 @@ public class MatchCupActivity extends BaseActivity {
                     device.Setting().name(getString(R.string.smart_glass));
                 }
                 device.updateSettings();
+
+                saveDeviceToDB(mUserid, device);
             } else {
                 Toast.makeText(this, getString(R.string.device_disConnect), Toast.LENGTH_SHORT).show();
             }
@@ -233,6 +243,29 @@ public class MatchCupActivity extends BaseActivity {
             this.finish();
         }
     }
+
+    private void saveDeviceToDB(String userid, OznerDevice device) {
+        try {
+            OznerDeviceSettings oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid, device.Address());
+            if (oznerSetting != null) {
+                DBManager.getInstance(this).deleteDeviceSettings(userid, device.Address());
+                oznerSetting = null;
+            }
+            oznerSetting = new OznerDeviceSettings();
+            oznerSetting.setCreateTime(String.valueOf(new Date().getTime()));
+            oznerSetting.setUserId(userid);
+            oznerSetting.setMac(device.Address());
+            oznerSetting.setName(device.Setting().name());
+            oznerSetting.setDevicePosition(etDevicePosition.getText().toString().trim());
+            oznerSetting.setStatus(0);
+            oznerSetting.setDevcieType(device.Type());
+            DBManager.getInstance(this).updateDeviceSettings(oznerSetting);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LCLogUtils.E(TAG, "saveDeviceToDB_Ex:" + ex.getMessage());
+        }
+    }
+
 
     /**
      * 获取RecyleView的宽度

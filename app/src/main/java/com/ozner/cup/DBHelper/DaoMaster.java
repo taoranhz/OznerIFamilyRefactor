@@ -23,6 +23,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void createAllTables(Database db, boolean ifNotExists) {
         EMMessageDao.createTable(db, ifNotExists);
         FriendRankItemDao.createTable(db, ifNotExists);
+        OznerDeviceSettingsDao.createTable(db, ifNotExists);
         UserInfoDao.createTable(db, ifNotExists);
         WaterPurifierAttrDao.createTable(db, ifNotExists);
     }
@@ -31,6 +32,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void dropAllTables(Database db, boolean ifExists) {
         EMMessageDao.dropTable(db, ifExists);
         FriendRankItemDao.dropTable(db, ifExists);
+        OznerDeviceSettingsDao.dropTable(db, ifExists);
         UserInfoDao.dropTable(db, ifExists);
         WaterPurifierAttrDao.dropTable(db, ifExists);
     }
@@ -53,6 +55,7 @@ public class DaoMaster extends AbstractDaoMaster {
         super(db, SCHEMA_VERSION);
         registerDaoClass(EMMessageDao.class);
         registerDaoClass(FriendRankItemDao.class);
+        registerDaoClass(OznerDeviceSettingsDao.class);
         registerDaoClass(UserInfoDao.class);
         registerDaoClass(WaterPurifierAttrDao.class);
     }

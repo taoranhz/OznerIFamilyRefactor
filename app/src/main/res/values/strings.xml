@@ -26,7 +26,7 @@
 
     <!--错误信息提示-->
     <string name="exception_tips">异常信息</string>
-    <string name="err_net_outline">网络中断，请检查您的网络状态"</string>
+    <string name="err_net_outline">网络中断，请检查您的网络状态</string>
 
     <string name="err_miss_phone">请输入11位手机号</string>
     <string name="err_miss_verify_code">请输入验证码</string>

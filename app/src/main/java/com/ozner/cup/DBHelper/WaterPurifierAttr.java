@@ -5,8 +5,8 @@ import android.util.Log;
 import com.google.gson.JsonObject;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * Created by ozner_67 on 2016/11/15.
@@ -57,34 +57,11 @@ public class WaterPurifierAttr {
     private long filterTime;
     private long filterNowtime;
 
-
-    public WaterPurifierAttr(String Mac, String DeviceType, String Attr, boolean Disabled, long CreateTime, long ModifyTime,
-                             boolean IsShowDueDay, String smlinkurl, String buylinkurl, String tips, int days, boolean boolshow, boolean hasCool,
-                             boolean hasHot) {
-        this.Mac = Mac;
-        this.DeviceType = DeviceType;
-        this.Attr = Attr;
-        this.Disabled = Disabled;
-        this.CreateTime = CreateTime;
-        this.ModifyTime = ModifyTime;
-        this.IsShowDueDay = IsShowDueDay;
-        this.smlinkurl = smlinkurl;
-        this.buylinkurl = buylinkurl;
-        this.tips = tips;
-        this.days = days;
-        this.boolshow = boolshow;
-        this.hasCool = hasCool;
-        this.hasHot = hasHot;
-    }
-
-    @Generated(hash = 1460846934)
-    public WaterPurifierAttr() {
-    }
-
     @Generated(hash = 918272366)
-    public WaterPurifierAttr(String Mac, String DeviceType, String Attr, boolean Disabled, long CreateTime, long ModifyTime, boolean IsShowDueDay,
-                             String smlinkurl, String buylinkurl, String tips, int days, boolean boolshow, boolean hasCool, boolean hasHot, long filterTime,
-                             long filterNowtime) {
+    public WaterPurifierAttr(String Mac, String DeviceType, String Attr, boolean Disabled,
+            long CreateTime, long ModifyTime, boolean IsShowDueDay, String smlinkurl, String buylinkurl,
+            String tips, int days, boolean boolshow, boolean hasCool, boolean hasHot, long filterTime,
+            long filterNowtime) {
         this.Mac = Mac;
         this.DeviceType = DeviceType;
         this.Attr = Attr;
@@ -101,6 +78,10 @@ public class WaterPurifierAttr {
         this.hasHot = hasHot;
         this.filterTime = filterTime;
         this.filterNowtime = filterNowtime;
+    }
+
+    @Generated(hash = 1460846934)
+    public WaterPurifierAttr() {
     }
 
     public String getMac() {

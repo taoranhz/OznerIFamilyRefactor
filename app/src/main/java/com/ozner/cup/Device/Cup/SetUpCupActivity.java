@@ -24,17 +24,22 @@ import android.widget.TimePicker;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.Cup;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.SetDeviceNameActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.ColorPickerBaseView;
 import com.ozner.cup.UIView.ColorPickerView;
 import com.ozner.cup.Utils.DateUtils;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDeviceManager;
 import com.zcw.togglebutton.ToggleButton;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -103,12 +108,15 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
     private String mac;
     private Cup mCup;
     private int cupColor;
-    private int mWeight, mWaterGoal;
+    private int mWeight = -1, mWaterGoal = -1;
     private String deviceNewName = null, deviceNewPos = null;
     private Calendar tipStartCal, tipEndCal;
     private int checkState = 0;
     private String[] intervalArray = new String[5];
     private boolean isRemindEnable = false;
+    private String mUserid;
+
+    private OznerDeviceSettings oznerSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,9 +130,14 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
         initIntervalList();
         initTodayStatusListener();
         try {
+            mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             Log.e(TAG, "onCreate: mac:" + mac);
             mCup = (Cup) OznerDeviceManager.Instance().getDevice(mac);
+            oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid, mac);
+            if (oznerSetting != null) {
+                LCLogUtils.E(TAG, "oznerSetting:" + oznerSetting.toString());
+            }
             initViewData();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -264,11 +277,11 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
      * @param isChecked
      */
     private void updateWaterGoal(boolean isChecked) {
-        try {
-            mWaterGoal = Integer.parseInt(etVolum.getText().toString().trim());
-        } catch (Exception ex) {
-            mWaterGoal = 0;
-        }
+//        try {
+//            mWaterGoal = Integer.parseInt(etVolum.getText().toString().trim());
+//        } catch (Exception ex) {
+//            mWaterGoal = 0;
+//        }
         if (isChecked) {
             mWaterGoal += Status_Add_Goal;
         } else {
@@ -283,11 +296,38 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
      */
     private void initViewData() {
         if (mCup != null) {
+            //初始化今日状态选中，必须放在设置饮水量前边设置，否则会重复增加数据
+            initTodayStatus();
+
             //初始化设备名字
             deviceNewName = mCup.getName();
+            String usePos = "";//(String) mCup.Setting().get(Contacts.DEV_USE_POS, "");
+
+            if (oznerSetting != null) {
+                if (oznerSetting.getName() != null && !oznerSetting.getName().isEmpty()) {
+                    deviceNewName = oznerSetting.getName();
+                }
+                if (oznerSetting.getDevicePosition() != null && !oznerSetting.getDevicePosition().isEmpty()) {
+                    usePos = oznerSetting.getDevicePosition();
+                }
+                if (oznerSetting.getAppData(Contacts.DEV_USER_WEIGHT) != null) {
+                    mWeight = Integer.parseInt((String) oznerSetting.getAppData(Contacts.DEV_USER_WEIGHT));
+                } else {
+                    mWeight = DEFAULT_WEIGHT;
+                }
+
+                if (oznerSetting.getAppData(Contacts.DEV_USER_WATER_GOAL) != null) {
+                    mWaterGoal = Integer.parseInt((String) oznerSetting.getAppData(Contacts.DEV_USER_WATER_GOAL));
+                } else {
+                    mWaterGoal = (int) Math.rint(mWeight * WaterGoal_Weight_Factor);
+                }
+            } else {
+                mWeight = DEFAULT_WEIGHT;
+                mWaterGoal = (int) Math.rint(mWeight * WaterGoal_Weight_Factor);
+            }
+
             StringBuffer deviceNameBuf = new StringBuffer();
             deviceNameBuf.append(mCup.getName());
-            String usePos = (String) mCup.Setting().get(Contacts.DEV_USE_POS, "");
             if (usePos != null && !usePos.isEmpty()) {
                 deviceNameBuf.append("(");
                 deviceNameBuf.append(usePos);
@@ -295,21 +335,21 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
             }
             tvDeviceName.setText(deviceNameBuf.toString());
 
-            //初始化今日状态选中
-            initTodayStatus();
 
             //初始化用户体重
-            mWeight = (int) mCup.Setting().get(Contacts.DEV_USER_WEIGHT, -1);
-            if (-1 == mWeight) {
-                mWeight = DEFAULT_WEIGHT;
-            }
-            etWeight.setText(String.valueOf(mWeight));
+//            mWeight = (int) mCup.Setting().get(Contacts.DEV_USER_WEIGHT, -1);
+//            if (-1 == mWeight) {
+//                mWeight = DEFAULT_WEIGHT;
+//            }
+//
+//            //初始化饮水目标
+////            mWaterGoal = (int) mCup.Setting().get(Contacts.DEV_USER_WATER_GOAL, -1);
+//            if (-1 == mWaterGoal) {
+//
+//            }
+            LCLogUtils.E(TAG, "Goal:" + mWaterGoal);
 
-            //初始化饮水目标
-            mWaterGoal = (int) mCup.Setting().get(Contacts.DEV_USER_WATER_GOAL, -1);
-            if (-1 == mWaterGoal) {
-                mWaterGoal = (int) Math.rint(mWeight * WaterGoal_Weight_Factor);
-            }
+            etWeight.setText(String.valueOf(mWeight));
             etVolum.setText(String.valueOf(mWaterGoal));
 
             initRemind();
@@ -321,7 +361,10 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
      */
     private void initTodayStatus() {
         if (mCup != null) {
-            checkState = (int) mCup.Setting().get(Contacts.Cup_Today_Status, 0);
+            if(oznerSetting!=null&&oznerSetting.getAppData(Contacts.Cup_Today_Status)!=null){
+                checkState = (int) oznerSetting.getAppData(Contacts.Cup_Today_Status);
+            }
+//            checkState = (int) mCup.Setting().get(Contacts.Cup_Today_Status, 0);
             if (checkState > 0) {
                 if ((checkState & Cup_Status_Cool_Checked) != 0) {
                     cbCool.setChecked(true);
@@ -418,34 +461,52 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
                     showToastCenter(R.string.input_device_name);
                     return;
                 }
-                //保存使用位置
-                if (deviceNewPos != null) {
-                    mCup.Setting().put(Contacts.DEV_USE_POS, deviceNewPos);
-                }
+//                //保存使用位置
+//                if (deviceNewPos != null) {
+//                    mCup.Setting().put(Contacts.DEV_USE_POS, deviceNewPos);
+//                }
                 //保存体重
-                if (etWeight.length() > 0) {
-                    mCup.Setting().put(Contacts.DEV_USER_WEIGHT, Integer.parseInt(etWeight.getText().toString().trim()));
-                } else {
+                if (etWeight.getText().toString().isEmpty()) {
                     showToastCenter(R.string.weight_can_not_empty);
                     return;
                 }
+//                else {
+//                    mCup.Setting().put(Contacts.DEV_USER_WEIGHT, Integer.parseInt(etWeight.getText().toString().trim()));
+//                }
                 //保存饮水目标
-                if (etVolum.length() > 0) {
-                    mCup.Setting().put(Contacts.DEV_USER_WATER_GOAL, Integer.parseInt(etVolum.getText().toString().trim()));
-                } else {
+                if (etVolum.getText().toString().isEmpty()) {
                     showToastCenter(R.string.water_goal_cannot_empty);
                     return;
                 }
+//                    mCup.Setting().put(Contacts.DEV_USER_WATER_GOAL, Integer.parseInt(etVolum.getText().toString().trim()));
 
                 //保存灯带颜色
                 mCup.Setting().haloColor(cupColor);
                 //保存提醒间隔
                 mCup.Setting().remindInterval(Integer.parseInt(tvRemindInterval.getText().toString().trim()));
-                //保存今日状态
-                mCup.Setting().put(Contacts.Cup_Today_Status, checkState);
+//                //保存今日状态
+//                mCup.Setting().put(Contacts.Cup_Today_Status, checkState);
                 //保存是否打开提醒功能
                 mCup.Setting().RemindEnable(isRemindEnable);
                 mCup.updateSettings();
+
+                if (oznerSetting == null) {
+                    oznerSetting = new OznerDeviceSettings();
+                    oznerSetting.setUserId(mUserid);
+                    oznerSetting.setCreateTime(String.valueOf(new Date().getTime()));
+                }
+                oznerSetting.setName(deviceNewName);
+                oznerSetting.setDevcieType(mCup.Type());
+                oznerSetting.setStatus(0);
+                oznerSetting.setMac(mCup.Address());
+                oznerSetting.setDevicePosition(deviceNewPos);
+
+                oznerSetting.setAppData(Contacts.Cup_Today_Status, checkState);
+                oznerSetting.setAppData(Contacts.DEV_USER_WATER_GOAL, etVolum.getText().toString().trim());
+                oznerSetting.setAppData(Contacts.DEV_USER_WEIGHT, etWeight.getText().toString().trim());
+                DBManager.getInstance(this).updateDeviceSettings(oznerSetting);
+
+                LCLogUtils.E(TAG, "CupSettings:" + mCup.Setting().toString());
                 OznerDeviceManager.Instance().save(mCup);
                 this.finish();
             } else {
@@ -559,7 +620,7 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
                     Intent webIntent = new Intent(this, WebActivity.class);
                     webIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutCup);
                     startActivity(webIntent);
-                }else {
+                } else {
                     showToastCenter(R.string.Not_found_device);
                 }
                 break;

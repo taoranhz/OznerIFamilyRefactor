@@ -5,6 +5,8 @@ package com.ozner.cup.MyCenter.Settings;
  */
 //计量单位
 public class MeasurementUnit {
+    //一盎司 —> 克
+    public static final float OZ_TO_G = 28.35f;
 
     //温度单位
     public static class TempUnit {
