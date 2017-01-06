@@ -17,5 +17,4 @@ public class PushOperationAction {
     public static final String Operation_LoginNotify = "LoginNotify";
     public static final String Operation_NewMessage = "NewMessage";
 
-
 }

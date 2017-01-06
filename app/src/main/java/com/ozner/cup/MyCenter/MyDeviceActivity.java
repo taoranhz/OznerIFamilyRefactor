@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -17,8 +19,11 @@ import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeterMgr;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
+import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.CupManager;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
@@ -30,7 +35,8 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class MyDeviceActivity extends BaseActivity {
+public class MyDeviceActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+    private static final String TAG = "MyDeviceActivity";
 
     @InjectView(R.id.title)
     TextView title;
@@ -43,6 +49,7 @@ public class MyDeviceActivity extends BaseActivity {
 
     private DeviceAdapter mAdapter;
     private DeviceMonitor mMonitor;
+    List<OznerDevice> deviceList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +60,7 @@ public class MyDeviceActivity extends BaseActivity {
         mAdapter = new DeviceAdapter(this, R.layout.my_device_item);
         gvDevice.setEmptyView(tvNodevice);
         gvDevice.setAdapter(mAdapter);
+        gvDevice.setOnItemClickListener(this);
         refreshDeviceData();
         initBroadCastFilter();
     }
@@ -85,7 +93,7 @@ public class MyDeviceActivity extends BaseActivity {
 
     private void refreshDeviceData() {
         OznerDevice[] devices = OznerDeviceManager.Instance().getDevices();
-        List<OznerDevice> deviceList = Arrays.asList(devices);
+        deviceList = Arrays.asList(devices);
         mAdapter.loadData(deviceList);
     }
 
@@ -97,6 +105,23 @@ public class MyDeviceActivity extends BaseActivity {
                 break;
         }
         return true;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        try {
+            if (deviceList != null && !deviceList.isEmpty()) {
+                Intent deviceIntent = new Intent(OznerBroadcastAction.OBA_CenterDeviceSelect);
+                deviceIntent.putExtra(Contacts.PARMS_MAC, deviceList.get(position).Address());
+                sendBroadcast(deviceIntent);
+                this.finish();
+            } else {
+                showToastCenter(R.string.device_unexsit);
+            }
+        } catch (Exception ex) {
+            LCLogUtils.E(TAG, "onItemClick_Ex:" + ex.getMessage());
+            showToastCenter(ex.getMessage());
+        }
     }
 
     class DeviceMonitor extends BroadcastReceiver {

@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ozner.AirPurifier.AirPurifierManager;
@@ -119,6 +120,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
     private void initBroadCastFilter() {
         mMonitor = new LeftMonitor();
         IntentFilter filter = new IntentFilter();
+        filter.addAction(OznerBroadcastAction.OBA_CenterDeviceSelect);
         filter.addAction(OznerBroadcastAction.OBA_Service_Init);
         filter.addAction(OznerDeviceManager.ACTION_OZNER_MANAGER_DEVICE_ADD);
         filter.addAction(OznerDeviceManager.ACTION_OZNER_MANAGER_DEVICE_CHANGE);
@@ -223,6 +225,14 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
                     || intent.getAction().equals(OznerDeviceManager.ACTION_OZNER_MANAGER_OWNER_CHANGE)
                     || intent.getAction().equals(OznerDeviceManager.ACTION_OZNER_MANAGER_DEVICE_REMOVE)) {
                 initDataList();
+            } else if (intent.getAction().endsWith(OznerBroadcastAction.OBA_CenterDeviceSelect)) {
+                String selMac = intent.getStringExtra(Contacts.PARMS_MAC);
+                int selPos = mLeftAdapter.getSelectItemPos(selMac);
+                if (selPos >= 0) {
+                    selectDevice(selPos, false);
+                } else {
+                    Toast.makeText(context, R.string.device_unexsit, Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
