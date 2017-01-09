@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -22,15 +21,16 @@ import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Bean.RankType;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.CupRecordList;
-import com.ozner.cup.Bean.RankType;
 import com.ozner.cup.Device.TDSSensorManager;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.ChartAdapter;
 import com.ozner.cup.UIView.TDSChartView;
 import com.ozner.cup.UIView.UIXWaterDetailProgress;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.device.OznerDeviceManager;
 
 import java.util.Calendar;
@@ -128,12 +128,12 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
         this.registerReceiver(mMonitor, filter);
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
-            Log.e(TAG, "onCreate: mac:" + mac);
+            LCLogUtils.E(TAG, "onCreate: mac:" + mac);
             mCup = (Cup) OznerDeviceManager.Instance().getDevice(mac);
             initViewData();
         } catch (Exception ex) {
             ex.printStackTrace();
-            Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
+            LCLogUtils.E(TAG, "onCreate_Ex: " + ex.getMessage());
         }
         loadTdsFriendRank();
     }
@@ -246,13 +246,13 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
                     try {
                         tvTdsRankValue.setText(String.valueOf(result));
                     } catch (Exception ex) {
-                        Log.e(TAG, "onSuccess_Ex: " + ex.getMessage());
+                        LCLogUtils.E(TAG, "onSuccess_Ex: " + ex.getMessage());
                     }
                 }
 
                 @Override
                 public void onFail(String msg) {
-                    Log.e(TAG, "loadTdsFriendRank_onFail: " + msg);
+                    LCLogUtils.E(TAG, "loadTdsFriendRank_onFail: " + msg);
                 }
             });
         }
@@ -287,7 +287,7 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
                     daySoSo = dayRecord.TDS_Mid;
                     dayBad = dayRecord.TDS_Bad;
                     dayCount = dayRecord.Count;
-                    Log.e(TAG, "initDayData: good:" + dayGood + " ,soso:" + daySoSo + " , bad:" + dayBad + " , count:" + dayCount);
+                    LCLogUtils.E(TAG, "initDayData: good:" + dayGood + " ,soso:" + daySoSo + " , bad:" + dayBad + " , count:" + dayCount);
 
                     CupRecord[] records = mCup.Volume().getRecordByDate(dayCal.getTime(), CupRecordList.QueryInterval.Hour);
                     for (int i = 0; i < records.length; i++) {
@@ -296,7 +296,7 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
                 }
             }
         } catch (Exception ex) {
-            Log.e(TAG, "initDayData_Ex: " + ex.getMessage());
+            LCLogUtils.E(TAG, "initDayData_Ex: " + ex.getMessage());
         }
     }
 
@@ -326,11 +326,11 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
                     weekBad += records[i].TDS_Bad;
                     weekCount += records[i].Count;
                 }
-                Log.e(TAG, "initWeekData: good:" + weekGood + " ,soso:" + weekSoSo + " , bad:" + weekBad + " , count:" + weekCount);
+                LCLogUtils.E(TAG, "initWeekData: good:" + weekGood + " ,soso:" + weekSoSo + " , bad:" + weekBad + " , count:" + weekCount);
 
             }
         } catch (Exception ex) {
-            Log.e(TAG, "initWeekData_Ex: " + ex.getMessage());
+            LCLogUtils.E(TAG, "initWeekData_Ex: " + ex.getMessage());
         }
     }
 
@@ -356,11 +356,11 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
                     monthCount += records[i].Count;
                 }
 
-                Log.e(TAG, "initMonthData: good:" + monthGood + " ,soso:" + monthSoSo + " , bad:" + monthBad + " , count:" + monthCount);
+                LCLogUtils.E(TAG, "initMonthData: good:" + monthGood + " ,soso:" + monthSoSo + " , bad:" + monthBad + " , count:" + monthCount);
 
             }
         } catch (Exception ex) {
-            Log.e(TAG, "initMonthData_Ex: " + ex.getMessage());
+            LCLogUtils.E(TAG, "initMonthData_Ex: " + ex.getMessage());
         }
     }
 

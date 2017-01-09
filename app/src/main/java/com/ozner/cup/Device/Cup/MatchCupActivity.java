@@ -246,7 +246,7 @@ public class MatchCupActivity extends BaseActivity {
 
     private void saveDeviceToDB(String userid, OznerDevice device) {
         try {
-            OznerDeviceSettings oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid, device.Address());
+            OznerDeviceSettings oznerSetting = DBManager.getInstance(this).getDeviceSettings(userid, device.Address());
             if (oznerSetting != null) {
                 DBManager.getInstance(this).deleteDeviceSettings(userid, device.Address());
                 oznerSetting = null;

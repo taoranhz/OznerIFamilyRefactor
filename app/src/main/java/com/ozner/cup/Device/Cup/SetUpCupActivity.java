@@ -301,14 +301,14 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
 
             //初始化设备名字
             deviceNewName = mCup.getName();
-            String usePos = "";//(String) mCup.Setting().get(Contacts.DEV_USE_POS, "");
+//            String usePos = "";//(String) mCup.Setting().get(Contacts.DEV_USE_POS, "");
 
             if (oznerSetting != null) {
                 if (oznerSetting.getName() != null && !oznerSetting.getName().isEmpty()) {
                     deviceNewName = oznerSetting.getName();
                 }
                 if (oznerSetting.getDevicePosition() != null && !oznerSetting.getDevicePosition().isEmpty()) {
-                    usePos = oznerSetting.getDevicePosition();
+                    deviceNewPos = oznerSetting.getDevicePosition();
                 }
                 if (oznerSetting.getAppData(Contacts.DEV_USER_WEIGHT) != null) {
                     mWeight = Integer.parseInt((String) oznerSetting.getAppData(Contacts.DEV_USER_WEIGHT));
@@ -327,10 +327,10 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
             }
 
             StringBuffer deviceNameBuf = new StringBuffer();
-            deviceNameBuf.append(mCup.getName());
-            if (usePos != null && !usePos.isEmpty()) {
+            deviceNameBuf.append(deviceNewName);
+            if (deviceNewPos != null && !deviceNewPos.isEmpty()) {
                 deviceNameBuf.append("(");
-                deviceNameBuf.append(usePos);
+                deviceNameBuf.append(deviceNewPos);
                 deviceNameBuf.append(")");
             }
             tvDeviceName.setText(deviceNameBuf.toString());
@@ -534,6 +534,7 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mCup != null) {
+                                    DBManager.getInstance(SetUpCupActivity.this).deleteDeviceSettings(mUserid,mCup.Address());
                                     OznerDeviceManager.Instance().remove(mCup);
                                     setResult(RESULT_OK);
                                     SetUpCupActivity.this.finish();

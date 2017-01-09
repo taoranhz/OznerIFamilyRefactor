@@ -29,12 +29,18 @@ import com.ozner.WaterPurifier.WaterPurifierManager;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.BuildConfig;
 import com.ozner.cup.Command.OznerPreference;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.Adapter.FoundDevcieAdapter;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 import com.ozner.wifi.WifiPair;
+
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -118,6 +124,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
     private FoundDevcieAdapter mDevAdpater;
     private BaseDeviceIO selDeviceIo;
     Monitor monitor;
+    private String mUserid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +132,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
         setContentView(R.layout.activity_match_water_purifer);
         ButterKnife.inject(this);
         monitor = new Monitor();
+        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
@@ -147,7 +155,6 @@ public class MatchWaterPuriferActivity extends BaseActivity {
 
         readyMatchDevice();
     }
-
 
 
     /**
@@ -253,6 +260,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
                         device.Setting().name(getString(R.string.water_purifier));
                     }
                     device.updateSettings();
+                    saveDeviceToDB(mUserid,device);
                 } else {
                     if (BuildConfig.DEBUG)
                         Log.e(TAG, "saveDevice: devcie is null");
@@ -271,7 +279,28 @@ public class MatchWaterPuriferActivity extends BaseActivity {
                 Log.e(TAG, "saveDevice: selDeviceIo is null");
             showToastCenter(R.string.device_disConnect);
         }
+    }
 
+    private void saveDeviceToDB(String userid, OznerDevice device) {
+        try {
+            OznerDeviceSettings oznerSetting = DBManager.getInstance(this).getDeviceSettings(userid, device.Address());
+            if (oznerSetting != null) {
+                DBManager.getInstance(this).deleteDeviceSettings(userid, device.Address());
+                oznerSetting = null;
+            }
+            oznerSetting = new OznerDeviceSettings();
+            oznerSetting.setCreateTime(String.valueOf(new Date().getTime()));
+            oznerSetting.setUserId(userid);
+            oznerSetting.setMac(device.Address());
+            oznerSetting.setName(device.Setting().name());
+            oznerSetting.setDevicePosition(etDevicePosition.getText().toString().trim());
+            oznerSetting.setStatus(0);
+            oznerSetting.setDevcieType(device.Type());
+            DBManager.getInstance(this).updateDeviceSettings(oznerSetting);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LCLogUtils.E(TAG, "saveDeviceToDB_Ex:" + ex.getMessage());
+        }
     }
 
 
@@ -436,7 +465,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
 
         tvMatchNotice.setVisibility(View.INVISIBLE);
         tvMatchType.setVisibility(View.INVISIBLE);
-
+        etDevicePosition.setText(R.string.pos_home);
 //        llayMatchSuccHolder.setVisibility(View.VISIBLE);
 
         llayMatchSuccHolder.setVisibility(View.GONE);

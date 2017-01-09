@@ -28,6 +28,7 @@ import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.DBHelper.WaterPurifierAttr;
 import com.ozner.cup.Device.DeviceFragment;
@@ -133,6 +134,8 @@ public class WaterPurifierFragment extends DeviceFragment {
     private boolean isShowFilterTips = false;
     private String dsn = "";
     private TDSSensorManager tdsSensorManager;
+    private String mUserid;
+    private OznerDeviceSettings oznerSetting;
 
     /**
      * 实例化Fragment
@@ -182,6 +185,7 @@ public class WaterPurifierFragment extends DeviceFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
         tdsSensorManager = new TDSSensorManager(getContext());
         initAnimation();
         try {
@@ -190,6 +194,7 @@ public class WaterPurifierFragment extends DeviceFragment {
 
             initWaterAttrInfo(mWaterPurifer.Address());
             oldPreValue = oldThenValue = 0;
+            oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mWaterPurifer.Address());
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -199,6 +204,7 @@ public class WaterPurifierFragment extends DeviceFragment {
 
     @Override
     public void setDevice(OznerDevice device) {
+        oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, device.Address());
         oldPreValue = oldThenValue = 0;
         initWaterAttrInfo(device.Address());
 
@@ -519,7 +525,11 @@ public class WaterPurifierFragment extends DeviceFragment {
         try {
             setBarColor(R.color.cup_detail_bg);
             setToolbarColor(R.color.cup_detail_bg);
-            title.setText(R.string.water_purifier);
+            if (oznerSetting != null) {
+                title.setText(oznerSetting.getName());
+            } else {
+                title.setText(R.string.water_purifier);
+            }
         } catch (Exception ex) {
 
         }
@@ -603,7 +613,11 @@ public class WaterPurifierFragment extends DeviceFragment {
      */
     private void refreshSensorData() {
         if (mWaterPurifer != null) {
-            title.setText(mWaterPurifer.getName());
+            if (oznerSetting != null) {
+                title.setText(oznerSetting.getName());
+            } else {
+                title.setText(mWaterPurifer.getName());
+            }
             showTdsState();
         }
     }

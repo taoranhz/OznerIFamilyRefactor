@@ -29,7 +29,7 @@ public class LoginModel implements ILoginModel {
         HttpMethods.getInstance().getPhoneCode(phone
                 , new ProgressSubscriber<JsonObject>(loginContext.get()
                         , loginContext.get().getString(R.string.verify_code_requesting)
-                        , true
+                        , false
                         , onNext));
     }
 
@@ -38,7 +38,7 @@ public class LoginModel implements ILoginModel {
         HttpMethods.getInstance().getVoiceVerifyCode(phone
                 , new ProgressSubscriber<JsonObject>(loginContext.get()
                         , loginContext.get().getString(R.string.verify_code_requesting)
-                        , true
+                        , false
                         , onNext));
     }
 
@@ -47,7 +47,7 @@ public class LoginModel implements ILoginModel {
         HttpMethods.getInstance().login(phone, verifyCode, miei, devicename
                 , new ProgressSubscriber<JsonObject>(loginContext.get()
                         , loginContext.get().getString(R.string.logining)
-                        , true
+                        , false
                         , onNext));
     }
 

@@ -29,12 +29,18 @@ import com.ozner.AirPurifier.AirPurifierManager;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.BuildConfig;
 import com.ozner.cup.Command.OznerPreference;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.Adapter.FoundDevcieAdapter;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 import com.ozner.wifi.WifiPair;
+
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -114,12 +120,15 @@ public class MatchVerAirActivity extends BaseActivity {
     private BaseDeviceIO selDeviceIo;
     private boolean isRemPass = true;
     private boolean isShowPass = false;
+    private String mUserid;
+    private OznerDeviceSettings oznerSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_ver_air);
         ButterKnife.inject(this);
+        mUserid = UserDataPreference.GetUserData(this,UserDataPreference.UserId,"");
         monitor = new Monitor();
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
@@ -305,6 +314,8 @@ public class MatchVerAirActivity extends BaseActivity {
                         device.Setting().name(getString(R.string.air_purifier));
                     }
                     device.updateSettings();
+
+                    saveDeviceToDB(mUserid,device);
                 } else {
                     if (BuildConfig.DEBUG)
                         Log.e(TAG, "saveDevice: devcie is null");
@@ -324,6 +335,28 @@ public class MatchVerAirActivity extends BaseActivity {
             showToastCenter(R.string.device_disConnect);
         }
 
+    }
+
+    private void saveDeviceToDB(String userid, OznerDevice device) {
+        try {
+            OznerDeviceSettings oznerSetting = DBManager.getInstance(this).getDeviceSettings(userid, device.Address());
+            if (oznerSetting != null) {
+                DBManager.getInstance(this).deleteDeviceSettings(userid, device.Address());
+                oznerSetting = null;
+            }
+            oznerSetting = new OznerDeviceSettings();
+            oznerSetting.setCreateTime(String.valueOf(new Date().getTime()));
+            oznerSetting.setUserId(userid);
+            oznerSetting.setMac(device.Address());
+            oznerSetting.setName(device.Setting().name());
+            oznerSetting.setDevicePosition(etDevicePosition.getText().toString().trim());
+            oznerSetting.setStatus(0);
+            oznerSetting.setDevcieType(device.Type());
+            DBManager.getInstance(this).updateDeviceSettings(oznerSetting);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LCLogUtils.E(TAG, "saveDeviceToDB_Ex:" + ex.getMessage());
+        }
     }
 
 
@@ -439,6 +472,7 @@ public class MatchVerAirActivity extends BaseActivity {
 
         tvMatchNotice.setVisibility(View.INVISIBLE);
         tvMatchType.setVisibility(View.INVISIBLE);
+        etDevicePosition.setText(R.string.pos_bedroom);
 
 //        llayMatchSuccHolder.setVisibility(View.VISIBLE);
 

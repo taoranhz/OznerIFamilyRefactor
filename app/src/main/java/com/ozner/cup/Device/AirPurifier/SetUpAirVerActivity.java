@@ -16,9 +16,14 @@ import com.ozner.AirPurifier.AirPurifier_MXChip;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.SetDeviceNameActivity;
 import com.ozner.cup.R;
 import com.ozner.device.OznerDeviceManager;
+
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -39,6 +44,8 @@ public class SetUpAirVerActivity extends BaseActivity {
     private String mac = "";
     private AirPurifier mAirPurifier;
     private String deviceNewName = null, deviceNewPos = null;
+    private String mUserid;
+    private OznerDeviceSettings oznerSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +55,12 @@ public class SetUpAirVerActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         initToolBar();
-
+        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             Log.e(TAG, "onCreate: mac:" + mac);
             mAirPurifier = (AirPurifier) OznerDeviceManager.Instance().getDevice(mac);
+            oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid, mac);
             initViewData();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -99,12 +107,17 @@ public class SetUpAirVerActivity extends BaseActivity {
     private void initViewData() {
         if (mAirPurifier != null) {
             deviceNewName = mAirPurifier.getName();
+            if (oznerSetting != null) {
+                deviceNewName = oznerSetting.getName();
+                deviceNewPos = oznerSetting.getDevicePosition();
+            }
+
             StringBuffer deviceNameBuf = new StringBuffer();
-            deviceNameBuf.append(mAirPurifier.getName());
-            String usePos = (String) mAirPurifier.Setting().get(Contacts.DEV_USE_POS, "");
-            if (usePos != null && !usePos.isEmpty()) {
+            deviceNameBuf.append(deviceNewName);
+//            String usePos = (String) mAirPurifier.Setting().get(Contacts.DEV_USE_POS, "");
+            if (deviceNewPos != null && !deviceNewPos.isEmpty()) {
                 deviceNameBuf.append("(");
-                deviceNameBuf.append(usePos);
+                deviceNameBuf.append(deviceNewPos);
                 deviceNameBuf.append(")");
             }
             tvDeviceName.setText(deviceNameBuf.toString());
@@ -130,16 +143,16 @@ public class SetUpAirVerActivity extends BaseActivity {
                         aboutIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutAirDesk);
                     }
                     startActivity(aboutIntent);
-                }else {
+                } else {
                     showToastCenter(R.string.Not_found_device);
                 }
                 break;
             case R.id.llay_faq:
-                if(mAirPurifier!=null){
-                    Intent faqIntent = new Intent(this,WebActivity.class);
-                    faqIntent.putExtra(Contacts.PARMS_URL,Contacts.air_faq);
+                if (mAirPurifier != null) {
+                    Intent faqIntent = new Intent(this, WebActivity.class);
+                    faqIntent.putExtra(Contacts.PARMS_URL, Contacts.air_faq);
                     startActivity(faqIntent);
-                }else {
+                } else {
                     showToastCenter(R.string.Not_found_device);
                 }
                 break;
@@ -149,6 +162,7 @@ public class SetUpAirVerActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mAirPurifier != null) {
+                                    DBManager.getInstance(SetUpAirVerActivity.this).deleteDeviceSettings(mUserid,mAirPurifier.Address());
                                     OznerDeviceManager.Instance().remove(mAirPurifier);
                                     setResult(RESULT_OK);
                                     SetUpAirVerActivity.this.finish();
@@ -175,10 +189,22 @@ public class SetUpAirVerActivity extends BaseActivity {
                 showToastCenter(R.string.input_device_name);
                 return;
             }
-            if (deviceNewPos != null) {
-                mAirPurifier.Setting().put(Contacts.DEV_USE_POS, deviceNewPos);
-            }
+//            if (deviceNewPos != null) {
+//                mAirPurifier.Setting().put(Contacts.DEV_USE_POS, deviceNewPos);
+//            }
             mAirPurifier.updateSettings();
+
+            if (oznerSetting == null) {
+                oznerSetting = new OznerDeviceSettings();
+                oznerSetting.setUserId(mUserid);
+                oznerSetting.setCreateTime(String.valueOf(new Date().getTime()));
+            }
+            oznerSetting.setName(deviceNewName);
+            oznerSetting.setDevcieType(mAirPurifier.Type());
+            oznerSetting.setStatus(0);
+            oznerSetting.setMac(mAirPurifier.Address());
+            oznerSetting.setDevicePosition(deviceNewPos);
+            DBManager.getInstance(this).updateDeviceSettings(oznerSetting);
             this.finish();
         } else {
             showToastCenter(R.string.Not_found_device);

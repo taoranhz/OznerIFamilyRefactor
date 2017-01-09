@@ -28,6 +28,9 @@ import android.widget.TextView;
 
 import com.ozner.AirPurifier.AirPurifier_MXChip;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.AirPurifier.bean.NetWeather;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.HttpHelper.NetState;
@@ -119,11 +122,12 @@ public class AirVerPurifierFragment extends DeviceFragment {
     Toolbar toolbar;
     private AirPurifier_MXChip mVerAirPurifier;
     AirPurifierMonitor airMonitor;
-    private String deviceNewName = "";
     private ProgressDialog progressDialog;
     private Handler mHandler = new Handler();
     AirPurifierPresenter airPresenter;
     private NetWeather netWeather;
+    private String mUserid;
+    private OznerDeviceSettings oznerSetting;
 
     /**
      * 定义模式开关注解，限定设置模式方法的参数
@@ -170,11 +174,13 @@ public class AirVerPurifierFragment extends DeviceFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
         airPresenter = new AirPurifierPresenter(getContext());
         getOutDoorInfo();
         try {
             Bundle bundle = getArguments();
             mVerAirPurifier = (AirPurifier_MXChip) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
+            oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mVerAirPurifier.Address());
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -201,9 +207,9 @@ public class AirVerPurifierFragment extends DeviceFragment {
 
     @Override
     public void setDevice(OznerDevice device) {
+        oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mVerAirPurifier.Address());
 //        refreshMainOutDoorInfo();
         getOutDoorInfo();
-        deviceNewName = "";
 //        initColor();
         if (mVerAirPurifier != null) {
             if (mVerAirPurifier.Address() != device.Address()) {
@@ -269,7 +275,11 @@ public class AirVerPurifierFragment extends DeviceFragment {
     @Override
     public void onResume() {
         try {
-            title.setText(R.string.air_purifier);
+            if (oznerSetting != null) {
+                title.setText(oznerSetting.getName());
+            } else {
+                title.setText(R.string.air_purifier);
+            }
             initBgColor();
         } catch (Exception ex) {
             Log.e(TAG, "onResume_Ex:" + ex.getMessage());
@@ -709,8 +719,13 @@ public class AirVerPurifierFragment extends DeviceFragment {
         try {
             if (mVerAirPurifier != null && isThisAdd()) {
                 //设置设备名字
-                if (!deviceNewName.equals(mVerAirPurifier.getName())) {
-                    deviceNewName = mVerAirPurifier.getName();
+//                if (!deviceNewName.equals(mVerAirPurifier.getName())) {
+//                    deviceNewName = mVerAirPurifier.getName();
+//                    title.setText(mVerAirPurifier.getName());
+//                }
+                if (oznerSetting != null) {
+                    title.setText(oznerSetting.getName());
+                } else {
                     title.setText(mVerAirPurifier.getName());
                 }
                 refreshSensorData();

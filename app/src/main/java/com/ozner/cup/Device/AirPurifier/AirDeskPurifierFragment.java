@@ -28,6 +28,9 @@ import android.widget.TextView;
 import com.ozner.AirPurifier.AirPurifier_Bluetooth;
 import com.ozner.AirPurifier.AirPurifier_MXChip;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.AirPurifier.bean.NetWeather;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Main.MainActivity;
@@ -103,6 +106,8 @@ public class AirDeskPurifierFragment extends DeviceFragment {
     private int oldSpeed = 0;
     private NetWeather netWeather;
     AirPurifierPresenter airPresenter;
+    private String mUserid;
+    private OznerDeviceSettings oznerSetting;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -218,12 +223,14 @@ public class AirDeskPurifierFragment extends DeviceFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
         airPresenter = new AirPurifierPresenter(getContext());
         getOutDoorInfo();
         initAnimation();
         try {
             Bundle bundle = getArguments();
             mDeskAirPurifier = (AirPurifier_Bluetooth) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
+            oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mDeskAirPurifier.Address());
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -250,6 +257,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
 
     @Override
     public void setDevice(OznerDevice device) {
+        oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mDeskAirPurifier.Address());
 //        refreshMainOutDoorInfo();
         getOutDoorInfo();
         deviceNewName = "";
@@ -598,7 +606,11 @@ public class AirDeskPurifierFragment extends DeviceFragment {
     @Override
     public void onResume() {
         try {
-            title.setText(R.string.air_purifier);
+            if (oznerSetting != null) {
+                title.setText(oznerSetting.getName());
+            } else {
+                title.setText(R.string.air_purifier);
+            }
             initBgColor();
         } catch (Exception ex) {
             Log.e(TAG, "onResume_Ex:" + ex.getMessage());

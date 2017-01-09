@@ -18,11 +18,15 @@ import com.ozner.WaterPurifier.WaterPurifier;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.DBHelper.WaterPurifierAttr;
 import com.ozner.cup.Device.SetDeviceNameActivity;
 import com.ozner.cup.R;
 import com.ozner.device.OznerDeviceManager;
+
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -48,6 +52,8 @@ public class SetupWaterActivity extends BaseActivity {
     private WaterPurifier mWaterPurifier;
     private String mac = "";
     private String url = "";
+    private String mUserid;
+    private OznerDeviceSettings oznerSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +61,13 @@ public class SetupWaterActivity extends BaseActivity {
         setContentView(R.layout.activity_setup_water);
         ButterKnife.inject(this);
         initToolBar();
-
+        mUserid = UserDataPreference.GetUserData(this,UserDataPreference.UserId,"");
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
 //            url = getIntent().getStringExtra(Contacts.PARMS_URL);
             Log.e(TAG, "onCreate: mac:" + mac);
             mWaterPurifier = (WaterPurifier) OznerDeviceManager.Instance().getDevice(mac);
+            oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid,mac);
             initViewData();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -86,13 +93,19 @@ public class SetupWaterActivity extends BaseActivity {
     private void initViewData() {
         if (mWaterPurifier != null) {
             tvMac.setText(mWaterPurifier.Address());
+            deviceNewName = mWaterPurifier.getName();
+//            String usePos = (String) mWaterPurifier.Setting().get(Contacts.DEV_USE_POS, "");
+            if(oznerSetting!=null){
+                deviceNewName = oznerSetting.getName();
+                deviceNewPos = oznerSetting.getDevicePosition();
+            }
+
 //            title.setText(deviceNewName);
             StringBuffer deviceNameBuf = new StringBuffer();
-            deviceNameBuf.append(mWaterPurifier.getName());
-            String usePos = (String) mWaterPurifier.Setting().get(Contacts.DEV_USE_POS, "");
-            if (usePos != null && !usePos.isEmpty()) {
+            deviceNameBuf.append(deviceNewName);
+            if (deviceNewPos != null && !deviceNewPos.isEmpty()) {
                 deviceNameBuf.append("(");
-                deviceNameBuf.append(usePos);
+                deviceNameBuf.append(deviceNewPos);
                 deviceNameBuf.append(")");
             }
             tvDeviceName.setText(deviceNameBuf.toString());
@@ -127,6 +140,7 @@ public class SetupWaterActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mWaterPurifier != null) {
+                                    DBManager.getInstance(SetupWaterActivity.this).deleteDeviceSettings(mUserid,mWaterPurifier.Address());
                                     OznerDeviceManager.Instance().remove(mWaterPurifier);
                                     setResult(RESULT_OK);
                                     SetupWaterActivity.this.finish();
@@ -156,10 +170,23 @@ public class SetupWaterActivity extends BaseActivity {
                 toast.show();
                 return;
             }
-            if (deviceNewPos != null) {
-                mWaterPurifier.Setting().put(Contacts.DEV_USE_POS, deviceNewPos);
-            }
+//            if (deviceNewPos != null) {
+//                mWaterPurifier.Setting().put(Contacts.DEV_USE_POS, deviceNewPos);
+//            }
             mWaterPurifier.updateSettings();
+
+            if (oznerSetting == null) {
+                oznerSetting = new OznerDeviceSettings();
+                oznerSetting.setUserId(mUserid);
+                oznerSetting.setCreateTime(String.valueOf(new Date().getTime()));
+            }
+            oznerSetting.setName(deviceNewName);
+            oznerSetting.setDevcieType(mWaterPurifier.Type());
+            oznerSetting.setStatus(0);
+            oznerSetting.setMac(mWaterPurifier.Address());
+            oznerSetting.setDevicePosition(deviceNewPos);
+            DBManager.getInstance(this).updateDeviceSettings(oznerSetting);
+
             this.finish();
         } else {
             Toast toast = Toast.makeText(SetupWaterActivity.this, getString(R.string.Not_found_device), Toast.LENGTH_SHORT);

@@ -25,8 +25,12 @@ import android.widget.Toast;
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScan;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.Adapter.FoundDevcieAdapter;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
@@ -45,11 +49,11 @@ public class MatchTapActivity extends BaseActivity {
     TextView tv_title;
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
-//    @InjectView(R.id.tv_state)
+    //    @InjectView(R.id.tv_state)
 //    TextView tvState;
     @InjectView(R.id.ib_moreLeft)
     ImageButton ibMoreLeft;
-//    @InjectView(R.id.ib_moreRight)
+    //    @InjectView(R.id.ib_moreRight)
 //    ImageButton ibMoreRight;
     @InjectView(R.id.iv_match_loading)
     ImageView ivMatchLoading;
@@ -83,12 +87,14 @@ public class MatchTapActivity extends BaseActivity {
     TimerCount timerCount;
     private Monitor mMonitor;
     private BaseDeviceIO selDeviceIo;
+    private String mUserid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_tap);
         ButterKnife.inject(this);
+        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
         initActionBar();
         initFoundDeviceView();
         startFindDevice();
@@ -210,6 +216,7 @@ public class MatchTapActivity extends BaseActivity {
                     device.Setting().name(getString(R.string.water_probe));
                 }
                 device.updateSettings();
+                saveDeviceToDB(mUserid, device);
             } else {
                 Toast.makeText(this, getString(R.string.device_disConnect), Toast.LENGTH_SHORT).show();
             }
@@ -217,6 +224,28 @@ public class MatchTapActivity extends BaseActivity {
             ex.printStackTrace();
         } finally {
             this.finish();
+        }
+    }
+
+    private void saveDeviceToDB(String userid, OznerDevice device) {
+        try {
+            OznerDeviceSettings oznerSetting = DBManager.getInstance(this).getDeviceSettings(userid, device.Address());
+            if (oznerSetting != null) {
+                DBManager.getInstance(this).deleteDeviceSettings(userid, device.Address());
+                oznerSetting = null;
+            }
+            oznerSetting = new OznerDeviceSettings();
+            oznerSetting.setCreateTime(String.valueOf(new Date().getTime()));
+            oznerSetting.setUserId(userid);
+            oznerSetting.setMac(device.Address());
+            oznerSetting.setName(device.Setting().name());
+            oznerSetting.setDevicePosition(etDevicePosition.getText().toString().trim());
+            oznerSetting.setStatus(0);
+            oznerSetting.setDevcieType(device.Type());
+            DBManager.getInstance(this).updateDeviceSettings(oznerSetting);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LCLogUtils.E(TAG, "saveDeviceToDB_Ex:" + ex.getMessage());
         }
     }
 

@@ -138,7 +138,7 @@ public class LoginPresenter {
             HttpMethods.getInstance().getVoiceVerifyCode(loginView.getUserPhone()
                     , new ProgressSubscriber<JsonObject>(loginContext.get()
                             , loginContext.get().getString(R.string.verify_code_requesting)
-                            , true
+                            , false
                             , new Action1<JsonObject>() {
                         @Override
                         public void call(JsonObject jsonObject) {

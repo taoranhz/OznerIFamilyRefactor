@@ -25,7 +25,10 @@ import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.OznerPreference;
+import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupRecord;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
@@ -108,6 +111,8 @@ public class TapFragment extends DeviceFragment {
     private TapMonitor tapMonitor;
     //    private RotateAnimation rotateAnimation;
     private int oldTdsValue;
+    private String mUserid;
+    private OznerDeviceSettings oznerSetting;
     SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     int[] tdsDatas = new int[31];
 
@@ -159,6 +164,7 @@ public class TapFragment extends DeviceFragment {
 
     @Override
     public void setDevice(OznerDevice device) {
+        oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, device.Address());
         if (mTap != null) {
             if (mTap.Address() != device.Address()) {
                 mTap.release();
@@ -175,11 +181,13 @@ public class TapFragment extends DeviceFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
         initAnimation();
         try {
             Bundle bundle = getArguments();
             mTap = (Tap) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
             oldTdsValue = 0;
+            oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mTap.Address());
             refreshTapFilterInfo();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -365,7 +373,11 @@ public class TapFragment extends DeviceFragment {
      */
     private void refreshSensorData() {
         if (mTap != null) {
-            title.setText(mTap.getName());
+            if (oznerSetting != null) {
+                title.setText(oznerSetting.getName());
+            } else {
+                title.setText(mTap.getName());
+            }
             showTdsState(mTap.Sensor().TDSFix);
             showPowerState();
             showTdsRecords();

@@ -343,7 +343,7 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // TODO: 2016/12/2
-        showToastCenter("点击了：" + projectStr[position]);
+//        showToastCenter("点击了：" + projectStr[position]);
         switch (position) {
             case 0:
                 if (userInfo != null && userInfo.getMobile() != null && !userInfo.getMobile().isEmpty()) {

@@ -26,6 +26,8 @@ import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.R;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
@@ -58,6 +60,8 @@ public class SetDeviceNameActivity extends BaseActivity {
     private PositionAdapter posAdapter;
     EditText et_addPos;
     List<String> savePosList = new ArrayList<>();
+    private String mUserid;
+    private OznerDeviceSettings oznerSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,13 +70,20 @@ public class SetDeviceNameActivity extends BaseActivity {
         ButterKnife.inject(this);
         initToolBar();
         initPosList();
+        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             mDevice = OznerDeviceManager.Instance().getDevice(mac);
+            oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid, mac);
 
-            if (mDevice != null) {
-                mSelPos = (String) mDevice.Setting().get(Contacts.DEV_USE_POS, "");
-                etDeviceName.setText(mDevice.getName());
+//            if (mDevice != null) {
+//                mSelPos = (String) mDevice.Setting().get(Contacts.DEV_USE_POS, "");
+//                etDeviceName.setText(mDevice.getName());
+//                loadDevicePosData();
+//            }
+            if (oznerSetting != null) {
+                mSelPos = oznerSetting.getDevicePosition();
+                etDeviceName.setText(oznerSetting.getName());
                 loadDevicePosData();
             }
         } catch (Exception ex) {
@@ -285,7 +296,7 @@ public class SetDeviceNameActivity extends BaseActivity {
     /**
      * 逗号分隔的字符串转成列表
      * <p>
-     * on 2016/11/11
+     * Create by ozner_67 on 2016/11/11
      * 关于这里为什么会看似多此一举的新建一个tempList并遍历复制，而不是使用系统方法直接转换成list，
      * 因为如果用Arrays.asList()将String[]转成List<String>的话，生成list就是定长的，长度不能改变，
      * 这样它的添加和删除方法就无法使用，否则会报UnsupportedOperationException异常。

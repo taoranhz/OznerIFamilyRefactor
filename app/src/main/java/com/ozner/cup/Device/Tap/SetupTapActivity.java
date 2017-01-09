@@ -21,8 +21,12 @@ import android.widget.Toast;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.SetDeviceNameActivity;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.device.OznerDeviceManager;
 import com.ozner.tap.Tap;
 
@@ -68,6 +72,8 @@ public class SetupTapActivity extends BaseActivity {
     private Tap mTap;
     private Date time1, time2;
     private SimpleDateFormat fmt = new SimpleDateFormat("HH:mm");
+    private String mUserid;
+    private OznerDeviceSettings oznerSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +81,15 @@ public class SetupTapActivity extends BaseActivity {
         setContentView(R.layout.activity_setup_tap);
         ButterKnife.inject(this);
         initToolBar();
-
+        mUserid = UserDataPreference.GetUserData(this,UserDataPreference.UserId,"");
         try {
             mac = getIntent().getStringExtra(PARMS_MAC);
             Log.e(TAG, "onCreate: mac:" + mac);
             mTap = (Tap) OznerDeviceManager.Instance().getDevice(mac);
+            oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid, mac);
+            if (oznerSetting != null) {
+                LCLogUtils.E(TAG, "oznerSetting:" + oznerSetting.toString());
+            }
             initViewData();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -105,13 +115,18 @@ public class SetupTapActivity extends BaseActivity {
         if (mTap != null) {
             //初始化设备名字
             deviceNewName = mTap.getName();
+//            String usePos = "";//(String) mTap.Setting().get(Contacts.DEV_USE_POS, "");
 //            tv_customTitle.setText(deviceNewName);
+            if(oznerSetting!=null){
+                deviceNewName = oznerSetting.getName();
+                deviceNewPos = oznerSetting.getDevicePosition();
+            }
+
             StringBuffer deviceNameBuf = new StringBuffer();
-            deviceNameBuf.append(mTap.getName());
-            String usePos = (String) mTap.Setting().get(Contacts.DEV_USE_POS, "");
-            if (usePos != null && !usePos.isEmpty()) {
+            deviceNameBuf.append(deviceNewName);
+            if (deviceNewPos != null && !deviceNewPos.isEmpty()) {
                 deviceNameBuf.append("(");
-                deviceNameBuf.append(usePos);
+                deviceNameBuf.append(deviceNewPos);
                 deviceNameBuf.append(")");
             }
             tvDeviceName.setText(deviceNameBuf.toString());
@@ -150,15 +165,28 @@ public class SetupTapActivity extends BaseActivity {
                 toast.show();
                 return;
             }
-            if (deviceNewPos != null) {
-                mTap.Setting().put(Contacts.DEV_USE_POS, deviceNewPos);
-            }
+//            if (deviceNewPos != null) {
+//                mTap.Setting().put(Contacts.DEV_USE_POS, deviceNewPos);
+//            }
 
             mTap.Setting().isDetectTime1(true);
             mTap.Setting().DetectTime1(time1.getHours() * 3600 + time1.getMinutes() * 60);
             mTap.Setting().isDetectTime2(true);
             mTap.Setting().DetectTime2(time2.getHours() * 3600 + time2.getMinutes() * 60);
             mTap.updateSettings();
+
+            if (oznerSetting == null) {
+                oznerSetting = new OznerDeviceSettings();
+                oznerSetting.setUserId(mUserid);
+                oznerSetting.setCreateTime(String.valueOf(new Date().getTime()));
+            }
+            oznerSetting.setName(deviceNewName);
+            oznerSetting.setDevcieType(mTap.Type());
+            oznerSetting.setStatus(0);
+            oznerSetting.setMac(mTap.Address());
+            oznerSetting.setDevicePosition(deviceNewPos);
+            DBManager.getInstance(this).updateDeviceSettings(oznerSetting);
+
             this.finish();
         } else {
             Toast toast = Toast.makeText(SetupTapActivity.this, getString(R.string.Not_found_device), Toast.LENGTH_SHORT);
@@ -257,6 +285,7 @@ public class SetupTapActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mTap != null) {
+                                    DBManager.getInstance(SetupTapActivity.this).deleteDeviceSettings(mUserid,mTap.Address());
                                     OznerDeviceManager.Instance().remove(mTap);
                                     setResult(RESULT_OK);
                                     SetupTapActivity.this.finish();
