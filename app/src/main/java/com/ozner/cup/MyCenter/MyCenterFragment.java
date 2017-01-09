@@ -34,7 +34,6 @@ import com.ozner.cup.MyCenter.Settings.SettingsActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.WeChatUrlUtil;
-import com.ozner.device.OznerDeviceManager;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -175,7 +174,7 @@ public class MyCenterFragment extends BaseFragment {
     public void onResume() {
         try {
             setBarColor(R.color.cup_detail_bg);
-            tvMyDevice.setText(String.valueOf(OznerDeviceManager.Instance().getDevices().length));
+            tvMyDevice.setText(String.valueOf(DBManager.getInstance(getContext()).getDeviceSettingList(userid).size()));
         } catch (Exception ex) {
 
         }

@@ -21,15 +21,18 @@ import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
+import com.ozner.cup.Main.Bean.LeftMenuDeviceItem;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.device.BaseDeviceIO;
-import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 import com.ozner.tap.TapManager;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -49,13 +52,17 @@ public class MyDeviceActivity extends BaseActivity implements AdapterView.OnItem
 
     private DeviceAdapter mAdapter;
     private DeviceMonitor mMonitor;
-    List<OznerDevice> deviceList;
+//    List<OznerDevice> deviceList;
+    List<LeftMenuDeviceItem> mDeviceList;
+    private String mUserid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_device);
         ButterKnife.inject(this);
+        mDeviceList = new ArrayList<>();
+        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
         initToolBar();
         mAdapter = new DeviceAdapter(this, R.layout.my_device_item);
         gvDevice.setEmptyView(tvNodevice);
@@ -92,9 +99,35 @@ public class MyDeviceActivity extends BaseActivity implements AdapterView.OnItem
     }
 
     private void refreshDeviceData() {
-        OznerDevice[] devices = OznerDeviceManager.Instance().getDevices();
-        deviceList = Arrays.asList(devices);
-        mAdapter.loadData(deviceList);
+//        OznerDevice[] devices = OznerDeviceManager.Instance().getDevices();
+//        deviceList = Arrays.asList(devices);
+//        mAdapter.loadData(deviceList);
+
+        if (OznerDeviceManager.Instance() == null) {
+            return;
+        }
+        if (OznerDeviceManager.Instance().getDevices() == null) {
+            return;
+        }
+
+        try {
+            List<OznerDeviceSettings> oznerSettings = DBManager.getInstance(this).getDeviceSettingList(mUserid);
+
+            mDeviceList.clear();
+            int settingCount = oznerSettings.size();
+            for (int i = 0; i < settingCount; i++) {
+                LeftMenuDeviceItem item = new LeftMenuDeviceItem();
+                item.setName(oznerSettings.get(i).getName());
+                item.setUsePos(oznerSettings.get(i).getDevicePosition());
+                item.setMac(oznerSettings.get(i).getMac());
+                item.setType(oznerSettings.get(i).getDevcieType());
+                item.setDevice(OznerDeviceManager.Instance().getDevice(oznerSettings.get(i).getMac()));
+                mDeviceList.add(item);
+            }
+            mAdapter.loadData(mDeviceList);
+        } catch (Exception ex) {
+            LCLogUtils.E(TAG, "refreshDeviceData_Ex:" + ex.getMessage());
+        }
     }
 
     @Override
@@ -110,9 +143,9 @@ public class MyDeviceActivity extends BaseActivity implements AdapterView.OnItem
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         try {
-            if (deviceList != null && !deviceList.isEmpty()) {
+            if (mDeviceList != null && !mDeviceList.isEmpty()) {
                 Intent deviceIntent = new Intent(OznerBroadcastAction.OBA_CenterDeviceSelect);
-                deviceIntent.putExtra(Contacts.PARMS_MAC, deviceList.get(position).Address());
+                deviceIntent.putExtra(Contacts.PARMS_MAC, mDeviceList.get(position).getMac());
                 sendBroadcast(deviceIntent);
                 this.finish();
             } else {
@@ -132,48 +165,48 @@ public class MyDeviceActivity extends BaseActivity implements AdapterView.OnItem
         }
     }
 
-    class DeviceAdapter extends CommonAdapter<OznerDevice> {
+    class DeviceAdapter extends CommonAdapter<LeftMenuDeviceItem> {
 
         public DeviceAdapter(Context context, int itemLayoutId) {
             super(context, itemLayoutId);
         }
 
         @Override
-        public void convert(CommonViewHolder holder, OznerDevice item, int position) {
+        public void convert(CommonViewHolder holder, LeftMenuDeviceItem item, int position) {
             holder.setText(R.id.tv_deviceName, item.getName());
 
-            if (CupManager.IsCup(item.Type())) {
-                if (item.connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+            if (CupManager.IsCup(item.getType())) {
+                if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
                     holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_cup_on);
                 } else {
                     holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_cup_gray);
                 }
-            } else if (TapManager.IsTap(item.Type())) {
-                if (item.connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+            } else if (TapManager.IsTap(item.getType())) {
+                if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
                     holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_tap_on);
                 } else {
                     holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_tap_gray);
                 }
-            } else if (WaterPurifierManager.IsWaterPurifier(item.Type())) {
-                if (item.connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+            } else if (WaterPurifierManager.IsWaterPurifier(item.getType())) {
+                if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
                     holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_water_purifier_on);
                 } else {
                     holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_purifier_gray);
                 }
-            } else if (AirPurifierManager.IsBluetoothAirPurifier(item.Type())) {
-                if (item.connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+            } else if (AirPurifierManager.IsBluetoothAirPurifier(item.getType())) {
+                if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
                     holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_air_purifier_desk_on);
                 } else {
                     holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_air_desk_gray);
                 }
-            } else if (AirPurifierManager.IsWifiAirPurifier(item.Type())) {
-                if (item.connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+            } else if (AirPurifierManager.IsWifiAirPurifier(item.getType())) {
+                if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
                     holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_air_purifier_ver_on);
                 } else {
                     holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_air_ver_gray);
                 }
-            } else if (WaterReplenishmentMeterMgr.IsWaterReplenishmentMeter(item.Type())) {
-                if (item.connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+            } else if (WaterReplenishmentMeterMgr.IsWaterReplenishmentMeter(item.getType())) {
+                if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
                     holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_replen_on);
                 } else {
                     holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_wrm_gray);

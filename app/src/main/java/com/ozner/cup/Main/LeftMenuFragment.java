@@ -29,12 +29,18 @@ import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.AddDevice.AddDeviceActivity;
+import com.ozner.cup.Main.Bean.LeftMenuDeviceItem;
 import com.ozner.cup.R;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 import com.ozner.tap.TapManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -57,8 +63,16 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
 
     private LeftMonitor mMonitor;
     private LeftMenuAdapter mLeftAdapter;
+    private List<LeftMenuDeviceItem> leftDeviceList;
+    private String mUserid;
 
     public LeftMenuFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
     }
 
     @Override
@@ -72,6 +86,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        leftDeviceList = new ArrayList<>();
         mLeftAdapter = new LeftMenuAdapter(getContext(), R.layout.left_menu_item);
         lvMyDevice.setAdapter(mLeftAdapter);
         lvMyDevice.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -101,14 +116,14 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
         mLeftAdapter.setSelectPosition(position);
         if (position >= 0 && position < lvMyDevice.getCount()) {
             lvMyDevice.setItemChecked(position, true);
-            ((MainActivity) getActivity()).onDeviceItemClick(mLeftAdapter.getItem(position), mLeftAdapter.getItem(position).Address(), isAuto);
+            ((MainActivity) getActivity()).onDeviceItemClick(mLeftAdapter.getItem(position).getDevice(), mLeftAdapter.getItem(position).getMac(), isAuto);
         }
 //        }
     }
 
     public OznerDevice getSelectedDevice() {
         if (mLeftAdapter != null && mLeftAdapter.getCount() > 0) {
-            return mLeftAdapter.getSelectedItem();
+            return mLeftAdapter.getSelectedItem().getDevice();
         } else {
             return null;
         }
@@ -181,18 +196,24 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
         if (OznerDeviceManager.Instance().getDevices() == null) {
             return;
         }
-        //释放资源
-        for (int i = 0; i < mLeftAdapter.getCount(); i++) {
-            try {
-                mLeftAdapter.getItem(i).release();
-            } catch (Exception ex) {
 
-            }
-        }
         mLeftAdapter.clear();
-        for (OznerDevice device : OznerDeviceManager.Instance().getDevices()) {
-            mLeftAdapter.addData(device);
+        List<OznerDeviceSettings> oznerSettings = DBManager.getInstance(getContext()).getDeviceSettingList(mUserid);
+//        for (OznerDevice device : OznerDeviceManager.Instance().getDevices()) {
+//            mLeftAdapter.addData(device);
+//        }
+        leftDeviceList.clear();
+        int settingCount = oznerSettings.size();
+        for (int i = 0; i < settingCount; i++) {
+            LeftMenuDeviceItem item = new LeftMenuDeviceItem();
+            item.setName(oznerSettings.get(i).getName());
+            item.setUsePos(oznerSettings.get(i).getDevicePosition());
+            item.setMac(oznerSettings.get(i).getMac());
+            item.setType(oznerSettings.get(i).getDevcieType());
+            item.setDevice(OznerDeviceManager.Instance().getDevice(oznerSettings.get(i).getMac()));
+            leftDeviceList.add(item);
         }
+        mLeftAdapter.loadData(leftDeviceList);
         if (mLeftAdapter.getCount() > 0) {
             //设置侧边栏默认选中
             String selMac = UserDataPreference.GetUserData(getContext(), UserDataPreference.SelMac, null);
@@ -237,7 +258,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
         }
     }
 
-    public class LeftMenuAdapter extends CommonAdapter<OznerDevice> {
+    public class LeftMenuAdapter extends CommonAdapter<LeftMenuDeviceItem> {
         private int selPos = -1;
         private String selMac = "";
         private boolean isMacSel = false;
@@ -251,7 +272,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
                 int count = getCount();
                 int pos = -1;
                 for (int i = 0; i < count; i++) {
-                    if (mac.equals(getItem(i).Address())) {
+                    if (mac.equals(getItem(i).getMac())) {
                         pos = i;
                         break;
                     }
@@ -297,7 +318,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
             return this.selPos;
         }
 
-        public OznerDevice getSelectedItem() {
+        public LeftMenuDeviceItem getSelectedItem() {
             if (selPos >= 0) {
                 return this.getItem(selPos);
             } else {
@@ -322,29 +343,29 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
         }
 
         @Override
-        public void convert(CommonViewHolder holder, OznerDevice item, int position) {
+        public void convert(CommonViewHolder holder, LeftMenuDeviceItem item, int position) {
             //设置设备名称
             holder.setText(R.id.tv_deviceName, item.getName());
 
             //设置设备连接状态
-            if (item.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+            if (item.getDevice().connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
                 holder.setText(R.id.tv_connectState, R.string.connected);
-            } else if (item.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
+            } else if (item.getDevice().connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
                 holder.setText(R.id.tv_connectState, R.string.connecting);
-            } else if (item.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
+            } else if (item.getDevice().connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
                 holder.setText(R.id.tv_connectState, R.string.disconnect);
             }
-            String usePos = (String) item.Setting().get(Contacts.DEV_USE_POS, "");
+            String usePos = item.getUsePos();//(String) item.Setting().get(Contacts.DEV_USE_POS, "");
             if (usePos != null && usePos.trim().length() > 0) {
                 holder.setText(R.id.tv_deviceDesc, usePos);
             }
 
             //设置设备网络类型和是否选中
-            String deviceType = item.Type();
+            String deviceType = item.getType();
             boolean isSelected = false;
             if (isMacSel) {
                 selPos = -1;
-                if (selMac == item.Address()) {
+                if (selMac == item.getMac()) {
                     selPos = position;
                 }
             }

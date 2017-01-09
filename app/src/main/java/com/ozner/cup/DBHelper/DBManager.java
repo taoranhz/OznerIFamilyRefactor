@@ -397,6 +397,18 @@ public class DBManager {
         msgDao.insertOrReplace(settings);
     }
 
+    public List<OznerDeviceSettings> getDeviceSettingList(String userid) {
+        try {
+            DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
+            DaoSession daoSession = daoMaster.newSession();
+            OznerDeviceSettingsDao settingsDao = daoSession.getOznerDeviceSettingsDao();
+            QueryBuilder<OznerDeviceSettings> qb = settingsDao.queryBuilder();
+            return qb.where(OznerDeviceSettingsDao.Properties.UserId.eq(userid)).orderAsc(OznerDeviceSettingsDao.Properties.CreateTime).list();
+        } catch (Exception ex) {
+            return new ArrayList<>();
+        }
+    }
+
     /**
      * 获取指定设备的设置
      *
