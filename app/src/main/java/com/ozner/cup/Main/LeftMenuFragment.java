@@ -228,6 +228,8 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
                     ((MainActivity) getActivity()).onDeviceItemClick(null, null, true);
                 }
             }
+        } else {
+            ((MainActivity) getActivity()).onDeviceItemClick(null, null, true);
         }
     }
 
@@ -348,12 +350,18 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
             holder.setText(R.id.tv_deviceName, item.getName());
 
             //设置设备连接状态
-            if (item.getDevice().connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
-                holder.setText(R.id.tv_connectState, R.string.connected);
-            } else if (item.getDevice().connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
-                holder.setText(R.id.tv_connectState, R.string.connecting);
-            } else if (item.getDevice().connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
+            if (item.getDevice() != null) {
+                if (item.getDevice().connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+                    holder.setText(R.id.tv_connectState, R.string.connected);
+                } else if (item.getDevice().connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
+                    holder.setText(R.id.tv_connectState, R.string.connecting);
+                } else if (item.getDevice().connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
+                    holder.setText(R.id.tv_connectState, R.string.disconnect);
+                }
+            } else {
                 holder.setText(R.id.tv_connectState, R.string.disconnect);
+                DBManager.getInstance(mContext).deleteDeviceSettings(mUserid, item.getMac());
+                loadDeviceList();
             }
             String usePos = item.getUsePos();//(String) item.Setting().get(Contacts.DEV_USE_POS, "");
             if (usePos != null && usePos.trim().length() > 0) {

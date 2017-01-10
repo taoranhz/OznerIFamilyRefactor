@@ -60,7 +60,7 @@ import rx.Subscriber;
 public class MainActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener, ILeftMenu {
     private static final String TAG = "MainActivity";
     private static final String NoDeviceTag = "nodevicetag";
-//    @InjectView(R.id.title)
+    //    @InjectView(R.id.title)
 //    TextView customTitle;
 //    @InjectView(R.id.toolbar)
 //    Toolbar toolbar;
@@ -109,9 +109,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
     /**
      * 初始化toolbar切换按钮
+     *
      * @param toolbar
      */
-    public void initActionBarToggle(Toolbar toolbar){
+    public void initActionBarToggle(Toolbar toolbar) {
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.setDrawerListener(toggle);

@@ -332,10 +332,9 @@ public class AirVerPurifierFragment extends DeviceFragment {
                         tvAirQuality.setText(R.string.bads);
                         break;
                     default:
-                        tvAirQuality.setText(R.string.state_null);
+                        tvAirQuality.setText(netWeather.getQlty());
                         break;
                 }
-
             }
         } catch (Exception ex) {
             Log.e(TAG, "refreshMainOutDoorInfo_Ex: " + ex.getMessage());
@@ -963,11 +962,16 @@ public class AirVerPurifierFragment extends DeviceFragment {
 //        }
     }
 
+
     @Override
     public void onDetach() {
-//        if (isDetached()) {
-        setToolbarColor(R.color.colorAccent);
-        setBarColor(R.color.colorAccent);
+//        if (!isDetached()) {
+        try {
+            setToolbarColor(R.color.colorAccent);
+            setBarColor(R.color.colorAccent);
+        } catch (Exception ex) {
+
+        }
 //        }
         System.gc();
         super.onDetach();
