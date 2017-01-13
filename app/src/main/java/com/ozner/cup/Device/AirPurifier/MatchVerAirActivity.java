@@ -128,7 +128,7 @@ public class MatchVerAirActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_ver_air);
         ButterKnife.inject(this);
-        mUserid = UserDataPreference.GetUserData(this,UserDataPreference.UserId,"");
+        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
         monitor = new Monitor();
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
@@ -315,7 +315,7 @@ public class MatchVerAirActivity extends BaseActivity {
                     }
                     device.updateSettings();
 
-                    saveDeviceToDB(mUserid,device);
+                    saveDeviceToDB(mUserid, device);
                 } else {
                     if (BuildConfig.DEBUG)
                         Log.e(TAG, "saveDevice: devcie is null");
@@ -612,9 +612,11 @@ public class MatchVerAirActivity extends BaseActivity {
                 @Override
                 public void run() {
                     if (io != null) {
-                        mDevAdpater.clear();
-                        mDevAdpater.addItem(io);
-                        mDevAdpater.setDefaultClick(0);
+//                        mDevAdpater.clear();
+                        if (!mDevAdpater.hasDevice(io)) {
+                            mDevAdpater.addItem(io);
+                            mDevAdpater.setDefaultClick(0);
+                        }
                         showFoundDevice();
                     } else {
                         showMatchFail();

@@ -2,6 +2,7 @@ package com.ozner.cup.Device.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import java.util.List;
  */
 
 public class FoundDevcieAdapter extends RecyclerView.Adapter<FoundDeviceHolder> {
+    private static final String TAG = "FoundDevcieAdapter";
     private WeakReference<Context> mContext;
     private List<BaseDeviceIO> deviceIoList;
     private int selPos = -1;
@@ -34,6 +36,7 @@ public class FoundDevcieAdapter extends RecyclerView.Adapter<FoundDeviceHolder> 
 
     /**
      * 设置默认选中
+     *
      * @param pos
      */
     public void setDefaultClick(int pos) {
@@ -61,6 +64,10 @@ public class FoundDevcieAdapter extends RecyclerView.Adapter<FoundDeviceHolder> 
         this.notifyDataSetChanged();
     }
 
+    public boolean hasDevice(BaseDeviceIO deviceIo) {
+        return deviceIoList.contains(deviceIo);
+    }
+
     public void addItem(BaseDeviceIO deviceIO) {
         deviceIoList.add(deviceIO);
         this.notifyDataSetChanged();
@@ -79,10 +86,12 @@ public class FoundDevcieAdapter extends RecyclerView.Adapter<FoundDeviceHolder> 
     @Override
     public void onBindViewHolder(FoundDeviceHolder holder, final int position) {
         BaseDeviceIO deviceIO = deviceIoList.get(position);
+
         holder.iv_deviceIcon.setOnClickListener(new MyClickListener(this, position));
         if (itemWidth > 0) {
             holder.llay_root.setLayoutParams(new LinearLayout.LayoutParams(itemWidth, LinearLayout.LayoutParams.WRAP_CONTENT));
         }
+        Log.e(TAG, "onBindViewHolder: selPos:" + selPos + " ,curPos:" + position);
 
         if (selPos == position) {
             holder.rb_check.setChecked(true);
@@ -116,6 +125,7 @@ public class FoundDevcieAdapter extends RecyclerView.Adapter<FoundDeviceHolder> 
         @Override
         public void onClick(View v) {
             selPos = position;
+            Log.e(TAG, "onClick: selPos:" + selPos);
             tempAdaper.notifyDataSetChanged();
             if (mClickListenr != null) {
                 mClickListenr.onItemClick(position, deviceIoList.get(position));

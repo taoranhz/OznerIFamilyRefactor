@@ -142,7 +142,7 @@ public class MatchCupActivity extends BaseActivity {
      */
     private void loadFoundDevices() {
         try {
-            mDevAdpater.clear();
+//            mDevAdpater.clear();
             if (OznerDeviceManager.Instance() != null) {
                 BaseDeviceIO[] deviceIOs = null;
                 try {
@@ -159,7 +159,8 @@ public class MatchCupActivity extends BaseActivity {
                                 BluetoothIO bluetoothIO = (BluetoothIO) device;
                                 //检查水杯处于start模式
                                 if (Cup.isBindMode(bluetoothIO))
-                                    mDevAdpater.addItem(device);
+                                    if (!mDevAdpater.hasDevice(device))
+                                        mDevAdpater.addItem(device);
                             }
                         }
                     }

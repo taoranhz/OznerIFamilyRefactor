@@ -1,4 +1,4 @@
-package com.ozner.cup.Device.AirPurifier;
+package com.ozner.cup.Device.ReplenWater;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,13 +20,15 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ozner.AirPurifier.AirPurifierManager;
+import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeterMgr;
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScan;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
@@ -43,10 +45,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-import static com.ozner.cup.R.id.et_device_position;
-
-public class MatchDeskAirActivity extends BaseActivity {
-    private static final String TAG = "MatchDeskAir";
+public class MatchReplenActivity extends BaseActivity {
+    private static final String TAG = "MatchReplenActivity";
     @InjectView(R.id.title)
     TextView title;
     @InjectView(R.id.toolbar)
@@ -57,8 +57,7 @@ public class MatchDeskAirActivity extends BaseActivity {
     ImageButton ibMoreLeft;
     @InjectView(R.id.rv_found_devices)
     RecyclerView rvFoundDevices;
-    @InjectView(R.id.ib_moreRight)
-    ImageButton ibMoreRight;
+
     @InjectView(R.id.llay_found_device)
     LinearLayout llayFoundDevice;
     @InjectView(R.id.iv_match_loading)
@@ -77,16 +76,15 @@ public class MatchDeskAirActivity extends BaseActivity {
     LinearLayout llayMatchFail;
     @InjectView(R.id.et_device_name)
     EditText etDeviceName;
-    @InjectView(et_device_position)
-    EditText etDevicePosition;
-    @InjectView(R.id.iv_place_icon)
-    ImageView ivPlaceIcon;
+    @InjectView(R.id.rg_gender)
+    RadioGroup rgGender;
     @InjectView(R.id.btn_match_success)
     Button btnMatchSuccess;
     @InjectView(R.id.llay_inputInfo)
     LinearLayout llayInputInfo;
     @InjectView(R.id.tv_succes_holder)
     TextView tvSuccesHolder;
+
 
     private boolean isShowFound = false;
     private boolean isSearching = true;
@@ -95,26 +93,34 @@ public class MatchDeskAirActivity extends BaseActivity {
     private Monitor mMonitor;
     private BaseDeviceIO selDeviceIo;
     private String mUserid;
-    private OznerDeviceSettings oznerSetting;
+    private int gender = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_match_desk_air);
+        setContentView(R.layout.activity_match_replen);
         ButterKnife.inject(this);
         mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
         initActionBar();
         initNormalInfo();
         initFoundDeviceView();
         startFindDevice();
-    }
-
-
-    /**
-     * 初始化基本信息
-     */
-    private void initNormalInfo() {
-        etDeviceName.setHint(R.string.input_air_name);
+        rgGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.rb_man:
+                        gender = 1;
+                        break;
+                    case R.id.rb_women:
+                        gender = 0;
+                        break;
+                    default:
+                        gender = 0;
+                        break;
+                }
+            }
+        });
     }
 
     /**
@@ -127,45 +133,12 @@ public class MatchDeskAirActivity extends BaseActivity {
         title.setText(R.string.match_device);
     }
 
-    /**
-     * 初始化RecyleView
-     */
-    private void initFoundDeviceView() {
-        mDevAdpater = new FoundDevcieAdapter(this, R.drawable.found_desk_air_seled, R.drawable.found_desk_air_unsel);
-        mDevAdpater.setOnItemClickListener(new FoundDevcieAdapter.ClientClickListener() {
-            @Override
-            public void onItemClick(int position, BaseDeviceIO deviceIO) {
-                Log.e(TAG, "onItemClick: " + position);
-                selDeviceIo = deviceIO;
-                showEditDeviceInfo();
-            }
-        });
-//        filladapterData();
-        rvFoundDevices.setAdapter(mDevAdpater);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        rvFoundDevices.setLayoutManager(linearLayoutManager);
-    }
 
-    /**
-     * 注册蓝牙监听
-     */
-    private void registerBlueReceiver() {
-        if (mMonitor == null) {
-            mMonitor = new MatchDeskAirActivity.Monitor();
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(BluetoothScan.ACTION_SCANNER_FOUND);
-            this.registerReceiver(mMonitor, filter);
-        }
-    }
-
-    /**
-     * 注销蓝牙监听
-     */
-    private void unRegisterBlueReceiver() {
-        if (mMonitor != null) {
-            this.unregisterReceiver(mMonitor);
-            mMonitor = null;
-        }
+    private void initNormalInfo() {
+        etDeviceName.setHint(R.string.input_replen_name);
+        tvMatchNotice.setText(R.string.replen_match_tips);
+        tvNoticeBottom.setText(R.string.problem_notice_replen);
+//        ivMatchIcon.setImageResource(R.drawable.match_device_replen);
     }
 
 
@@ -184,14 +157,19 @@ public class MatchDeskAirActivity extends BaseActivity {
             }
             if (deviceIOs != null) {
                 for (BaseDeviceIO device : deviceIOs) {
-                    //只添加 台式空净  并且在配对模式
-                    if (AirPurifierManager.IsBluetoothAirPurifier(device.getType())
-                            && OznerDeviceManager.Instance().checkisBindMode(device)) {
-                        if (mDevAdpater.hasDevice(device)) {
-                            mDevAdpater.addItem(device);
+                    //只添加 水探头
+                    if (WaterReplenishmentMeterMgr.IsWaterReplenishmentMeter(device.getType())) {
+                        if (device instanceof BluetoothIO) {
+//                            BluetoothIO bluetoothIO = (BluetoothIO) device;
+                            //检查水探头处于start模式
+//                            if (Tap.isBindMode(bluetoothIO))
+                            if (OznerDeviceManager.Instance().checkisBindMode(device) && !mDevAdpater.hasDevice(device))
+                                mDevAdpater.addItem(device);
                         }
                     }
                 }
+            } else {
+                showToastCenter(R.string.device_disConnect);
             }
         }
 
@@ -215,6 +193,74 @@ public class MatchDeskAirActivity extends BaseActivity {
     }
 
     /**
+     * 初始化RecyleView
+     */
+    private void initFoundDeviceView() {
+        mDevAdpater = new FoundDevcieAdapter(this, R.drawable.found_replen_selected, R.drawable.found_replen_unsel);
+        mDevAdpater.setOnItemClickListener(new FoundDevcieAdapter.ClientClickListener() {
+            @Override
+            public void onItemClick(int position, BaseDeviceIO deviceIO) {
+                Log.e(TAG, "onItemClick: " + position);
+                selDeviceIo = deviceIO;
+                showEditDeviceInfo();
+            }
+        });
+//        filladapterData();
+        rvFoundDevices.setAdapter(mDevAdpater);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        rvFoundDevices.setLayoutManager(linearLayoutManager);
+    }
+
+    @OnClick({R.id.btn_rematch, R.id.btn_match_success})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_rematch:
+                startFindDevice();
+                break;
+            case R.id.btn_match_success:
+                if (selDeviceIo != null) {
+                    saveDevice(selDeviceIo);
+                } else {
+                    Toast.makeText(this, getString(R.string.device_disConnect), Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    /**
+     * 注册蓝牙监听
+     */
+    private void registerBlueReceiver() {
+        if (mMonitor == null) {
+            mMonitor = new Monitor();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(BluetoothScan.ACTION_SCANNER_FOUND);
+            this.registerReceiver(mMonitor, filter);
+        }
+    }
+
+    /**
+     * 注销蓝牙监听
+     */
+    private void unRegisterBlueReceiver() {
+        if (mMonitor != null) {
+            this.unregisterReceiver(mMonitor);
+            mMonitor = null;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                break;
+        }
+        return true;
+    }
+
+
+    /**
      * 保存设备
      *
      * @param deviceIo
@@ -222,12 +268,12 @@ public class MatchDeskAirActivity extends BaseActivity {
     private void saveDevice(BaseDeviceIO deviceIo) {
         try {
             OznerDevice device = OznerDeviceManager.Instance().getDevice(deviceIo);
-            if (device != null && AirPurifierManager.IsBluetoothAirPurifier(device.Type())) {
+            if (device != null && WaterReplenishmentMeterMgr.IsWaterReplenishmentMeter(device.Type())) {
                 OznerDeviceManager.Instance().save(device);
                 if (etDeviceName.getText().length() > 0) {
                     device.Setting().name(etDeviceName.getText().toString().trim());
                 } else {
-                    device.Setting().name(getString(R.string.air_purifier));
+                    device.Setting().name(getString(R.string.water_replen_meter));
                 }
                 device.updateSettings();
                 saveDeviceToDB(mUserid, device);
@@ -253,7 +299,7 @@ public class MatchDeskAirActivity extends BaseActivity {
             oznerSetting.setUserId(userid);
             oznerSetting.setMac(device.Address());
             oznerSetting.setName(device.Setting().name());
-            oznerSetting.setDevicePosition(etDevicePosition.getText().toString().trim());
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_GENDER, gender);
             oznerSetting.setStatus(0);
             oznerSetting.setDevcieType(device.Type());
             DBManager.getInstance(this).updateDeviceSettings(oznerSetting);
@@ -266,18 +312,15 @@ public class MatchDeskAirActivity extends BaseActivity {
     /**
      * 配对界面初始化
      */
-
     private void startFindDevice() {
         llayInputInfo.setVisibility(View.GONE);
         llayMatchFail.setVisibility(View.GONE);
-        tvMatchNotice.setVisibility(View.GONE);
         title.setText(R.string.match_device);
-        tvNoticeBottom.setText(R.string.notice_bottom_air_desk);
         llayFoundDevice.setVisibility(View.INVISIBLE);
         tvMatchType.setVisibility(View.VISIBLE);
         tvMatchType.setText(getString(R.string.matching_bluetooth));
-        tvMatchNotice.setText(getString(R.string.match_notice_tap));
-        ivMatchIcon.setImageResource(R.drawable.match_device_desk_air);
+        tvMatchNotice.setText(getString(R.string.replen_match_tips));
+        ivMatchIcon.setImageResource(R.drawable.match_device_replen);
         ivMatchLoading.setImageResource(R.drawable.match_loading);
         ivMatchLoading.setVisibility(View.VISIBLE);
         ivMatchIcon.setVisibility(View.VISIBLE);
@@ -299,7 +342,7 @@ public class MatchDeskAirActivity extends BaseActivity {
         llayFoundDevice.setVisibility(View.VISIBLE);
         tvMatchNotice.setVisibility(View.INVISIBLE);
         tvMatchType.setVisibility(View.INVISIBLE);
-        ivMatchLoading.setImageResource(R.drawable.found_desk_air_seled);
+        ivMatchLoading.setImageResource(R.drawable.found_replen_selected);
         llayFoundDevice.setVisibility(View.VISIBLE);
         tvSuccesHolder.setVisibility(View.VISIBLE);
     }
@@ -330,7 +373,6 @@ public class MatchDeskAirActivity extends BaseActivity {
 //        isEditShow = true;
         stopRotate();
         title.setText(R.string.match_successed);
-        etDevicePosition.setText(R.string.pos_bedroom);
         llayMatchFail.setVisibility(View.GONE);
         ivMatchIcon.setVisibility(View.GONE);
         tvSuccesHolder.setVisibility(View.GONE);
@@ -338,7 +380,6 @@ public class MatchDeskAirActivity extends BaseActivity {
         tvMatchNotice.setVisibility(View.INVISIBLE);
         llayFoundDevice.setVisibility(View.VISIBLE);
         llayInputInfo.setVisibility(View.VISIBLE);
-
         ivMatchLoading.setImageResource(R.drawable.match_device_successed);
     }
 
@@ -381,7 +422,7 @@ public class MatchDeskAirActivity extends BaseActivity {
     public void StartTime() {
         isSearching = true;
         if (timerCount == null) {
-            timerCount = new MatchDeskAirActivity.TimerCount(30000, 1000);
+            timerCount = new TimerCount(30000, 1000);
             timerCount.start();
         } else {
             StopTime();
@@ -398,45 +439,6 @@ public class MatchDeskAirActivity extends BaseActivity {
         if (timerCount != null) {
             timerCount.cancel();
             timerCount = null;
-        }
-    }
-
-    /**
-     * 测试数据填充
-     */
-    private void filladapterData() {
-        for (int i = 0; i < 5; i++) {
-            BaseDeviceIO io = new BluetoothIO(this, null, null, null, new Date().getTime());
-            mDevAdpater.addItem(io);
-        }
-        int rvWidth = getRVWidth();
-        mDevAdpater.setItemWidth(rvWidth / 3);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                break;
-        }
-        return true;
-    }
-
-    @OnClick({R.id.btn_rematch, R.id.btn_match_success})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btn_rematch:
-                startFindDevice();
-                break;
-            case R.id.btn_match_success:
-                if (selDeviceIo != null) {
-                    saveDevice(selDeviceIo);
-                } else {
-                    Toast.makeText(this, getString(R.string.device_disConnect), Toast.LENGTH_SHORT).show();
-                }
-                break;
         }
     }
 
@@ -460,6 +462,7 @@ public class MatchDeskAirActivity extends BaseActivity {
         super.onDestroy();
     }
 
+
     /**
      * 广播监听
      */
@@ -481,7 +484,7 @@ public class MatchDeskAirActivity extends BaseActivity {
 
         @Override
         public void onFinish() {
-            if (!MatchDeskAirActivity.this.isFinishing() && !MatchDeskAirActivity.this.isDestroyed()) {
+            if (!MatchReplenActivity.this.isFinishing() && !MatchReplenActivity.this.isDestroyed()) {
                 if (mDevAdpater.getItemCount() > 0) {
                     if (!isShowFound)
                         showFoundDevice();

@@ -30,6 +30,9 @@ public class Contacts {
     public final static String DEV_USER_WEIGHT = "device_user_weight";
     //饮水目标
     public final static String DEV_USER_WATER_GOAL = "device_user_water_goal";
+    //补水仪性别
+    public final static String DEV_REPLEN_GENDER = "dev_replen_gender";
+
     //水杯今日状态
     public final static String Cup_Today_Status = "cup_today_status";
     //水探头滤芯开始时间

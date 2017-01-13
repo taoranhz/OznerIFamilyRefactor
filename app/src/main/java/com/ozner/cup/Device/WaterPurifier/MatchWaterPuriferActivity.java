@@ -260,7 +260,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
                         device.Setting().name(getString(R.string.water_purifier));
                     }
                     device.updateSettings();
-                    saveDeviceToDB(mUserid,device);
+                    saveDeviceToDB(mUserid, device);
                 } else {
                     if (BuildConfig.DEBUG)
                         Log.e(TAG, "saveDevice: devcie is null");
@@ -671,9 +671,11 @@ public class MatchWaterPuriferActivity extends BaseActivity {
                 @Override
                 public void run() {
                     if (io != null) {
-                        mDevAdpater.clear();
-                        mDevAdpater.addItem(io);
-                        mDevAdpater.setDefaultClick(0);
+//                        mDevAdpater.clear();
+                        if (!mDevAdpater.hasDevice(io)) {
+                            mDevAdpater.addItem(io);
+                            mDevAdpater.setDefaultClick(0);
+                        }
                         showFoundDevice();
                     } else {
                         showMatchFail();

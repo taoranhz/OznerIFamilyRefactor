@@ -24,6 +24,7 @@ import com.baidu.android.pushservice.PushManager;
 import com.google.gson.JsonObject;
 import com.ozner.AirPurifier.AirPurifierManager;
 import com.ozner.WaterPurifier.WaterPurifierManager;
+import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeterMgr;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
@@ -32,12 +33,14 @@ import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
 import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.Device.AirPurifier.AirDeskPurifierFragment;
 import com.ozner.cup.Device.AirPurifier.AirVerPurifierFragment;
 import com.ozner.cup.Device.Cup.CupFragment;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Device.NoDeviceFragment;
+import com.ozner.cup.Device.ReplenWater.ReplenWaterFragment;
 import com.ozner.cup.Device.Tap.TapFragment;
 import com.ozner.cup.Device.WaterPurifier.WaterPurifierFragment;
 import com.ozner.cup.EShop.EShopFragment;
@@ -294,18 +297,20 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
      *
      * @return
      */
-    private DeviceFragment getDeviceFragment(OznerDevice device) {
+    private DeviceFragment getDeviceFragment(OznerDeviceSettings device) {
         if (device != null) {
-            if (CupManager.IsCup(device.Type())) {
-                return CupFragment.newInstance(device.Address());
-            } else if (TapManager.IsTap(device.Type())) {
-                return TapFragment.newInstance(device.Address());
-            } else if (WaterPurifierManager.IsWaterPurifier(device.Type())) {
-                return WaterPurifierFragment.newInstance(device.Address());
-            } else if (AirPurifierManager.IsWifiAirPurifier(device.Type())) {
-                return AirVerPurifierFragment.newInstance(device.Address());
-            } else if (AirPurifierManager.IsBluetoothAirPurifier(device.Type())) {
-                return AirDeskPurifierFragment.newInstance(device.Address());
+            if (CupManager.IsCup(device.getDevcieType())) {
+                return CupFragment.newInstance(device.getMac());
+            } else if (TapManager.IsTap(device.getDevcieType())) {
+                return TapFragment.newInstance(device.getMac());
+            } else if (WaterPurifierManager.IsWaterPurifier(device.getDevcieType())) {
+                return WaterPurifierFragment.newInstance(device.getMac());
+            } else if (AirPurifierManager.IsWifiAirPurifier(device.getDevcieType())) {
+                return AirVerPurifierFragment.newInstance(device.getMac());
+            } else if (AirPurifierManager.IsBluetoothAirPurifier(device.getDevcieType())) {
+                return AirDeskPurifierFragment.newInstance(device.getMac());
+            } else if (WaterReplenishmentMeterMgr.IsWaterReplenishmentMeter(device.getDevcieType())) {
+                return ReplenWaterFragment.newInstance(device.getMac());
             } else {
                 return NoDeviceFragment.newInstance();
             }
@@ -327,9 +332,18 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 df.setDevice(device);
                 trans.replace(R.id.fg_content, df);
             } else {
-                DeviceFragment newDef = getDeviceFragment(device);
-                devFragmentMap.put(device.Address(), newDef);
-                trans.replace(R.id.fg_content, newDef);
+                OznerDeviceSettings oznerSetting = DBManager.getInstance(MainActivity.this).getDeviceSettings(mUserid,device.Address());
+                if(oznerSetting!=null){
+                    DeviceFragment newDef = getDeviceFragment(oznerSetting);
+                    devFragmentMap.put(device.Address(), newDef);
+                    trans.replace(R.id.fg_content, newDef);
+                }else {
+                    trans.replace(R.id.fg_content, devFragmentMap.get(NoDeviceTag));
+                }
+                
+//                DeviceFragment newDef = getDeviceFragment(device);
+//                devFragmentMap.put(device.Address(), newDef);
+//                trans.replace(R.id.fg_content, newDef);
             }
         } else {
             Log.e(TAG, "showDevice: NoDeviceTag");

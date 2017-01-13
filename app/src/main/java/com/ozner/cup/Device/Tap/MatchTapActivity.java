@@ -157,7 +157,7 @@ public class MatchTapActivity extends BaseActivity {
      * 加载搜索到的设备
      */
     private void loadFoundDevices() {
-        mDevAdpater.clear();
+//        mDevAdpater.clear();
         if (OznerDeviceManager.Instance() != null) {
             BaseDeviceIO[] deviceIOs = null;
             try {
@@ -173,8 +173,10 @@ public class MatchTapActivity extends BaseActivity {
                         if (device instanceof BluetoothIO) {
                             BluetoothIO bluetoothIO = (BluetoothIO) device;
                             //检查水探头处于start模式
-                            if (Tap.isBindMode(bluetoothIO))
-                                mDevAdpater.addItem(device);
+                            if (Tap.isBindMode(bluetoothIO)) {
+                                if (!mDevAdpater.hasDevice(device))
+                                    mDevAdpater.addItem(device);
+                            }
                         }
                     }
                 }

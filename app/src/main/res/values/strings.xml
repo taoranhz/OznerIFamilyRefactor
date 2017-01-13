@@ -106,6 +106,7 @@
     <string name="wifi_connection">WIFI连接</string>
 
     <!--配对-->
+    <string name="replen_match_tips">按开关键5秒，蓝灯闪烁</string>
     <string name="rember_password">下次记住密码</string>
     <string name="match_notice_tap">长按下start按钮3秒</string>
     <string name="matching_bluetooth">正在进行蓝牙配对</string>
@@ -115,6 +116,7 @@
     <string name="match_failed">配对超时</string>
     <string name="common_problem">常见问题</string>
     <string name="problem_notice_tap">您可以检查水探头电量、蓝牙开启状态后再进行配对</string>
+    <string name="problem_notice_replen">您可以检查补水仪蓝牙开启状态后再进行配对</string>
     <string name="input_tap_name">输入水探头名字</string>
     <string name="input_weight">输入体重</string>
     <string name="beat_users">击败了%1$d%%的用户</string>
@@ -122,6 +124,10 @@
     <string name="reverse_cup">请将智能水杯倒置</string>
     <string name="input_cup_name">输入水杯名字</string>
     <string name="input_air_name">输入空气净化器名字</string>
+    <string name="input_replen_name">输入补水仪名字</string>
+    <string name="select_gender_tips">请选择设定您的性别</string>
+    <string name="man">男</string>
+    <string name="women">女</string>
     <string name="office">办公室</string>
     <string name="finish">完成</string>
     <string name="no_success">未成功</string>
@@ -146,6 +152,17 @@
     <string name="matching_wifi">正在进行WiFi配对</string>
 
     <string name="notice_bottom_air_desk">检查滤芯状态和蓝牙开启状态后再尝试配对</string>
+
+    <string name="replen_low_power_tips">电池电量低，请及时充电！！！</string>
+    <string name="replen_click_tips">请点击您想要检测的身体部位</string>
+    <string name="replen_skin_null">您的肤质\t暂无</string>
+    <string name="replen_last_test">上一次检测</string>
+    <string name="replen_average">平均值</string>
+    <string name="replen_test_face_tips">请将补水仪\n放置脸部</string>
+    <string name="replen_test_eye_tips">请将补水仪\n放置眼部</string>
+    <string name="replen_test_hand_tips">请将补水仪\n放置手部</string>
+    <string name="replen_test_neck_tips">请将补水仪\n放置颈部</string>
+
 
     <!--Tds-->
     <string name="tds_months">本月水质纯净指数分布</string>
