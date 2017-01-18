@@ -128,6 +128,14 @@
     <string name="select_gender_tips">请选择设定您的性别</string>
     <string name="man">男</string>
     <string name="women">女</string>
+    <string name="gender">性别</string>
+    <string name="replen_remind">补水提醒</string>
+    <string name="replen_remind_time">补水提醒时间</string>
+    <string name="replen_tips">建议每天补水2-3次</string>
+    <string name="replen_buy_essence">购买精华水</string>
+    <string name="replen_use_replen_tips">坚持使用精华水，能有效改善肌肤状态</string>
+    <string name="replen_use_des">补水仪使用说明</string>
+    <string name="replen_low_power_setting_tips">当电量低于15%时，APP会进行提示！</string>
     <string name="office">办公室</string>
     <string name="finish">完成</string>
     <string name="no_success">未成功</string>
@@ -162,7 +170,24 @@
     <string name="replen_test_eye_tips">请将补水仪\n放置眼部</string>
     <string name="replen_test_hand_tips">请将补水仪\n放置手部</string>
     <string name="replen_test_neck_tips">请将补水仪\n放置颈部</string>
-
+    <string name="replen_water_low">水分太低</string>
+    <string name="dry">干燥</string>
+    <string name="normal">正常</string>
+    <string name="wetness">湿润</string>
+    <string name="replen_test_less_time">您的检测时间未满5秒...</string>
+    <string name="replen_average_value">%1$2.1f%%(%2$d次)</string>
+    <string name="replen_face_notice_dry">脸颊两边皮肤干燥起皮，T区油腻毛孔粗大痘痘横行 脸部亟需补水哦！</string>
+    <string name="replen_face_notice_normal">皮肤不油也不干，脸部缺水问题暂时得到缓解。</string>
+    <string name="replen_face_notice_wetness"> 脸部细腻红润有光泽 补水到位 面色也不一样哦！</string>
+    <string name="replen_eye_notice_dry">眼部肌肤干燥，易出现皱纹及水肿。此处皮肤松弛较难恢复原状态。补水是延缓衰老的根本保障。</string>
+    <string name="replen_eye_notice_normal">眼部现在的皮肤水分属于正常水平，但是略显疲惫，请注意保湿！</string>
+    <string name="replen_eye_notice_wetness">眼部现在的肌肤已经喝饱了水分！请注意保持呦！</string>
+    <string name="replen_hand_notice_dry"> 手部干燥细纹也跑出来啦 手指的肉刺也变多 需要赶快补充水分哦！</string>
+    <string name="replen_hand_notice_normal"> 手部现在的肌肤水份得到补充 果然光滑许多</string>
+    <string name="replen_hand_notice_wetness">手部润滑有弹性 喝饱水的肌肤果然让人爱不释手呢！</string>
+    <string name="replen_neck_notice_dry">颈部组织薄弱，油脂分泌少，水分难以保持，皱纹容易产生，补水显得格外重要！</string>
+    <string name="replen_neck_notice_normal">颈部水份已达标，别让颈纹泄露了你的年龄。</string>
+    <string name="replen_neck_notice_wetness">颈部现在很水润，但不要松懈哦！</string>
 
     <!--Tds-->
     <string name="tds_months">本月水质纯净指数分布</string>

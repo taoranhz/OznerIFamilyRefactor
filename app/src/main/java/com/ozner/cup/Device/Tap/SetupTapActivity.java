@@ -37,8 +37,9 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
+import static com.ozner.cup.Bean.Contacts.PARMS_MAC;
+
 public class SetupTapActivity extends BaseActivity {
-    public static final String PARMS_MAC = "parms_mac";
     private static final String TAG = "SetupTapActivity";
     private final int SET_NAME_REQ_CODE = 0x101;//设置名字请求码
     @InjectView(R.id.title)
@@ -232,7 +233,7 @@ public class SetupTapActivity extends BaseActivity {
                 break;
             case R.id.rlay_device_name:
                 Intent setNameIntent = new Intent(this, SetDeviceNameActivity.class);
-                setNameIntent.putExtra(PARMS_MAC, mac);
+                setNameIntent.putExtra(Contacts.PARMS_MAC, mac);
                 startActivityForResult(setNameIntent, SET_NAME_REQ_CODE);
                 break;
             case R.id.llay_first_time:

@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
@@ -564,10 +563,10 @@ public class TapFragment extends DeviceFragment {
             case R.id.iv_setting:
                 if (mTap != null) {
                     Intent setIntent = new Intent(getContext(), SetupTapActivity.class);
-                    setIntent.putExtra(SetupTapActivity.PARMS_MAC, mTap.Address());
+                    setIntent.putExtra(Contacts.PARMS_MAC, mTap.Address());
                     startActivity(setIntent);
                 } else {
-                    Toast.makeText(getContext(), R.string.Not_found_device, Toast.LENGTH_SHORT).show();
+                    showCenterToast(R.string.Not_found_device);
                 }
                 break;
             case R.id.llay_tds_detail:

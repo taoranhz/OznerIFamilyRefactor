@@ -29,16 +29,20 @@ import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
+import com.ozner.cup.Utils.OznerFileImageHelper;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+
+import static com.ozner.cup.R.id.llay_skin_value;
 
 
 public class ReplenWaterFragment extends DeviceFragment {
@@ -61,7 +65,7 @@ public class ReplenWaterFragment extends DeviceFragment {
     TextView tvSkinState;
     @InjectView(R.id.tv_skin_value)
     TextView tvSkinValue;
-    @InjectView(R.id.llay_skin_value)
+    @InjectView(llay_skin_value)
     LinearLayout llaySkinValue;
     @InjectView(R.id.tv_last_value)
     TextView tvLastValue;
@@ -81,6 +85,8 @@ public class ReplenWaterFragment extends DeviceFragment {
     LinearLayout llaySkinDetail;
     @InjectView(R.id.tv_lowPowerTip)
     TextView tvLowPowerTip;
+    @InjectView(R.id.rlay_skin_value)
+    RelativeLayout rlaySkinValue;
 
     private WaterReplenishmentMeter replenWater;
     private OznerDeviceSettings oznerSetting;
@@ -88,7 +94,22 @@ public class ReplenWaterFragment extends DeviceFragment {
     private ReplenMonitor mMonitor;
     private boolean isWaitTest = false;
     private int gender = 0;
-
+    private int clickPos = -1;
+    /*
+    *当同时拥有开始检测标记和检测结果标记时，代表完成一次检测过程，可以计一次数
+    * 也就是shouldCounter值为3时，进行计数，计数结束后需要将shouldCounter复位
+    */
+    private byte shouldCounter = 0;//是否应该检测计数
+    private double lastFaceMoisValue = 0;
+    private double lastEyeMoisValue = 0;
+    private double lastHandMoisValue = 0;
+    private double lastNeckMoisValue = 0;
+    private float curFaceMoisValue = 0, curFaceOilValue = 0;
+    private float curEyeMoisValue = 0, curEyeOilValue = 0;
+    private float curHandMoisValue = 0, curHandOilValue = 0;
+    private float curNeckMoisValue = 0, curNeckOilValue = 0;
+    private int count = 0;
+    private double totalValue = 0;
     private List<RectF> manClikArea = new ArrayList<>();
     private List<RectF> womenClickArea = new ArrayList<>();
 
@@ -167,7 +188,8 @@ public class ReplenWaterFragment extends DeviceFragment {
                     if (isWaitTest) {
                         resetView();
                     } else {
-                        showWaitTest(generateClickPos(event.getX(), event.getY()));
+                        clickPos = generateClickPos(event.getX(), event.getY());
+                        showWaitTest(clickPos);
                     }
                 }
                 return true;
@@ -180,9 +202,6 @@ public class ReplenWaterFragment extends DeviceFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         ((MainActivity) getActivity()).initActionBarToggle(toolbar);
         resetView();
-//        showTesting();
-//        showWaitTest();
-//        showTestValue();
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -217,45 +236,87 @@ public class ReplenWaterFragment extends DeviceFragment {
 
     @Override
     protected void refreshUIData() {
-        showPowerState();
+        refreshPowerState();
+        refreshConnectState();
+        refreshTestStatus();
     }
 
     /**
-     * 显示电池状态
+     * 刷新测试状态
      */
-    private void showPowerState() {
-        if (replenWater != null && isAdded()) {
-            if (replenWater.status().power()) {
-                int batteryValue = Math.round(replenWater.status().battery() * 100);
-                Log.e(TAG, "showPowerState: batteryValue:" + batteryValue + " ,orgVlue;" + replenWater.status().battery());
-                Log.e(TAG, "showPowerState:toString: " + replenWater.toString());
-                //设置电池电量图标
-                tvLowPowerTip.setVisibility(View.GONE);
-                if (batteryValue == 100) {
-                    ivBatteryIcon.setImageResource(R.drawable.battery100);
-                } else if (batteryValue >= 50 && batteryValue < 100) {
-                    ivBatteryIcon.setImageResource(R.drawable.battery70);
-                } else if (batteryValue > 0 && batteryValue < 50) {
-                    ivBatteryIcon.setImageResource(R.drawable.battery30);
+    private void refreshTestStatus() {
+        if (replenWater != null) {
+            if (isWaitTest) {
+                if (replenWater.status().isTesting()) {
+                    showInTesting();
+                } else if (replenWater.status().testValue().moisture < 0.01) {
+                    showWaitTest(clickPos);
                 }
-                if (batteryValue >= 0 && batteryValue < 15) {
-                    tvLowPowerTip.setVisibility(View.VISIBLE);
+                if (replenWater.status().testValue().moisture > 0) {
+                    showTestValue();
                 }
+            }
+        }
+    }
 
-                //设置电量值，并设置没电时的电量图标
-                if (batteryValue > 0) {
-                    tvBatteryValue.setText(String.valueOf(batteryValue) + "%");
+    /**
+     * 刷新电池状态
+     */
+    private void refreshPowerState() {
+        if (isAdded()) {
+            if (replenWater != null) {
+                if (replenWater.status().power()) {
+                    int batteryValue = Math.round(replenWater.status().battery() * 100);
+                    //设置电池电量图标
+                    tvLowPowerTip.setVisibility(View.GONE);
+                    if (batteryValue == 100) {
+                        ivBatteryIcon.setImageResource(R.drawable.battery100);
+                    } else if (batteryValue >= 50 && batteryValue < 100) {
+                        ivBatteryIcon.setImageResource(R.drawable.battery70);
+                    } else if (batteryValue > 0 && batteryValue < 50) {
+                        ivBatteryIcon.setImageResource(R.drawable.battery30);
+                    }
+                    if (batteryValue >= 0 && batteryValue < 15) {
+                        tvLowPowerTip.setVisibility(View.VISIBLE);
+                    }
+
+                    //设置电量值，并设置没电时的电量图标
+                    if (batteryValue > 0) {
+                        tvBatteryValue.setText(String.valueOf(batteryValue) + "%");
+                    } else {
+                        ivBatteryIcon.setImageResource(R.drawable.battery0);
+                        tvBatteryValue.setText(R.string.state_null);
+                    }
                 } else {
                     ivBatteryIcon.setImageResource(R.drawable.battery0);
                     tvBatteryValue.setText(R.string.state_null);
+//                    LCLogUtils.E(TAG, "refreshPowerState: off");
                 }
-            }else {
-                ivBatteryIcon.setImageResource(R.drawable.battery0);
-                tvBatteryValue.setText(R.string.state_null);
-                LCLogUtils.E(TAG,"showPowerState: off");
+            } else {
+                LCLogUtils.E(TAG, "refreshPowerState: replen is null");
             }
-        } else {
-            LCLogUtils.E(TAG, "showPowerState: replen is null");
+        }
+    }
+
+    /**
+     * 刷新设备连接状态
+     */
+    private void refreshConnectState() {
+        if (isAdded()) {
+            if (replenWater != null) {
+                if (replenWater.connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+                    tvConnectState.setVisibility(View.INVISIBLE);
+                } else if (replenWater.connectStatus().equals(BaseDeviceIO.ConnectStatus.Connecting)) {
+                    tvConnectState.setVisibility(View.VISIBLE);
+                    tvConnectState.setText(R.string.device_connecting);
+                } else if (replenWater.connectStatus().equals(BaseDeviceIO.ConnectStatus.Disconnect)) {
+                    tvConnectState.setVisibility(View.VISIBLE);
+                    tvConnectState.setText(R.string.device_unconnected);
+                }
+            } else {
+                tvConnectState.setVisibility(View.VISIBLE);
+                tvConnectState.setText(R.string.Not_found_device);
+            }
         }
     }
 
@@ -265,7 +326,6 @@ public class ReplenWaterFragment extends DeviceFragment {
      * @param clickView
      */
     private void initManClickArea(View clickView) {
-//        int[] viewSize = getMeasuredWidth(clickView);
         manClikArea.clear();
         //点击脸部区域
         RectF faceRect = new RectF();
@@ -303,8 +363,6 @@ public class ReplenWaterFragment extends DeviceFragment {
      * @param clickView
      */
     private void initWomenClickArea(View clickView) {
-//        int[] viewSize = getMeasuredWidth(clickView);
-        Log.e(TAG, "initWomenClickArea: sizeWidth:" + clickView.getWidth() + " ,sizeHight:" + clickView.getHeight());
         womenClickArea.clear();
         //点击脸部区域
         RectF faceRect = new RectF();
@@ -369,28 +427,28 @@ public class ReplenWaterFragment extends DeviceFragment {
      * 重置页面到最初状态
      */
     private void resetView() {
+        curFaceMoisValue = 0;
+        curEyeMoisValue = 0;
+        curHandMoisValue = 0;
+        curNeckMoisValue = 0;
+        curFaceOilValue = 0;
+        curEyeOilValue = 0;
+        curHandOilValue = 0;
+        curNeckOilValue = 0;
+        shouldCounter = 0;
         isWaitTest = false;
-        if (ivInTesting.getAnimation() != null && ivInTesting.getAnimation().hasStarted()) {
-            ivInTesting.getAnimation().cancel();
-        }
+        ivInTesting.clearAnimation();
+        ivInTesting.setVisibility(View.GONE);
         rlayInTest.setVisibility(View.GONE);
         llaySkinDetail.setVisibility(View.GONE);
         tvNullSkinBtn.setVisibility(View.VISIBLE);
         tvReplenClickTips.setVisibility(View.VISIBLE);
+        rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
 
         if (gender == 0) {
             ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_women_click));
-//            Glide.with(this).load(R.drawable.img_women_click)
-//                    .asBitmap()
-//                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-//                    .into(ivClickImg);
-
         } else {
             ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_man_click));
-//            Glide.with(this).load(R.drawable.img_man_click)
-//                    .asBitmap()
-//                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-//                    .into(ivClickImg);
         }
     }
 
@@ -398,19 +456,21 @@ public class ReplenWaterFragment extends DeviceFragment {
      * 显示正在检测
      */
     private void showInTesting() {
-        if (ivInTesting.getAnimation() == null) {
-            ivInTesting.setAnimation(rotateAnimation);
-        }
-        tvReplenClickTips.setVisibility(View.GONE);
-        llaySkinDetail.setVisibility(View.GONE);
-        llaySkinValue.setVisibility(View.GONE);
-        tvNullSkinBtn.setVisibility(View.VISIBLE);
-        rlayInTest.setVisibility(View.VISIBLE);
-        ivInTesting.setVisibility(View.VISIBLE);
-        tvInTesting.setVisibility(View.VISIBLE);
-        tvInTesting.setText(R.string.in_test);
-        if (ivInTesting.getAnimation() != null && !ivInTesting.getAnimation().hasStarted()) {
-            ivInTesting.getAnimation().start();
+        if (isAdded()) {
+            shouldCounter = 0;
+            shouldCounter |= 0x01;//设置开始检测标记
+            LCLogUtils.E(TAG, "showInTesting:shouldCounter: " + shouldCounter);
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+            tvReplenClickTips.setVisibility(View.GONE);
+            llaySkinValue.setVisibility(View.GONE);
+            tvNullSkinBtn.setVisibility(View.GONE);
+            rlayInTest.setVisibility(View.VISIBLE);
+            ivInTesting.setVisibility(View.VISIBLE);
+            tvInTesting.setVisibility(View.VISIBLE);
+            llaySkinDetail.setVisibility(View.VISIBLE);
+            tvInTesting.setText(R.string.in_test);
+            if (rotateAnimation != null)
+                ivInTesting.startAnimation(rotateAnimation);
         }
     }
 
@@ -418,60 +478,65 @@ public class ReplenWaterFragment extends DeviceFragment {
      * 显示等待检测
      */
     private void showWaitTest(int clickPos) {
-        if (clickPos >= 0 && clickPos < 4) {
-            isWaitTest = true;
-            if (ivInTesting.getAnimation() != null && ivInTesting.getAnimation().hasStarted()) {
-                ivInTesting.getAnimation().cancel();
-            }
-            ivInTesting.setVisibility(View.GONE);
-            llaySkinDetail.setVisibility(View.GONE);
-            llaySkinValue.setVisibility(View.GONE);
-            tvReplenClickTips.setVisibility(View.GONE);
-            tvInTesting.setVisibility(View.VISIBLE);
-            rlayInTest.setVisibility(View.VISIBLE);
-            tvNullSkinBtn.setVisibility(View.VISIBLE);
-
-            switch (clickPos) {
-                case 0:
-                    tvInTesting.setText(R.string.replen_test_face_tips);
-                    if (gender == 0) {
+        if (isAdded()) {
+//            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+            if (clickPos >= 0 && clickPos < 4) {
+                isWaitTest = true;
+                ivInTesting.clearAnimation();
+                ivInTesting.setVisibility(View.GONE);
+                llaySkinValue.setVisibility(View.GONE);
+                tvNullSkinBtn.setVisibility(View.GONE);
+                tvReplenClickTips.setVisibility(View.GONE);
+                tvSkinNotice.setVisibility(View.GONE);
+                tvInTesting.setVisibility(View.VISIBLE);
+                rlayInTest.setVisibility(View.VISIBLE);
+                llaySkinDetail.setVisibility(View.VISIBLE);
+                switch (clickPos) {
+                    case 0:
+                        tvInTesting.setText(R.string.replen_test_face_tips);
+                        if (gender == 0) {
 //                        Glide.with(this).load(R.drawable.img_women_face_click_tip).asBitmap().diskCacheStrategy(DiskCacheStrategy.RESULT).into(ivClickImg);
-                        ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_women_face_click_tip));
-                    } else {
+                            ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_women_face_click_tip));
+                        } else {
 //                        Glide.with(this).load(R.drawable.img_man_face_click_tip).asBitmap().diskCacheStrategy(DiskCacheStrategy.RESULT).into(ivClickImg);
-                        ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_man_face_click_tip));
-                    }
-                    break;
-                case 1:
-                    tvInTesting.setText(R.string.replen_test_eye_tips);
-                    if (gender == 0) {
+                            ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_man_face_click_tip));
+                        }
+                        showFaceValue();
+                        break;
+                    case 1:
+                        tvInTesting.setText(R.string.replen_test_eye_tips);
+                        if (gender == 0) {
 //                        Glide.with(this).load(R.drawable.img_women_eye_click_tip).asBitmap().diskCacheStrategy(DiskCacheStrategy.RESULT).into(ivClickImg);
-                        ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_women_eye_click_tip));
-                    } else {
+                            ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_women_eye_click_tip));
+                        } else {
 //                        Glide.with(this).load(R.drawable.img_man_eye_click_tip).asBitmap().diskCacheStrategy(DiskCacheStrategy.RESULT).into(ivClickImg);
-                        ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_man_eye_click_tip));
-                    }
-                    break;
-                case 2:
-                    tvInTesting.setText(R.string.replen_test_hand_tips);
-                    if (gender == 0) {
+                            ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_man_eye_click_tip));
+                        }
+                        showEyeValue();
+                        break;
+                    case 2:
+                        tvInTesting.setText(R.string.replen_test_hand_tips);
+                        if (gender == 0) {
 //                        Glide.with(this).load(R.drawable.img_women_hand_click_tip).asBitmap().diskCacheStrategy(DiskCacheStrategy.RESULT).into(ivClickImg);
-                        ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_women_hand_click_tip));
-                    } else {
+                            ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_women_hand_click_tip));
+                        } else {
 //                        Glide.with(this).load(R.drawable.img_man_hand_click_tip).asBitmap().diskCacheStrategy(DiskCacheStrategy.RESULT).into(ivClickImg);
-                        ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_man_hand_click_tip));
-                    }
-                    break;
-                case 3:
-                    tvInTesting.setText(R.string.replen_test_neck_tips);
-                    if (gender == 0) {
+                            ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_man_hand_click_tip));
+                        }
+                        showHandValue();
+                        break;
+                    case 3:
+                        tvInTesting.setText(R.string.replen_test_neck_tips);
+                        if (gender == 0) {
 //                        Glide.with(this).load(R.drawable.img_women_neck_click_tips).asBitmap().diskCacheStrategy(DiskCacheStrategy.RESULT).into(ivClickImg);
-                        ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_women_neck_click_tips));
-                    } else {
+                            ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_women_neck_click_tips));
+                        } else {
 //                        Glide.with(this).load(R.drawable.img_man_neck_click_tip).asBitmap().diskCacheStrategy(DiskCacheStrategy.RESULT).into(ivClickImg);
-                        ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_man_neck_click_tip));
-                    }
-                    break;
+                            ivClickImg.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.img_man_neck_click_tip));
+                        }
+                        showNeckValue();
+                        break;
+                }
             }
         }
     }
@@ -480,16 +545,401 @@ public class ReplenWaterFragment extends DeviceFragment {
      * 显示检测结果
      */
     private void showTestValue() {
-        if (ivInTesting.getAnimation() != null && ivInTesting.getAnimation().hasStarted()) {
-            ivInTesting.getAnimation().cancel();
+        if (isAdded()) {
+            if (shouldCounter == 1)
+                shouldCounter |= 0x02;//设置显示检测结果标记
+            LCLogUtils.E(TAG, "showTestValue:shouldCounter: " + shouldCounter);
+            ivInTesting.clearAnimation();
+            tvReplenClickTips.setVisibility(View.GONE);
+            ivInTesting.setVisibility(View.GONE);
+            tvInTesting.setVisibility(View.GONE);
+            tvNullSkinBtn.setVisibility(View.GONE);
+            rlayInTest.setVisibility(View.VISIBLE);
+            llaySkinDetail.setVisibility(View.VISIBLE);
+            llaySkinValue.setVisibility(View.VISIBLE);
+            LCLogUtils.E(TAG, "oznerSetting:" + oznerSetting.getSettings());
+
+            if (replenWater != null) {
+                switch (clickPos) {
+                    case 0://脸
+                        showFaceValue();
+                        break;
+                    case 1://眼
+                        showEyeValue();
+                        break;
+                    case 2://手
+                        showHandValue();
+                        break;
+                    case 3://颈部
+                        showNeckValue();
+                        break;
+                }
+
+            }
         }
-        tvReplenClickTips.setVisibility(View.GONE);
-        ivInTesting.setVisibility(View.GONE);
-        tvInTesting.setVisibility(View.GONE);
-        tvNullSkinBtn.setVisibility(View.GONE);
-        rlayInTest.setVisibility(View.VISIBLE);
-        llaySkinDetail.setVisibility(View.VISIBLE);
-        llaySkinValue.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 显示脸部数据
+     */
+    private void showFaceValue() {
+        try {
+            totalValue = (double) oznerSetting.getAppData(Contacts.DEV_REPLEN_FACE_MOIS_TOTAL);
+            count = (int) oznerSetting.getAppData(Contacts.DEV_REPLEN_FACE_TEST_COUNT);
+        } catch (Exception ex) {
+            count = 0;
+            totalValue = 0;
+        }
+        if (curFaceMoisValue < 0.1) {
+            try {
+                lastFaceMoisValue = Double.parseDouble(String.valueOf(oznerSetting.getAppData(Contacts.DEV_REPLEN_FACE_LAST_MOIS)));
+            } catch (Exception ex) {
+                Log.e(TAG, "showFaceValue_Ex: " + ex.getMessage());
+                lastFaceMoisValue = 0;
+            }
+        }
+//        LCLogUtils.E(TAG, "face_count:" + count + " ,totalValue:" + totalValue);
+
+        if (shouldCounter == 3) {//可以计数
+            shouldCounter = 7;
+            if (replenWater.status().testValue().moisture > 0) {
+                curFaceMoisValue = replenWater.status().testValue().moisture;
+            }
+            if (replenWater.status().testValue().oil > 0) {
+                curFaceOilValue = replenWater.status().testValue().oil;
+            }
+            try {
+                lastFaceMoisValue = Double.parseDouble(String.valueOf(oznerSetting.getAppData(Contacts.DEV_REPLEN_FACE_LAST_MOIS)));
+            } catch (Exception ex) {
+                lastFaceMoisValue = 0;
+            }
+            count++;
+            totalValue += curFaceMoisValue;
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_FACE_TEST_COUNT, count);
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_FACE_LAST_MOIS, curFaceMoisValue);
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_FACE_LAST_OIL, curFaceOilValue);
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_FACE_MOIS_TOTAL, totalValue);
+            DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+        }
+        LCLogUtils.E(TAG, "face_Mois:" + curFaceMoisValue + " ,Oil:" + curFaceOilValue + " ,shouldCounter:" + shouldCounter);
+        if (curFaceMoisValue > 0.1) {
+            tvSkinValue.setText(String.format("%.1f", curFaceMoisValue));
+            llaySkinValue.setVisibility(View.VISIBLE);
+            tvInTesting.setVisibility(View.GONE);
+            tvSkinNotice.setVisibility(View.VISIBLE);
+        } else {
+            llaySkinValue.setVisibility(View.GONE);
+            tvInTesting.setVisibility(View.VISIBLE);
+            tvSkinNotice.setVisibility(View.GONE);
+        }
+
+        if (curFaceMoisValue > 0.1 && curFaceMoisValue <= 32) {
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_orange));
+            tvSkinNotice.setText(R.string.replen_face_notice_dry);
+            tvSkinState.setText(R.string.dry);
+        } else if (curFaceMoisValue > 32 && curFaceMoisValue <= 42) {
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+            tvSkinNotice.setText(R.string.replen_face_notice_normal);
+            tvSkinState.setText(R.string.normal);
+        } else if (curFaceMoisValue > 42) {
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+            tvSkinNotice.setText(R.string.replen_face_notice_wetness);
+            tvSkinState.setText(R.string.wetness);
+        } else {
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+            if (!replenWater.status().isTesting()) {
+                if (shouldCounter == 7 || shouldCounter == 1) {
+                    if (curFaceMoisValue < 0.1 && curFaceMoisValue > -0.1) {
+                        tvInTesting.setText(R.string.replen_test_less_time);
+                    } else if (curFaceMoisValue < -0.1) {
+                        tvInTesting.setText(R.string.replen_water_low);
+                    }
+                }
+            }
+        }
+
+
+        if (lastFaceMoisValue > 0) {
+            tvLastValue.setText(String.format("%.1f%%", lastFaceMoisValue));
+        } else {
+            tvLastValue.setText(R.string.state_null);
+        }
+
+        if (count > 0) {
+            tvSkinAverage.setText(String.format(getString(R.string.replen_average_value), totalValue / count, count));
+        } else {
+            tvSkinAverage.setText(R.string.state_null);
+        }
+    }
+
+    /**
+     * 显示眼部数据
+     */
+
+    private void showEyeValue() {
+        try {
+            totalValue = (double) oznerSetting.getAppData(Contacts.DEV_REPLEN_EYE_MOIS_TOTAL);
+            count = (int) oznerSetting.getAppData(Contacts.DEV_REPLEN_EYE_TEST_COUNT);
+        } catch (Exception ex) {
+            count = 0;
+            totalValue = 0;
+        }
+        if (curEyeMoisValue < 0.1) {
+            try {
+                lastEyeMoisValue = Double.parseDouble(String.valueOf(oznerSetting.getAppData(Contacts.DEV_REPLEN_EYE_LAST_MOIS)));
+            } catch (Exception ex) {
+                lastEyeMoisValue = 0;
+            }
+        }
+//        LCLogUtils.E(TAG, "eye_count:" + count + " ,totalValue:" + totalValue);
+        if (shouldCounter == 3) {//可以计数
+            shouldCounter = 7;
+            if (replenWater.status().testValue().moisture > 0) {
+                curEyeMoisValue = replenWater.status().testValue().moisture;
+            }
+            if (replenWater.status().testValue().oil > 0) {
+                curEyeOilValue = replenWater.status().testValue().oil;
+            }
+            try {
+                lastEyeMoisValue = Double.parseDouble(String.valueOf(oznerSetting.getAppData(Contacts.DEV_REPLEN_EYE_LAST_MOIS)));
+            } catch (Exception ex) {
+                lastFaceMoisValue = 0;
+            }
+
+            count++;
+            totalValue += curEyeMoisValue;
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_EYE_TEST_COUNT, count);
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_EYE_LAST_MOIS, curEyeMoisValue);
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_EYE_LAST_OIL, curEyeOilValue);
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_EYE_MOIS_TOTAL, totalValue);
+            DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+        }
+
+        if (curEyeMoisValue > 0.1) {
+            tvSkinValue.setText(String.format("%.1f", curEyeMoisValue));
+            llaySkinValue.setVisibility(View.VISIBLE);
+            tvInTesting.setVisibility(View.GONE);
+            tvSkinNotice.setVisibility(View.VISIBLE);
+        } else {
+            llaySkinValue.setVisibility(View.GONE);
+            tvInTesting.setVisibility(View.VISIBLE);
+            tvSkinNotice.setVisibility(View.GONE);
+        }
+
+
+        if (curEyeMoisValue > 0.1 && curEyeMoisValue <= 35) {
+            tvSkinState.setText(R.string.dry);
+            tvSkinNotice.setText(R.string.replen_eye_notice_dry);
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_orange));
+        } else if (curEyeMoisValue > 35 && curEyeMoisValue <= 45) {
+            tvSkinState.setText(R.string.normal);
+            tvSkinNotice.setText(R.string.replen_eye_notice_normal);
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+        } else if (curEyeMoisValue > 45) {
+            tvSkinState.setText(R.string.wetness);
+            tvSkinNotice.setText(R.string.replen_eye_notice_wetness);
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+        } else {
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+            if (shouldCounter == 7) {
+                if (curEyeMoisValue < 0.1 && curEyeMoisValue > -0.1) {
+                    tvInTesting.setText(R.string.replen_test_less_time);
+                } else if (curEyeMoisValue < -0.1) {
+                    tvInTesting.setText(R.string.replen_water_low);
+                }
+            }
+        }
+
+        if (lastEyeMoisValue > 0) {
+            tvLastValue.setText(lastEyeMoisValue + "%");
+        } else {
+            tvLastValue.setText(R.string.state_null);
+        }
+
+        if (count > 0) {
+            tvSkinAverage.setText(String.format(getString(R.string.replen_average_value), totalValue / count, count));
+        } else {
+            tvSkinAverage.setText(R.string.state_null);
+        }
+    }
+
+    /**
+     * 显示手部数据
+     */
+    private void showHandValue() {
+        try {
+            totalValue = (double) oznerSetting.getAppData(Contacts.DEV_REPLEN_HAND_MOIS_TOTAL);
+            count = (int) oznerSetting.getAppData(Contacts.DEV_REPLEN_HAND_TEST_COUNT);
+        } catch (Exception ex) {
+            count = 0;
+            totalValue = 0;
+        }
+        if (curHandMoisValue < 0.1) {
+            try {
+                lastHandMoisValue = Double.parseDouble(String.valueOf(oznerSetting.getAppData(Contacts.DEV_REPLEN_HAND_LAST_MOIS)));
+            } catch (Exception ex) {
+                lastHandMoisValue = 0;
+            }
+        }
+//        LCLogUtils.E(TAG, "hand_count:" + count + " ,totalValue:" + totalValue + " ,shouldCounter:" + shouldCounter);
+        if (shouldCounter == 3) {//可以计数
+            shouldCounter = 7;
+            if (replenWater.status().testValue().moisture > 0) {
+                curHandMoisValue = replenWater.status().testValue().moisture;
+            }
+            if (replenWater.status().testValue().oil > 0) {
+                curHandOilValue = replenWater.status().testValue().oil;
+            }
+            try {
+                lastHandMoisValue = Double.parseDouble(String.valueOf(oznerSetting.getAppData(Contacts.DEV_REPLEN_HAND_LAST_MOIS)));
+            } catch (Exception ex) {
+                lastHandMoisValue = 0;
+            }
+            count++;
+            totalValue += curHandMoisValue;
+            totalValue = new BigDecimal(totalValue).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_HAND_TEST_COUNT, count);
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_HAND_LAST_MOIS, curHandMoisValue);
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_HAND_LAST_OIL, curHandOilValue);
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_HAND_MOIS_TOTAL, totalValue);
+            DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+        }
+
+        if (curHandMoisValue > 0.1) {
+            tvSkinValue.setText(String.format("%.1f", curHandMoisValue));
+            llaySkinValue.setVisibility(View.VISIBLE);
+            tvInTesting.setVisibility(View.GONE);
+            tvSkinNotice.setVisibility(View.VISIBLE);
+        } else {
+            llaySkinValue.setVisibility(View.GONE);
+            tvInTesting.setVisibility(View.VISIBLE);
+            tvSkinNotice.setVisibility(View.GONE);
+        }
+
+
+        if (curHandMoisValue > 0.1 && curHandMoisValue <= 30) {
+            tvSkinState.setText(R.string.dry);
+            tvSkinNotice.setText(R.string.replen_hand_notice_dry);
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_orange));
+        } else if (curHandMoisValue > 30 && curHandMoisValue <= 38) {
+            tvSkinState.setText(R.string.normal);
+            tvSkinNotice.setText(R.string.replen_hand_notice_normal);
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+        } else if (curHandMoisValue > 38) {
+            tvSkinState.setText(R.string.wetness);
+            tvSkinNotice.setText(R.string.replen_hand_notice_wetness);
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+        } else {
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+            if (shouldCounter == 7) {
+                if (curHandMoisValue < 0.1 && curHandMoisValue > -0.1) {
+                    tvInTesting.setText(R.string.replen_test_less_time);
+                } else if (curHandMoisValue < -0.1) {
+                    tvInTesting.setText(R.string.replen_water_low);
+                }
+            }
+        }
+
+        if (lastHandMoisValue > 0) {
+            tvLastValue.setText(String.format("%.1f%%", lastHandMoisValue));
+        } else {
+            tvLastValue.setText(R.string.state_null);
+        }
+
+        if (count > 0) {
+            tvSkinAverage.setText(String.format(getString(R.string.replen_average_value), totalValue / count, count));
+        } else {
+            tvSkinAverage.setText(R.string.state_null);
+        }
+    }
+
+    /**
+     * 显示颈部数据
+     */
+    private void showNeckValue() {
+        try {
+            totalValue = (double) oznerSetting.getAppData(Contacts.DEV_REPLEN_NECK_MOIS_TOTAL);
+            count = (int) oznerSetting.getAppData(Contacts.DEV_REPLEN_NECK_TEST_COUNT);
+        } catch (Exception ex) {
+            count = 0;
+            totalValue = 0;
+        }
+        if (curNeckMoisValue < 0.1) {
+            try {
+                lastNeckMoisValue = Double.parseDouble(String.valueOf(oznerSetting.getAppData(Contacts.DEV_REPLEN_NECK_LAST_MOIS)));
+            } catch (Exception ex) {
+                lastNeckMoisValue = 0;
+            }
+        }
+//        LCLogUtils.E(TAG, "neck_count:" + count + " ,totalValue:" + totalValue);
+
+        if (shouldCounter == 3) {//可以计数
+            shouldCounter = 7;
+            if (replenWater.status().testValue().moisture > 0) {
+                curNeckMoisValue = replenWater.status().testValue().moisture;
+            }
+            if (replenWater.status().testValue().oil > 0) {
+                curNeckOilValue = replenWater.status().testValue().oil;
+            }
+            try {
+                lastNeckMoisValue = Double.parseDouble(String.valueOf(oznerSetting.getAppData(Contacts.DEV_REPLEN_NECK_LAST_MOIS)));
+            } catch (Exception ex) {
+                lastNeckMoisValue = 0;
+            }
+            count++;
+            totalValue += curNeckMoisValue;
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_NECK_TEST_COUNT, count);
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_NECK_LAST_MOIS, curNeckMoisValue);
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_NECK_LAST_OIL, curNeckOilValue);
+            oznerSetting.setAppData(Contacts.DEV_REPLEN_NECK_MOIS_TOTAL, totalValue);
+            DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+        }
+
+        if (curNeckMoisValue > 0.1) {
+            tvSkinValue.setText(String.format("%.1f", curNeckMoisValue));
+            llaySkinValue.setVisibility(View.VISIBLE);
+            tvInTesting.setVisibility(View.GONE);
+            tvSkinNotice.setVisibility(View.VISIBLE);
+        } else {
+            llaySkinValue.setVisibility(View.GONE);
+            tvInTesting.setVisibility(View.VISIBLE);
+            tvSkinNotice.setVisibility(View.GONE);
+        }
+
+        if (curNeckMoisValue > 0.1 && curNeckMoisValue <= 35) {
+            tvSkinState.setText(R.string.dry);
+            tvSkinNotice.setText(R.string.replen_neck_notice_dry);
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_orange));
+        } else if (curNeckMoisValue > 35 && curNeckMoisValue <= 45) {
+            tvSkinState.setText(R.string.normal);
+            tvSkinNotice.setText(R.string.replen_neck_notice_normal);
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+        } else if (curNeckMoisValue > 45) {
+            tvSkinState.setText(R.string.wetness);
+            tvSkinNotice.setText(R.string.replen_neck_notice_wetness);
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+        } else {
+            rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
+            if (shouldCounter == 7) {
+                if (curNeckMoisValue < 0.1 && curNeckMoisValue > -0.1) {
+                    tvInTesting.setText(R.string.replen_test_less_time);
+                } else if (curNeckMoisValue < -0.1) {
+                    tvInTesting.setText(R.string.replen_water_low);
+                }
+            }
+        }
+
+        if (lastNeckMoisValue > 0) {
+            tvLastValue.setText(lastNeckMoisValue + "%");
+        } else {
+            tvLastValue.setText(R.string.state_null);
+        }
+
+        if (count > 0) {
+            tvSkinAverage.setText(String.format(getString(R.string.replen_average_value), totalValue / count, count));
+        } else {
+            tvSkinAverage.setText(R.string.state_null);
+        }
     }
 
     @Override
@@ -515,6 +965,13 @@ public class ReplenWaterFragment extends DeviceFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_setting:
+                if (replenWater != null) {
+                    Intent setUpIntent = new Intent(getContext(), SetUpReplenActivity.class);
+                    setUpIntent.putExtra(Contacts.PARMS_MAC, replenWater.Address());
+                    startActivity(setUpIntent);
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
                 break;
             case R.id.tv_null_skin_btn:
                 break;
@@ -532,6 +989,7 @@ public class ReplenWaterFragment extends DeviceFragment {
         filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTING);
         filter.addAction(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED);
         getContext().registerReceiver(mMonitor, filter);
+        LCLogUtils.E(TAG, "registerMonitor");
     }
 
     /**
@@ -539,9 +997,10 @@ public class ReplenWaterFragment extends DeviceFragment {
      */
     private void releaseMonitor() {
         try {
-            if (!isDetached()) {
-                getContext().unregisterReceiver(mMonitor);
-            }
+//            if (!isDetached()) {
+            getContext().unregisterReceiver(mMonitor);
+//            }
+            LCLogUtils.E(TAG, "releaseMonitor");
         } catch (Exception ex) {
 
         }
@@ -559,7 +1018,7 @@ public class ReplenWaterFragment extends DeviceFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-//            Log.e(TAG, "onReceive: " + mCup.toString());
+            Log.e(TAG, "onReceive: " + replenWater.toString() + " ,connectStatus:" + replenWater.connectStatus().toString());
             refreshUIData();
         }
     }

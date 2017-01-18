@@ -269,12 +269,12 @@ public class MatchReplenActivity extends BaseActivity {
         try {
             OznerDevice device = OznerDeviceManager.Instance().getDevice(deviceIo);
             if (device != null && WaterReplenishmentMeterMgr.IsWaterReplenishmentMeter(device.Type())) {
-                OznerDeviceManager.Instance().save(device);
                 if (etDeviceName.getText().length() > 0) {
                     device.Setting().name(etDeviceName.getText().toString().trim());
                 } else {
                     device.Setting().name(getString(R.string.water_replen_meter));
                 }
+                OznerDeviceManager.Instance().save(device);
                 device.updateSettings();
                 saveDeviceToDB(mUserid, device);
             } else {

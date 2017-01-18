@@ -32,7 +32,39 @@ public class Contacts {
     public final static String DEV_USER_WATER_GOAL = "device_user_water_goal";
     //补水仪性别
     public final static String DEV_REPLEN_GENDER = "dev_replen_gender";
-
+    //补水仪上次脸部水分检测结果
+    public final static String DEV_REPLEN_FACE_LAST_MOIS = "dev_replen_face_last_mois";
+    //补水仪上次脸部油分检测结果
+    public final static String DEV_REPLEN_FACE_LAST_OIL = "dev_replen_face_last_oil";
+    //补水仪脸部检测总次数
+    public final static String DEV_REPLEN_FACE_TEST_COUNT = "dev_replen_face_test_count";
+    //补水仪脸部总数据
+    public final static String DEV_REPLEN_FACE_MOIS_TOTAL = "dev_replen_face_mois_total";
+    //补水仪上次眼部水分检测结果
+    public final static String DEV_REPLEN_EYE_LAST_MOIS = "dev_replen_eye_last_mois";
+    //补水仪上次眼部油分检测结果
+    public final static String DEV_REPLEN_EYE_LAST_OIL = "dev_replen_eye_last_oil";
+    //补水仪眼部检测总次数
+    public final static String DEV_REPLEN_EYE_TEST_COUNT = "dev_replen_eye_test_count";
+    //补水仪眼部总数据
+    public final static String DEV_REPLEN_EYE_MOIS_TOTAL = "dev_replen_eye_mois_total";
+    //补水仪上次手部水分检测结果
+    public final static String DEV_REPLEN_HAND_LAST_MOIS = "dev_replen_hand_last_mois";
+    //补水仪上次手部油分检测结果
+    public final static String DEV_REPLEN_HAND_LAST_OIL = "dev_replen_hand_last_oil";
+    //补水仪手部检测总次数
+    public final static String DEV_REPLEN_HAND_TEST_COUNT = "dev_replen_hand_test_count";
+    //补水仪手部总数据
+    public final static String DEV_REPLEN_HAND_MOIS_TOTAL = "dev_replen_hand_mois_total";
+    //补水仪上次手部水分检测结果
+    public final static String DEV_REPLEN_NECK_LAST_MOIS = "dev_replen_hand_last_mois";
+    //补水仪上次手部油分检测结果
+    public final static String DEV_REPLEN_NECK_LAST_OIL = "dev_replen_hand_last_oil";
+    //补水仪手部检测总次数
+    public final static String DEV_REPLEN_NECK_TEST_COUNT = "dev_replen_hand_test_count";
+    //补水仪手部总数据
+    public final static String DEV_REPLEN_NECK_MOIS_TOTAL = "dev_replen_hand_mois_total";
+    
     //水杯今日状态
     public final static String Cup_Today_Status = "cup_today_status";
     //水探头滤芯开始时间

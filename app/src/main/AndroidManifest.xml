@@ -198,6 +198,8 @@
         </activity>
         <activity android:name=".Device.ReplenWater.MatchReplenActivity">
         </activity>
+        <activity android:name=".Device.ReplenWater.SetUpReplenActivity">
+        </activity>
     </application>
 
 </manifest>
