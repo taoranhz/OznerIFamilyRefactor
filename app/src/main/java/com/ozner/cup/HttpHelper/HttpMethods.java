@@ -447,4 +447,47 @@ public class HttpMethods {
 //                .map(new ResultTransFunc1())
                 .subscribe(subscriber);
     }
+
+    /**
+     * 上传补水仪检测数据
+     *
+     * @param usertoken
+     * @param mac        补水仪设备地址
+     * @param oilValue   油性值
+     * @param moisValue  水分值
+     * @param action     检测部位，取值范围如下：
+     *                   脸部：FaceSkinValue,
+     *                   手部：HandSkinValue,
+     *                   眼部：EyesSkinValue,
+     *                   颈部：NeckSkinValue
+     * @param subscriber
+     */
+    public void updateBuShuiYiNumber(String usertoken, String mac, String oilValue, String moisValue, String action, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.updateBuShuiYiNumber(usertoken, mac, oilValue, moisValue, action)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
+
+    /**
+     * 获取补水仪检测历史检测数据
+     *
+     * @param usertoken
+     * @param mac        补水仪mac地址
+     * @param action     检测位置参数，取值范围如下：
+     *                   脸部：FaceSkinValue,
+     *                   手部：HandSkinValue,
+     *                   眼部：EyesSkinValue,
+     *                   颈部：NeckSkinValue
+     * @param subscriber
+     */
+    public void getBuShuiFenBu(String usertoken, String mac, String action, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getBuShuiFenBu(usertoken, mac, action)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
 }

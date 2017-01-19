@@ -308,6 +308,7 @@ public interface OznerHttpService {
 
     /**
      * 提交意见
+     *
      * @param usertoken
      * @param message
      *
@@ -315,10 +316,11 @@ public interface OznerHttpService {
      */
     @FormUrlEncoded
     @POST("OznerServer/SubmitOpinion")
-    Observable<JsonObject> submitOption(@Field("usertoken") String usertoken,@Field("message") String message);
+    Observable<JsonObject> submitOption(@Field("usertoken") String usertoken, @Field("message") String message);
 
     /**
      * 获取最新版本号
+     *
      * @param os
      *
      * @return
@@ -326,5 +328,44 @@ public interface OznerHttpService {
     @FormUrlEncoded
     @POST("OznerServer/GetNewVersion")
     Observable<JsonObject> getNewVersion(@Field("os") String os);
+
+
+    /**
+     * 上传补水仪检测数据
+     *
+     * @param usertoken
+     * @param mac       补水仪设备地址
+     * @param oilValue  油性值
+     * @param moisValue 水分值
+     * @param action    检测部位，取值范围如下：
+     *                  脸部：FaceSkinValue,
+     *                  手部：HandSkinValue,
+     *                  眼部：EyesSkinValue,
+     *                  颈部：NeckSkinValue
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/UpdateBuShuiYiNumber")
+    Observable<JsonObject> updateBuShuiYiNumber(@Field("usertoken") String usertoken, @Field("mac") String mac
+            , @Field("ynumber") String oilValue, @Field("snumber") String moisValue, @Field("action") String action);
+
+
+    /**
+     * 获取补水仪检测历史检测数据
+     *
+     * @param usertoken
+     * @param mac       补水仪mac地址
+     * @param action    检测位置参数，取值范围如下：
+     *                  脸部：FaceSkinValue,
+     *                  手部：HandSkinValue,
+     *                  眼部：EyesSkinValue,
+     *                  颈部：NeckSkinValue
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/GetBuShuiFenBu")
+    Observable<JsonObject> getBuShuiFenBu(@Field("usertoken") String usertoken, @Field("mac") String mac, @Field("myaction") String action);
 
 }

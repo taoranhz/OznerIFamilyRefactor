@@ -20,12 +20,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeter;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.DeviceFragment;
+import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.ProgressSubscriber;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
@@ -41,6 +46,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import rx.functions.Action1;
 
 import static com.ozner.cup.R.id.llay_skin_value;
 
@@ -91,6 +97,7 @@ public class ReplenWaterFragment extends DeviceFragment {
     private WaterReplenishmentMeter replenWater;
     private OznerDeviceSettings oznerSetting;
     private String mUserid;
+    private String mUserToken;
     private ReplenMonitor mMonitor;
     private boolean isWaitTest = false;
     private int gender = 0;
@@ -110,6 +117,9 @@ public class ReplenWaterFragment extends DeviceFragment {
     private float curNeckMoisValue = 0, curNeckOilValue = 0;
     private int count = 0;
     private double totalValue = 0;
+
+    private float oilTotal = 0;//油分总值，从网络获取
+    private int timeTotal = 0;//油分总次数，从网络获取
     private List<RectF> manClikArea = new ArrayList<>();
     private List<RectF> womenClickArea = new ArrayList<>();
 
@@ -126,6 +136,8 @@ public class ReplenWaterFragment extends DeviceFragment {
 
     @Override
     public void setDevice(OznerDevice device) {
+        oilTotal = 0;
+        timeTotal = 0;
         oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, device.Address());
         if (oznerSetting != null) {
             gender = (int) oznerSetting.getAppData(Contacts.DEV_REPLEN_GENDER);
@@ -139,12 +151,14 @@ public class ReplenWaterFragment extends DeviceFragment {
         } else {
             replenWater = (WaterReplenishmentMeter) device;
         }
+//        loadBuShuiFenbu();
         refreshUIData();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         initAnimation();
+        mUserToken = OznerPreference.getUserToken(getContext());
         mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
         try {
             Bundle bundle = getArguments();
@@ -157,7 +171,7 @@ public class ReplenWaterFragment extends DeviceFragment {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
         }
-
+        loadBuShuiFenbu();
         super.onCreate(savedInstanceState);
 
     }
@@ -220,6 +234,7 @@ public class ReplenWaterFragment extends DeviceFragment {
         try {
             setBarColor(R.color.replen_blue_bg);
             setToolbarColor(R.color.replen_blue_bg);
+            showSkinStatus();
         } catch (Exception ex) {
 
         }
@@ -443,6 +458,7 @@ public class ReplenWaterFragment extends DeviceFragment {
         llaySkinDetail.setVisibility(View.GONE);
         tvNullSkinBtn.setVisibility(View.VISIBLE);
         tvReplenClickTips.setVisibility(View.VISIBLE);
+        tvNullSkinBtn.setText(String.format(getString(R.string.replen_skin_null), getString(R.string.state_null)));
         rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
 
         if (gender == 0) {
@@ -617,9 +633,13 @@ public class ReplenWaterFragment extends DeviceFragment {
             totalValue += curFaceMoisValue;
             oznerSetting.setAppData(Contacts.DEV_REPLEN_FACE_TEST_COUNT, count);
             oznerSetting.setAppData(Contacts.DEV_REPLEN_FACE_LAST_MOIS, curFaceMoisValue);
-            oznerSetting.setAppData(Contacts.DEV_REPLEN_FACE_LAST_OIL, curFaceOilValue);
+//            oznerSetting.setAppData(Contacts.DEV_REPLEN_FACE_LAST_OIL, curFaceOilValue);
             oznerSetting.setAppData(Contacts.DEV_REPLEN_FACE_MOIS_TOTAL, totalValue);
             DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+
+            if (curFaceMoisValue > 0) {
+                updateBuShuiYiNumber(String.format("%.2f", curFaceOilValue), String.format("%.2f", curFaceMoisValue), ReplenFenBuAction.FaceSkinValue);
+            }
         }
         LCLogUtils.E(TAG, "face_Mois:" + curFaceMoisValue + " ,Oil:" + curFaceOilValue + " ,shouldCounter:" + shouldCounter);
         if (curFaceMoisValue > 0.1) {
@@ -710,9 +730,13 @@ public class ReplenWaterFragment extends DeviceFragment {
             totalValue += curEyeMoisValue;
             oznerSetting.setAppData(Contacts.DEV_REPLEN_EYE_TEST_COUNT, count);
             oznerSetting.setAppData(Contacts.DEV_REPLEN_EYE_LAST_MOIS, curEyeMoisValue);
-            oznerSetting.setAppData(Contacts.DEV_REPLEN_EYE_LAST_OIL, curEyeOilValue);
+//            oznerSetting.setAppData(Contacts.DEV_REPLEN_EYE_LAST_OIL, curEyeOilValue);
             oznerSetting.setAppData(Contacts.DEV_REPLEN_EYE_MOIS_TOTAL, totalValue);
             DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+
+            if (curEyeMoisValue > 0) {
+                updateBuShuiYiNumber(String.format("%.2f", curEyeOilValue), String.format("%.2f", curEyeMoisValue), ReplenFenBuAction.EyesSkinValue);
+            }
         }
 
         if (curEyeMoisValue > 0.1) {
@@ -800,9 +824,13 @@ public class ReplenWaterFragment extends DeviceFragment {
             totalValue = new BigDecimal(totalValue).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
             oznerSetting.setAppData(Contacts.DEV_REPLEN_HAND_TEST_COUNT, count);
             oznerSetting.setAppData(Contacts.DEV_REPLEN_HAND_LAST_MOIS, curHandMoisValue);
-            oznerSetting.setAppData(Contacts.DEV_REPLEN_HAND_LAST_OIL, curHandOilValue);
+//            oznerSetting.setAppData(Contacts.DEV_REPLEN_HAND_LAST_OIL, curHandOilValue);
             oznerSetting.setAppData(Contacts.DEV_REPLEN_HAND_MOIS_TOTAL, totalValue);
             DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+
+            if (curHandMoisValue > 0) {
+                updateBuShuiYiNumber(String.format("%.2f", curHandOilValue), String.format("%.2f", curHandMoisValue), ReplenFenBuAction.HandSkinValue);
+            }
         }
 
         if (curHandMoisValue > 0.1) {
@@ -890,9 +918,13 @@ public class ReplenWaterFragment extends DeviceFragment {
             totalValue += curNeckMoisValue;
             oznerSetting.setAppData(Contacts.DEV_REPLEN_NECK_TEST_COUNT, count);
             oznerSetting.setAppData(Contacts.DEV_REPLEN_NECK_LAST_MOIS, curNeckMoisValue);
-            oznerSetting.setAppData(Contacts.DEV_REPLEN_NECK_LAST_OIL, curNeckOilValue);
+//            oznerSetting.setAppData(Contacts.DEV_REPLEN_NECK_LAST_OIL, curNeckOilValue);
             oznerSetting.setAppData(Contacts.DEV_REPLEN_NECK_MOIS_TOTAL, totalValue);
             DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+
+            if (curNeckMoisValue > 0) {
+                updateBuShuiYiNumber(String.format("%.2f", curNeckOilValue), String.format("%.2f", curNeckMoisValue), ReplenFenBuAction.NeckSkinValue);
+            }
         }
 
         if (curNeckMoisValue > 0.1) {
@@ -942,6 +974,95 @@ public class ReplenWaterFragment extends DeviceFragment {
         }
     }
 
+    /**
+     * 显示皮肤肤质
+     */
+    private void showSkinStatus() {
+        try {
+            float oilAverage = 0;
+            if (timeTotal > 0) {
+                oilAverage = oilTotal / timeTotal;
+            }
+            if (oilAverage > 0 && oilAverage <= 12) {
+                tvNullSkinBtn.setText(String.format(getString(R.string.replen_skin_null), getString(R.string.replen_skin_oil)));
+            } else if (oilAverage > 12 && oilAverage <= 20) {
+                tvNullSkinBtn.setText(String.format(getString(R.string.replen_skin_null), getString(R.string.replen_skin_neture)));
+            } else if (oilAverage > 20) {
+                tvNullSkinBtn.setText(String.format(getString(R.string.replen_skin_null), getString(R.string.replen_skin_oil)));
+            } else {
+                tvNullSkinBtn.setText(String.format(getString(R.string.replen_skin_null), getString(R.string.state_null)));
+            }
+        } catch (Exception ex) {
+            LCLogUtils.E(TAG, "showSkinStatus:" + ex.getMessage());
+        }
+    }
+
+    /**
+     * 上传补水仪检测数据
+     *
+     * @param oilValue  油分值
+     * @param moisValue 水分值
+     * @param action    检测部位
+     */
+    private void updateBuShuiYiNumber(String oilValue, String moisValue, final String action) {
+        if (replenWater != null) {
+            HttpMethods.getInstance().updateBuShuiYiNumber(mUserToken, replenWater.Address(), oilValue, moisValue, action, new ProgressSubscriber<JsonObject>(getContext(), new Action1<JsonObject>() {
+                @Override
+                public void call(JsonObject jsonObject) {
+                    LCLogUtils.E(TAG, "updateBuShuiYiNumber_" + action + ":" + jsonObject.toString());
+                }
+            }));
+        }
+    }
+
+
+    /**
+     * 加载补水仪历史检测数据
+     * 目前只获取脸部数据
+     */
+    private void loadBuShuiFenbu() {
+        LCLogUtils.E(TAG, "开始加载历史检测数据");
+        if (replenWater != null) {
+            HttpMethods.getInstance().getBuShuiFenBu(mUserToken, replenWater.Address(), ReplenFenBuAction.FaceSkinValue,
+                    new ProgressSubscriber<JsonObject>(getContext(), new Action1<JsonObject>() {
+                        @Override
+                        public void call(JsonObject jsonObject) {
+                            if (jsonObject != null) {
+                                Log.e(TAG, "loadBuShuiFenbu: " + jsonObject.toString());
+                                int state = jsonObject.get("state").getAsInt();
+                                if (state > 0) {
+                                    JsonObject faceData = jsonObject.getAsJsonObject("data").getAsJsonObject("FaceSkinValue");
+                                    if (!faceData.isJsonNull()) {
+                                        JsonArray faceMonthArray = faceData.getAsJsonArray("monty");
+                                        if (!faceMonthArray.isJsonNull()) {
+                                            int arraySize = faceMonthArray.size();
+                                            oilTotal = 0;
+                                            timeTotal = 0;
+                                            /**
+                                             * 皮肤肤质只计算脸部数据
+                                             *
+                                             *数组中是每天测试的平均值以及每天测试的次数，测试的时候会上传当前测试的油性值，服务器计算平均值，并和当天测试次数一起存储；
+                                             *所以计算月数据的时候需要把每天的值统计，然后求平均
+                                             */
+                                            for (int i = 0; i < arraySize; i++) {
+                                                float oil = faceMonthArray.get(i).getAsJsonObject().get("ynumber").getAsFloat();
+                                                int time = faceMonthArray.get(i).getAsJsonObject().get("times").getAsInt();
+                                                oilTotal += oil * time;
+                                                timeTotal += time;
+                                            }
+
+                                            showSkinStatus();
+                                        }
+                                    }
+                                }
+                            } else {
+                                LCLogUtils.E(TAG, "结果为空");
+                            }
+                        }
+                    }));
+        }
+    }
+
     @Override
     public void onStart() {
         registerMonitor();
@@ -974,6 +1095,13 @@ public class ReplenWaterFragment extends DeviceFragment {
                 }
                 break;
             case R.id.tv_null_skin_btn:
+                if (replenWater != null) {
+                    Intent queryIntent = new Intent(getContext(), ReplenQueryActivity.class);
+                    queryIntent.putExtra(Contacts.PARMS_MAC, replenWater.Address());
+                    startActivity(queryIntent);
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
                 break;
         }
     }

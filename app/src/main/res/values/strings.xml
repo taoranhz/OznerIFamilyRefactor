@@ -15,6 +15,7 @@
     <string name="navigation_drawer_close">关闭侧边栏</string>
     <string name="settings">设置</string>
     <string name="PressToExit">再按一次退出程序</string>
+    <string name="times">次</string>
 
     <!--底部菜单-->
     <string name="device">设备</string>
@@ -132,7 +133,6 @@
     <string name="replen_remind">补水提醒</string>
     <string name="replen_remind_time">补水提醒时间</string>
     <string name="replen_tips">建议每天补水2-3次</string>
-    <string name="replen_buy_essence">购买精华水</string>
     <string name="replen_use_replen_tips">坚持使用精华水，能有效改善肌肤状态</string>
     <string name="replen_use_des">补水仪使用说明</string>
     <string name="replen_low_power_setting_tips">当电量低于15%时，APP会进行提示！</string>
@@ -161,9 +161,13 @@
 
     <string name="notice_bottom_air_desk">检查滤芯状态和蓝牙开启状态后再尝试配对</string>
 
+    <string name="replen_query_title">肤质查询</string>
+    <string name="replen_your_skin">您的肤质</string>
+    <string name="replen_never_test">您还从未检测过哦</string>
+
     <string name="replen_low_power_tips">电池电量低，请及时充电！！！</string>
     <string name="replen_click_tips">请点击您想要检测的身体部位</string>
-    <string name="replen_skin_null">您的肤质\t暂无</string>
+    <string name="replen_skin_null">您的肤质\t%s</string>
     <string name="replen_last_test">上一次检测</string>
     <string name="replen_average">平均值</string>
     <string name="replen_test_face_tips">请将补水仪\n放置脸部</string>
@@ -188,6 +192,19 @@
     <string name="replen_neck_notice_dry">颈部组织薄弱，油脂分泌少，水分难以保持，皱纹容易产生，补水显得格外重要！</string>
     <string name="replen_neck_notice_normal">颈部水份已达标，别让颈纹泄露了你的年龄。</string>
     <string name="replen_neck_notice_wetness">颈部现在很水润，但不要松懈哦！</string>
+    <string name="replen_query_data_less">数据累计不足，无法查询你的肤质类型，请再接再励！</string>
+    <string name="replen_test_count">累计检测次数</string>
+    <string name="replen_query_notice">温馨提示：肤质评估仅供参考，涂抹化妆品及其他护理后会影响检测结果。</string>
+    <string name="replen_other_skin_type">其他肤质类型</string>
+    <string name="replen_skin_dry">干性</string>
+    <string name="replen_skin_oil">油性</string>
+    <string name="replen_skin_neture">中性</string>
+    <string name="replen_skin_dry_notice">干性肌肤需要进行深层补水，另外，肌肤营养缺乏会加速保水能力衰弱，定期使用适量净化补水也能改善您的干性特质哦！</string>
+    <string name="replen_skin_neture_notice">您的肌肤正处于相对健康的肤质状态哦，请注意及时补水保湿维持住您吹弹可破的肌肤状态哦！</string>
+    <string name="replen_skin_oil_notice">皮肤通道是先吸收水，再吸收油。当肌底极度缺水干燥的时候，为保护皮肤，油脂才会分泌过盛。水油已严重失衡啦，请注意控油补水！</string>
+    <string name="replen_times_tips">通过数据累计统计，仅供参考。</string>
+    <string name="replen_buy_essence">购买精华水</string>
+    <string name="warm_remind_colon">温馨提醒:</string>
 
     <!--Tds-->
     <string name="tds_months">本月水质纯净指数分布</string>
