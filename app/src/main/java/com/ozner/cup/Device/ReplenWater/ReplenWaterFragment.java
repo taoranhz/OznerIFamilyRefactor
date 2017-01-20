@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeter;
 import com.ozner.cup.Bean.Contacts;
@@ -175,6 +176,7 @@ public class ReplenWaterFragment extends DeviceFragment {
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
         }
         loadBuShuiFenbu();
+        loadTestCount();
         super.onCreate(savedInstanceState);
 
     }
@@ -187,6 +189,7 @@ public class ReplenWaterFragment extends DeviceFragment {
         ButterKnife.inject(this, view);
         toolbar.setTitle("");
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        tvNullSkinBtn.setText(String.format(getString(R.string.replen_skin_null), getString(R.string.state_null)));
 
         ivClickImg.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -1016,6 +1019,54 @@ public class ReplenWaterFragment extends DeviceFragment {
                     LCLogUtils.E(TAG, "updateBuShuiYiNumber_" + action + ":" + jsonObject.toString());
                 }
             }));
+        }
+    }
+
+    /**
+     * 从网络加载检测次数
+     */
+    private void loadTestCount() {
+        if (replenWater != null) {
+            HttpMethods.getInstance().getTimesCountBuShui(mUserToken, replenWater.Address(),
+                    new ProgressSubscriber<JsonObject>(getContext(), new Action1<JsonObject>() {
+                        @Override
+                        public void call(JsonObject jsonObject) {
+                            if (jsonObject != null && jsonObject.get("state").getAsInt() > 0) {
+                                JsonArray dataArray = jsonObject.getAsJsonArray("data");
+                                if (!dataArray.isJsonNull() && dataArray.size() > 0) {
+                                    for (JsonElement element : dataArray) {
+                                        JsonObject data = element.getAsJsonObject();
+                                        switch (data.get("action").getAsString()) {
+                                            case ReplenFenBuAction.FaceSkinValue:
+                                                if (oznerSetting != null) {
+                                                    oznerSetting.setAppData(Contacts.DEV_REPLEN_FACE_TEST_COUNT, data.get("times").getAsInt());
+                                                    DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+                                                }
+                                                break;
+                                            case ReplenFenBuAction.EyesSkinValue:
+                                                if (oznerSetting != null) {
+                                                    oznerSetting.setAppData(Contacts.DEV_REPLEN_EYE_TEST_COUNT, data.get("times").getAsInt());
+                                                    DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+                                                }
+                                                break;
+                                            case ReplenFenBuAction.HandSkinValue:
+                                                if (oznerSetting != null) {
+                                                    oznerSetting.setAppData(Contacts.DEV_REPLEN_HAND_TEST_COUNT, data.get("times").getAsInt());
+                                                    DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+                                                }
+                                                break;
+                                            case ReplenFenBuAction.NeckSkinValue:
+                                                if (oznerSetting != null) {
+                                                    oznerSetting.setAppData(Contacts.DEV_REPLEN_NECK_TEST_COUNT, data.get("times").getAsInt());
+                                                    DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+                                                }
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }));
         }
     }
 
