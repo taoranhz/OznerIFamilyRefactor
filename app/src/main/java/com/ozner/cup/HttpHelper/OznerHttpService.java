@@ -362,10 +362,25 @@ public interface OznerHttpService {
      *                  眼部：EyesSkinValue,
      *                  颈部：NeckSkinValue
      *
-     * @return
+     * @return 返回数据示例：{"state":1,"data":{"FaceSkinValue":{"week":[{"id":235,"userid":"b376615c-0718-43b4-9103-d3906d02d2b9","mac":"E2:68:46:AC:F7:88","ynumber":14.05,"snumber":32.6,"action":"FaceSkinValue","times":2,"updatetime":"/Date(1484755200000)/"},{"id":236,"userid":"b376615c-0718-43b4-9103-d3906d02d2b9","mac":"E2:68:46:AC:F7:88","ynumber":16.975,"snumber":38.475,"action":"FaceSkinValue","times":2,"updatetime":"/Date(1484841600000)/"}],"monty":[{"id":235,"userid":"b376615c-0718-43b4-9103-d3906d02d2b9","mac":"E2:68:46:AC:F7:88","ynumber":14.05,"snumber":32.6,"action":"FaceSkinValue","times":2,"updatetime":"/Date(1484755200000)/"},{"id":236,"userid":"b376615c-0718-43b4-9103-d3906d02d2b9","mac":"E2:68:46:AC:F7:88","ynumber":16.975,"snumber":38.475,"action":"FaceSkinValue","times":2,"updatetime":"/Date(1484841600000)/"}]}}}
      */
     @FormUrlEncoded
     @POST("OznerServer/GetBuShuiFenBu")
     Observable<JsonObject> getBuShuiFenBu(@Field("usertoken") String usertoken, @Field("mac") String mac, @Field("myaction") String action);
+
+
+    /**
+     * 肤质详情页检测总次数
+     *
+     * @param usertoken
+     * @param mac
+     *
+     * @return 返回数据示例：{"state":3,"data":[{"id":138,"userid":"b376615c-0718-43b4-9103-d3906d02d2b9","mac":"E2:68:46:AC:F7:88","ynumber":null,"snumber":null,"times":4,"action":"FaceSkinValue","updatetime":"/Date(1484809092587)/"},{"id":139,"userid":"b376615c-0718-43b4-9103-d3906d02d2b9","mac":"E2:68:46:AC:F7:88","ynumber":null,"snumber":null,"times":1,"action":"EyesSkinValue","updatetime":"/Date(1484879958607)/"},{"id":140,"userid":"b376615c-0718-43b4-9103-d3906d02d2b9","mac":"E2:68:46:AC:F7:88","ynumber":null,"snumber":null,"times":1,"action":"NeckSkinValue","updatetime":"/Date(1484880218780)/"}]}
+     *
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/GetTimesCountBuShui")
+    Observable<JsonObject> getTimesCountBuShui(@Field("usertoken") String usertoken, @Field("mac") String mac);
+
 
 }

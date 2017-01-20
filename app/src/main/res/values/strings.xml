@@ -205,6 +205,7 @@
     <string name="replen_times_tips">通过数据累计统计，仅供参考。</string>
     <string name="replen_buy_essence">购买精华水</string>
     <string name="warm_remind_colon">温馨提醒:</string>
+    <string name="replen_detail_title">智能补水仪详情</string>
 
     <!--Tds-->
     <string name="tds_months">本月水质纯净指数分布</string>

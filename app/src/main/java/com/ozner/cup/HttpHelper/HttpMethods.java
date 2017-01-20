@@ -490,4 +490,20 @@ public class HttpMethods {
 //                .map(new ResultTransFunc1())
                 .subscribe(subscriber);
     }
+
+
+    /**
+     * 肤质查询页检测总次数
+     *
+     * @param usertoken
+     * @param mac
+     * @param subscriber
+     */
+    public void getTimesCountBuShui(String usertoken, String mac, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getTimesCountBuShui(usertoken, mac)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
 }

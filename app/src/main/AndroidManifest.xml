@@ -202,6 +202,8 @@
         </activity>
         <activity android:name=".Device.ReplenWater.ReplenQueryActivity">
         </activity>
+        <activity android:name=".Device.ReplenWater.ReplenDetailActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -102,10 +102,13 @@ public class ReplenWaterFragment extends DeviceFragment {
     private boolean isWaitTest = false;
     private int gender = 0;
     private int clickPos = -1;
-    /*
-    *当同时拥有开始检测标记和检测结果标记时，代表完成一次检测过程，可以计一次数
-    * 也就是shouldCounter值为3时，进行计数，计数结束后需要将shouldCounter复位
-    */
+    /**
+     * 开始检测标记shouldCounter = 1，结束检测标记shouldCounter = 7
+     * 当同时拥有开始检测标记和检测结果标记时，代表完成一次检测过程，可以计一次数
+     * 也就是shouldCounter值为3时，进行计数，
+     * 计数结束后将shouldCounter置为7，用来防止误判
+     * 当shouldCounter为1或者7时，用来检测时间是否到5秒
+     */
     private byte shouldCounter = 0;//是否应该检测计数
     private double lastFaceMoisValue = 0;
     private double lastEyeMoisValue = 0;
@@ -234,7 +237,7 @@ public class ReplenWaterFragment extends DeviceFragment {
         try {
             setBarColor(R.color.replen_blue_bg);
             setToolbarColor(R.color.replen_blue_bg);
-            showSkinStatus();
+//            showSkinStatus();
         } catch (Exception ex) {
 
         }
@@ -458,7 +461,8 @@ public class ReplenWaterFragment extends DeviceFragment {
         llaySkinDetail.setVisibility(View.GONE);
         tvNullSkinBtn.setVisibility(View.VISIBLE);
         tvReplenClickTips.setVisibility(View.VISIBLE);
-        tvNullSkinBtn.setText(String.format(getString(R.string.replen_skin_null), getString(R.string.state_null)));
+//        tvNullSkinBtn.setText(String.format(getString(R.string.replen_skin_null), getString(R.string.state_null)));
+//        showSkinStatus();
         rlayInTest.setBackground(OznerFileImageHelper.readBitDrawable(getContext(), R.drawable.replen_test_blue));
 
         if (gender == 0) {
@@ -1082,7 +1086,7 @@ public class ReplenWaterFragment extends DeviceFragment {
         ButterKnife.reset(this);
     }
 
-    @OnClick({R.id.iv_setting, R.id.tv_null_skin_btn})
+    @OnClick({R.id.iv_setting, R.id.tv_null_skin_btn, R.id.llay_skin_detail})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_setting:
@@ -1099,6 +1103,15 @@ public class ReplenWaterFragment extends DeviceFragment {
                     Intent queryIntent = new Intent(getContext(), ReplenQueryActivity.class);
                     queryIntent.putExtra(Contacts.PARMS_MAC, replenWater.Address());
                     startActivity(queryIntent);
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
+                break;
+            case R.id.llay_skin_detail:
+                if (replenWater != null) {
+                    Intent detailIntent = new Intent(getContext(), ReplenDetailActivity.class);
+                    detailIntent.putExtra(Contacts.PARMS_MAC, replenWater.Address());
+                    startActivity(detailIntent);
                 } else {
                     showCenterToast(R.string.Not_found_device);
                 }

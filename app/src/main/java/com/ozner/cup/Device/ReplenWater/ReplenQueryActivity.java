@@ -15,6 +15,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Bean.Contacts;
@@ -68,6 +69,7 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
     private String mUserToken;
     private OznerDeviceSettings oznerSetting;
     private int gender = 0;
+    private int countTotal = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +95,7 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
         }
 
         initView();
-
+        loadTestTimes();
         loadBuShuiFenbu();
     }
 
@@ -137,6 +139,12 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
      */
     private void showData() {
 
+    }
+
+    @Override
+    protected void onResume() {
+        tvTestTime.setText(String.valueOf(countTotal));
+        super.onResume();
     }
 
     @OnClick(R.id.tv_buy_essence_btn)
@@ -215,7 +223,7 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
             } else {
                 tvNeverTest.setText(R.string.replen_never_test);
             }
-            tvTestTime.setText(String.valueOf(timeTotal));
+//            tvTestTime.setText(String.valueOf(timeTotal));
 
             if (oilAverage > 0 && oilAverage <= 12) {
                 //干性皮肤
@@ -260,6 +268,35 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
         } catch (Exception ex) {
             LCLogUtils.E(TAG, "refreshSkinStatus_Ex:" + ex.getMessage());
         }
+    }
+
+    /**
+     * 获取总检测次数
+     */
+    private void loadTestTimes() {
+        HttpMethods.getInstance().getTimesCountBuShui(mUserToken, mac,
+                new ProgressSubscriber<JsonObject>(this, new Action1<JsonObject>() {
+                    @Override
+                    public void call(JsonObject jsonObject) {
+                        LCLogUtils.E(TAG, "loadTestTimes:" + jsonObject.toString());
+                        if (jsonObject != null) {
+                            if (jsonObject.get("state").getAsInt() > 0) {
+                                countTotal = 0;
+                                JsonArray dataArray = jsonObject.getAsJsonArray("data");
+                                if (!dataArray.isJsonNull() && dataArray.size() > 0) {
+                                    for (JsonElement element : dataArray) {
+                                        countTotal += element.getAsJsonObject().get("times").getAsInt();
+                                    }
+                                }
+                                try {
+                                    tvTestTime.setText(String.valueOf(countTotal));
+                                } catch (Exception ex) {
+                                    LCLogUtils.E(TAG, "loadTestTimes_Ex:" + ex.getMessage());
+                                }
+                            }
+                        }
+                    }
+                }));
     }
 
     /**
