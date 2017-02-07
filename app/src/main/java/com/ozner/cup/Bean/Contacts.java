@@ -56,14 +56,14 @@ public class Contacts {
     public final static String DEV_REPLEN_HAND_TEST_COUNT = "dev_replen_hand_test_count";
     //补水仪手部总数据
     public final static String DEV_REPLEN_HAND_MOIS_TOTAL = "dev_replen_hand_mois_total";
-    //补水仪上次手部水分检测结果
+    //补水仪上次颈部水分检测结果
     public final static String DEV_REPLEN_NECK_LAST_MOIS = "dev_replen_hand_last_mois";
-    //补水仪上次手部油分检测结果
+    //补水仪上次颈部油分检测结果
     public final static String DEV_REPLEN_NECK_LAST_OIL = "dev_replen_hand_last_oil";
-    //补水仪手部检测总次数
-    public final static String DEV_REPLEN_NECK_TEST_COUNT = "dev_replen_hand_test_count";
-    //补水仪手部总数据
-    public final static String DEV_REPLEN_NECK_MOIS_TOTAL = "dev_replen_hand_mois_total";
+    //补水仪颈部检测总次数
+    public final static String DEV_REPLEN_NECK_TEST_COUNT = "dev_replen_neck_test_count";
+    //补水仪颈部总数据
+    public final static String DEV_REPLEN_NECK_MOIS_TOTAL = "dev_replen_neck_mois_total";
     
     //水杯今日状态
     public final static String Cup_Today_Status = "cup_today_status";

@@ -240,11 +240,11 @@ public class ReplenWaterFragment extends DeviceFragment {
         try {
             setBarColor(R.color.replen_blue_bg);
             setToolbarColor(R.color.replen_blue_bg);
+            title.setText(oznerSetting.getName());
 //            showSkinStatus();
         } catch (Exception ex) {
 
         }
-        title.setText(getString(R.string.water_replen_meter));
         super.onResume();
     }
 
@@ -782,7 +782,7 @@ public class ReplenWaterFragment extends DeviceFragment {
         }
 
         if (lastEyeMoisValue > 0) {
-            tvLastValue.setText(lastEyeMoisValue + "%");
+            tvLastValue.setText(String.format("%.1f%%", lastEyeMoisValue));
         } else {
             tvLastValue.setText(R.string.state_null);
         }
@@ -969,7 +969,7 @@ public class ReplenWaterFragment extends DeviceFragment {
         }
 
         if (lastNeckMoisValue > 0) {
-            tvLastValue.setText(lastNeckMoisValue + "%");
+            tvLastValue.setText(String.format("%.1f%%", lastNeckMoisValue));
         } else {
             tvLastValue.setText(R.string.state_null);
         }
@@ -1162,6 +1162,7 @@ public class ReplenWaterFragment extends DeviceFragment {
                 if (replenWater != null) {
                     Intent detailIntent = new Intent(getContext(), ReplenDetailActivity.class);
                     detailIntent.putExtra(Contacts.PARMS_MAC, replenWater.Address());
+                    detailIntent.putExtra(Contacts.PARMS_CLICK_POS,clickPos);
                     startActivity(detailIntent);
                 } else {
                     showCenterToast(R.string.Not_found_device);

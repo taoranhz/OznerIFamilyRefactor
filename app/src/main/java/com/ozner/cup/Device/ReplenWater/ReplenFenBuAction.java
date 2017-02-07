@@ -9,7 +9,7 @@ package com.ozner.cup.Device.ReplenWater;
 
 public class ReplenFenBuAction {
     public static final String FaceSkinValue = "FaceSkinValue";//脸部action
-    public static final String HandSkinValue = "handSkinValue";//手部
+    public static final String HandSkinValue = "HandSkinValue";//手部
     public static final String EyesSkinValue = "EyesSkinValue";//眼部
     public static final String NeckSkinValue = "NeckSkinValue";//颈部
 }

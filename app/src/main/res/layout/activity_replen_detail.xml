@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_replen_detail"
     android:layout_width="match_parent"
@@ -9,10 +10,361 @@
     tools:context="com.ozner.cup.Device.ReplenWater.ReplenDetailActivity">
 
     <include layout="@layout/toolbar"/>
-    <TextView
-        android:layout_gravity="center"
-        android:textSize="45dp"
-        android:text="正在完善"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cup_detail_bg"
+                android:orientation="horizontal"
+                android:paddingBottom="15dp"
+                android:paddingTop="10dp">
+
+                <LinearLayout
+                    android:id="@+id/llay_face"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/face"
+                        android:textColor="@color/faq_text_blue"
+                        android:textSize="14dp"/>
+
+                    <ImageView
+                        android:id="@+id/iv_face"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/replen_detail_legend_selector"
+                        android:src="@drawable/replen_face"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llay_hand"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hand"
+                        android:textColor="@color/faq_text_blue"
+                        android:textSize="14dp"/>
+
+                    <ImageView
+                        android:id="@+id/iv_hand"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/replen_detail_legend_selector"
+                        android:src="@drawable/replen_hand"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llay_eye"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/eyes"
+                        android:textColor="@color/faq_text_blue"
+                        android:textSize="14dp"/>
+
+                    <ImageView
+                        android:id="@+id/iv_eye"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/replen_detail_legend_selector"
+                        android:src="@drawable/replen_eye"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llay_neck"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/neck"
+                        android:textColor="@color/faq_text_blue"
+                        android:textSize="14dp"/>
+
+                    <ImageView
+                        android:id="@+id/iv_neck"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/replen_detail_legend_selector"
+                        android:src="@drawable/replen_neck"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cup_detail_bg"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_skin_humidity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/faq_text_blue"
+                    android:textSize="45dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="%"
+                    android:textColor="@color/faq_text_blue"
+                    android:textSize="18dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cup_detail_bg"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/skin_condition"
+                    android:textColor="@color/faq_text_blue"
+                    android:textSize="14dp"/>
+
+                <TextView
+                    android:id="@+id/tv_skin_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/faq_text_blue"
+                    android:textSize="14dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/cup_detail_bg"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/replen_last_test"
+                    android:textColor="@color/replen_label_blue"
+                    android:textSize="12dp"/>
+
+                <TextView
+                    android:id="@+id/tv_last_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/state_null"
+                    android:textColor="@color/replen_value_blue"
+                    android:textSize="16dp"/>
+
+                <TextView
+                    android:layout_width="1px"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@color/replen_value_blue"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/replen_average"
+                    android:textColor="@color/replen_label_blue"
+                    android:textSize="12dp"/>
+
+                <TextView
+                    android:id="@+id/tv_skin_average"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/state_null"
+                    android:textColor="@color/replen_value_blue"
+                    android:textSize="16dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="15dp">
+
+                <TextView
+                    android:id="@+id/tv_skin_part"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/part_face"
+                    android:textColor="@color/faq_text_blue"/>
+
+                <RadioGroup
+                    android:id="@+id/rg_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb_week"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/cup_remind_way_temp"
+                        android:button="@null"
+                        android:checked="true"
+                        android:gravity="center"
+                        android:text="@string/week"
+                        android:textColor="@color/text_light_selector"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_month"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/cup_remind_way_tds"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:text="@string/month"
+                        android:textColor="@color/text_light_selector"/>
+                </RadioGroup>
+
+                <com.ozner.cup.UIView.WaterReplMeterView
+                    android:id="@+id/wrm_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="15dp"
+                    android:minHeight="200dp"/>
+
+                <LinearLayout
+                    android:layout_marginTop="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_skin_oil"
+                            android:textSize="12dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:drawableLeft="@drawable/skin_oily_res"
+                            android:drawablePadding="10dp"
+                            android:drawableRight="@drawable/icon_question"
+                            android:text="@string/replen_oil"
+                            android:textColor="@color/zihong"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_skin_water"
+                            android:textSize="12dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:drawableLeft="@drawable/skin_water_res"
+                            android:drawablePadding="10dp"
+                            android:drawableRight="@drawable/icon_question"
+                            android:text="@string/replen_water"
+                            android:textColor="@color/faq_text_blue"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:textSize="12dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:drawableLeft="@drawable/skin_better_res"
+                            android:drawablePadding="10dp"
+                            android:text="@string/hydra_standard"
+                            android:textColor="@color/line_green"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_marginTop="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="12dp"
+                    android:text="@string/replen_skin_notices"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_margin="25dp"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/tv_chat_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/stroke_unfill_detail_text_bg"
+                android:drawableLeft="@drawable/msg"
+                android:drawablePadding="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="@string/chat"
+                android:textColor="@color/detail_textblue"
+                android:textSize="18dp"/>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

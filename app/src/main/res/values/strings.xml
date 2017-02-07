@@ -165,6 +165,28 @@
     <string name="replen_your_skin">您的肤质</string>
     <string name="replen_never_test">您还从未检测过哦</string>
 
+    <string name="face">脸</string>
+    <string name="eyes">眼</string>
+    <string name="hand">手</string>
+    <string name="neck">颈</string>
+    <string name="part_face">脸部</string>
+    <string name="part_eye">眼部</string>
+    <string name="part_hand">手部</string>
+    <string name="part_neck">颈部</string>
+    <string name="replen_oil">油分</string>
+    <string name="replen_water">水分</string>
+    <string name="hydra_standard">水润标准</string>
+    <string name="skin_condition">今日肌肤状态\t\t</string>
+    <string name="replen_skin_notices">您本周的皮肤水分偏离正常，请及时保湿补水。</string>
+    
+    <string name="water_replenish_oilcontext">\t\t皮肤出油是由于人体皮肤干燥缺水，导致肌肤受损，人体自我修复和保护系统会分泌油脂来保护肌肤！
+        大多数男性肌肤多为油性肌肤，所以要想从根本解决出油问题，需要注意肌肤的补水保湿，这样才能从根本改善和保护受损肌肤。</string>
+    <string name="water_replenish_humtip">(仅供参考)</string>
+
+    <string name="replen_water_introduce" formatted="false">眼部\t35%-45%\n脸部\t32%-42%\n颈部\t35%-45%\n手部\t32%-38%\n(仅供参考)</string>
+    <string name="replen_water_season_tip">不同季节各部分水分数值将有所不同。</string>
+    <string name="replen_water_season_tip_value" formatted="false">夏季水分率正常值相差3%，冬季水分率正常值相差5%。</string>
+    <string name="replen_water_introduce_title">人体部位正常水分率</string>
     <string name="replen_low_power_tips">电池电量低，请及时充电！！！</string>
     <string name="replen_click_tips">请点击您想要检测的身体部位</string>
     <string name="replen_skin_null">您的肤质\t%s</string>

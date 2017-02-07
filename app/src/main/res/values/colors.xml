@@ -13,6 +13,7 @@
     <color name="theme_blue">#5ecffe</color>
 
     <!--App颜色设置-->
+    <color name="line_green">#ff09a110</color>
     <color name="light_green">#ff5aeb97</color>
     <color name="light_black">#292929</color>
     <color name="white">#ffffff</color>
@@ -54,7 +55,7 @@
     <color name="MyCenter_ProgressStart">#ff3387f9</color>
     <color name="MyCenter_ProgressEnd">#fff83636</color>
     <color name="no_fiend_bg">#ffafe0ff</color>
-
+    <color name="zihong">#C33436</color>
     <color name="replen_blue_bg">#ff69b7ff</color>
     <color name="replen_label_blue">#ff8aa9fb</color>
     <color name="replen_value_blue">#ff238fff</color>

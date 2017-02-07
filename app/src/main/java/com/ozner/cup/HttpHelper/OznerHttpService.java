@@ -356,7 +356,7 @@ public interface OznerHttpService {
      *
      * @param usertoken
      * @param mac       补水仪mac地址
-     * @param action    检测位置参数，取值范围如下：
+     * @param action    检测位置参数，取值范围如下：(为空时获取所有部位数据)
      *                  脸部：FaceSkinValue,
      *                  手部：HandSkinValue,
      *                  眼部：EyesSkinValue,

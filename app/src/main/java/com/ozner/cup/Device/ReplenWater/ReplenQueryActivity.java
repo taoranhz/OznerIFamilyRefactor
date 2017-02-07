@@ -134,12 +134,12 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
         }
     }
 
-    /**
-     * 加载数据
-     */
-    private void showData() {
-
-    }
+//    /**
+//     * 加载数据
+//     */
+//    private void showData() {
+//
+//    }
 
     @Override
     protected void onResume() {

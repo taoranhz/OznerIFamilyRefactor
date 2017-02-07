@@ -204,6 +204,10 @@
         </activity>
         <activity android:name=".Device.ReplenWater.ReplenDetailActivity">
         </activity>
+        <activity android:name=".Device.ReplenWater.ReplenOilIntroduceActivity">
+        </activity>
+        <activity android:name=".Device.ReplenWater.ReplenWaterIntroduceActivity">
+        </activity>
     </application>
 
 </manifest>
