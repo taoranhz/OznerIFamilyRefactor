@@ -1,5 +1,6 @@
 package com.ozner.cup.Device.ReplenWater;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -54,6 +55,7 @@ import static com.ozner.cup.R.id.llay_skin_value;
 
 public class ReplenWaterFragment extends DeviceFragment {
     private static final String TAG = "ReplenWaterFragment";
+    private final int SetReqCode = 1;
     @InjectView(R.id.tv_connectState)
     TextView tvConnectState;
     @InjectView(R.id.tv_replen_click_tips)
@@ -1144,7 +1146,7 @@ public class ReplenWaterFragment extends DeviceFragment {
                 if (replenWater != null) {
                     Intent setUpIntent = new Intent(getContext(), SetUpReplenActivity.class);
                     setUpIntent.putExtra(Contacts.PARMS_MAC, replenWater.Address());
-                    startActivity(setUpIntent);
+                    startActivityForResult(setUpIntent, SetReqCode);
                 } else {
                     showCenterToast(R.string.Not_found_device);
                 }
@@ -1162,12 +1164,26 @@ public class ReplenWaterFragment extends DeviceFragment {
                 if (replenWater != null) {
                     Intent detailIntent = new Intent(getContext(), ReplenDetailActivity.class);
                     detailIntent.putExtra(Contacts.PARMS_MAC, replenWater.Address());
-                    detailIntent.putExtra(Contacts.PARMS_CLICK_POS,clickPos);
+                    detailIntent.putExtra(Contacts.PARMS_CLICK_POS, clickPos);
                     startActivity(detailIntent);
                 } else {
                     showCenterToast(R.string.Not_found_device);
                 }
                 break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode == SetReqCode){
+                oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, replenWater.Address());
+                if (oznerSetting != null) {
+                    gender = (int) oznerSetting.getAppData(Contacts.DEV_REPLEN_GENDER);
+                }
+                resetView();
+            }
         }
     }
 

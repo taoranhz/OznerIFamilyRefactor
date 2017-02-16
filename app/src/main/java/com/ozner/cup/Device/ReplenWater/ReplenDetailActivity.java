@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.kayvannj.permission_utils.Func;
 import com.github.kayvannj.permission_utils.PermissionUtil;
@@ -214,7 +213,7 @@ public class ReplenDetailActivity extends BaseActivity {
                 }).onAnyDenied(new Func() {
                     @Override
                     protected void call() {
-                        Toast.makeText(ReplenDetailActivity.this, R.string.permission_call_phone_denied, Toast.LENGTH_SHORT).show();
+                        showToastCenter(R.string.permission_call_phone_denied);
                     }
                 }).ask(1);
     }
@@ -437,7 +436,7 @@ public class ReplenDetailActivity extends BaseActivity {
     private void handleBuShuiFenBuData(JsonObject dataObject, int index) {
         if (index > 3 || index < 0)
             return;
-        LCLogUtils.E(TAG,"index:"+index);
+        LCLogUtils.E(TAG, "index:" + index);
         try {
             Calendar todayCal = Calendar.getInstance();
             Calendar tempCal = Calendar.getInstance();
@@ -474,7 +473,7 @@ public class ReplenDetailActivity extends BaseActivity {
                     JsonObject itemObject = monthArray.get(i).getAsJsonObject();
                     tempCal.setTimeInMillis(DateUtils.formatDateFromString(itemObject.get("updatetime").getAsString()));
                     waterMs[index][tempCal.get(Calendar.DAY_OF_MONTH) - 1] = (int) (itemObject.get("snumber").getAsFloat() + 0.5f);
-                    oilMs[index][tempCal.get(Calendar.DAY_OF_MONTH) - 1] = (int) (itemObject.get("ynumber").getAsFloat()+0.5f);
+                    oilMs[index][tempCal.get(Calendar.DAY_OF_MONTH) - 1] = (int) (itemObject.get("ynumber").getAsFloat() + 0.5f);
                     int times = itemObject.get("times").getAsInt();
                     totalValues[index] += times * (itemObject.get("snumber").getAsFloat());
                     totalCounts[index] += times;

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:toggle="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_set_remind_time"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ozner.cup.Device.ReplenWater.ReplenSettings.SetRemindTimeActivity">
+
+    <include layout="@layout/toolbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
+        >
+
+        <RelativeLayout
+            android:id="@+id/rlay_time1"
+            style="@style/item_click_ripple"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/tv_first_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/time1"
+                android:textColor="@color/light_black"
+                android:textSize="15dp"/>
+
+            <TextView
+                android:layout_below="@+id/tv_first_desc"
+                android:id="@+id/tv_time1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="08:30"
+                android:textSize="15dp"/>
+
+
+            <com.zcw.togglebutton.ToggleButton
+                android:id="@+id/tb_first_switch"
+                android:layout_width="50dp"
+                android:layout_height="25dp"
+                toggle:tbBorderWidth="1px"
+                android:layout_marginRight="15dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                toggle:tbOffBorderColor="@color/colorLine"
+                toggle:tbOffColor="@color/colorLine"
+                toggle:tbOnColor="@color/light_green"
+                toggle:tbSpotColor="@color/white"/>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/colorLine"/>
+
+        <RelativeLayout
+            android:id="@+id/rlay_time2"
+            style="@style/item_click_ripple"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/tv_second_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/time2"
+                android:textColor="@color/light_black"
+                android:textSize="15dp"/>
+
+            <TextView
+                android:layout_below="@+id/tv_second_desc"
+                android:id="@+id/tv_time2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="14:30"
+                android:textSize="15dp"/>
+
+            <com.zcw.togglebutton.ToggleButton
+                android:id="@+id/tb_second_switch"
+                android:layout_width="50dp"
+                android:layout_height="25dp"
+                toggle:tbBorderWidth="1px"
+                android:layout_marginRight="15dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                toggle:tbOffBorderColor="@color/colorLine"
+                toggle:tbOffColor="@color/colorLine"
+                toggle:tbOnColor="@color/light_green"
+                toggle:tbSpotColor="@color/white"/>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/colorLine"/>
+
+        <RelativeLayout
+            android:id="@+id/rlay_time3"
+            style="@style/item_click_ripple"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/tv_three_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/time3"
+                android:textColor="@color/light_black"
+                android:textSize="15dp"/>
+
+            <TextView
+                android:layout_below="@+id/tv_three_desc"
+                android:id="@+id/tv_time3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="20:00"
+                android:textSize="15dp"/>
+
+            <com.zcw.togglebutton.ToggleButton
+                android:id="@+id/tb_three_switch"
+                android:layout_width="50dp"
+                android:layout_height="25dp"
+                toggle:tbBorderWidth="1px"
+                android:layout_marginRight="15dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                toggle:tbOffBorderColor="@color/colorLine"
+                toggle:tbOffColor="@color/colorLine"
+                toggle:tbOnColor="@color/light_green"
+                toggle:tbSpotColor="@color/white"/>
+        </RelativeLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/colorLine"/>
+    </LinearLayout>
+</LinearLayout>

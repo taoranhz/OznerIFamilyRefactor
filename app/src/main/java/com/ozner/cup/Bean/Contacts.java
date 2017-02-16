@@ -57,14 +57,22 @@ public class Contacts {
     //补水仪手部总数据
     public final static String DEV_REPLEN_HAND_MOIS_TOTAL = "dev_replen_hand_mois_total";
     //补水仪上次颈部水分检测结果
-    public final static String DEV_REPLEN_NECK_LAST_MOIS = "dev_replen_hand_last_mois";
+    public final static String DEV_REPLEN_NECK_LAST_MOIS = "dev_replen_neck_last_mois";
     //补水仪上次颈部油分检测结果
-    public final static String DEV_REPLEN_NECK_LAST_OIL = "dev_replen_hand_last_oil";
+    public final static String DEV_REPLEN_NECK_LAST_OIL = "dev_replen_neck_last_oil";
     //补水仪颈部检测总次数
     public final static String DEV_REPLEN_NECK_TEST_COUNT = "dev_replen_neck_test_count";
     //补水仪颈部总数据
     public final static String DEV_REPLEN_NECK_MOIS_TOTAL = "dev_replen_neck_mois_total";
-    
+    //补水仪提醒时间
+    public final static String DEV_REPLEN_REMIND_TIME_1 = "dev_remind_time_1";
+    public final static String DEV_REPLEN_REMIND_TIME_2 = "dev_remind_time_2";
+    public final static String DEV_REPLEN_REMIND_TIME_3 = "dev_remind_time_3";
+    //补水提醒是否启用
+    public final static String DEV_REPLEN_IS_REMIND_1 = "dev_remind_switch_1";
+    public final static String DEV_REPLEN_IS_REMIND_2 = "dev_remind_switch_2";
+    public final static String DEV_REPLEN_IS_REMIND_3 = "dev_remind_switch_3";
+
     //水杯今日状态
     public final static String Cup_Today_Status = "cup_today_status";
     //水探头滤芯开始时间
@@ -133,7 +141,8 @@ public class Contacts {
     //关于净水器
     public static String aboutWaterPurifier = "http://cup.ozner.net/app/gyysj/gyysj.html";
     //关于补水仪
-    public static String aboutWRM = "http://app.ozner.net:888//Public/Index";
+//    public static String aboutWRM = "http://app.ozner.net:888//Public/Index";
+    public static String aboutWRM = "http://app.joyro.com.cn:8282/BeautyInstrument.html";
     //关于立式空净
     public static String aboutAirVer = "file:///android_asset/hz_l.html";
     //关于台式空净

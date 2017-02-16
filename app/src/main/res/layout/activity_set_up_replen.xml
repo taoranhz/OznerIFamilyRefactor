@@ -43,7 +43,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
             android:layout_toLeftOf="@+id/iv_name_right"
-            android:text="智能补水仪(办公室)"/>
+            android:text="智能补水仪"/>
     </RelativeLayout>
 
     <TextView
