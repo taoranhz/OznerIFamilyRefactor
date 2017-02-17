@@ -14,13 +14,13 @@ import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.HttpHelper.ApiException;
 import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
 import com.ozner.cup.R;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import rx.functions.Action1;
 
 public class SendVerifyActivity extends BaseActivity {
     private static final String TAG = "SendVerifyActivity";
@@ -95,9 +95,14 @@ public class SendVerifyActivity extends BaseActivity {
      */
     private void sendMessage(String mobile, String content) {
         HttpMethods.getInstance().addFriend(OznerPreference.getUserToken(this), mobile, content,
-                new ProgressSubscriber<JsonObject>(this, getString(R.string.submiting), false, new Action1<JsonObject>() {
+                new ProgressSubscriber<JsonObject>(this, getString(R.string.submiting), false, new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        showToastCenter(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         if (jsonObject != null) {
                             if (jsonObject.get("state").getAsInt() > 0) {
                                 Intent resIntent = new Intent();
@@ -106,7 +111,12 @@ public class SendVerifyActivity extends BaseActivity {
                                 setResult(RESULT_OK, resIntent);
                                 finish();
                             } else {
-                                showToastCenter(getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
+                                if (jsonObject.get("state").getAsInt() == -10006
+                                        || jsonObject.get("state").getAsInt() == -10007) {
+                                    BaseActivity.reLogin(SendVerifyActivity.this);
+                                } else {
+                                    showToastCenter(getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
+                                }
                             }
                         } else {
                             showToastCenter(R.string.send_status_fail);

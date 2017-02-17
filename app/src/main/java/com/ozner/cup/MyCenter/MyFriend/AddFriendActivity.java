@@ -38,6 +38,7 @@ import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
@@ -49,7 +50,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import rx.functions.Action1;
 
 public class AddFriendActivity extends BaseActivity implements TextView.OnEditorActionListener {
     private static final String TAG = "AddFriendActivity";
@@ -245,9 +245,14 @@ public class AddFriendActivity extends BaseActivity implements TextView.OnEditor
     private void searchFriend(String mobile) {
         searchInfo = null;
         HttpMethods.getInstance().getUserNickImage(OznerPreference.getUserToken(this),
-                mobile, new ProgressSubscriber<JsonObject>(this, getString(R.string.searching), false, new Action1<JsonObject>() {
+                mobile, new ProgressSubscriber<JsonObject>(this, getString(R.string.searching), false, new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        showNoSearchResult();
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         if (jsonObject != null) {
                             if (jsonObject.get("state").getAsInt() > 0) {
                                 JsonArray array = jsonObject.getAsJsonArray("data");
@@ -255,11 +260,18 @@ public class AddFriendActivity extends BaseActivity implements TextView.OnEditor
                                     List<UserInfo> result = new Gson().fromJson(array, new TypeToken<List<UserInfo>>() {
                                     }.getType());
                                     searchInfo = result.get(0);
-                                }
-                                if (searchInfo != null) {
-                                    loadSearchInfo(searchInfo);
+                                    if (searchInfo != null) {
+                                        loadSearchInfo(searchInfo);
+                                    } else {
+                                        showNoSearchResult();
+                                    }
                                 } else {
-                                    showNoSearchResult();
+                                    if (jsonObject.get("state").getAsInt() == -10006
+                                            || jsonObject.get("state").getAsInt() == -10007) {
+                                        BaseActivity.reLogin(AddFriendActivity.this);
+                                    } else {
+                                        showNoSearchResult();
+                                    }
                                 }
                             } else {
                                 showNoSearchResult();
@@ -325,9 +337,14 @@ public class AddFriendActivity extends BaseActivity implements TextView.OnEditor
     private void loadContactFriend(final String jsonMobile) {
         HttpMethods.getInstance().getUserNickImage(OznerPreference.getUserToken(this),
                 jsonMobile,
-                new ProgressSubscriber<JsonObject>(this, new Action1<JsonObject>() {
+                new ProgressSubscriber<JsonObject>(this, new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        showNoContactFriend();
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         if (jsonObject != null) {
                             if (jsonObject.get("state").getAsInt() > 0) {
                                 lvContacts.setVisibility(View.VISIBLE);
@@ -347,7 +364,12 @@ public class AddFriendActivity extends BaseActivity implements TextView.OnEditor
                                     showNoContactFriend();
                                 }
                             } else {
-                                showNoContactFriend();
+                                if (jsonObject.get("state").getAsInt() == -10006
+                                        || jsonObject.get("state").getAsInt() == -10007) {
+                                    BaseActivity.reLogin(AddFriendActivity.this);
+                                } else {
+                                    showNoContactFriend();
+                                }
                             }
                         } else {
                             showNoContactFriend();

@@ -19,13 +19,13 @@ import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.HttpHelper.ApiException;
 import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
 import com.ozner.cup.R;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import rx.functions.Action1;
 
 public class FeedBackActivity extends BaseActivity {
 
@@ -99,9 +99,14 @@ public class FeedBackActivity extends BaseActivity {
      */
     private void submitOptions(String message) {
         HttpMethods.getInstance().submitOption(OznerPreference.getUserToken(this), message,
-                new ProgressSubscriber<JsonObject>(this, getString(R.string.submiting), false, new Action1<JsonObject>() {
+                new ProgressSubscriber<JsonObject>(this, getString(R.string.submiting), false, new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        showToastCenter(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         if (jsonObject != null) {
                             if (jsonObject.get("state").getAsInt() > 0) {
                                 Toast toast = new Toast(FeedBackActivity.this);
@@ -112,7 +117,12 @@ public class FeedBackActivity extends BaseActivity {
                                 toast.show();
                                 FeedBackActivity.this.finish();
                             } else {
-                                showToastCenter(getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
+                                if (jsonObject.get("state").getAsInt() == -10006
+                                        || jsonObject.get("state").getAsInt() == -10007) {
+                                    BaseActivity.reLogin(FeedBackActivity.this);
+                                } else {
+                                    showToastCenter(getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
+                                }
                             }
                         } else {
                             showToastCenter(R.string.submit_fail);

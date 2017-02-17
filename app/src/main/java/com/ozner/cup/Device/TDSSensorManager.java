@@ -6,15 +6,15 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.HttpHelper.ApiException;
 import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
 
 import java.lang.ref.WeakReference;
-
-import rx.functions.Action1;
 
 /**
  * Created by ozner_67 on 2016/12/8.
@@ -50,9 +50,16 @@ public class TDSSensorManager {
     public void updateTds(String mac, String deviceType, String tds, String beforetds, String dsn, final TDSListener listener) {
         HttpMethods.getInstance().updateTDSSensor(OznerPreference.getUserToken(mContext.get())
                 , mac, deviceType, tds, beforetds, dsn
-                , new ProgressSubscriber<JsonObject>(mContext.get(), new Action1<JsonObject>() {
+                , new ProgressSubscriber<JsonObject>(mContext.get(), new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        if (listener != null) {
+                            listener.onFail(e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         Log.e(TAG, "updateTds: " + jsonObject.toString());
                         if (jsonObject != null) {
                             if (jsonObject.get("state").getAsInt() > 0) {
@@ -72,7 +79,10 @@ public class TDSSensorManager {
                                     listener.onSuccess(per);
                                 }
                             } else {
-                                if (listener != null) {
+                                if (jsonObject.get("state").getAsInt() == -10006
+                                        || jsonObject.get("state").getAsInt() == -10007) {
+                                    BaseActivity.reLogin((BaseActivity) mContext.get());
+                                } else if (listener != null) {
                                     listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
                                 }
                             }
@@ -94,9 +104,16 @@ public class TDSSensorManager {
      */
     public void getTdsFriendRank(String rankType, final TDSListener listener) {
         HttpMethods.getInstance().getTdsFriendRank(OznerPreference.getUserToken(mContext.get()), rankType
-                , new ProgressSubscriber<JsonObject>(mContext.get(), new Action1<JsonObject>() {
+                , new ProgressSubscriber<JsonObject>(mContext.get(), new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        if (listener != null) {
+                            listener.onFail(e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         Log.e(TAG, "getTdsFriendRank: " + jsonObject.toString());
                         try {
                             if (jsonObject != null) {
@@ -113,7 +130,10 @@ public class TDSSensorManager {
                                         listener.onSuccess(rank);
                                     }
                                 } else {
-                                    if (listener != null) {
+                                    if (jsonObject.get("state").getAsInt() == -10006
+                                            || jsonObject.get("state").getAsInt() == -10007) {
+                                        BaseActivity.reLogin((BaseActivity) mContext.get());
+                                    } else if (listener != null) {
                                         listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
                                     }
                                 }
@@ -124,6 +144,9 @@ public class TDSSensorManager {
                             }
                         } catch (Exception ex) {
                             Log.e(TAG, "getTdsFriendRank_Ex: " + ex.getMessage());
+                            if (listener != null) {
+                                listener.onFail(ex.getMessage());
+                            }
                         }
                     }
                 }));
@@ -136,9 +159,16 @@ public class TDSSensorManager {
      */
     public void getVolumeFriendRank(final TDSListener listener) {
         HttpMethods.getInstance().getVolumeFriendRank(OznerPreference.getUserToken(mContext.get())
-                , new ProgressSubscriber<JsonObject>(mContext.get(), new Action1<JsonObject>() {
+                , new ProgressSubscriber<JsonObject>(mContext.get(), new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        if (listener != null) {
+                            listener.onFail(e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         Log.e(TAG, "getTdsFriendRank: " + jsonObject.toString());
                         try {
                             if (jsonObject != null) {
@@ -149,7 +179,10 @@ public class TDSSensorManager {
                                         listener.onSuccess(rank);
                                     }
                                 } else {
-                                    if (listener != null) {
+                                    if (jsonObject.get("state").getAsInt() == -10006
+                                            || jsonObject.get("state").getAsInt() == -10007) {
+                                        BaseActivity.reLogin((BaseActivity) mContext.get());
+                                    } else if (listener != null) {
                                         listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
                                     }
                                 }
@@ -160,6 +193,9 @@ public class TDSSensorManager {
                             }
                         } catch (Exception ex) {
                             Log.e(TAG, "getTdsFriendRank_Ex: " + ex.getMessage());
+                            if (listener != null) {
+                                listener.onFail(ex.getMessage());
+                            }
                         }
                     }
                 }));
@@ -176,9 +212,16 @@ public class TDSSensorManager {
      */
     public void updateVolumeSensor(String mac, String type, String volume, final TDSListener listener) {
         HttpMethods.getInstance().updateVolumeSensor(OznerPreference.getUserToken(mContext.get()), mac, type, volume,
-                new ProgressSubscriber<JsonObject>(mContext.get(), new Action1<JsonObject>() {
+                new ProgressSubscriber<JsonObject>(mContext.get(), new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        if (listener != null) {
+                            listener.onFail(e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         Log.e(TAG, "updateVolumeSensor: " + jsonObject.toString());
                         try {
                             if (jsonObject != null) {
@@ -187,7 +230,10 @@ public class TDSSensorManager {
                                         listener.onSuccess(jsonObject.get("state").getAsInt());
                                     }
                                 } else {
-                                    if (listener != null) {
+                                    if (jsonObject.get("state").getAsInt() == -10006
+                                            || jsonObject.get("state").getAsInt() == -10007) {
+                                        BaseActivity.reLogin((BaseActivity) mContext.get());
+                                    } else if (listener != null) {
                                         listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
                                     }
                                 }
@@ -198,6 +244,9 @@ public class TDSSensorManager {
                             }
                         } catch (Exception ex) {
                             Log.e(TAG, "getTdsFriendRank_Ex: " + ex.getMessage());
+                            if (listener != null) {
+                                listener.onFail(ex.getMessage());
+                            }
                         }
                     }
                 }));

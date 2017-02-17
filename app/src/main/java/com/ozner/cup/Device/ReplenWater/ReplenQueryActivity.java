@@ -4,7 +4,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -24,6 +23,7 @@ import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
@@ -31,7 +31,6 @@ import com.ozner.cup.Utils.LCLogUtils;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import rx.functions.Action1;
 
 public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
     private static final String TAG = "ReplenQuery";
@@ -275,9 +274,14 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
      */
     private void loadTestTimes() {
         HttpMethods.getInstance().getTimesCountBuShui(mUserToken, mac,
-                new ProgressSubscriber<JsonObject>(this, new Action1<JsonObject>() {
+                new ProgressSubscriber<JsonObject>(this, new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        LCLogUtils.E(TAG, "loadTestTimes_onError:" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         LCLogUtils.E(TAG, "loadTestTimes:" + jsonObject.toString());
                         if (jsonObject != null) {
                             if (jsonObject.get("state").getAsInt() > 0) {
@@ -293,6 +297,11 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
                                 } catch (Exception ex) {
                                     LCLogUtils.E(TAG, "loadTestTimes_Ex:" + ex.getMessage());
                                 }
+                            }else {
+                                if (jsonObject.get("state").getAsInt() == -10006
+                                        || jsonObject.get("state").getAsInt() == -10007) {
+                                    BaseActivity.reLogin(ReplenQueryActivity.this);
+                                }
                             }
                         }
                     }
@@ -306,11 +315,16 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
     private void loadBuShuiFenbu() {
         LCLogUtils.E(TAG, "开始加载历史检测数据");
         HttpMethods.getInstance().getBuShuiFenBu(mUserToken, mac, ReplenFenBuAction.FaceSkinValue,
-                new ProgressSubscriber<JsonObject>(this, new Action1<JsonObject>() {
+                new ProgressSubscriber<JsonObject>(this, new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        LCLogUtils.E(TAG, "loadBuShuiFenbu_onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         if (jsonObject != null) {
-                            Log.e(TAG, "loadBuShuiFenbu: " + jsonObject.toString());
+                            LCLogUtils.E(TAG, "loadBuShuiFenbu: " + jsonObject.toString());
                             int state = jsonObject.get("state").getAsInt();
                             if (state > 0) {
                                 JsonObject faceData = jsonObject.getAsJsonObject("data").getAsJsonObject("FaceSkinValue");
@@ -335,6 +349,11 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
 
                                         refreshSkinStatus(oilTotal, timeTotal);
                                     }
+                                }
+                            }else {
+                                if (jsonObject.get("state").getAsInt() == -10006
+                                        || jsonObject.get("state").getAsInt() == -10007) {
+                                    BaseActivity.reLogin(ReplenQueryActivity.this);
                                 }
                             }
                         } else {

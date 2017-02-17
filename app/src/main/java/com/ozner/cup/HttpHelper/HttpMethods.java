@@ -80,7 +80,7 @@ public class HttpMethods {
         oznerHttpService.getPhoneCode(phone)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(new ResultTransFunc1())
+//                .map(new ResultTransFunc1())
                 .subscribe(subscriber);
     }
 
@@ -94,7 +94,7 @@ public class HttpMethods {
         oznerHttpService.getVoicePhoneCode(phone)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(new ResultTransFunc1())
+//                .map(new ResultTransFunc1())
                 .subscribe(subscriber);
     }
 
@@ -111,7 +111,7 @@ public class HttpMethods {
         oznerHttpService.login(phone, verifyCode, miei, deviceName)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(new ResultTransFunc1())
+//                .map(new ResultTransFunc1())
                 .subscribe(subscriber);
     }
 

@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.google.gson.JsonObject;
 import com.ozner.cup.HttpHelper.ApiException;
 import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
@@ -31,8 +32,6 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import rx.functions.Action1;
 
 /**
  * Created by ozner_67 on 2017/1/4.
@@ -89,9 +88,14 @@ public class OznerUpdateManager {
      */
     private void getNetVersion() {
         HttpMethods.getInstance().getNewVersion("android",
-                new ProgressSubscriber<JsonObject>(mContext.get(), new Action1<JsonObject>() {
+                new ProgressSubscriber<JsonObject>(mContext.get(), new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        showCenterToast(mContext.get().getString(R.string.not_obtain_version));
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         isChecking = false;
                         try {
                             if (jsonObject != null) {

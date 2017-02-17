@@ -3,6 +3,7 @@ package com.ozner.cup.LoginWelcom.View;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Command.OznerPreference;
@@ -14,6 +15,7 @@ import com.ozner.cup.R;
 import butterknife.ButterKnife;
 
 public class WelcomeActivity extends BaseActivity {
+    private static final String TAG = "WelcomeActivity";
     private final int DEFAULT_WAIT_TIME = 1000;//启动页默认等待1秒
     private UserInfoManager userInfoManager;
     private String usertoken;
@@ -64,6 +66,7 @@ public class WelcomeActivity extends BaseActivity {
 
             @Override
             public void onFail(String msg) {
+                Log.e(TAG, "onFail: " + msg);
                 startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
                 WelcomeActivity.this.finish();
             }

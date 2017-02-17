@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeterMgr;
 import com.ozner.cup.Bean.Contacts;
@@ -16,6 +15,7 @@ import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.LCLogUtils;
 
 import java.util.Calendar;
 import java.util.List;
@@ -34,8 +34,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         long interval = intent.getLongExtra(RemindUtil.INTERVAL_MILLIS, 0);
         int reqCode = intent.getIntExtra(RemindUtil.PARMS_REQ_CODE, 1);
-        Log.e(TAG, "onReceive:提醒服务执行 interval:" + interval + " , action:" + intent.getAction());
-        Log.e(TAG, "onReceive: action equal: " + intent.getAction().equals(RemindUtil.ALARM_ACTION));
+        LCLogUtils.E(TAG, "onReceive:提醒服务执行 interval:" + interval + " , action:" + intent.getAction());
+        LCLogUtils.E(TAG, "onReceive: action equal: " + intent.getAction().equals(RemindUtil.ALARM_ACTION));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.MILLISECOND, 0);
@@ -61,9 +61,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setContentTitle(context.getString(R.string.replen_remind))
                 .setTicker(context.getString(R.string.time_to_moisturizing))
                 .setDefaults(Notification.DEFAULT_ALL);
-//        Notification notification = builder.build();
-//        notification.flags = Notification.FLAG_AUTO_CANCEL;
-//        notification.tickerText = "补水时间到了，亲";
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(reqCode, builder.build());
     }

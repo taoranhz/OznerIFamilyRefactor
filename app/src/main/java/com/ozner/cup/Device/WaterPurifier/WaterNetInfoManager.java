@@ -4,15 +4,15 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
+import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.WaterPurifierAttr;
 import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
-
-import rx.functions.Action1;
 
 /**
  * Created by ozner_67 on 2016/11/16.
@@ -42,16 +42,38 @@ public class WaterNetInfoManager {
     public void getMatchineType(final String mac, final IWaterAttr attrListener) {
         Log.e(TAG, "getMatchineType: " + mac);
         HttpMethods.getInstance().getMatchineType(mac
-                , new ProgressSubscriber<JsonObject>(mContext.get(), new Action1<JsonObject>() {
+                , new ProgressSubscriber<JsonObject>(mContext.get(), new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
-                        WaterPurifierAttr attr = DBManager.getInstance(mContext.get()).getWaterAttr(mac);
-                        if (null == attr) {
-                            attr = new WaterPurifierAttr();
+                    public void onError(Throwable e) {
+                        if (attrListener != null) {
+                            attrListener.onResult(null);
                         }
-                        attr.fromJsonObject(mac, jsonObject.get("data").getAsJsonObject());
-                        DBManager.getInstance(mContext.get()).updateWaterAttr(attr);
-                        attrListener.onResult(attr);
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        if (jsonObject != null) {
+                            if (jsonObject.get("state").getAsInt() > 0) {
+                                WaterPurifierAttr attr = DBManager.getInstance(mContext.get()).getWaterAttr(mac);
+                                if (null == attr) {
+                                    attr = new WaterPurifierAttr();
+                                }
+                                attr.fromJsonObject(mac, jsonObject.get("data").getAsJsonObject());
+                                DBManager.getInstance(mContext.get()).updateWaterAttr(attr);
+                                if (attrListener != null)
+                                    attrListener.onResult(attr);
+                            } else {
+                                if (jsonObject.get("state").getAsInt() == -10006
+                                        || jsonObject.get("state").getAsInt() == -10007) {
+                                    BaseActivity.reLogin((BaseActivity) mContext.get());
+                                } else if (attrListener != null) {
+                                    attrListener.onResult(null);
+                                }
+                            }
+                        } else {
+                            if (attrListener != null)
+                                attrListener.onResult(null);
+                        }
                     }
                 }));
     }
@@ -64,23 +86,45 @@ public class WaterNetInfoManager {
      */
     public void getWaterFilterInfo(final String mac, final IWaterAttr attrListener) {
         HttpMethods.getInstance().getWaterFilterInfo(mac
-                , new ProgressSubscriber<JsonObject>(mContext.get(), new Action1<JsonObject>() {
+                , new ProgressSubscriber<JsonObject>(mContext.get(), new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
-                        Log.e(TAG, "getWaterFilterInfo: " + jsonObject.toString());
-                        WaterPurifierAttr attr = DBManager.getInstance(mContext.get()).getWaterAttr(mac);
-                        if (null == attr) {
-                            attr = new WaterPurifierAttr();
+                    public void onError(Throwable e) {
+                        if (attrListener != null) {
+                            attrListener.onResult(null);
                         }
-                        attr.setMac(mac);
-                        String nowtime = jsonObject.get("nowtime").getAsString();
-                        String time = jsonObject.get("time").getAsString();
-                        Date date = new Date(nowtime);
-                        attr.setFilterNowtime(date.getTime());
-                        date = new Date(time);
-                        attr.setFilterTime(date.getTime());
-                        DBManager.getInstance(mContext.get()).updateWaterAttr(attr);
-                        attrListener.onResult(attr);
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        if (jsonObject != null) {
+                            if (jsonObject.get("state").getAsInt() > 0) {
+                                Log.e(TAG, "getWaterFilterInfo: " + jsonObject.toString());
+                                WaterPurifierAttr attr = DBManager.getInstance(mContext.get()).getWaterAttr(mac);
+                                if (null == attr) {
+                                    attr = new WaterPurifierAttr();
+                                }
+                                attr.setMac(mac);
+                                String nowtime = jsonObject.get("nowtime").getAsString();
+                                String time = jsonObject.get("time").getAsString();
+                                Date date = new Date(nowtime);
+                                attr.setFilterNowtime(date.getTime());
+                                date = new Date(time);
+                                attr.setFilterTime(date.getTime());
+                                DBManager.getInstance(mContext.get()).updateWaterAttr(attr);
+                                if (attrListener != null)
+                                    attrListener.onResult(attr);
+                            } else {
+                                if (jsonObject.get("state").getAsInt() == -10006
+                                        || jsonObject.get("state").getAsInt() == -10007) {
+                                    BaseActivity.reLogin((BaseActivity) mContext.get());
+                                } else if (attrListener != null) {
+                                    attrListener.onResult(null);
+                                }
+                            }
+                        } else {
+                            if (attrListener != null)
+                                attrListener.onResult(null);
+                        }
                     }
                 }));
     }

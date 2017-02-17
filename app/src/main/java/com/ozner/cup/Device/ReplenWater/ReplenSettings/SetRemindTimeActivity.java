@@ -259,16 +259,17 @@ public class SetRemindTimeActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.rlay_time1:
                 final TimePicker timePicker1 = new TimePicker(this);
-                if (time1Cal == null) {
-                    time1Cal = Calendar.getInstance();
-                }
+                Calendar cal1 = Calendar.getInstance();
                 timePicker1.setIs24HourView(true);
-                timePicker1.setCurrentHour(time1Cal.get(Calendar.HOUR_OF_DAY));
-                timePicker1.setCurrentMinute(time1Cal.get(Calendar.MINUTE));
+                timePicker1.setCurrentHour(cal1.get(Calendar.HOUR_OF_DAY));
+                timePicker1.setCurrentMinute(cal1.get(Calendar.MINUTE));
                 new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT).setView(timePicker1)
                         .setPositiveButton(R.string.ensure, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                if (time1Cal == null) {
+                                    time1Cal = Calendar.getInstance();
+                                }
                                 time1Cal.set(Calendar.HOUR_OF_DAY, timePicker1.getCurrentHour());
                                 time1Cal.set(Calendar.MINUTE, timePicker1.getCurrentMinute());
                                 time1Cal.set(Calendar.SECOND, 0);
@@ -284,16 +285,17 @@ public class SetRemindTimeActivity extends BaseActivity {
                 break;
             case R.id.rlay_time2:
                 final TimePicker timePicker2 = new TimePicker(this);
-                if (null == time2Cal) {
-                    time2Cal = Calendar.getInstance();
-                }
+                Calendar cal2 = Calendar.getInstance();
                 timePicker2.setIs24HourView(true);
-                timePicker2.setCurrentHour(time2Cal.get(Calendar.HOUR_OF_DAY));
-                timePicker2.setCurrentMinute(time2Cal.get(Calendar.MINUTE));
+                timePicker2.setCurrentHour(cal2.get(Calendar.HOUR_OF_DAY));
+                timePicker2.setCurrentMinute(cal2.get(Calendar.MINUTE));
                 new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT).setView(timePicker2)
                         .setPositiveButton(R.string.ensure, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                if (null == time2Cal) {
+                                    time2Cal = Calendar.getInstance();
+                                }
                                 time2Cal.set(Calendar.HOUR_OF_DAY, timePicker2.getCurrentHour());
                                 time2Cal.set(Calendar.MINUTE, timePicker2.getCurrentMinute());
                                 time2Cal.set(Calendar.SECOND, 0);
@@ -309,16 +311,17 @@ public class SetRemindTimeActivity extends BaseActivity {
                 break;
             case R.id.rlay_time3:
                 final TimePicker timePicker3 = new TimePicker(this);
-                if (null == time3Cal) {
-                    time3Cal = Calendar.getInstance();
-                }
+               Calendar cal3 = Calendar.getInstance();
                 timePicker3.setIs24HourView(true);
-                timePicker3.setCurrentHour(time3Cal.get(Calendar.HOUR_OF_DAY));
-                timePicker3.setCurrentMinute(time3Cal.get(Calendar.MINUTE));
+                timePicker3.setCurrentHour(cal3.get(Calendar.HOUR_OF_DAY));
+                timePicker3.setCurrentMinute(cal3.get(Calendar.MINUTE));
                 new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT).setView(timePicker3)
                         .setPositiveButton(R.string.ensure, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                if (null == time3Cal) {
+                                    time3Cal = Calendar.getInstance();
+                                }
                                 time3Cal.set(Calendar.HOUR_OF_DAY, timePicker3.getCurrentHour());
                                 time3Cal.set(Calendar.MINUTE, timePicker3.getCurrentMinute());
                                 time3Cal.set(Calendar.SECOND, 0);

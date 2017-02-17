@@ -25,6 +25,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeter;
+import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
@@ -32,6 +33,7 @@ import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
@@ -48,7 +50,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import rx.functions.Action1;
 
 import static com.ozner.cup.R.id.llay_skin_value;
 
@@ -1015,12 +1016,23 @@ public class ReplenWaterFragment extends DeviceFragment {
      */
     private void updateBuShuiYiNumber(String oilValue, String moisValue, final String action) {
         if (replenWater != null) {
-            HttpMethods.getInstance().updateBuShuiYiNumber(mUserToken, replenWater.Address(), oilValue, moisValue, action, new ProgressSubscriber<JsonObject>(getContext(), new Action1<JsonObject>() {
-                @Override
-                public void call(JsonObject jsonObject) {
-                    LCLogUtils.E(TAG, "updateBuShuiYiNumber_" + action + ":" + jsonObject.toString());
-                }
-            }));
+            HttpMethods.getInstance().updateBuShuiYiNumber(mUserToken, replenWater.Address(), oilValue, moisValue, action,
+                    new ProgressSubscriber<JsonObject>(getContext(), new OznerHttpResult<JsonObject>() {
+                        @Override
+                        public void onError(Throwable e) {
+                            LCLogUtils.E(TAG, "updateBuShuiYiNumber_" + action + "_onError:" + e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(JsonObject jsonObject) {
+                            if (jsonObject.get("state").getAsInt() == -10006
+                                    || jsonObject.get("state").getAsInt() == -10007) {
+                                BaseActivity.reLogin(getActivity());
+                            } else {
+                                LCLogUtils.E(TAG, "updateBuShuiYiNumber_" + action + ":" + jsonObject.toString());
+                            }
+                        }
+                    }));
         }
     }
 
@@ -1030,40 +1042,52 @@ public class ReplenWaterFragment extends DeviceFragment {
     private void loadTestCount() {
         if (replenWater != null) {
             HttpMethods.getInstance().getTimesCountBuShui(mUserToken, replenWater.Address(),
-                    new ProgressSubscriber<JsonObject>(getContext(), new Action1<JsonObject>() {
+                    new ProgressSubscriber<JsonObject>(getContext(), new OznerHttpResult<JsonObject>() {
                         @Override
-                        public void call(JsonObject jsonObject) {
-                            if (jsonObject != null && jsonObject.get("state").getAsInt() > 0) {
-                                JsonArray dataArray = jsonObject.getAsJsonArray("data");
-                                if (!dataArray.isJsonNull() && dataArray.size() > 0) {
-                                    for (JsonElement element : dataArray) {
-                                        JsonObject data = element.getAsJsonObject();
-                                        switch (data.get("action").getAsString()) {
-                                            case ReplenFenBuAction.FaceSkinValue:
-                                                if (oznerSetting != null) {
-                                                    oznerSetting.setAppData(Contacts.DEV_REPLEN_FACE_TEST_COUNT, data.get("times").getAsInt());
-                                                    DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
-                                                }
-                                                break;
-                                            case ReplenFenBuAction.EyesSkinValue:
-                                                if (oznerSetting != null) {
-                                                    oznerSetting.setAppData(Contacts.DEV_REPLEN_EYE_TEST_COUNT, data.get("times").getAsInt());
-                                                    DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
-                                                }
-                                                break;
-                                            case ReplenFenBuAction.HandSkinValue:
-                                                if (oznerSetting != null) {
-                                                    oznerSetting.setAppData(Contacts.DEV_REPLEN_HAND_TEST_COUNT, data.get("times").getAsInt());
-                                                    DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
-                                                }
-                                                break;
-                                            case ReplenFenBuAction.NeckSkinValue:
-                                                if (oznerSetting != null) {
-                                                    oznerSetting.setAppData(Contacts.DEV_REPLEN_NECK_TEST_COUNT, data.get("times").getAsInt());
-                                                    DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
-                                                }
-                                                break;
+                        public void onError(Throwable e) {
+                            LCLogUtils.E(TAG, "loadTestCount_onError:" + e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(JsonObject jsonObject) {
+                            if (jsonObject != null) {
+                                if (jsonObject.get("state").getAsInt() > 0) {
+                                    JsonArray dataArray = jsonObject.getAsJsonArray("data");
+                                    if (!dataArray.isJsonNull() && dataArray.size() > 0) {
+                                        for (JsonElement element : dataArray) {
+                                            JsonObject data = element.getAsJsonObject();
+                                            switch (data.get("action").getAsString()) {
+                                                case ReplenFenBuAction.FaceSkinValue:
+                                                    if (oznerSetting != null) {
+                                                        oznerSetting.setAppData(Contacts.DEV_REPLEN_FACE_TEST_COUNT, data.get("times").getAsInt());
+                                                        DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+                                                    }
+                                                    break;
+                                                case ReplenFenBuAction.EyesSkinValue:
+                                                    if (oznerSetting != null) {
+                                                        oznerSetting.setAppData(Contacts.DEV_REPLEN_EYE_TEST_COUNT, data.get("times").getAsInt());
+                                                        DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+                                                    }
+                                                    break;
+                                                case ReplenFenBuAction.HandSkinValue:
+                                                    if (oznerSetting != null) {
+                                                        oznerSetting.setAppData(Contacts.DEV_REPLEN_HAND_TEST_COUNT, data.get("times").getAsInt());
+                                                        DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+                                                    }
+                                                    break;
+                                                case ReplenFenBuAction.NeckSkinValue:
+                                                    if (oznerSetting != null) {
+                                                        oznerSetting.setAppData(Contacts.DEV_REPLEN_NECK_TEST_COUNT, data.get("times").getAsInt());
+                                                        DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+                                                    }
+                                                    break;
+                                            }
                                         }
+                                    }
+                                } else {
+                                    if (jsonObject.get("state").getAsInt() == -10006
+                                            || jsonObject.get("state").getAsInt() == -10007) {
+                                        BaseActivity.reLogin(getActivity());
                                     }
                                 }
                             }
@@ -1081,11 +1105,16 @@ public class ReplenWaterFragment extends DeviceFragment {
         LCLogUtils.E(TAG, "开始加载历史检测数据");
         if (replenWater != null) {
             HttpMethods.getInstance().getBuShuiFenBu(mUserToken, replenWater.Address(), ReplenFenBuAction.FaceSkinValue,
-                    new ProgressSubscriber<JsonObject>(getContext(), new Action1<JsonObject>() {
+                    new ProgressSubscriber<JsonObject>(getContext(), new OznerHttpResult<JsonObject>() {
                         @Override
-                        public void call(JsonObject jsonObject) {
+                        public void onError(Throwable e) {
+                            LCLogUtils.E(TAG, "loadBuShuiFenbu_onError: " + e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(JsonObject jsonObject) {
                             if (jsonObject != null) {
-                                Log.e(TAG, "loadBuShuiFenbu: " + jsonObject.toString());
+                                LCLogUtils.E(TAG, "loadBuShuiFenbu: " + jsonObject.toString());
                                 int state = jsonObject.get("state").getAsInt();
                                 if (state > 0) {
                                     JsonObject faceData = jsonObject.getAsJsonObject("data").getAsJsonObject("FaceSkinValue");
@@ -1110,6 +1139,10 @@ public class ReplenWaterFragment extends DeviceFragment {
 
                                             showSkinStatus();
                                         }
+                                    }
+                                } else {
+                                    if (state == -10006 || state == -10007) {
+                                        BaseActivity.reLogin(getActivity());
                                     }
                                 }
                             } else {
@@ -1176,8 +1209,8 @@ public class ReplenWaterFragment extends DeviceFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK){
-            if(requestCode == SetReqCode){
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SetReqCode) {
                 oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, replenWater.Address());
                 if (oznerSetting != null) {
                     gender = (int) oznerSetting.getAppData(Contacts.DEV_REPLEN_GENDER);

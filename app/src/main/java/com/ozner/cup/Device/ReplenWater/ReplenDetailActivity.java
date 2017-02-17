@@ -29,6 +29,7 @@ import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.WaterReplMeterView;
@@ -40,7 +41,6 @@ import java.util.Calendar;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import rx.functions.Action1;
 
 public class ReplenDetailActivity extends BaseActivity {
     private static final String TAG = "ReplenDetail";
@@ -393,9 +393,14 @@ public class ReplenDetailActivity extends BaseActivity {
     private void loadBuShuiFenbu() {
         LCLogUtils.E(TAG, "开始加载历史检测数据");
         HttpMethods.getInstance().getBuShuiFenBu(mUserToken, mac, "",
-                new ProgressSubscriber<JsonObject>(this, new Action1<JsonObject>() {
+                new ProgressSubscriber<JsonObject>(this, new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        LCLogUtils.E(TAG, "loadBuShuiFenbu_onError:" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         if (jsonObject != null) {
                             Log.e(TAG, "loadBuShuiFenbu: " + jsonObject.toString());
                             int state = jsonObject.get("state").getAsInt();
@@ -414,6 +419,10 @@ public class ReplenDetailActivity extends BaseActivity {
                                     }
                                 } catch (Exception ex) {
                                     LCLogUtils.E(TAG, "loadBuShuiFenbu_Ex:" + ex.getMessage());
+                                }
+                            } else {
+                                if (state == -10006 || state == -10007) {
+                                    BaseActivity.reLogin(ReplenDetailActivity.this);
                                 }
                             }
                         } else {

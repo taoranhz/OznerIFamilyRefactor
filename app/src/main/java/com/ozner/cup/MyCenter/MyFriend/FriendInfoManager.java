@@ -8,11 +8,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.FriendRankItem;
 import com.ozner.cup.HttpHelper.ApiException;
 import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
 import com.ozner.cup.MyCenter.MyFriend.bean.CenterRankItem;
 import com.ozner.cup.MyCenter.MyFriend.bean.FriendItem;
@@ -24,8 +26,6 @@ import com.ozner.cup.Utils.LCLogUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-
-import rx.functions.Action1;
 
 /**
  * Created by ozner_67 on 2016/12/26.
@@ -51,9 +51,14 @@ public class FriendInfoManager implements IFriendInfoManager {
 
     public void loadFriendRank() {
         HttpMethods.getInstance().getRankNotify(OznerPreference.getUserToken(mContext.get()),
-                new ProgressSubscriber<JsonObject>(mContext.get(), new Action1<JsonObject>() {
+                new ProgressSubscriber<JsonObject>(mContext.get(), new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         try {
                             if (jsonObject != null) {
                                 if (jsonObject.get("state").getAsInt() > 0) {
@@ -81,7 +86,11 @@ public class FriendInfoManager implements IFriendInfoManager {
 
                                         }
                                     });
-
+                                } else {
+                                    if (jsonObject.get("state").getAsInt() == -10006
+                                            || jsonObject.get("state").getAsInt() == -10007) {
+                                        BaseActivity.reLogin((BaseActivity) mContext.get());
+                                    }
                                 }
                             } else {
 
@@ -104,9 +113,16 @@ public class FriendInfoManager implements IFriendInfoManager {
                 , new ProgressSubscriber<JsonObject>(mContext.get(),
                         mContext.get().getString(R.string.data_loading),
                         false,
-                        new Action1<JsonObject>() {
+                        new OznerHttpResult<JsonObject>() {
                             @Override
-                            public void call(JsonObject jsonObject) {
+                            public void onError(Throwable e) {
+                                if (listener != null) {
+                                    listener.onFail(e.getMessage());
+                                }
+                            }
+
+                            @Override
+                            public void onNext(JsonObject jsonObject) {
                                 Log.e(TAG, "getTdsFriendRank: " + jsonObject.toString());
                                 try {
                                     if (jsonObject != null) {
@@ -120,7 +136,10 @@ public class FriendInfoManager implements IFriendInfoManager {
                                                 listener.onSuccess(result);
                                             }
                                         } else {
-                                            if (listener != null) {
+                                            if (jsonObject.get("state").getAsInt() == -10006
+                                                    || jsonObject.get("state").getAsInt() == -10007) {
+                                                BaseActivity.reLogin((BaseActivity) mContext.get());
+                                            } else if (listener != null) {
                                                 listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
                                             }
                                         }
@@ -156,9 +175,16 @@ public class FriendInfoManager implements IFriendInfoManager {
                 , new ProgressSubscriber<JsonObject>(mContext.get(),
                         mContext.get().getString(R.string.data_loading),
                         false,
-                        new Action1<JsonObject>() {
+                        new OznerHttpResult<JsonObject>() {
                             @Override
-                            public void call(JsonObject jsonObject) {
+                            public void onError(Throwable e) {
+                                if (listener != null) {
+                                    listener.onFail(e.getMessage());
+                                }
+                            }
+
+                            @Override
+                            public void onNext(JsonObject jsonObject) {
                                 Log.e(TAG, "getWhoLikeMe: " + jsonObject.toString());
                                 try {
                                     if (jsonObject != null) {
@@ -170,7 +196,10 @@ public class FriendInfoManager implements IFriendInfoManager {
                                                 listener.onSuccess(result);
                                             }
                                         } else {
-                                            if (listener != null) {
+                                            if (jsonObject.get("state").getAsInt() == -10006
+                                                    || jsonObject.get("state").getAsInt() == -10007) {
+                                                BaseActivity.reLogin((BaseActivity) mContext.get());
+                                            } else if (listener != null) {
                                                 listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
                                             }
                                         }
@@ -208,9 +237,16 @@ public class FriendInfoManager implements IFriendInfoManager {
                 , new ProgressSubscriber<JsonObject>(mContext.get(),
                         mContext.get().getString(R.string.submiting),
                         false,
-                        new Action1<JsonObject>() {
+                        new OznerHttpResult<JsonObject>() {
                             @Override
-                            public void call(JsonObject jsonObject) {
+                            public void onError(Throwable e) {
+                                if (listener != null) {
+                                    listener.onFail(e.getMessage());
+                                }
+                            }
+
+                            @Override
+                            public void onNext(JsonObject jsonObject) {
                                 Log.e(TAG, "getWhoLikeMe: " + jsonObject.toString());
                                 try {
                                     if (jsonObject != null) {
@@ -219,7 +255,10 @@ public class FriendInfoManager implements IFriendInfoManager {
                                                 listener.onSuccess(position);
                                             }
                                         } else {
-                                            if (listener != null) {
+                                            if (jsonObject.get("state").getAsInt() == -10006
+                                                    || jsonObject.get("state").getAsInt() == -10007) {
+                                                BaseActivity.reLogin((BaseActivity) mContext.get());
+                                            } else if (listener != null) {
                                                 listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
                                             }
                                         }
@@ -254,9 +293,16 @@ public class FriendInfoManager implements IFriendInfoManager {
                 new ProgressSubscriber<JsonObject>(mContext.get(),
                         mContext.get().getString(R.string.data_loading),
                         false,
-                        new Action1<JsonObject>() {
+                        new OznerHttpResult<JsonObject>() {
                             @Override
-                            public void call(JsonObject jsonObject) {
+                            public void onError(Throwable e) {
+                                if (listener != null) {
+                                    listener.onFail(e.getMessage());
+                                }
+                            }
+
+                            @Override
+                            public void onNext(JsonObject jsonObject) {
                                 try {
                                     if (jsonObject != null) {
                                         LCLogUtils.E(TAG, "getFriendList:" + jsonObject.toString());
@@ -268,7 +314,10 @@ public class FriendInfoManager implements IFriendInfoManager {
                                                 listener.onSuccess(result);
                                             }
                                         } else {
-                                            if (listener != null) {
+                                            if (jsonObject.get("state").getAsInt() == -10006
+                                                    || jsonObject.get("state").getAsInt() == -10007) {
+                                                BaseActivity.reLogin((BaseActivity) mContext.get());
+                                            } else if (listener != null) {
                                                 listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
                                             }
                                         }
@@ -301,9 +350,16 @@ public class FriendInfoManager implements IFriendInfoManager {
                 new ProgressSubscriber<JsonObject>(mContext.get(),
                         mContext.get().getString(R.string.data_loading),
                         false,
-                        new Action1<JsonObject>() {
+                        new OznerHttpResult<JsonObject>() {
                             @Override
-                            public void call(JsonObject jsonObject) {
+                            public void onError(Throwable e) {
+                                if (listener != null) {
+                                    listener.onFail(e.getMessage());
+                                }
+                            }
+
+                            @Override
+                            public void onNext(JsonObject jsonObject) {
                                 try {
                                     if (jsonObject != null) {
                                         LCLogUtils.E(TAG, "getFriendList:" + jsonObject.toString());
@@ -315,7 +371,10 @@ public class FriendInfoManager implements IFriendInfoManager {
                                                 listener.onSuccess(result);
                                             }
                                         } else {
-                                            if (listener != null) {
+                                            if (jsonObject.get("state").getAsInt() == -10006
+                                                    || jsonObject.get("state").getAsInt() == -10007) {
+                                                BaseActivity.reLogin((BaseActivity) mContext.get());
+                                            } else if (listener != null) {
                                                 listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
                                             }
                                         }
@@ -353,9 +412,16 @@ public class FriendInfoManager implements IFriendInfoManager {
                 new ProgressSubscriber<JsonObject>(mContext.get(),
                         mContext.get().getString(R.string.sending),
                         false,
-                        new Action1<JsonObject>() {
+                        new OznerHttpResult<JsonObject>() {
                             @Override
-                            public void call(JsonObject jsonObject) {
+                            public void onError(Throwable e) {
+                                if (listener != null) {
+                                    listener.onFail(e.getMessage());
+                                }
+                            }
+
+                            @Override
+                            public void onNext(JsonObject jsonObject) {
                                 try {
                                     if (jsonObject != null) {
                                         if (jsonObject.get("state").getAsInt() > 0) {
@@ -363,7 +429,10 @@ public class FriendInfoManager implements IFriendInfoManager {
                                                 listener.onSuccess();
                                             }
                                         } else {
-                                            if (listener != null) {
+                                            if (jsonObject.get("state").getAsInt() == -10006
+                                                    || jsonObject.get("state").getAsInt() == -10007) {
+                                                BaseActivity.reLogin((BaseActivity) mContext.get());
+                                            } else if (listener != null) {
                                                 listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
                                             }
                                         }
@@ -396,9 +465,16 @@ public class FriendInfoManager implements IFriendInfoManager {
     public void getVerifyMessage(final LoadVerifyListener listener) {
         HttpMethods.getInstance().getVerifyMessage(OznerPreference.getUserToken(mContext.get()),
                 new ProgressSubscriber<JsonObject>(mContext.get(),
-                        mContext.get().getString(R.string.data_loading), false, new Action1<JsonObject>() {
+                        mContext.get().getString(R.string.data_loading), false, new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        if (listener != null) {
+                            listener.onFail(e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         try {
                             if (jsonObject != null) {
                                 if (jsonObject.get("state").getAsInt() > 0) {
@@ -409,7 +485,10 @@ public class FriendInfoManager implements IFriendInfoManager {
                                         listener.onSuccess(result);
                                     }
                                 } else {
-                                    if (listener != null) {
+                                    if (jsonObject.get("state").getAsInt() == -10006
+                                            || jsonObject.get("state").getAsInt() == -10007) {
+                                        BaseActivity.reLogin((BaseActivity) mContext.get());
+                                    } else if (listener != null) {
                                         listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
                                     }
                                 }
@@ -439,9 +518,16 @@ public class FriendInfoManager implements IFriendInfoManager {
                 id,
                 new ProgressSubscriber<JsonObject>(mContext.get(),
                         mContext.get().getString(R.string.submiting),
-                        false, new Action1<JsonObject>() {
+                        false, new OznerHttpResult<JsonObject>() {
                     @Override
-                    public void call(JsonObject jsonObject) {
+                    public void onError(Throwable e) {
+                        if (listener != null) {
+                            listener.onFail(e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
                         try {
                             if (jsonObject != null) {
                                 if (jsonObject.get("state").getAsInt() > 0) {
@@ -449,7 +535,10 @@ public class FriendInfoManager implements IFriendInfoManager {
                                         listener.onSuccess();
                                     }
                                 } else {
-                                    if (listener != null) {
+                                    if (jsonObject.get("state").getAsInt() == -10006
+                                            || jsonObject.get("state").getAsInt() == -10007) {
+                                        BaseActivity.reLogin((BaseActivity) mContext.get());
+                                    } else if (listener != null) {
                                         listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
                                     }
                                 }

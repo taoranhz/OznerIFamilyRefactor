@@ -30,12 +30,14 @@ import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.ChartAdapter;
 import com.ozner.cup.UIView.TapTDSChartView;
 import com.ozner.cup.UIView.TdsDetailProgress;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.MobileInfoUtil;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
@@ -50,7 +52,6 @@ import java.util.Date;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import rx.functions.Action1;
 
 import static com.ozner.cup.R.string.bad;
 
@@ -289,12 +290,18 @@ public class TapFragment extends DeviceFragment {
         if (mTap != null) {
             Log.e(TAG, "loadTapFilterFromNet_Usertoken: " + OznerPreference.getUserToken(getContext()));
             Log.e(TAG, "loadTapFilterFromNet_Mac: " + mTap.Address());
-            HttpMethods.getInstance().getTapFilterInfo(OznerPreference.getUserToken(getContext()), mTap.Address(), new ProgressSubscriber<JsonObject>(getContext(), new Action1<JsonObject>() {
-                @Override
-                public void call(JsonObject jsonObject) {
-                    Log.e(TAG, "loadTapFilterFromNet: " + jsonObject.toString());
-                }
-            }));
+            HttpMethods.getInstance().getTapFilterInfo(OznerPreference.getUserToken(getContext()), mTap.Address(),
+                    new ProgressSubscriber<JsonObject>(getContext(), new OznerHttpResult<JsonObject>() {
+                        @Override
+                        public void onError(Throwable e) {
+                            LCLogUtils.E(TAG, "loadTapFilterFromNet_onError: " + e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(JsonObject jsonObject) {
+                            LCLogUtils.E(TAG, "loadTapFilterFromNet: " + jsonObject.toString());
+                        }
+                    }));
         }
     }
 

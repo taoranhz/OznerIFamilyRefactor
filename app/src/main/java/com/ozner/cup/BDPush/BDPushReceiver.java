@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.baidu.android.pushservice.PushMessageReceiver;
+import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Chat.EaseUI.utils.MessageCreator;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.EMMessage;
+import com.ozner.cup.Utils.LCLogUtils;
 
 import org.json.JSONObject;
 
@@ -106,6 +108,17 @@ public class BDPushReceiver extends PushMessageReceiver {
                     }
                     break;
                 case PushOperationAction.Operation_LoginNotify:
+                    LCLogUtils.E(TAG, "LoginNotify");
+                    Intent loginIntent = new Intent(OznerBroadcastAction.OBA_Login_Notify);
+                    String data = jsonObj.getJSONObject("custom_content").getString("data");
+                    JSONObject dataJo = new JSONObject(data);
+                    String loginUsertoken = dataJo.getString("token");
+                    String miei = dataJo.getString("miei");
+                    String loginUserid = dataJo.getString("userid");
+                    loginIntent.putExtra(Contacts.PARMS_LOGIN_TOKEN, loginUsertoken);
+                    loginIntent.putExtra(Contacts.PARMS_LOGIN_MIEI, miei);
+                    loginIntent.putExtra(Contacts.PARMS_LOGIN_USERID, loginUserid);
+                    context.sendBroadcast(loginIntent);
                     break;
 
             }

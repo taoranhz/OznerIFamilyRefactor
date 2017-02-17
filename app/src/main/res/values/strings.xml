@@ -30,11 +30,12 @@
     <!--错误信息提示-->
     <string name="exception_tips">异常信息</string>
     <string name="err_net_outline">网络中断，请检查您的网络状态</string>
+    <string name="not_obtain_version">未获取到版本信息</string>
 
     <string name="err_miss_phone">请输入11位手机号</string>
     <string name="err_miss_verify_code">请输入验证码</string>
     <string name="err_miss_proctol">请先同意《浩泽净水家免责条款》</string>
-
+    <string name="bd_bind_fail">百度推送绑定失败</string>
 
     <!--登录-->
     <string name="input_userphone">请输入手机号</string>
@@ -50,6 +51,8 @@
     <string name="logining">登录中...</string>
     <string name="tips_getcode">验证码将以短信的形式发送给您,请注意查收</string>
     <string name="tips_getvoice">您将会收到来自400电话语音，请注意接听。</string>
+    <string name="sign_out_tip">下线通知</string>
+    <string name="login_on_other_device">您的账号在其他设备登录，请重新登录.</string>
 
     <string name="current_filter_state">当前滤芯状态</string>
     <string name="filter_tips">温馨提醒：及时更换滤芯才能保证饮用水的安全</string>

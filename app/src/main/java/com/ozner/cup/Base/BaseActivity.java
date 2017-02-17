@@ -1,6 +1,10 @@
 package com.ozner.cup.Base;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -11,6 +15,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.ozner.cup.Command.OznerPreference;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.LoginWelcom.View.LoginActivity;
 import com.ozner.cup.R;
 
 /**
@@ -80,6 +87,25 @@ public abstract class BaseActivity extends AppCompatActivity {
         size[0] = view.getMeasuredWidth();
         size[1] = view.getMeasuredHeight();
         return size;
+    }
+
+
+    /**
+     * 重新登录
+     */
+    public static void reLogin(final Activity activity) {
+        new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_LIGHT)
+                .setTitle(R.string.sign_out_tip)
+                .setMessage(R.string.login_on_other_device)
+                .setPositiveButton(R.string.ensure, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        UserDataPreference.SetUserData(activity, UserDataPreference.UserId, "");
+                        OznerPreference.setUserToken(activity, "");
+                        activity.startActivity(new Intent(activity.getApplicationContext(), LoginActivity.class));
+                        activity.finishAffinity();
+                    }
+                }).show();
     }
 
     public int dip2px(Context context, float dpValue) {

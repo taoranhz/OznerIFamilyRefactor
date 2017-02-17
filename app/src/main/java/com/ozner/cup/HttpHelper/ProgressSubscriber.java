@@ -1,17 +1,8 @@
 package com.ozner.cup.HttpHelper;
 
 import android.content.Context;
-import android.util.Log;
-import android.view.Gravity;
-import android.widget.Toast;
-
-import com.ozner.cup.R;
-
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
 
 import rx.Subscriber;
-import rx.functions.Action1;
 
 /**
  * Created by ozner_67 on 2016/11/2.
@@ -23,12 +14,20 @@ import rx.functions.Action1;
 
 public class ProgressSubscriber<JsonObject> extends Subscriber<JsonObject> implements ProgressCancelListener {
     private Context mContext;
-    private Action1<JsonObject> nextListener;
+//        private Action1<JsonObject> nextListener;
+    private OznerHttpResult httpResult;
     private ProgressDialogHandler progressHandler;
     private String dialogMsg;
 
-    public ProgressSubscriber(Context context, String dialogMsg, boolean dialogCancelable, Action1<JsonObject> nextListener) {
-        this.nextListener = nextListener;
+//    public ProgressSubscriber(Context context, String dialogMsg, boolean dialogCancelable, Action1<JsonObject> nextListener) {
+//        this.nextListener = nextListener;
+//        this.mContext = context;
+//        this.dialogMsg = dialogMsg;
+//        progressHandler = new ProgressDialogHandler(context, dialogMsg, this, dialogCancelable);
+//    }
+
+    public ProgressSubscriber(Context context, String dialogMsg, boolean dialogCancelable, OznerHttpResult httpResult) {
+        this.httpResult = httpResult;
         this.mContext = context;
         this.dialogMsg = dialogMsg;
         progressHandler = new ProgressDialogHandler(context, dialogMsg, this, dialogCancelable);
@@ -40,8 +39,13 @@ public class ProgressSubscriber<JsonObject> extends Subscriber<JsonObject> imple
      * @param context
      * @param nextListener
      */
-    public ProgressSubscriber(Context context, Action1<JsonObject> nextListener) {
-        this.nextListener = nextListener;
+//    public ProgressSubscriber(Context context, Action1<JsonObject> nextListener) {
+//        this.nextListener = nextListener;
+//        this.mContext = context;
+////        progressHandler = new ProgressDialogHandler(context, dialogMsg, this, false);
+//    }
+    public ProgressSubscriber(Context context, OznerHttpResult nextListener) {
+        this.httpResult = nextListener;
         this.mContext = context;
 //        progressHandler = new ProgressDialogHandler(context, dialogMsg, this, false);
     }
@@ -72,19 +76,23 @@ public class ProgressSubscriber<JsonObject> extends Subscriber<JsonObject> imple
 
     @Override
     public void onError(Throwable e) {
-        if (e instanceof SocketTimeoutException) {
-            Toast.makeText(mContext, mContext.getString(R.string.err_net_outline), Toast.LENGTH_SHORT).show();
-        } else if (e instanceof ConnectException) {
-            Toast.makeText(mContext, mContext.getString(R.string.err_net_outline), Toast.LENGTH_SHORT).show();
-        } else {
-            try {
-                Log.e("ProgressSubscriber", "onError: " + e.getMessage());
-                Toast toast = Toast.makeText(mContext, "error:" + mContext.getString(ApiException.getErrResId(Integer.parseInt(e.getMessage()))), Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-            } catch (Exception ex) {
-                Log.e("ProgressSubscriber", "onError_Ex: " + ex.getMessage());
-            }
+//        if (e instanceof SocketTimeoutException) {
+//            Toast.makeText(mContext, mContext.getString(R.string.err_net_outline), Toast.LENGTH_SHORT).show();
+//        } else if (e instanceof ConnectException) {
+//            Toast.makeText(mContext, mContext.getString(R.string.err_net_outline), Toast.LENGTH_SHORT).show();
+//        } else {
+//            try {
+//                Log.e("ProgressSubscriber", "onError: " + e.getMessage());
+//                Toast toast = Toast.makeText(mContext, "error:" + mContext.getString(ApiException.getErrResId(Integer.parseInt(e.getMessage()))), Toast.LENGTH_SHORT);
+//                toast.setGravity(Gravity.CENTER, 0, 0);
+//                toast.show();
+//            } catch (Exception ex) {
+//                Log.e("ProgressSubscriber", "onError_Ex: " + ex.getMessage());
+//            }
+//        }
+
+        if (httpResult != null) {
+            httpResult.onError(e);
         }
 
         dismissProgressDialog();
@@ -92,9 +100,12 @@ public class ProgressSubscriber<JsonObject> extends Subscriber<JsonObject> imple
 
     @Override
     public void onNext(JsonObject t) {
-        if (nextListener != null) {
-            nextListener.call(t);
+        if (httpResult != null) {
+            httpResult.onNext(t);
         }
+//        if (nextListener != null) {
+//            nextListener.call(t);
+//        }
     }
 
     @Override

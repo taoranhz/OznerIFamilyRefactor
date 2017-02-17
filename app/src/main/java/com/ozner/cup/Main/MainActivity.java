@@ -48,6 +48,7 @@ import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.LoginWelcom.View.LoginActivity;
 import com.ozner.cup.MyCenter.MyCenterFragment;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.MobileInfoUtil;
 import com.ozner.cup.Utils.WeChatUrlUtil;
 import com.ozner.device.OznerDevice;
 import com.ozner.tap.TapManager;
@@ -161,6 +162,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         filter.addAction(OznerBroadcastAction.OBA_SWITCH_ESHOP);
         filter.addAction(OznerBroadcastAction.OBA_SWITCH_CHAT);
         filter.addAction(OznerBroadcastAction.OBA_BDBind);
+        filter.addAction(OznerBroadcastAction.OBA_Login_Notify);
         this.registerReceiver(mainMonitor, filter);
     }
 
@@ -332,15 +334,15 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 df.setDevice(device);
                 trans.replace(R.id.fg_content, df);
             } else {
-                OznerDeviceSettings oznerSetting = DBManager.getInstance(MainActivity.this).getDeviceSettings(mUserid,device.Address());
-                if(oznerSetting!=null){
+                OznerDeviceSettings oznerSetting = DBManager.getInstance(MainActivity.this).getDeviceSettings(mUserid, device.Address());
+                if (oznerSetting != null) {
                     DeviceFragment newDef = getDeviceFragment(oznerSetting);
                     devFragmentMap.put(device.Address(), newDef);
                     trans.replace(R.id.fg_content, newDef);
-                }else {
+                } else {
                     trans.replace(R.id.fg_content, devFragmentMap.get(NoDeviceTag));
                 }
-                
+
 //                DeviceFragment newDef = getDeviceFragment(device);
 //                devFragmentMap.put(device.Address(), newDef);
 //                trans.replace(R.id.fg_content, newDef);
@@ -466,10 +468,29 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                                 Log.e(TAG, "onNext: success");
                                 OznerPreference.SetValue(MainActivity.this, OznerPreference.ISBDBind, String.valueOf(true));
                             } else {
-                                Toast.makeText(MainActivity.this, "百度推送绑定失败", Toast.LENGTH_SHORT).show();
+                                if (jsonObject.get("state").getAsInt() == -10006
+                                        || jsonObject.get("state").getAsInt() == -10007) {
+                                    BaseActivity.reLogin(MainActivity.this);
+                                } else {
+                                    showToastCenter(R.string.bd_bind_fail);
+//                                    Toast.makeText(MainActivity.this, "百度推送绑定失败", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
                     });
+                    break;
+                case OznerBroadcastAction.OBA_Login_Notify://登录通知
+                    String loginUserid = intent.getStringExtra(Contacts.PARMS_LOGIN_USERID);
+                    String loginToken = intent.getStringExtra(Contacts.PARMS_LOGIN_TOKEN);
+                    String miei = intent.getStringExtra(Contacts.PARMS_LOGIN_MIEI);
+                    if (miei != null
+                            && loginToken != null
+                            && loginUserid != null
+                            && !miei.equals(MobileInfoUtil.getImie(MainActivity.this))
+                            && loginUserid.equals(UserDataPreference.GetUserData(MainActivity.this, UserDataPreference.UserId, null))
+                            && !loginToken.endsWith(OznerPreference.getUserToken(MainActivity.this))) {
+                        BaseActivity.reLogin(MainActivity.this);
+                    }
                     break;
             }
         }

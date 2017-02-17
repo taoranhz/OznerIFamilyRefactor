@@ -372,7 +372,9 @@ public class WaterPurifierFragment extends DeviceFragment {
                 waterNetInfoManager.getMatchineType(mac, new WaterNetInfoManager.IWaterAttr() {
                     @Override
                     public void onResult(WaterPurifierAttr attr) {
-                        refreshWaterSwitcher(attr);
+                        if (attr != null) {
+                            refreshWaterSwitcher(attr);
+                        }
                     }
                 });
             }

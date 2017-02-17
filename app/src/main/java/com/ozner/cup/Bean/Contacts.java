@@ -6,6 +6,11 @@ package com.ozner.cup.Bean;
  */
 
 public class Contacts {
+    //登录通知相关参数
+    public final static String PARMS_LOGIN_TOKEN = "parms_login_token";
+    public final static String PARMS_LOGIN_MIEI = "parms_login_miei";
+    public final static String PARMS_LOGIN_USERID = "parms_login_userid";
+
     //蓝牙配对类型参数
     public final static String PARMS_MATCHTYPE = "parms_matchtype";
     //传递参数mac

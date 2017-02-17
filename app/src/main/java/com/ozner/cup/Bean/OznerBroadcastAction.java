@@ -21,9 +21,12 @@ public class OznerBroadcastAction {
     public static final String OBA_BDBind = "ozner_bdpush_bind";
 
     //接收到咨询消息
-    public static final String OBA_RECEIVE_CHAT_MSG="ozner_recieve_chat_msg";
+    public static final String OBA_RECEIVE_CHAT_MSG = "ozner_recieve_chat_msg";
 
     //个人中心我的设备选择
     public static final String OBA_CenterDeviceSelect = "ozner_center_deivce_select";
+
+    //登录通知
+    public static final String OBA_Login_Notify = "ozner_login_notify";
 
 }

@@ -4,16 +4,16 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
+import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Device.AirPurifier.bean.NetWeather;
 import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-
-import rx.functions.Action1;
 
 /**
  * Created by ozner_67 on 2016/12/5.
@@ -37,9 +37,15 @@ public class AirPurifierPresenter {
      */
     public void getWeatherOutSide(final NetWeatherResult result) {
         HttpMethods.getInstance().getWeatherOutSide(new ProgressSubscriber<JsonObject>(mContext.get()
-                , new Action1<JsonObject>() {
+                , new OznerHttpResult<JsonObject>() {
             @Override
-            public void call(JsonObject jsonObject) {
+            public void onError(Throwable e) {
+                if (result != null)
+                    result.onResult(null);
+            }
+
+            @Override
+            public void onNext(JsonObject jsonObject) {
 //                Log.e(TAG, "getWeatherOutSide_result: " + jsonObject.toString());
                 try {
                     if (jsonObject.get("state").getAsInt() > 0) {
@@ -78,13 +84,19 @@ public class AirPurifierPresenter {
                                 weather.setQlty(city.get("qlty").toString());
                             }
                         }
-                        result.onResult(weather);
+                        if (result != null)
+                            result.onResult(weather);
                     } else {
-                        result.onResult(null);
+                        if (jsonObject.get("state").getAsInt() == -10006
+                                || jsonObject.get("state").getAsInt() == -10007) {
+                            BaseActivity.reLogin((BaseActivity) mContext.get());
+                        } else if (result != null)
+                            result.onResult(null);
                     }
                 } catch (Exception ex) {
                     Log.e(TAG, "getWeatherOutSide_Ex: " + ex.getMessage());
-                    result.onResult(null);
+                    if (result != null)
+                        result.onResult(null);
                 }
             }
         }));
