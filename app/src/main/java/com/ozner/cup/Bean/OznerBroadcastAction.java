@@ -25,5 +25,5 @@ public class OznerBroadcastAction {
 
     //个人中心我的设备选择
     public static final String OBA_CenterDeviceSelect = "ozner_center_deivce_select";
-    
+
 }

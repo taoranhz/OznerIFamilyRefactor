@@ -10,6 +10,7 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:navigationBarColor">@color/colorAccent</item>
         <item name="android:statusBarColor">@color/colorAccent</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
     <style name="ShowBigImgStyle" parent="Theme.AppCompat.NoActionBar">
         <!--<item name="android:windowAnimationStyle">@style/Anim_fade</item>-->

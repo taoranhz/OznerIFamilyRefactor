@@ -13,6 +13,7 @@ public class OznerPreference {
     public final static String IsLogin = "islogin";
     public final static String ISBDBind = "isBdBind";//设备id是否已经绑定
     public final static String BDDeivceID = "bd_deviceid";//百度推送设备id
+    public final static String IsFirstStart = "is_first_start";//是否是第一次启动
     public final static String UserToken = "usertoken";
 
     private static SharedPreferences Init(Context context) {

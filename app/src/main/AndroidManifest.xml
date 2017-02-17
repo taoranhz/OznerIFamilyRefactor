@@ -49,12 +49,14 @@
             android:name=".Main.MainActivity"
             android:launchMode="singleTask">
         </activity>
-        <activity android:name=".LoginWelcom.View.LoginActivity">
+        <activity android:name=".LoginWelcom.View.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".LoginWelcom.View.LoginActivity">
         </activity>
 
         <service android:name="com.ozner.application.OznerBLEService"/>
@@ -215,61 +217,68 @@
         <activity android:name=".Device.ReplenWater.ReplenSettings.SetRemindTimeActivity">
         </activity>
 
-
         <!-- 补水提醒相关-start -->
-        <!--<provider-->
-        <!--android:name=".Device.ReplenWater.Alarm.AlarmProvider"-->
-        <!--android:authorities="com.ozner.cup.Alarm"-->
-        <!--android:exported="false"/>-->
-        <!--<activity-->
-        <!--android:name=".Device.ReplenWater.Alarm.AlarmAlert"-->
-        <!--android:configChanges="orientation|keyboardHidden|keyboard|navigation"-->
-        <!--android:excludeFromRecents="true"-->
-        <!--android:launchMode="singleInstance"-->
-        <!--android:taskAffinity=""-->
-        <!--android:theme="@style/alarm_alert"/>-->
-        <!--<service android:name=".Device.ReplenWater.Alarm.AlarmKlaxon">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="com.ozner.cup.Alarm.ALARM_ALERT"/>-->
-        <!--</intent-filter>-->
-        <!--</service>-->
+        <!-- <provider -->
+        <!-- android:name=".Device.ReplenWater.Alarm.AlarmProvider" -->
+        <!-- android:authorities="com.ozner.cup.Alarm" -->
+        <!-- android:exported="false"/> -->
+        <!-- <activity -->
+        <!-- android:name=".Device.ReplenWater.Alarm.AlarmAlert" -->
+        <!-- android:configChanges="orientation|keyboardHidden|keyboard|navigation" -->
+        <!-- android:excludeFromRecents="true" -->
+        <!-- android:launchMode="singleInstance" -->
+        <!-- android:taskAffinity="" -->
+        <!-- android:theme="@style/alarm_alert"/> -->
+        <!-- <service android:name=".Device.ReplenWater.Alarm.AlarmKlaxon"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.ozner.cup.Alarm.ALARM_ALERT"/> -->
+        <!-- </intent-filter> -->
+        <!-- </service> -->
 
-        <!--<receiver android:name=".Device.ReplenWater.Alarm.AlarmReceiver">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="com.ozner.cup.Alarm.ALARM_ALERT"/>-->
-        <!--<action android:name="alarm_killed"/>-->
-        <!--<action android:name="cancel_snooze"/>-->
-        <!--</intent-filter>-->
-        <!--</receiver>-->
 
-        <!--<receiver android:name=".Device.ReplenWater.Alarm.AlarmInitReceiver">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.BOOT_COMPLETED"/>-->
-        <!--<action android:name="android.intent.action.TIME_SET"/>-->
-        <!--<action android:name="android.intent.action.TIMEZONE_CHANGED"/>-->
-        <!--<action android:name="android.intent.action.LOCALE_CHANGED"/>-->
-        <!--</intent-filter>-->
-        <!--</receiver>-->
+        <!-- <receiver android:name=".Device.ReplenWater.Alarm.AlarmReceiver"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.ozner.cup.Alarm.ALARM_ALERT"/> -->
+        <!-- <action android:name="alarm_killed"/> -->
+        <!-- <action android:name="cancel_snooze"/> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
 
-        <!--补水提醒相关-end -->
+
+        <!-- <receiver android:name=".Device.ReplenWater.Alarm.AlarmInitReceiver"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.BOOT_COMPLETED"/> -->
+        <!-- <action android:name="android.intent.action.TIME_SET"/> -->
+        <!-- <action android:name="android.intent.action.TIMEZONE_CHANGED"/> -->
+        <!-- <action android:name="android.intent.action.LOCALE_CHANGED"/> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
+
+
+        <!-- 补水提醒相关-end -->
         <activity
             android:name=".Device.ReplenWater.RemindUtils.NotifyActivity"
             android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
         </activity>
+
         <receiver
             android:name=".Device.ReplenWater.RemindUtils.AlarmReceiver"
             android:process=":remote">
             <intent-filter>
                 <action android:name="ozner.alarm.action"/>
+
                 <category android:name="ozner.alarm.category"/>
 
-                <!--<action android:name="android.intent.action.BOOT_COMPLETED"/>-->
-                <!--<action android:name="android.intent.action.LOCALE_CHANGED"/>-->
-                <!--<action android:name="android.intent.action.TIMEZONE_CHANGED"/>-->
-                <!--<action android:name="android.intent.action.TIME_SET"/>-->
+                <!-- <action android:name="android.intent.action.BOOT_COMPLETED"/> -->
+                <!-- <action android:name="android.intent.action.LOCALE_CHANGED"/> -->
+                <!-- <action android:name="android.intent.action.TIMEZONE_CHANGED"/> -->
+                <!-- <action android:name="android.intent.action.TIME_SET"/> -->
             </intent-filter>
         </receiver>
+
+        <activity android:name=".LoginWelcom.View.GuideActivity">
+        </activity>
     </application>
 
 </manifest>

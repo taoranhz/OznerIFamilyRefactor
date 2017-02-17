@@ -9,6 +9,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowAnimationStyle">@style/fade</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="fade" parent="@android:style/Animation.Activity">
@@ -111,7 +112,9 @@
     <style name="Center_Rank_ProgressBar" parent="@android:style/Widget.Holo.ProgressBar.Horizontal">
         <item name="android:indeterminateOnly">false</item>
         <item name="android:progressDrawable">@drawable/center_progress_selector_purifier</item>
-        <item name="android:indeterminateDrawable">@android:drawable/progress_indeterminate_horizontal</item>
+        <item name="android:indeterminateDrawable">
+            @android:drawable/progress_indeterminate_horizontal
+        </item>
         <item name="android:minHeight">10dp</item>
         <item name="android:maxHeight">10dp</item>
     </style>
@@ -131,7 +134,20 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
+
     <style name="alarm_alert" parent="android:Theme.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
     </style>
 </resources>

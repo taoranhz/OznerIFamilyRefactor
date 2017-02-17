@@ -24,6 +24,7 @@
     <color name="air_good_bg">#5ecffe</color>
     <color name="air_soso_bg">#a381fb</color>
     <color name="air_bad_bg">#fe6565</color>
+    <color name="guide_color">#ff8dd0fb</color>
 
     <color name="pressed_blue">#48b4e9</color>
     <color name="font_gray">#959595</color>
@@ -59,4 +60,6 @@
     <color name="replen_blue_bg">#ff69b7ff</color>
     <color name="replen_label_blue">#ff8aa9fb</color>
     <color name="replen_value_blue">#ff238fff</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>
