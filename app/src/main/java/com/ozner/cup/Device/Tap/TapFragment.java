@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.ozner.cup.CupRecord;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.DeviceFragment;
+import com.ozner.cup.Device.FilterStatusActivity;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
@@ -47,7 +49,6 @@ import com.ozner.tap.TapRecord;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -61,8 +62,8 @@ import static com.ozner.cup.R.string.bad;
  */
 
 public class TapFragment extends DeviceFragment {
+    public static final int INIT_WARRANTY = 30;// 默认有效期
     private static final String TAG = "TapFragment";
-    private static final int INIT_WARRANTY = 30;// 默认有效期
     private static final int TextSize = 45;
     private static final int NumSize = 60;
     @InjectView(R.id.iv_battery_icon)
@@ -176,7 +177,7 @@ public class TapFragment extends DeviceFragment {
             mTap = (Tap) device;
             refreshUIData();
         }
-        refreshTapFilterInfo();
+//        refreshTapFilterInfo();
     }
 
     @Override
@@ -188,7 +189,7 @@ public class TapFragment extends DeviceFragment {
             mTap = (Tap) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
             oldTdsValue = 0;
             oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mTap.Address());
-            refreshTapFilterInfo();
+//            refreshTapFilterInfo();
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -241,6 +242,7 @@ public class TapFragment extends DeviceFragment {
         try {
             setBarColor(R.color.cup_detail_bg);
             setToolbarColor(R.color.cup_detail_bg);
+            refreshTapFilterInfo();
         } catch (Exception ex) {
 
         }
@@ -255,27 +257,22 @@ public class TapFragment extends DeviceFragment {
      * 刷新水探头滤芯信息
      */
     private void refreshTapFilterInfo() {
-        String startTimeStr = (String) mTap.Setting().get(Contacts.TAP_START_TIME, null);
-        if (startTimeStr != null) {
-            try {
-                int useDay = (int) mTap.Setting().get(Contacts.TAP_FILTER_USEDAY, 0);
-                Date startTime = dataFormat.parse(startTimeStr);
-                long temUseDay = (Calendar.getInstance().getTimeInMillis() - startTime.getTime()) / (24 * 3600 * 1000);
-                Log.e(TAG, "refreshTapFilterInfo: temUseDay:" + temUseDay);
-                if (temUseDay != useDay) {
-                    loadTapFilterFromNet();
+        try {
+            LCLogUtils.E(TAG, "refreshTapFilterInfo:" + oznerSetting.getSettings());
+            String startTimeStr = (String) oznerSetting.getAppData(Contacts.TAP_FILTER_START_TIME);
+            long updateTimeMill = (long) oznerSetting.getAppData(Contacts.TAP_FILTER_UPDATE_TIMEMILLS);
+            int useDay = (int) oznerSetting.getAppData(Contacts.TAP_FILTER_USEDAY);
+            if (DateUtils.isToday(updateTimeMill)) {
+                if (useDay < INIT_WARRANTY) {
+                    int ret = (INIT_WARRANTY - useDay) / INIT_WARRANTY * 100;
+                    showFilterInfo(ret);
                 } else {
-                    if (useDay < INIT_WARRANTY) {
-                        int ret = (INIT_WARRANTY - useDay) / INIT_WARRANTY * 100;
-                        showFilterInfo(ret);
-                    } else {
-                        showFilterInfo(0);
-                    }
+                    showFilterInfo(0);
                 }
-            } catch (Exception ex) {
-                Log.e(TAG, "refreshTapFilterInfo_Ex: " + ex.getMessage());
+            } else {
+                loadTapFilterFromNet();
             }
-        } else {
+        } catch (Exception ex) {
             loadTapFilterFromNet();
         }
     }
@@ -288,8 +285,8 @@ public class TapFragment extends DeviceFragment {
     private void loadTapFilterFromNet() {
         Log.e(TAG, "loadTapFilterFromNet: mime:" + MobileInfoUtil.getImie(getContext()) + " ,deviceName:" + Build.MANUFACTURER);
         if (mTap != null) {
-            Log.e(TAG, "loadTapFilterFromNet_Usertoken: " + OznerPreference.getUserToken(getContext()));
-            Log.e(TAG, "loadTapFilterFromNet_Mac: " + mTap.Address());
+            LCLogUtils.E(TAG, "loadTapFilterFromNet_Usertoken: " + OznerPreference.getUserToken(getContext()));
+            LCLogUtils.E(TAG, "loadTapFilterFromNet_Mac: " + mTap.Address());
             HttpMethods.getInstance().getTapFilterInfo(OznerPreference.getUserToken(getContext()), mTap.Address(),
                     new ProgressSubscriber<JsonObject>(getContext(), new OznerHttpResult<JsonObject>() {
                         @Override
@@ -300,6 +297,28 @@ public class TapFragment extends DeviceFragment {
                         @Override
                         public void onNext(JsonObject jsonObject) {
                             LCLogUtils.E(TAG, "loadTapFilterFromNet: " + jsonObject.toString());
+                            try {
+                                if (jsonObject != null) {
+                                    if (jsonObject.get("state").getAsInt() > 0) {
+                                        String startTime = jsonObject.get("modifytime").getAsString();
+                                        int useDay = jsonObject.get("useday").getAsInt();
+                                        if (useDay < INIT_WARRANTY) {
+                                            int ret = (INIT_WARRANTY - useDay) / INIT_WARRANTY * 100;
+                                            showFilterInfo(ret);
+                                        } else {
+                                            showFilterInfo(0);
+                                        }
+                                        if (oznerSetting != null) {
+                                            oznerSetting.setAppData(Contacts.TAP_FILTER_START_TIME, startTime);
+                                            oznerSetting.setAppData(Contacts.TAP_FILTER_USEDAY, useDay);
+                                            oznerSetting.setAppData(Contacts.TAP_FILTER_UPDATE_TIMEMILLS, System.currentTimeMillis());
+                                            DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+                                        }
+                                    }
+                                }
+                            } catch (Exception ex) {
+
+                            }
                         }
                     }));
         }
@@ -566,6 +585,14 @@ public class TapFragment extends DeviceFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rlay_filter:
+                if (mTap != null) {
+                    Intent filterIntent = new Intent(getContext(), FilterStatusActivity.class);
+                    filterIntent.putExtra(Contacts.PARMS_MAC, mTap.Address());
+                    filterIntent.putExtra(FilterStatusActivity.PARMS_DEVICE_TYPE, FilterStatusActivity.TYPE_TAP_FILTER);
+                    startActivity(filterIntent);
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
                 break;
             case R.id.iv_setting:
                 if (mTap != null) {

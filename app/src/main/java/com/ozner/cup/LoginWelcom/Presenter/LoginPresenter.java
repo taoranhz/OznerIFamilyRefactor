@@ -50,29 +50,6 @@ public class LoginPresenter {
     /**
      * 获取手机验证码
      */
-//    public void getVerifyCode() {
-//        loginView.showErrMsg("");
-//        if (!isNetAvailable()) {
-//            return;
-//        }
-//        if (!loginView.getUserPhone().isEmpty() && loginView.getUserPhone().length() == 11) {
-//            loginModel.getVerifyCode(loginView.getUserPhone(), new Action1<JsonObject>() {
-//                @Override
-//                public void call(JsonObject jsonObject) {
-//                    Log.e(TAG, "getVerifyCode: " + jsonObject.toString());
-//                    if (jsonObject.get("state").getAsInt() > 0) {
-//                        loginView.showErrMsg(loginContext.get().getString(R.string.tips_getcode));
-//                        loginView.beginCountdown();
-//                    } else {
-//                        showResultErrMsg(jsonObject.get("state").getAsInt(), jsonObject.get("msg"));
-//                        loginView.showErrMsg(ApiException.getErrResId(jsonObject.get("state").getAsInt()));
-//                    }
-//                }
-//            });
-//        } else {
-//            loginView.showErrMsg(R.string.err_miss_phone);
-//        }
-//    }
     public void getVerifyCode() {
         loginView.showErrMsg("");
         if (!isNetAvailable()) {

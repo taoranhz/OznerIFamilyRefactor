@@ -506,4 +506,22 @@ public class HttpMethods {
 //                .map(new ResultTransFunc1())
                 .subscribe(subscriber);
     }
+
+
+    /**
+     * 更新滤芯服务时间
+     *
+     * @param usertoken
+     * @param mac
+     * @param deivcetype
+     * @param code 二维码值
+     * @param subscriber
+     */
+    public void reNewFilterTime(String usertoken,String mac,String deivcetype,String code,Subscriber<JsonObject> subscriber){
+        oznerHttpService.reNewFilterTime(usertoken,mac,deivcetype,code)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
 }

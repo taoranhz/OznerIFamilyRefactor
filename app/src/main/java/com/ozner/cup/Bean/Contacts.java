@@ -81,9 +81,11 @@ public class Contacts {
     //水杯今日状态
     public final static String Cup_Today_Status = "cup_today_status";
     //水探头滤芯开始时间
-    public final static String TAP_START_TIME = "tap_start_time";
+    public final static String TAP_FILTER_START_TIME = "tap_start_time";
     //水探头滤芯使用时间
     public final static String TAP_FILTER_USEDAY = "tap_filter_useday";
+    //水探头滤芯信息更新时间
+    public final static String TAP_FILTER_UPDATE_TIMEMILLS = "tap_update_timemills";
 
 
     //网络请求基础url

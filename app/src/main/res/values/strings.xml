@@ -36,6 +36,9 @@
     <string name="err_miss_verify_code">请输入验证码</string>
     <string name="err_miss_proctol">请先同意《浩泽净水家免责条款》</string>
     <string name="bd_bind_fail">百度推送绑定失败</string>
+    <string name="device_address_err">设备地址错误</string>
+    <string name="Filter_Scan">扫一扫</string>
+    <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
 
     <!--登录-->
     <string name="input_userphone">请输入手机号</string>

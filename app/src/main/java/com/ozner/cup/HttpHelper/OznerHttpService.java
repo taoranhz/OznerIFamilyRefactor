@@ -383,4 +383,17 @@ public interface OznerHttpService {
     Observable<JsonObject> getTimesCountBuShui(@Field("usertoken") String usertoken, @Field("mac") String mac);
 
 
+    /**
+     * 更新滤芯服务时间
+     * @param usertoken
+     * @param mac
+     * @param devicetype
+     * @param code
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerDevice/RenewFilterTime")
+    Observable<JsonObject> reNewFilterTime(@Field("usertoken") String usertoken,@Field("mac") String mac,@Field("devicetype") String devicetype,@Field("code") String code);
+
 }

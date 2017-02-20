@@ -67,14 +67,13 @@
                     android:layout_toRightOf="@+id/iv_filter_icon"
                     android:text="@string/state_null"
                     android:textColor="@color/white"
-                    android:textSize="13dp"/>
+                    android:textSize="18dp"/>
 
                 <TextView
                     android:id="@+id/tv_filter_tips"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tv_filter_value"
-                    android:layout_marginTop="3dp"
                     android:layout_toRightOf="@+id/iv_filter_icon"
                     android:text="@string/filter_need_change"
                     android:textColor="@color/white"

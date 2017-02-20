@@ -1,9 +1,12 @@
 package com.ozner.cup.Device;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,21 +15,31 @@ import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Bean.RankType;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.DBHelper.WaterPurifierAttr;
 import com.ozner.cup.Device.WaterPurifier.WaterNetInfoManager;
+import com.ozner.cup.HttpHelper.ApiException;
+import com.ozner.cup.HttpHelper.HttpMethods;
+import com.ozner.cup.HttpHelper.OznerHttpResult;
+import com.ozner.cup.HttpHelper.ProgressSubscriber;
+import com.ozner.cup.QRCodeScan.activity.CaptureActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.FilterProgressView;
 import com.ozner.cup.UIView.UIZGridView;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.WeChatUrlUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,10 +49,12 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
+import static com.ozner.cup.Device.Tap.TapFragment.INIT_WARRANTY;
 import static com.ozner.cup.R.id.uiz_moreProject;
 
 public class FilterStatusActivity extends BaseActivity implements AdapterView.OnItemClickListener, IFilterStatusView {
     private static final String TAG = "FilterStatusActivity";
+    private final static int SCANNIN_GREQUEST_CODE = 0x03;
     public static final int TYPE_WATER_FILTER = 0;
     public static final int TYPE_TAP_FILTER = 1;
     public static final String PARMS_DEVICE_TYPE = "parms_device_type";
@@ -83,9 +98,11 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
     private WaterNetInfoManager waterNetInfoManager;
     private WaterPurifierAttr purifierAttr;
     private String mac = "";
+    private String userid = "";
     private int deviceType = TYPE_WATER_FILTER;
     private ProgressDialog progressDialog;
-    UserInfo userInfo;
+    private UserInfo userInfo;
+    SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,18 +113,30 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
         uizMoreProject.setOnItemClickListener(this);
         initToolBar();
         initStaticData();
-        String userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
+        userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
         if (userid != null) {
             userInfo = DBManager.getInstance(this).getUserInfo(userid);
         }
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
-            deviceType = getIntent().getIntExtra(PARMS_DEVICE_TYPE, TYPE_WATER_FILTER);
-            if (TYPE_WATER_FILTER == deviceType) {
-                initWaterPurifierInfo();
-            } else if (TYPE_TAP_FILTER == deviceType) {
-                Log.e(TAG, "onCreate: 水探头");
-                initTapInfo();
+            if (null != mac && "" != mac) {
+                deviceType = getIntent().getIntExtra(PARMS_DEVICE_TYPE, TYPE_WATER_FILTER);
+                if (TYPE_WATER_FILTER == deviceType) {
+                    initWaterPurifierInfo();
+                } else if (TYPE_TAP_FILTER == deviceType) {
+                    Log.e(TAG, "onCreate: 水探头");
+                    initTapInfo();
+                }
+            } else {
+                new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
+                        .setMessage(R.string.device_address_err)
+                        .setPositiveButton(R.string.ensure, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                FilterStatusActivity.this.finish();
+                            }
+                        }).show();
             }
         } catch (Exception ex) {
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -129,7 +158,21 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
      * 初始化净水器信息
      */
     private void initWaterPurifierInfo() {
-        // TODO: 2016/12/2 隐藏该隐藏的信息
+        purifierAttr = DBManager.getInstance(this).getWaterAttr(mac);
+        if (purifierAttr != null) {
+            if (purifierAttr.getBuylinkurl() != null) {
+                if (purifierAttr.isBoolshow()) {
+                    llayScanCode.setVisibility(View.VISIBLE);
+                } else {
+                    llayScanCode.setVisibility(View.GONE);
+                }
+            } else {
+                llayScanCode.setVisibility(View.VISIBLE);
+            }
+        } else {
+            llayScanCode.setVisibility(View.VISIBLE);
+        }
+
         initWaterPurifierFilter(mac);
     }
 
@@ -137,7 +180,79 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
      * 初始化水探头滤芯信息
      */
     private void initTapInfo() {
+        llayMoreService.setVisibility(View.GONE);
 
+        try {
+            OznerDeviceSettings oznerSetting = DBManager.getInstance(this).getDeviceSettings(userid, mac);
+            if (oznerSetting != null) {
+                LCLogUtils.E(TAG, "refreshTapFilterInfo:" + oznerSetting.getSettings());
+                String startTimeStr = (String) oznerSetting.getAppData(Contacts.TAP_FILTER_START_TIME);
+                long updateTimeMill = (long) oznerSetting.getAppData(Contacts.TAP_FILTER_UPDATE_TIMEMILLS);
+                int useDay = (int) oznerSetting.getAppData(Contacts.TAP_FILTER_USEDAY);
+                if (DateUtils.isToday(updateTimeMill)) {
+                    Date startTime = dataFormat.parse(startTimeStr);
+                    if (useDay < INIT_WARRANTY) {
+                        int ret = (INIT_WARRANTY - useDay) / INIT_WARRANTY * 100;
+                        tvRemainTime.setText(String.valueOf(INIT_WARRANTY - useDay));
+                        tvRemainPre.setText(String.valueOf(ret));
+                    }
+                    filterProgress.initTime(startTime, INIT_WARRANTY);
+                    filterProgress.update(useDay);
+                } else {
+                    loadTapFilterFromNet();
+                }
+            } else {
+                loadTapFilterFromNet();
+            }
+        } catch (Exception ex) {
+            LCLogUtils.E(TAG, "initTapInfo_Ex:" + ex.getMessage());
+            loadTapFilterFromNet();
+        }
+    }
+
+    /**
+     * 从网络加载滤芯数据
+     * <p>
+     * 这里获取数据，需要在设备配对时，将设备同步到服务器
+     */
+    private void loadTapFilterFromNet() {
+        HttpMethods.getInstance().getTapFilterInfo(OznerPreference.getUserToken(FilterStatusActivity.this), mac,
+                new ProgressSubscriber<JsonObject>(FilterStatusActivity.this, new OznerHttpResult<JsonObject>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        LCLogUtils.E(TAG, "loadTapFilterFromNet_onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        LCLogUtils.E(TAG, "loadTapFilterFromNet: " + jsonObject.toString());
+                        try {
+                            if (jsonObject != null) {
+                                if (jsonObject.get("state").getAsInt() > 0) {
+                                    String modifytime = jsonObject.get("modifytime").getAsString();
+                                    Date startTime = dataFormat.parse(modifytime);
+                                    int useDay = jsonObject.get("useday").getAsInt();
+                                    if (useDay < INIT_WARRANTY) {
+                                        int ret = (INIT_WARRANTY - useDay) / INIT_WARRANTY * 100;
+                                        tvRemainTime.setText(String.valueOf(INIT_WARRANTY - useDay));
+                                        tvRemainPre.setText(String.valueOf(ret));
+                                    }
+                                    filterProgress.initTime(startTime, INIT_WARRANTY);
+                                    filterProgress.update(useDay);
+                                    OznerDeviceSettings oznerSetting = DBManager.getInstance(FilterStatusActivity.this).getDeviceSettings(userid, mac);
+                                    if (oznerSetting != null) {
+                                        oznerSetting.setAppData(Contacts.TAP_FILTER_START_TIME, startTime);
+                                        oznerSetting.setAppData(Contacts.TAP_FILTER_USEDAY, useDay);
+                                        oznerSetting.setAppData(Contacts.TAP_FILTER_UPDATE_TIMEMILLS, System.currentTimeMillis());
+                                        DBManager.getInstance(FilterStatusActivity.this).updateDeviceSettings(oznerSetting);
+                                    }
+                                }
+                            }
+                        } catch (Exception ex) {
+                            LCLogUtils.E(TAG, "loadTapFilterFromNet_Ex:" + ex.getMessage());
+                        }
+                    }
+                }));
     }
 
     /**
@@ -147,7 +262,7 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
      */
     private void initWaterPurifierFilter(String mac) {
         try {
-            purifierAttr = DBManager.getInstance(this).getWaterAttr(mac);
+
             if (null == waterNetInfoManager) {
                 waterNetInfoManager = new WaterNetInfoManager(this);
             }
@@ -335,7 +450,9 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
                 break;
             case R.id.tv_scancode_btn:
                 // TODO: 2016/12/2  
-                showToastCenter("扫描二维码");
+//                showToastCenter("扫描二维码");
+                Intent scanIntent = new Intent(FilterStatusActivity.this, CaptureActivity.class);
+                startActivityForResult(scanIntent, SCANNIN_GREQUEST_CODE);
                 break;
         }
     }
@@ -400,5 +517,53 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
     public void showFilterProgress(Date startTime, Date endTime, Date currentTime) {
         filterProgress.initTime(startTime, endTime);
         filterProgress.update(currentTime);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case SCANNIN_GREQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    Bundle bundle = data.getExtras();
+                    String scanResult = bundle.getString("result");
+                    if (null != scanResult && "" != scanResult) {
+                        reNewFilterTime( deviceType == 0 ? RankType.WaterType : RankType.TapType, scanResult);
+                    }
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * 更新滤芯服务时间
+     * @param type
+     * @param code
+     */
+    private void reNewFilterTime(final String type, String code) {
+        HttpMethods.getInstance().reNewFilterTime(OznerPreference.getUserToken(FilterStatusActivity.this), mac, type, code,
+                new ProgressSubscriber<JsonObject>(FilterStatusActivity.this, getString(R.string.loading), false, new OznerHttpResult<JsonObject>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        LCLogUtils.E(TAG, "reNewFilterTime_Ex:" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        LCLogUtils.E(TAG,"reNewFilterTime:"+jsonObject.toString());
+                        if(jsonObject!=null){
+                            if(jsonObject.get("state").getAsInt()>0){
+                                if(deviceType == TYPE_TAP_FILTER){
+                                    loadTapFilterFromNet();
+                                }else {
+                                    loadWaterFilterNet(mac);
+                                }
+                            }else {
+                                showToastCenter(ApiException.getErrResId(jsonObject.get("state").getAsInt()));
+                            }
+                        }
+                    }
+                }));
     }
 }
