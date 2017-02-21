@@ -168,7 +168,6 @@ public class TapFragment extends DeviceFragment {
         oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, device.Address());
         if (mTap != null) {
             if (mTap.Address() != device.Address()) {
-                mTap.release();
                 mTap = null;
                 mTap = (Tap) device;
                 refreshUIData();

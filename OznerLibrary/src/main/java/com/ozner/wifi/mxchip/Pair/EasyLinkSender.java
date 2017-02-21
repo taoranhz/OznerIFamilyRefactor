@@ -3,8 +3,6 @@
  */
 package com.ozner.wifi.mxchip.Pair;
 
-//import com.aylanetworks.aaml.AylaNetworks;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

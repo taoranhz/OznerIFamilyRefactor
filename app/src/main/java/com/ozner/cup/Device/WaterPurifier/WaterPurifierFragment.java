@@ -210,7 +210,6 @@ public class WaterPurifierFragment extends DeviceFragment {
 
         if (mWaterPurifer != null) {
             if (mWaterPurifer.Address() != device.Address()) {
-                mWaterPurifer.release();
                 mWaterPurifer = null;
                 mWaterPurifer = (WaterPurifier) device;
                 refreshUIData();

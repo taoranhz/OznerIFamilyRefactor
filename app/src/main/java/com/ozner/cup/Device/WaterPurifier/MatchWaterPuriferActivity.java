@@ -229,12 +229,12 @@ public class MatchWaterPuriferActivity extends BaseActivity {
                 //开始配网
                 try {
                     wifiPair.pair(tvSelectedWifi.getText().toString(), etPassword.getText().toString());
+                    showMatchDevice();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     Log.e(TAG, "matchDevice_Ex: " + ex.getMessage());
+                    showMatchFail();
                 }
-
-                showMatchDevice();
             } else {
                 showToastCenter("请输入密码");
             }

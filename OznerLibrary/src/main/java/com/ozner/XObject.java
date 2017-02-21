@@ -16,11 +16,16 @@ public abstract class XObject {
     private static RunningMode runningMode = RunningMode.Foreground;
     private final StatusMonitor statusMonitor = new StatusMonitor();
     private final Object waitObject = new Object();
-    protected Context context;
+    private Context context;
 
     public XObject(Context context) {
         this.context = context;
-        context.registerReceiver(statusMonitor, new IntentFilter(ACTION_RUNNING_MODE_CHANGE));
+        try {
+            context.registerReceiver(statusMonitor, new IntentFilter(ACTION_RUNNING_MODE_CHANGE));
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**

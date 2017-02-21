@@ -1,6 +1,7 @@
 package com.ozner.WaterPurifier;
 
 import android.content.Context;
+import android.text.format.Time;
 
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScanResponse;
@@ -24,11 +25,15 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
     private static final int defaultAutoUpdatePeriod=1000;
     private static final byte opCode_request_info=(byte)0x20;
     private static final byte opCode_reset=(byte)0xa0;
+    private static final byte opCode_set_setting=(byte)0x40;
+
     private static final byte opCode_respone_setting=(byte)0x21;
     private static final byte opCode_respone_water=(byte)0x22;
     private static final byte opCode_respone_filter=(byte)0x23;
     private static final byte opCode_respone_filterHis1=(byte)0x11;
     private static final byte opCode_respone_filterHis2=(byte)0x12;
+
+
 
 
 
@@ -78,7 +83,10 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
         public int TDS1_RAW;
         public int TDS2_RAW;
         public int TDS_Temperature;
-
+        /**
+         * 过滤水量
+         */
+        public int FilterVolume;
         public void fromBytes(byte[] bytes)
         {
             this.TDS1= ByteUtil.getShort(bytes,0);
@@ -86,11 +94,12 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
             this.TDS1_RAW= ByteUtil.getShort(bytes,4);
             this.TDS2_RAW= ByteUtil.getShort(bytes,6);
             this.TDS_Temperature= ByteUtil.getShort(bytes,8);
+            this.FilterVolume= ByteUtil.getInt(bytes,10);
         }
 
         @Override
         public String toString() {
-            return String.format("TDS1:%d(%d) TDS2:%d(%d) 温度:%d",TDS1,TDS1_RAW,TDS2,TDS2_RAW,TDS_Temperature);
+            return String.format("TDS1:%d(%d) TDS2:%d(%d) 温度:%d 过滤水量:%d",TDS1,TDS1_RAW,TDS2,TDS2_RAW,TDS_Temperature,FilterVolume);
         }
     }
 
@@ -157,7 +166,6 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
     @Override
     protected void updateStatus(OperateCallback<Void> cb) {
 
-
             if ((requestCount%2)==0)
             {
                 waterPurifierIMP.requestFilterInfo();
@@ -179,6 +187,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
 
     @Override
     public String toString() {
+
         StringBuilder sb=new StringBuilder();
         sb.append(settingInfo.toString()+"\n");
         sb.append(waterInfo.toString()+"\n");
@@ -204,18 +213,48 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
         {
             if (IO() != null) {
                 byte[] bytes=new byte[3];
-                bytes[0]=0x20;
+                bytes[0]=opCode_request_info;
                 bytes[1]=1;
                 bytes[2]=calcSum(bytes,2);
                 IO().send(bytes);
                 dbg.i("请求设置信息");
             }
         }
+        public boolean updateSetting(int Ozone_Interval,int Ozone_WorkTime,boolean resetFilter,OperateCallback<Void> cb)
+        {
+            if (IO()!=null) {
+                byte[] bytes = new byte[11];
+                bytes[0] = opCode_set_setting;
+                Time time = new Time();
+                time.setToNow();
+
+                bytes[1] = (byte) (time.year - 2000);
+                bytes[2] = (byte) (time.month + 1);
+                bytes[3] = (byte) time.monthDay;
+                bytes[4] = (byte) time.hour;
+                bytes[5] = (byte) time.minute;
+                bytes[6] = (byte) time.second;
+
+                bytes[7] = (byte) Ozone_Interval;
+                bytes[8] = (byte) Ozone_WorkTime;
+                if (resetFilter)
+                    bytes[9] = 1;
+                else
+                    bytes[9] = 0;
+
+                bytes[10] = calcSum(bytes, 10);
+                dbg.i("发送设置信息");
+                return IO().send(bytes,cb);
+            }else
+                return false;
+
+        }
+
         private void requestWaterInfo()
         {
             if (IO() != null) {
                 byte[] bytes=new byte[3];
-                bytes[0]=0x20;
+                bytes[0]=opCode_request_info;
                 bytes[1]=2;
                 bytes[2]=calcSum(bytes,2);
                 IO().send(bytes);
@@ -227,24 +266,28 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
         {
             if (IO() != null) {
                 byte[] bytes=new byte[3];
-                bytes[0]=0x20;
+                bytes[0]=opCode_request_info;
                 bytes[1]=3;
                 bytes[2]=calcSum(bytes,2);
                 IO().send(bytes);
                 dbg.i("请求滤芯信息");
             }
         }
+
+
         private void requestFilterHisInfo()
         {
             if (IO() != null) {
                 byte[] bytes=new byte[3];
-                bytes[0]=0x20;
+                bytes[0]=opCode_request_info;
                 bytes[1]=4;
                 bytes[2]=calcSum(bytes,2);
                 IO().send(bytes);
                 dbg.i("请求滤芯历史信息");
             }
         }
+
+
         private void reset()
         {
             if (IO() != null) {
@@ -304,7 +347,13 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
 
         @Override
         public void onConnected(BaseDeviceIO io) {
-
+            BluetoothIO bluetoothIO=(BluetoothIO)io;
+            if (((BluetoothIO) io).getScanResponse()!=null)
+            {
+                info.ControlBoard="";
+                info.MainBoard=bluetoothIO.getScanResponse().MainbroadPlatform;
+                info.Model=bluetoothIO.getScanResponse().Model;
+            }
         }
 
         @Override
@@ -341,9 +390,12 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
      * 重置滤芯时间
      * @return
      */
-    public boolean resetFilter()
+    public boolean resetFilter(OperateCallback<Void> cb)
     {
-        return false;
+        if (settingInfo.Ozone_Interval<=0) return false;
+        if (settingInfo.Ozone_WorkTime<=0) return false;
+        return waterPurifierIMP.updateSetting(settingInfo.Ozone_Interval,settingInfo.Ozone_WorkTime,
+                true,cb);
     }
 
     public static BluetoothScanResponse parseScanResp(String name,byte[] Service_Data)
@@ -362,7 +414,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
                 rep.MainbroadFirmware = new Date(Service_Data[12] + 2000 - 1900, Service_Data[13] - 1,
                         Service_Data[14], Service_Data[15],
                         Service_Data[16], Service_Data[17]);
-
+                rep.Firmware=rep.MainbroadFirmware;
                 rep.CustomDataLength=8;
                 rep.ScanResponseType=WaterPurifier_RO_BLE.BLE_RO_ScanResponseType;
                 rep.ScanResponseData= Arrays.copyOfRange(Service_Data, 18, 25);
@@ -380,12 +432,11 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
      * @return true=配对状态
      */
     public static boolean isBindMode(BluetoothIO io) {
-        return true;
-        /*if (!CupManager.IsCup(io.getType())) return false;
+        //return true;
         byte[] data=io.getScanResponseData();
         if ((io.getScanResponseType() == BLE_RO_ScanResponseType) && (data!= null)) {
             return data[0]==1;
         }
-        return false;*/
+        return false;
     }
 }

@@ -263,7 +263,6 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         deviceNewName = "";
         if (mDeskAirPurifier != null) {
             if (mDeskAirPurifier.Address() != device.Address()) {
-                mDeskAirPurifier.release();
                 mDeskAirPurifier = null;
                 mDeskAirPurifier = (AirPurifier_Bluetooth) device;
                 refreshUIData();

@@ -189,7 +189,7 @@ public class CupRecordList {
      * @param time 要获取的时间
      * @param interval 统计走起间隔
      */
-    public CupRecord[] getRecordByDate(Date time, QueryInterval interval) {
+    public CupRecord[] getRecordByDate(Date time,QueryInterval interval) {
         synchronized (this) {
             ArrayList<CupRecord> arrays=new ArrayList<>();
 

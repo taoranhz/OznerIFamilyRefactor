@@ -66,7 +66,7 @@ public class WaterPurifierManager extends BaseDeviceManager {
             OznerDeviceManager.Instance().ioManagerList().mxChipIOManager()
                         .createMXChipDevice(waterPurifier.Address(), waterPurifier.Type());
             return waterPurifier;
-        }
+        }else
 //        if (type.trim().equals("AY001MAB1"))
 //        {
 //            WaterPurifier waterPurifier = new WaterPurifier_Ayla(context(), address, type, settings);
@@ -82,10 +82,13 @@ public class WaterPurifierManager extends BaseDeviceManager {
 
     @Override
     public boolean checkIsBindMode(BaseDeviceIO io) {
+
         if (io instanceof BluetoothIO)
         {
-            //检查是否在配对模式
-            return WaterPurifier_RO_BLE.isBindMode((BluetoothIO)io);
+            if (io.getType().equals("Ozner RO")) {
+                //检查是否在配对模式
+                return WaterPurifier_RO_BLE.isBindMode((BluetoothIO) io);
+            }
         }
         return super.checkIsBindMode(io);
     }

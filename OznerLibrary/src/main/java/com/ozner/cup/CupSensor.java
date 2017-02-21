@@ -1,12 +1,11 @@
 package com.ozner.cup;
 
-import android.util.Log;
-
 import com.ozner.util.ByteUtil;
 
 /**
  * @author zhiyongxu
  *         智能杯传感器对象
+ * @category 智能杯
  */
 public class CupSensor {
     public static final int CUP_SENSOR_ERROR = 0xffff;
@@ -44,7 +43,6 @@ public class CupSensor {
             float ret = (BatteryFix - 3000f) / (4200f - 3000f);
             if (ret > 100)
                 ret = 100;
-            Log.e("datou", "getPower: " + ret);
             return ret;
         } else
             return 0;

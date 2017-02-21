@@ -213,7 +213,6 @@ public class AirVerPurifierFragment extends DeviceFragment {
 //        initColor();
         if (mVerAirPurifier != null) {
             if (mVerAirPurifier.Address() != device.Address()) {
-                mVerAirPurifier.release();
                 mVerAirPurifier = null;
                 mVerAirPurifier = (AirPurifier_MXChip) device;
                 refreshUIData();

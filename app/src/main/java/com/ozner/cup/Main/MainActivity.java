@@ -85,6 +85,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     private int curBottomIndex = 0;
     private String mUserid;
 
+    /**
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,7 +99,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         initBroadCastFilter();
         mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
         if (mUserid != null && !mUserid.isEmpty()) {
-            Log.e(TAG, "onCreate: mUserid:" + mUserid);
+            Log.e(TAG, "onCreate: mUserid:" + mUserid+",usertoken:"+OznerPreference.getUserToken(this));
             userInfo = DBManager.getInstance(this).getUserInfo(mUserid);
             userInfoManager = new UserInfoManager(this);
             userInfoManager.loadUserInfo(null);
@@ -104,6 +107,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
             startActivity(new Intent(this, LoginActivity.class));
             this.finish();
         }
+//        ((OznerApplication)getApplication()).getService().getDeviceManager().setOwner(mUserid, OznerPreference.getUserToken(MainActivity.this));
 
         //启动百度云推送
         PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, getString(R.string.Baidu_Push_ApiKey));

@@ -4,12 +4,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.ozner.bluetooth.BluetoothIO;
+import com.ozner.bluetooth.BluetoothIOMgr;
 import com.ozner.bluetooth.BluetoothScanResponse;
 import com.ozner.bluetooth.IBluetoothScanResponseParser;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.BaseDeviceManager;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
+
+import java.util.Arrays;
 
 @SuppressLint("NewApi")
 /**

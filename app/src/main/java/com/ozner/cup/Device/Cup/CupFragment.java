@@ -129,7 +129,6 @@ public class CupFragment extends DeviceFragment {
         oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, device.Address());
         if (mCup != null) {
             if (!mCup.Address().equals(device.Address())) {
-                mCup.release();
                 mCup = null;
                 mCup = (Cup) device;
                 refreshUIData();

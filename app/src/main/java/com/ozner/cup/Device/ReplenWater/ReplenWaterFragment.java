@@ -151,7 +151,6 @@ public class ReplenWaterFragment extends DeviceFragment {
         }
         if (replenWater != null) {
             if (replenWater.Address() != device.Address()) {
-                replenWater.release();
                 replenWater = null;
                 replenWater = (WaterReplenishmentMeter) device;
             }

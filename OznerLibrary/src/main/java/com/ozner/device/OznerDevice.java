@@ -126,18 +126,6 @@ public abstract class OznerDevice extends XObject {
     }
 
     /**
-     * add by ozner_67 on 2016/11/7
-     * 释放新创建的设备，注销当前设备的广播接收器
-     *
-     */
-    public void release() {
-//        if (statusBroadcastReceiver != null) {
-//            this.context.unregisterReceiver(statusBroadcastReceiver);
-//            statusBroadcastReceiver = null;
-//        }
-    }
-
-    /**
      * 获取设备定时查询操作的循环周期
      *
      * @return 返回查询操作的循环周期, 默认Integer.MAX_VALUE
