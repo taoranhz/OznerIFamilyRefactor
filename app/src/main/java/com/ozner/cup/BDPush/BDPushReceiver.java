@@ -7,6 +7,7 @@ import android.util.Log;
 import com.baidu.android.pushservice.PushMessageReceiver;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Chat.EaseUI.model.MessageDirect;
 import com.ozner.cup.Chat.EaseUI.utils.MessageCreator;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
@@ -102,7 +103,7 @@ public class BDPushReceiver extends PushMessageReceiver {
                     boolean isLogin = OznerPreference.IsLogin(context);
 
                     if (isLogin && !msg.isEmpty()) {
-                        EMMessage emMessage = MessageCreator.transMsgNetToLocal(userid, msg);
+                        EMMessage emMessage = MessageCreator.transMsgNetToLocal(userid, msg, MessageDirect.RECEIVE, MessageCreator.LOCAL_TIME);
                         DBManager.getInstance(context).updateEMMessage(emMessage);
                         context.sendBroadcast(new Intent(OznerBroadcastAction.OBA_RECEIVE_CHAT_MSG));
                     }

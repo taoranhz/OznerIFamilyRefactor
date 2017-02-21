@@ -23,6 +23,9 @@ public class OznerBroadcastAction {
     //接收到咨询消息
     public static final String OBA_RECEIVE_CHAT_MSG = "ozner_recieve_chat_msg";
 
+    //获取到咨询历史消息
+    public static final String OBA_OBTAIN_CHAT_HISTORY = "ozner_obtain_chat_history";
+
     //个人中心我的设备选择
     public static final String OBA_CenterDeviceSelect = "ozner_center_deivce_select";
 

@@ -1,11 +1,21 @@
 package com.ozner.cup.Chat.ChatHttpUtils;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Chat.EaseUI.model.MessageDirect;
+import com.ozner.cup.Chat.EaseUI.utils.MessageCreator;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.DBHelper.DBManager;
+import com.ozner.cup.DBHelper.EMMessage;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.SecurityUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,12 +37,14 @@ import cz.msebera.android.httpclient.util.EntityUtils;
  * 邮箱：xinde.zhang@cftcn.com
  */
 public class FuckChatHttpClient {
+    public static final int DEFAULT_PAGESIZE = 30;//默认历史记录pagesize
+    public static final String GET_COUNT = "getcount";
     private static final String TAG = "FuckChatHttpClient";
     private static final int DEFAULT_READ_TIMEOUT = 10000;//默认超时时间10s
     private static final int HANDLER_TOKEN_RESULT = 1;
     private static final int HANDLER_USERINFO_RESULT = 2;
     private static final int HANDLER_LOGIN_RESULT = 3;
-    private String mMobile, mDeviceid, mToken, mCustomerId;
+    private String mMobile, mDeviceid, mToken, mCustomerId, mKfId;
     private FuckChatHttpListener chatListener;
 
     public interface FuckChatHttpListener {
@@ -142,6 +154,7 @@ public class FuckChatHttpClient {
                             int code = loginJson.getInt("code");
                             if (code == 0) {
                                 JSONObject resJson = loginJson.getJSONObject("result");
+                                mKfId = resJson.getString("kfid");
                                 if (chatListener != null) {
                                     chatListener.onLoginSuccess(resJson.getString("kfid"), resJson.getString("kfname"));
                                 }
@@ -318,6 +331,81 @@ public class FuckChatHttpClient {
     }
 
     /**
+     * 咨询获取历史记录
+     *
+     * @param context
+     * @param userid
+     * @param page    页数
+     */
+    public void chatGetHistoryMsg(final Context context, final String userid, final int page) {
+        try {
+            String queyParams = getSysQueryParams(mToken);
+            final JSONObject paramsJson = new JSONObject();
+            paramsJson.put("customer_id", mCustomerId);
+            paramsJson.put("pagesize", String.valueOf(DEFAULT_PAGESIZE));
+            paramsJson.put("page", String.valueOf(page));
+            final String queryUrl = String.format("%s/%s?%s", ChatHttpBean.ChatBaseUrl, ChatHttpBean.HistoryActionUrl, queyParams);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String result = basePostString(queryUrl, paramsJson.toString());
+                    LCLogUtils.E(TAG, "chatGetHistoryMsg_result: " + result);
+                    try {
+                        if (result != null && result != "") {
+                            JSONObject resJson = new JSONObject(result);
+                            int code = resJson.getInt("code");
+                            if (0 == code) {
+                                JSONObject resJo = resJson.getJSONObject("result");
+                                int totalCount = resJo.getInt("count");
+                                int historyCount = Integer.parseInt(UserDataPreference.GetUserData(context, UserDataPreference.ChatHistoryCount, "-1"));
+                                //当本地历史记录总数为-1时，表示未获取过历史消息，
+                                // 如果大于等于0表示已经不是第一次获取历史消息，就不需要再保存历史消息总数，
+                                // 否则会造成信息重复
+                                if (historyCount < 0) {
+                                    UserDataPreference.SetUserData(context, UserDataPreference.ChatHistoryCount, String.valueOf(totalCount));
+                                }
+                                int curMsgCount = DBManager.getInstance(context).getAllChatMessage(userid).size();
+                                if (totalCount > 0) {
+                                    //保存本次获取历史记录的页码，为下次获取历史记录准备
+                                    UserDataPreference.SetUserData(context, UserDataPreference.ChatCurPage, String.valueOf(page));
+                                    JSONArray jsonArray = resJo.getJSONArray("list");
+                                    int getCount = jsonArray.length();
+                                    for (int i = 0; i < getCount; i++) {
+                                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                        //修正为毫秒级时间戳
+                                        long addtime = jsonObject.getLong("_add_timestamp") * 1000;
+                                        String message = jsonObject.getString("_message");
+                                        int oper = jsonObject.getInt("_oper");
+                                        int direct = 1;
+                                        if (oper == 1) {
+                                            direct = MessageDirect.SEND;
+                                        } else if (oper == 2) {
+                                            direct = MessageDirect.RECEIVE;
+                                        }
+                                        EMMessage chatMsg = MessageCreator.transMsgNetToLocal(userid, message, direct, addtime);
+                                        DBManager.getInstance(context).updateEMMessage(chatMsg);
+                                    }
+                                    if (curMsgCount > 0) {
+                                        Intent hisIntent = new Intent(OznerBroadcastAction.OBA_OBTAIN_CHAT_HISTORY);
+                                        hisIntent.putExtra(GET_COUNT, getCount);
+                                        context.sendBroadcast(hisIntent);
+                                    } else {
+                                        context.sendBroadcast(new Intent(OznerBroadcastAction.OBA_RECEIVE_CHAT_MSG));
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception ex) {
+                        Log.e(TAG, "chatGetHistoryMsg_run_ex: " + ex.getMessage());
+                    }
+                }
+            }).start();
+        } catch (Exception ex) {
+            LCLogUtils.E(TAG, "chatGetHistoryMsg_Ex:" + ex.getMessage());
+        }
+    }
+
+    /**
      * 咨询上传图片
      *
      * @param msgTime
@@ -448,79 +536,4 @@ public class FuckChatHttpClient {
         }
         return null;
     }
-
-
-//    /**
-//     * @param actionUrl
-//     * @param paramsMap
-//     *
-//     * @return
-//     */
-//    private String httpGet(String actionUrl, HashMap<String, String> paramsMap) {
-//        try {
-//            StringBuffer tempParams = new StringBuffer();
-//            int pos = 0;
-//            for (String key : paramsMap.keySet()) {
-//                if (pos > 0) {
-//                    tempParams.append("&");
-//                }
-//                tempParams.append(String.format("%s=%s", key, URLEncoder.encode(paramsMap.get(key), "utf-8")));
-//                pos++;
-//            }
-//            String queryUrl = String.format("%s/%s?%s", ChatHttpBean.ChatBaseUrl, actionUrl, tempParams.toString());
-//            Log.e(TAG, "httpGet: queryUrl:" + queryUrl);
-//
-//            RequestConfig requestConfig = RequestConfig.custom()
-//                    .setSocketTimeout(DEFAULT_READ_TIMEOUT)
-//                    .setConnectTimeout(DEFAULT_READ_TIMEOUT)
-//                    .build();//设置请求和传输超时时间
-//
-//            //声明HttpClient对象
-//            CloseableHttpClient httpclient = HttpClients.createDefault();
-//            HttpGet httpGet = new HttpGet(queryUrl);
-//            httpGet.setConfig(requestConfig);
-//            CloseableHttpResponse response2 = httpclient.execute(httpGet);
-//            try {
-//                if (response2.getStatusLine().getStatusCode() == 200) {
-//                    HttpEntity entity2 = response2.getEntity();
-//                    String strResult = EntityUtils.toString(entity2);
-//                    return strResult;
-//                }
-//
-//            } finally {
-//                response2.close();
-//            }
-//        } catch (Exception ex) {
-//            Log.e(TAG, "httpGet_ex: " + ex.getMessage());
-//        }
-//        return null;
-//    }
-
-
-//    @Deprecated
-//    private String httpPost(String url, String parm, RequestConfig requestConfig) {
-//        try {
-//            StringEntity parmentity = new StringEntity(parm, HTTP.UTF_8);
-//            //声明HttpClient对象
-//            CloseableHttpClient httpclient = HttpClients.createDefault();
-//            HttpPost httpPost = new HttpPost(url);
-//            httpPost.setConfig(requestConfig);
-//            httpPost.setEntity(parmentity);
-//            CloseableHttpResponse response2 = httpclient.execute(httpPost);
-//            try {
-//                if (response2.getStatusLine().getStatusCode() == 200) {
-//                    HttpEntity entity2 = response2.getEntity();
-//                    String strResult = EntityUtils.toString(entity2);
-//                    return strResult;
-//                }
-//            } finally {
-//                response2.close();
-//            }
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//            return null;
-//        }
-//        return null;
-//    }
-
 }

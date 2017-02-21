@@ -18,6 +18,8 @@
     <string name="settings">设置</string>
     <string name="PressToExit">再按一次退出程序</string>
     <string name="times">次</string>
+    <string name="no_more_messages">没有更多信息了</string>
+    <!--<string name= "no_more_messages">no more messages</string>-->
 
     <!--底部菜单-->
     <string name="device">设备</string>

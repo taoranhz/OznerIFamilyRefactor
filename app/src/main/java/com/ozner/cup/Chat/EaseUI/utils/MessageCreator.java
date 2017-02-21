@@ -5,7 +5,6 @@ import android.text.Spanned;
 import android.util.Log;
 
 import com.ozner.cup.Chat.ChatHttpUtils.ChatHttpBean;
-import com.ozner.cup.Chat.EaseUI.model.MessageDirect;
 import com.ozner.cup.Chat.EaseUI.model.MessageStatus;
 import com.ozner.cup.Chat.EaseUI.model.MessageType;
 import com.ozner.cup.DBHelper.EMMessage;
@@ -25,6 +24,7 @@ import java.util.regex.Pattern;
  */
 
 public class MessageCreator {
+    public static final long LOCAL_TIME = -1;
     private static final String TAG = "MessageCreator";
 
     private static String StartDiv = "<div style=\"font-size:14px;font-family:微软雅黑\">";
@@ -35,95 +35,162 @@ public class MessageCreator {
     /**
      * 将接收到的信息转换成本地格式
      *
+     * @param userid
      * @param receiveMsg
+     * @param timestamp  -1表示使用本地时间，其他的表示
      *
      * @return
      */
-    public static EMMessage transMsgNetToLocal(@NotNull String userid, @NotNull String receiveMsg) {
+    public static EMMessage transMsgNetToLocal(@NotNull String userid, @NotNull String receiveMsg, int msgDirect, long timestamp) {
         EMMessage eMsg = new EMMessage();
 
         String tempMsg = receiveMsg;
         try {
             eMsg.setStatus(MessageStatus.SUCCESS);
-            eMsg.setTime(Calendar.getInstance().getTimeInMillis());
+            if (LOCAL_TIME == timestamp) {
+                eMsg.setTime(Calendar.getInstance().getTimeInMillis());
+            } else {
+                eMsg.setTime(timestamp);
+            }
             eMsg.setUserid(userid);
-            eMsg.setMDirect(MessageDirect.RECEIVE);
+            eMsg.setMDirect(msgDirect);
             eMsg.setMType(MessageType.TXT);
+//            Log.e("tag", "transMsgNetToLocal_receiveMsg: " + receiveMsg);
 
-            if (!tempMsg.isEmpty() && tempMsg.contains("<div")) {
-                String firstStr = "<div style=\"font-size:14px;font-family:微软雅黑\">";
-                int last = tempMsg.lastIndexOf("</div>");
+            if (!tempMsg.isEmpty()) {
+                if (tempMsg.startsWith("<div")) {
+                    String firstStr = "<div style=\"font-size:14px;font-family:微软雅黑\">";
+                    int last = tempMsg.lastIndexOf("</div>");
 
-                tempMsg = tempMsg.substring(firstStr.length(), last);
-                tempMsg = tempMsg.replace("<div><br></div>", "\n");
+                    tempMsg = tempMsg.substring(firstStr.length(), last);
+                    tempMsg = tempMsg.replace("<div><br></div>", "\n");
 
-                tempMsg = tempMsg.replace("<br>", "");
-                tempMsg = tempMsg.replace("<div>", "");
-                tempMsg = tempMsg.replace("</div>", "");
-                tempMsg = tempMsg.replace("&nbsp;", " ");
-                tempMsg = tempMsg.trim();
-                Log.e(TAG, "transMsgNetToLocal: tempMsg:" + tempMsg);
-                String msgTemp = tempMsg.trim();
+                    tempMsg = tempMsg.replace("<br>", "");
+                    tempMsg = tempMsg.replace("<div>", "");
+                    tempMsg = tempMsg.replace("</div>", "");
+                    tempMsg = tempMsg.replace("&nbsp;", " ");
+                    tempMsg = tempMsg.trim();
+                    Log.e(TAG, "transMsgNetToLocal: tempMsg:" + tempMsg);
+                    String msgTemp = tempMsg.trim();
 //                Pattern p = Pattern.compile("<img.*?src=\\\".*?\\\".*? .*?>");
-                if (tempMsg.contains(".gif")) {
-                    Pattern p = Pattern.compile("<img.*?src=\\\".*?>");
-                    Matcher m = p.matcher(tempMsg);
-                    if (m != null) {
-                        while (m.find()) {
-                            try {
-                                String imgtag = m.group();
+                    if (tempMsg.contains(".gif")) {
+                        Pattern p = Pattern.compile("<img.*?src=\\\".*?>");
+                        Matcher m = p.matcher(tempMsg);
+                        if (m != null) {
+                            while (m.find()) {
+                                try {
+                                    String imgtag = m.group();
 //                        Log.e("match", "imgtag:" + imgtag);
-                                Pattern patSrc = Pattern.compile("http:.*?\\.gif");
-                                Matcher mSrc = patSrc.matcher(imgtag);
-                                if (mSrc != null && mSrc.find()) {
-                                    String matchSrc = mSrc.group();
+                                    Pattern patSrc = Pattern.compile("http:.*?\\.gif");
+                                    Matcher mSrc = patSrc.matcher(imgtag);
+                                    if (mSrc != null && mSrc.find()) {
+                                        String matchSrc = mSrc.group();
 //                            Log.e("match", "matchSrc:" + matchSrc);
-                                    int start = matchSrc.lastIndexOf("/") + 1;
-                                    int end = matchSrc.indexOf(".gif");
-                                    int index = Integer.parseInt(matchSrc.substring(start, end));
-                                    StringBuilder giftag = new StringBuilder();
-                                    giftag.append("[f_");
-                                    if (index < 10) {
-                                        giftag.append("0");
-                                    }
-                                    if (index < 100) {
-                                        giftag.append("0");
-                                    }
-                                    giftag.append(index);
-                                    giftag.append("]");
+                                        int start = matchSrc.lastIndexOf("/") + 1;
+                                        int end = matchSrc.indexOf(".gif");
+                                        int index = Integer.parseInt(matchSrc.substring(start, end));
+                                        StringBuilder giftag = new StringBuilder();
+                                        giftag.append("[f_");
+                                        if (index < 10) {
+                                            giftag.append("0");
+                                        }
+                                        if (index < 100) {
+                                            giftag.append("0");
+                                        }
+                                        giftag.append(index);
+                                        giftag.append("]");
 //                                String resStr = "#[face/png/f_static_" + num + ".png]#";
 //                            Log.e("match", "index:" + index + " , " + resStr);
-                                    msgTemp = msgTemp.replace(imgtag, giftag.toString());
-                                } else {
-                                    Log.e("match", "mSrc is null or not find");
-                                }
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
+                                        msgTemp = msgTemp.replace(imgtag, giftag.toString());
+                                    } else {
+                                        Log.e("match", "mSrc is null or not find");
+                                    }
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
 
+                                }
+                            }
+                        } else {
+                            Log.e("match", "m is null");
+                        }
+                    } else if (tempMsg.contains(".PNG") || tempMsg.contains(".png")
+                            || tempMsg.contains(".JPEG") || tempMsg.contains(".jpg") || tempMsg.contains(".JPG")) {
+                        eMsg.setMType(MessageType.IMAGE);
+                        Pattern p = Pattern.compile("<img.*?src=\\\"(.*).*\\\"");
+                        Matcher m = p.matcher(tempMsg);
+                        if (m != null) {
+                            while (m.find()) {
+                                String imagepath = m.group(1);
+                                int start = imagepath.indexOf("\"");
+                                if (start >= 0) {
+                                    imagepath = imagepath.substring(0, start);
+                                }
+
+//                                Log.e("tag", "imagePath_Pre:" + imagepath);
+//                            path.add(imagepath);
+                                msgTemp = imagepath;
                             }
                         }
-                    } else {
-                        Log.e("match", "m is null");
                     }
-                } else if (tempMsg.contains(".PNG")||tempMsg.contains(".png")
-                        || tempMsg.contains(".JPEG") || tempMsg.contains(".jpg") || tempMsg.contains(".JPG")) {
-                    eMsg.setMType(MessageType.IMAGE);
-                    Pattern p = Pattern.compile("<img.*?src=\\\"(.*).*\\\"");
-                    Matcher m = p.matcher(tempMsg);
-                    if (m != null) {
-                        while (m.find()) {
-                            String imagepath = m.group(1);
-//                    Log.e("tag", "imagePath_Pre:" + imagepath);
-                            int start = imagepath.indexOf("\"");
-                            if (start >= 0)
-                                imagepath = imagepath.substring(0, start);
+                    tempMsg = msgTemp;
+                } else if (tempMsg.startsWith("<img")) {
+                    Log.e(TAG, "transMsgNetToLocal: tempMsg:" + tempMsg);
+                    String msgTemp = tempMsg.trim();
+                    if (tempMsg.contains(".gif")) {
+                        Pattern p = Pattern.compile("<img.*?src=\\\".*?>");
+                        Matcher m = p.matcher(tempMsg);
+                        if (m != null) {
+                            while (m.find()) {
+                                try {
+                                    String imgtag = m.group();
+                                    Pattern patSrc = Pattern.compile("http:.*?\\.gif");
+                                    Matcher mSrc = patSrc.matcher(imgtag);
+                                    if (mSrc != null && mSrc.find()) {
+                                        String matchSrc = mSrc.group();
+                                        int start = matchSrc.lastIndexOf("/") + 1;
+                                        int end = matchSrc.indexOf(".gif");
+                                        int index = Integer.parseInt(matchSrc.substring(start, end));
+                                        StringBuilder giftag = new StringBuilder();
+                                        giftag.append("[f_");
+                                        if (index < 10) {
+                                            giftag.append("0");
+                                        }
+                                        if (index < 100) {
+                                            giftag.append("0");
+                                        }
+                                        giftag.append(index);
+                                        giftag.append("]");
+                                        msgTemp = msgTemp.replace(imgtag, giftag.toString());
+                                    } else {
+                                        Log.e("match", "mSrc is null or not find");
+                                    }
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
 
-//                            path.add(imagepath);
-                            msgTemp = imagepath;
+                                }
+                            }
+                        } else {
+                            Log.e("match", "m is null");
+                        }
+                    } else if (tempMsg.contains(".PNG") || tempMsg.contains(".png")
+                            || tempMsg.contains(".JPEG") || tempMsg.contains(".jpg") || tempMsg.contains(".JPG")) {
+                        eMsg.setMType(MessageType.IMAGE);
+                        Pattern p = Pattern.compile("<img.*?src=\\\"(.*).*\\\"");
+                        Matcher m = p.matcher(tempMsg);
+                        if (m != null) {
+                            while (m.find()) {
+                                String imagepath = m.group(1);
+                                int start = imagepath.indexOf("\"");
+                                if (start >= 0) {
+                                    imagepath = imagepath.substring(0, start);
+                                }
+//                                Log.e("tag", "imagePath_Pre:" + imagepath);
+                                msgTemp = imagepath;
+                            }
                         }
                     }
+                    tempMsg = msgTemp;
                 }
-                tempMsg = msgTemp;
             }
         } catch (Exception ex) {
             Log.e(TAG, "transMsgNetToLocal_Ex: " + ex.getMessage());

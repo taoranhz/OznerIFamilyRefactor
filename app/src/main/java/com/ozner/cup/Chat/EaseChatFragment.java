@@ -62,12 +62,12 @@ import com.ozner.cup.DBHelper.EMMessage;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.OznerFileImageHelper;
 
 import java.io.File;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -215,6 +215,7 @@ public class EaseChatFragment extends EaseBaseFragment {
         chatMonitor = new ChatMessageReciever();
         IntentFilter filter = new IntentFilter();
         filter.addAction(OznerBroadcastAction.OBA_RECEIVE_CHAT_MSG);
+        filter.addAction(OznerBroadcastAction.OBA_OBTAIN_CHAT_HISTORY);
         getActivity().registerReceiver(chatMonitor, filter);
     }
 
@@ -431,38 +432,21 @@ public class EaseChatFragment extends EaseBaseFragment {
 
                     @Override
                     public void run() {
-                        if (listView.getFirstVisiblePosition() == 0 && !isloading && haveMoreData) {
-                            List<EMMessage> messages;
-//                            try {
-//                                if (chatType == EaseConstant.CHATTYPE_SINGLE) {
-//                                    messages = conversation.loadMoreMsgFromDB(messageList.getItem(0).getMsgId(),
-//                                            pagesize);
-//                                } else {
-//                                    messages = conversation.loadMoreMsgFromDB(messageList.getItem(0).getMsgId(),
-//                                            pagesize);
-//                                }
-//                            } catch (Exception e1) {
-//                                swipeRefreshLayout.setRefreshing(false);
-//                                return;
-//                            }
-//                            if (messages.size() > 0) {
-//                                messageList.refreshSeekTo(messages.size() - 1);
-//                                if (messages.size() != pagesize) {
-//                                    haveMoreData = false;
-//                                }
-//                            } else {
-//                                haveMoreData = false;
-//                            }
-
-                            isloading = false;
-
+//                        if (!swipeRefreshLayout.isRefreshing()) {
+                        int curPage = Integer.parseInt(UserDataPreference.GetUserData(getContext(), UserDataPreference.ChatCurPage, "0"));
+                        int totalHistory = Integer.parseInt(UserDataPreference.GetUserData(getContext(), UserDataPreference.ChatHistoryCount, "-1"));
+                        boolean hasMoreData = curPage * FuckChatHttpClient.DEFAULT_PAGESIZE < totalHistory;
+                        LCLogUtils.E(TAG, "hasMoreData:" + hasMoreData + " ,curPage:" + curPage + " ,totalHistory:" + totalHistory + " ,isRefreshing:" + swipeRefreshLayout.isRefreshing());
+                        if (hasMoreData) {
+                            fuckChatHttpClient.chatGetHistoryMsg(getContext(), userid, ++curPage);
                         } else {
-                            Toast.makeText(getActivity(), getResources().getString(R.string.no_more_messages),
-                                    Toast.LENGTH_SHORT).show();
+                            Toast toast = Toast.makeText(getContext(), R.string.no_more_messages, Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.show();
+                            swipeRefreshLayout.setRefreshing(false);
                         }
-                        swipeRefreshLayout.setRefreshing(false);
                     }
-                }, 600);
+                }, 300);
             }
         });
     }
@@ -1011,7 +995,7 @@ public class EaseChatFragment extends EaseBaseFragment {
                 Toast.makeText(getActivity(), R.string.sd_card_does_not_exist, Toast.LENGTH_SHORT).show();
                 return;
             }
-            perReqResult = PermissionUtil.with((MainActivity)getActivity()).request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+            perReqResult = PermissionUtil.with((MainActivity) getActivity()).request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
                     .onAllGranted(new Func() {
                         @Override
                         protected void call() {
@@ -1152,6 +1136,20 @@ public class EaseChatFragment extends EaseBaseFragment {
         @Override
         public void onLoginSuccess(String kfid, String kfname) {
 //            showChatroomToast(kfid + " : " + kfname);
+            LCLogUtils.E(TAG, "kfid:" + kfid + " ,kfname:" + kfname);
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int curMsgCount = DBManager.getInstance(getContext()).getAllChatMessage(userid).size();
+                    int historyCount = Integer.parseInt(UserDataPreference.GetUserData(getContext(), UserDataPreference.ChatHistoryCount, "-1"));
+                    //本地没有消息，并且未获取过历史记录，则加载第一页数据
+                    if (0 == curMsgCount && -1 == historyCount) {
+                        swipeRefreshLayout.setRefreshing(true);
+                        fuckChatHttpClient.chatGetHistoryMsg(getContext(), userid, 1);
+                    }
+                }
+            });
         }
 
         @Override
@@ -1217,11 +1215,19 @@ public class EaseChatFragment extends EaseBaseFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            swipeRefreshLayout.setRefreshing(false);
             switch (intent.getAction()) {
                 case OznerBroadcastAction.OBA_RECEIVE_CHAT_MSG:
                     //刷新UI
                     if (isMessageListInited) {
                         messageList.refreshSelectLast();
+                    }
+                    break;
+                case OznerBroadcastAction.OBA_OBTAIN_CHAT_HISTORY:
+                    int getcount = intent.getIntExtra(FuckChatHttpClient.GET_COUNT, 0);
+                    LCLogUtils.E(TAG, "ChatMessageReciever_goutCount:" + getcount);
+                    if (isMessageListInited) {
+                        messageList.refreshSeekTo(getcount);
                     }
                     break;
             }
