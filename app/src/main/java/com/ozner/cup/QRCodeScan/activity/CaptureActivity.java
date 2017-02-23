@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -65,16 +66,21 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         //ViewUtil.addTopView(getApplicationContext(), this, R.string.scan_card);
         CameraManager.init(getApplication());
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
-        toolbar_text = (TextView) findViewById(R.id.tv_title);
+        toolbar_text = (TextView) findViewById(R.id.title);
         toolbar_text.setText(getString(R.string.Filter_Scan));
         bar_layout = (AppBarLayout) findViewById(R.id.bar_layout);
+//        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
         llay_captureRoot = (LinearLayout) findViewById(R.id.llay_captureRoot);
         llay_captureRoot.getViewTreeObserver().addOnGlobalLayoutListener(new GlobalLayoutChange());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        toolbar.setNavigationIcon(R.drawable.back);
+        toolbar.setBackgroundColor(ContextCompat.getColor(this,R.color.translucent));
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowTitleEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

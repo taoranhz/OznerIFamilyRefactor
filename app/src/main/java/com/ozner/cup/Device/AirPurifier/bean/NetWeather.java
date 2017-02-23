@@ -18,6 +18,8 @@ public class NetWeather {
     private String so2; //二氧化硫1小时平均值(ug/m³)
     private String hum; //相对湿度（%）
     private String tmp; //温度
+    private String updateLocTime="";//更新时间（本地）
+    private String updateUtcTime="";//更新时间（UTC）
 
     public String getWeatherform() {
         return weatherfrom;
@@ -115,6 +117,22 @@ public class NetWeather {
         this.tmp = tmp;
     }
 
+    public String getUpdateLocTime() {
+        return updateLocTime;
+    }
+
+    public void setUpdateLocTime(String updateLocTime) {
+        this.updateLocTime = updateLocTime;
+    }
+
+    public String getUpdateUtcTime() {
+        return updateUtcTime;
+    }
+
+    public void setUpdateUtcTime(String updateUtcTime) {
+        this.updateUtcTime = updateUtcTime;
+    }
+
     @Override
     public String toString() {
         StringBuffer str = new StringBuffer();
@@ -130,6 +148,10 @@ public class NetWeather {
         str.append(hum);
         str.append(" , tmp");
         str.append(tmp);
+        str.append(" ,updateLocTime:");
+        str.append(updateLocTime);
+        str.append(" ,updateUtcTime:");
+        str.append(updateUtcTime);
 
         return str.toString();
     }

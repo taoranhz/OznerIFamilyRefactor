@@ -70,6 +70,11 @@ public class AirPurifierPresenter {
                             if (firstElement.get("basic") != null) {
 //                                Log.e(TAG, "city: " + ((JSONObject) firstElement.get("basic")).get("city"));
                                 weather.setCity(((JSONObject) firstElement.get("basic")).get("city").toString());
+                                JSONObject update = ((JSONObject) firstElement.get("basic")).getJSONObject("update");
+                                if (update != null) {
+                                    weather.setUpdateLocTime(update.getString("loc"));
+                                    weather.setUpdateUtcTime(update.getString("utc"));
+                                }
                             }
                             if (firstElement.get("aqi") != null) {
                                 JSONObject city = (JSONObject) ((JSONObject) firstElement.get("aqi")).get("city");

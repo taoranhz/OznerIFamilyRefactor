@@ -212,6 +212,7 @@ public class MatchTapActivity extends BaseActivity {
             OznerDevice device = OznerDeviceManager.Instance().getDevice(deviceIo);
             if (device != null && TapManager.IsTap(device.Type())) {
                 OznerDeviceManager.Instance().save(device);
+                UserDataPreference.SetUserData(this, UserDataPreference.SelMac, device.Address());//保存选中的设备mac
                 if (etDeviceName.getText().length() > 0) {
                     device.Setting().name(etDeviceName.getText().toString().trim());
                 } else {

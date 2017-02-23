@@ -254,6 +254,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
                 if (device != null && WaterPurifierManager.IsWaterPurifier(device.Type())) {
                     Log.e(TAG, "saveDevice: " + device.Type());
                     OznerDeviceManager.Instance().save(device);
+                    UserDataPreference.SetUserData(this, UserDataPreference.SelMac, device.Address());//保存选中的设备mac
                     if (etDeviceName.getText().length() > 0) {
                         device.Setting().name(etDeviceName.getText().toString().trim());
                     } else {

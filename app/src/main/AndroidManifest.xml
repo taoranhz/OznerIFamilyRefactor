@@ -100,6 +100,8 @@
         </activity>
         <activity android:name=".Device.FilterStatusActivity">
         </activity>
+        <activity
+            android:name=".QRCodeScan.activity.CaptureActivity"/>
         <activity android:name=".Device.AirPurifier.AirDeskFilterActivity">
         </activity>
         <activity android:name=".Base.WebActivity">

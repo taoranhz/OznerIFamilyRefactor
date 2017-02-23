@@ -275,6 +275,7 @@ public class MatchReplenActivity extends BaseActivity {
                     device.Setting().name(getString(R.string.water_replen_meter));
                 }
                 OznerDeviceManager.Instance().save(device);
+                UserDataPreference.SetUserData(this, UserDataPreference.SelMac, device.Address());//保存选中的设备mac
                 device.updateSettings();
                 saveDeviceToDB(mUserid, device);
             } else {
