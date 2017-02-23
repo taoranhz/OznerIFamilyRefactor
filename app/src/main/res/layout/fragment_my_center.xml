@@ -1,8 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:tools="http://schemas.android.com/tools"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       tools:context="com.ozner.cup.MyCenter.MyCenterFragment">
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="com.ozner.cup.MyCenter.MyCenterFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -58,7 +58,7 @@
                     android:visibility="invisible"/>
             </LinearLayout>
 
-            <TextView style="@style/HaLineView" />
+            <TextView style="@style/HaLineView"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -66,8 +66,8 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    style="@style/item_click_ripple"
                     android:id="@+id/llay_myDevice"
+                    style="@style/item_click_ripple"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -100,8 +100,8 @@
                     android:background="@color/colorLine"/>
 
                 <LinearLayout
-                    style="@style/item_click_ripple"
                     android:id="@+id/llay_myBurse"
+                    style="@style/item_click_ripple"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -133,113 +133,132 @@
             <TextView style="@style/HaLineView"/>
 
             <RelativeLayout
-                style="@style/item_click_ripple"
                 android:id="@+id/rlay_my_order"
+                style="@style/item_click_ripple"
                 android:layout_width="match_parent"
                 android:layout_height="48dp">
 
                 <TextView
                     style="@style/CenterFragmentItemTextStyle"
                     android:drawableLeft="@mipmap/center_myorder"
-                    android:text="@string/my_order" />
+                    android:text="@string/my_order"/>
 
-                <ImageView style="@style/ArrowView" />
+                <ImageView style="@style/ArrowView"/>
 
             </RelativeLayout>
+
             <TextView style="@style/HaLineMarginLeftView"/>
 
             <RelativeLayout
-                style="@style/item_click_ripple"
                 android:id="@+id/rlay_redbag"
+                style="@style/item_click_ripple"
                 android:layout_width="match_parent"
                 android:layout_height="48dp">
 
                 <TextView
                     style="@style/CenterFragmentItemTextStyle"
                     android:drawableLeft="@mipmap/center_redbag"
-                    android:text="@string/cathc_redbag" />
+                    android:text="@string/cathc_redbag"/>
 
-                <ImageView style="@style/ArrowView" />
+                <ImageView style="@style/ArrowView"/>
 
             </RelativeLayout>
+
             <TextView style="@style/HaLineMarginLeftView"/>
 
             <RelativeLayout
-                style="@style/item_click_ripple"
                 android:id="@+id/rlay_my_ticket"
+                style="@style/item_click_ripple"
                 android:layout_width="match_parent"
                 android:layout_height="48dp">
 
                 <TextView
                     style="@style/CenterFragmentItemTextStyle"
                     android:drawableLeft="@mipmap/center_myticket"
-                    android:text="@string/my_ticket" />
+                    android:text="@string/my_ticket"/>
 
-                <ImageView style="@style/ArrowView" />
+                <ImageView style="@style/ArrowView"/>
 
             </RelativeLayout>
+
             <TextView style="@style/HaLineMarginLeftView"/>
 
             <RelativeLayout
-                style="@style/item_click_ripple"
                 android:id="@+id/rlay_my_friend"
+                style="@style/item_click_ripple"
                 android:layout_width="match_parent"
                 android:layout_height="48dp">
 
                 <TextView
                     style="@style/CenterFragmentItemTextStyle"
                     android:drawableLeft="@mipmap/icon_my_friend"
-                    android:text="@string/my_friend" />
+                    android:text="@string/my_friend"/>
 
-                <ImageView style="@style/ArrowView" />
+                <TextView
+                    android:id="@+id/tv_newFriendNum"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="40dp"
+                    android:background="@drawable/btn_bg_red_readius_my"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/white"
+                    android:visibility="gone"/>
+
+                <ImageView style="@style/ArrowView"/>
 
             </RelativeLayout>
+
             <TextView style="@style/HaLineMarginLeftView"/>
 
             <RelativeLayout
-                style="@style/item_click_ripple"
                 android:id="@+id/rlay_report"
+                style="@style/item_click_ripple"
                 android:layout_width="match_parent"
                 android:layout_height="48dp">
 
                 <TextView
                     style="@style/CenterFragmentItemTextStyle"
                     android:drawableLeft="@mipmap/icon_view_report"
-                    android:text="@string/view_report" />
+                    android:text="@string/view_report"/>
 
-                <ImageView style="@style/ArrowView" />
+                <ImageView style="@style/ArrowView"/>
 
             </RelativeLayout>
+
             <TextView style="@style/HaLineMarginLeftView"/>
 
             <RelativeLayout
-                style="@style/item_click_ripple"
                 android:id="@+id/rlay_feedback"
+                style="@style/item_click_ripple"
                 android:layout_width="match_parent"
                 android:layout_height="48dp">
 
                 <TextView
                     style="@style/CenterFragmentItemTextStyle"
                     android:drawableLeft="@mipmap/icon_feedback_comment"
-                    android:text="@string/my_feedback" />
+                    android:text="@string/my_feedback"/>
 
-                <ImageView style="@style/ArrowView" />
+                <ImageView style="@style/ArrowView"/>
 
             </RelativeLayout>
+
             <TextView style="@style/HaLineMarginLeftView"/>
 
             <RelativeLayout
-                style="@style/item_click_ripple"
                 android:id="@+id/rlay_settings"
+                style="@style/item_click_ripple"
                 android:layout_width="match_parent"
                 android:layout_height="48dp">
 
                 <TextView
                     style="@style/CenterFragmentItemTextStyle"
                     android:drawableLeft="@mipmap/icon_setting"
-                    android:text="@string/settings" />
+                    android:text="@string/settings"/>
 
-                <ImageView style="@style/ArrowView" />
+                <ImageView style="@style/ArrowView"/>
 
             </RelativeLayout>
         </LinearLayout>

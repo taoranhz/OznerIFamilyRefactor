@@ -32,4 +32,17 @@ public class OznerBroadcastAction {
     //登录通知
     public static final String OBA_Login_Notify = "ozner_login_notify";
 
+    //新的好友
+    public static final String OBA_NewFriendVF = "ozner_new_firend_vf";
+
+    //新的排名
+    public static final String OBA_NewRank = "ozner_new_rank";
+
+    //新的留言
+    public static final String OBA_NewCenterMsg = "ozner_new_center_msg";
+
+    //验证信息通过
+    public static final String OBA_NewFriend = "ozner_new_friend";
+
+
 }

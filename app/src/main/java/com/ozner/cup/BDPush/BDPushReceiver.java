@@ -92,7 +92,7 @@ public class BDPushReceiver extends PushMessageReceiver {
             JSONObject jsonObj = new JSONObject(message);
             String action = jsonObj.getJSONObject("custom_content").getString("action");
             switch (action) {
-                case PushOperationAction.Operation_Chat:
+                case PushOperationAction.Operation_Chat://咨询新的信息
                     String msg;
                     if (jsonObj.has("custom_content")) {
                         msg = jsonObj.getJSONObject("custom_content").getString("data");
@@ -121,7 +121,22 @@ public class BDPushReceiver extends PushMessageReceiver {
                     loginIntent.putExtra(Contacts.PARMS_LOGIN_USERID, loginUserid);
                     context.sendBroadcast(loginIntent);
                     break;
-
+                case PushOperationAction.Operation_NewFriendVF://新的好友验证请求
+                    Intent vfIntent = new Intent(OznerBroadcastAction.OBA_NewFriendVF);
+                    context.sendBroadcast(vfIntent);
+                    break;
+                case PushOperationAction.Operation_NewRank://新的排名
+                    Intent newRankIntent = new Intent(OznerBroadcastAction.OBA_NewRank);
+                    context.sendBroadcast(newRankIntent);
+                    break;
+                case PushOperationAction.Operation_NewMessage://新的留言
+                    Intent newMsgIntent = new Intent(OznerBroadcastAction.OBA_NewCenterMsg);
+                    context.sendBroadcast(newMsgIntent);
+                    break;
+                case PushOperationAction.Operation_NewFriend:
+                    Intent newFrendIntent = new Intent(OznerBroadcastAction.OBA_NewFriend);
+                    context.sendBroadcast(newFrendIntent);
+                    break;
             }
         } catch (Exception ex) {
             Log.e(TAG, "handleMessage_Ex: " + ex.getMessage());

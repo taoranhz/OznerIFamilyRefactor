@@ -19,6 +19,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
+import com.ozner.cup.Command.CenterNotification;
 import com.ozner.cup.MyCenter.MyFriend.bean.VerifyMessageItem;
 import com.ozner.cup.R;
 
@@ -140,6 +141,17 @@ public class DealVerifyActivity extends BaseActivity {
                             public void onSuccess() {
                                 verifyList.get(position).setStatus(2);
                                 mAdapter.loadData(verifyList);
+                                int waitNum = 0;
+                                for (VerifyMessageItem item : verifyList) {
+                                    if (item.getStatus() != 2) {
+                                        waitNum++;
+                                    }
+                                }
+                                if (waitNum > 0) {
+                                    CenterNotification.setCenterNotify(DealVerifyActivity.this, CenterNotification.NewFriendVF);
+                                } else {
+                                    CenterNotification.resetCenterNotify(DealVerifyActivity.this, CenterNotification.DealNewFriendVF);
+                                }
                             }
 
                             @Override

@@ -508,6 +508,55 @@ public class FriendInfoManager implements IFriendInfoManager {
     }
 
     /**
+     * 获取验证消息列表
+     *
+     * @param listener
+     */
+    public void getVerifyMessageNoDialog(final LoadVerifyListener listener) {
+        HttpMethods.getInstance().getVerifyMessage(OznerPreference.getUserToken(mContext.get()),
+                new ProgressSubscriber<JsonObject>(mContext.get(), new OznerHttpResult<JsonObject>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        if (listener != null) {
+                            listener.onFail(e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        try {
+                            if (jsonObject != null) {
+                                if (jsonObject.get("state").getAsInt() > 0) {
+                                    JsonArray array = jsonObject.getAsJsonArray("msglist");
+                                    List<VerifyMessageItem> result = new Gson().fromJson(array, new TypeToken<List<VerifyMessageItem>>() {
+                                    }.getType());
+                                    if (listener != null) {
+                                        listener.onSuccess(result);
+                                    }
+                                } else {
+                                    if (jsonObject.get("state").getAsInt() == -10006
+                                            || jsonObject.get("state").getAsInt() == -10007) {
+                                        BaseActivity.reLogin((BaseActivity) mContext.get());
+                                    } else if (listener != null) {
+                                        listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
+                                    }
+                                }
+                            } else {
+                                if (listener != null) {
+                                    listener.onFail("result is null");
+                                }
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            if (listener != null) {
+                                listener.onFail(ex.getMessage());
+                            }
+                        }
+                    }
+                }));
+    }
+
+    /**
      * 接受验证请求
      *
      * @param id

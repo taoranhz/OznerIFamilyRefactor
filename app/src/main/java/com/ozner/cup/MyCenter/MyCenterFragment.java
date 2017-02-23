@@ -22,6 +22,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.ozner.cup.Base.BaseFragment;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.CenterNotification;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
@@ -59,6 +60,8 @@ public class MyCenterFragment extends BaseFragment {
     TextView tvMyDevice;
     @InjectView(tv_myMoney)
     TextView tvMyMoney;
+    @InjectView(R.id.tv_newFriendNum)
+    TextView tvNewFriendNum;
 
     private UserInfoManager userInfoManager;
     private String userid;
@@ -126,6 +129,19 @@ public class MyCenterFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    /**
+     * 刷新我的消息记录
+     */
+    private void refreshCenterMsgCount() {
+        int centerNotify = CenterNotification.getCenterNotifyState(getContext());
+        if (centerNotify > 0) {
+            tvNewFriendNum.setVisibility(View.VISIBLE);
+        } else {
+            tvNewFriendNum.setVisibility(View.GONE);
+        }
+        ((MainActivity) getActivity()).setNewCenterMsgTip(centerNotify);
+    }
+
     public void showUserInfo(UserInfo userinfo) {
         if (isAdded()) {
             if (userinfo.getNickname() != null && !mUserInfo.getNickname().isEmpty()) {
@@ -175,6 +191,7 @@ public class MyCenterFragment extends BaseFragment {
         try {
             setBarColor(R.color.cup_detail_bg);
             tvMyDevice.setText(String.valueOf(DBManager.getInstance(getContext()).getDeviceSettingList(userid).size()));
+            refreshCenterMsgCount();
         } catch (Exception ex) {
 
         }

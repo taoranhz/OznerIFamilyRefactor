@@ -119,5 +119,7 @@ public class NoDeviceFragment extends DeviceFragment {
     @OnClick(R.id.tv_add_device)
     public void onClick() {
         startActivity(new Intent(getContext(), AddDeviceActivity.class));
+//        ((MainActivity)getActivity()).refreshBottomBadge(3);
+//        ((MainActivity)getActivity()).hideBottomNav();
     }
 }

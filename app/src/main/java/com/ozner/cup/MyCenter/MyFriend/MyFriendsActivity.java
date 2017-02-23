@@ -14,7 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Command.CenterNotification;
+import com.ozner.cup.MyCenter.MyFriend.bean.VerifyMessageItem;
 import com.ozner.cup.R;
+
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -73,6 +77,43 @@ public class MyFriendsActivity extends BaseActivity {
     private void initView() {
         initToolBar();
         setRankSelected();
+        CenterNotification.resetCenterNotify(this,CenterNotification.DealNewFriend);
+        CenterNotification.resetCenterNotify(this,CenterNotification.DealNewRank);
+        byte vernotify = CenterNotification.getCenterNotifyState(getBaseContext());
+        vernotify &= CenterNotification.NewFriendVF;
+        if (vernotify > 0) {
+            ivNewMsgTips.setVisibility(View.VISIBLE);
+        } else {
+            ivNewMsgTips.setVisibility(View.GONE);
+        }
+        initVerifyMsg();
+    }
+
+    private void initVerifyMsg() {
+        FriendInfoManager infoManager = new FriendInfoManager(this, null);
+        infoManager.getVerifyMessageNoDialog(new FriendInfoManager.LoadVerifyListener() {
+            @Override
+            public void onSuccess(List<VerifyMessageItem> result) {
+                int waitNum = 0;
+                for (VerifyMessageItem item : result) {
+                    if (item.getStatus() != 2) {
+                        waitNum++;
+                    }
+                }
+                if (waitNum > 0) {
+                    CenterNotification.setCenterNotify(MyFriendsActivity.this, CenterNotification.NewFriendVF);
+                } else {
+                    CenterNotification.resetCenterNotify(MyFriendsActivity.this, CenterNotification.DealNewFriendVF);
+                }
+//                setNewCenterMsgTip(CenterNotification.getCenterNotifyState(MyFriendsActivity.this));
+            }
+
+            @Override
+            public void onFail(String msg) {
+                ivNewMsgTips.setVisibility(View.GONE);
+//                setNewCenterMsgTip(CenterNotification.getCenterNotifyState(MyFriendsActivity.this));
+            }
+        });
     }
 
     @OnClick({R.id.llay_friend_rank, R.id.rlay_my_friend, R.id.iv_newMsg, R.id.iv_add_friend})

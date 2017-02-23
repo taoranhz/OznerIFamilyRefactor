@@ -12,6 +12,8 @@ import android.support.annotation.StringDef;
 public class UserDataPreference {
     public final static String UserId = "UserId";
     public final static String SelMac = "SelMac";
+    //个人中心
+    public final static String CenterNotify = "centernotify";//个人中心通知状态
     public final static String ChatHistoryCount = "chathistorycount";//咨询历史信息总数，只在第一次保存
     public final static String ChatCurPage = "chatcurpage";//上次获取咨询历史消息的页码
     public final static String IsAllowPushMessage = "isAllowPushMsg";//允许推送消息

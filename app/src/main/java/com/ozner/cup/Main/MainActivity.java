@@ -8,15 +8,20 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.baidu.android.pushservice.PushConstants;
@@ -29,6 +34,7 @@ import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Chat.EaseChatFragment;
+import com.ozner.cup.Command.CenterNotification;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
@@ -47,13 +53,17 @@ import com.ozner.cup.EShop.EShopFragment;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.LoginWelcom.View.LoginActivity;
 import com.ozner.cup.MyCenter.MyCenterFragment;
+import com.ozner.cup.MyCenter.MyFriend.FriendInfoManager;
+import com.ozner.cup.MyCenter.MyFriend.bean.VerifyMessageItem;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.MobileInfoUtil;
 import com.ozner.cup.Utils.WeChatUrlUtil;
 import com.ozner.device.OznerDevice;
 import com.ozner.tap.TapManager;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -72,10 +82,13 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     BottomNavigationBar bnBootomNavBar;
     @InjectView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
+    @InjectView(R.id.llay_bottom)
+    LinearLayout llayBottom;
 
     MainReceiver mainMonitor;
     UserInfo userInfo;
     UserInfoManager userInfoManager;
+
     //以设备类型来保存相应的Fragment
     private HashMap<String, DeviceFragment> devFragmentMap;
     private EShopFragment shopFragment;
@@ -84,6 +97,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     public Boolean isExit = false;
     private int curBottomIndex = 0;
     private String mUserid;
+    private BadgeItem centerBadge;
 
     /**
      * @param savedInstanceState
@@ -96,10 +110,11 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         devFragmentMap = new HashMap<>();
         setDefaultFragment();
         initNavBar();
+//        refreshBottomBadge(0);
         initBroadCastFilter();
         mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
         if (mUserid != null && !mUserid.isEmpty()) {
-            Log.e(TAG, "onCreate: mUserid:" + mUserid+",usertoken:"+OznerPreference.getUserToken(this));
+            Log.e(TAG, "onCreate: mUserid:" + mUserid + ",usertoken:" + OznerPreference.getUserToken(this));
             userInfo = DBManager.getInstance(this).getUserInfo(mUserid);
             userInfoManager = new UserInfoManager(this);
             userInfoManager.loadUserInfo(null);
@@ -111,6 +126,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
         //启动百度云推送
         PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, getString(R.string.Baidu_Push_ApiKey));
+
+
+//        setNewCenterMsgTip(CenterNotification.getCenterNotifyState(this));
+        checkUserVerifyMsg();
 
     }
 
@@ -132,10 +151,11 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
      */
     public void hideBottomNav() {
         try {
-            if (!bnBootomNavBar.isHidden()) {
-                bnBootomNavBar.hide();//隐藏
-                bnBootomNavBar.hide(true);//隐藏是否启动动画，这里并不能自定义动画
-            }
+//            if (!bnBootomNavBar.isHidden()) {
+//                bnBootomNavBar.hide();//隐藏
+//                bnBootomNavBar.hide(false);//隐藏是否启动动画，这里并不能自定义动画
+//            }
+            llayBottom.setVisibility(View.GONE);
         } catch (Exception ex) {
             Log.e(TAG, "hideBottomNav_Ex: " + ex.getMessage());
         }
@@ -147,10 +167,11 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
     public void showBottomNav() {
         try {
-            if (!bnBootomNavBar.isShown()) {
-                bnBootomNavBar.show();//显示
-                bnBootomNavBar.show(true);//隐藏是否启动动画，这里并不能自定义动画
-            }
+//            if (!bnBootomNavBar.isShown()) {
+//                bnBootomNavBar.show();//显示
+//                bnBootomNavBar.show(true);//隐藏是否启动动画，这里并不能自定义动画
+//            }
+            llayBottom.setVisibility(View.VISIBLE);
         } catch (Exception ex) {
             Log.e(TAG, "showBottomNav_Ex: " + ex.getMessage());
         }
@@ -167,6 +188,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         filter.addAction(OznerBroadcastAction.OBA_SWITCH_CHAT);
         filter.addAction(OznerBroadcastAction.OBA_BDBind);
         filter.addAction(OznerBroadcastAction.OBA_Login_Notify);
+        filter.addAction(OznerBroadcastAction.OBA_NewFriendVF);
+        filter.addAction(OznerBroadcastAction.OBA_NewRank);
+        filter.addAction(OznerBroadcastAction.OBA_NewCenterMsg);
         this.registerReceiver(mainMonitor, filter);
     }
 
@@ -225,12 +249,25 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     private void initNavBar() {
         bnBootomNavBar.setMode(BottomNavigationBar.MODE_FIXED);
         bnBootomNavBar.setActiveColor(R.color.colorAccent);
+        centerBadge = new BadgeItem()
+                .setBorderWidth(2)//Badge的Border(边界)宽度
+//                .setBorderColor(ContextCompat.getColor(this, R.color.err_red))//Badge的Border颜色
+                .setBackgroundColor(ContextCompat.getColor(this, R.color.err_red))//Badge背景颜色
+                .setGravity(Gravity.RIGHT | Gravity.TOP)//位置，默认右上角
+//                .setText(String.valueOf(getCenterMsgCount()))//显示的文本
+                .setTextColor(ContextCompat.getColor(this, R.color.white));//文本颜色
+//                .setAnimationDuration(2000)
+//                .setHideOnSelect(true);//当选中状态时消失，非选中状态显示
+
         bnBootomNavBar
                 .addItem(new BottomNavigationItem(R.drawable.tab_device_selector, getString(R.string.device)))
                 .addItem(new BottomNavigationItem(R.drawable.tab_shop_selector, getString(R.string.eshop)))
                 .addItem(new BottomNavigationItem(R.drawable.tab_msg_selector, getString(R.string.chat)))
-                .addItem(new BottomNavigationItem(R.drawable.tab_my_selector, getString(R.string.mine)))
+                .addItem(new BottomNavigationItem(R.drawable.tab_my_selector, getString(R.string.mine)).setBadgeItem(centerBadge))
+//                .addItem(new BottomNavigationItem(R.drawable.tab_my_selector, getString(R.string.mine)))
                 .initialise();
+
+
         bnBootomNavBar.setTabSelectedListener(this);
         if (Build.VERSION.SDK_INT >= 21) {
             bnBootomNavBar.setElevation(0);
@@ -238,9 +275,62 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         bnBootomNavBar.selectTab(0);
     }
 
+
+    /**
+     * 设置“我的”底部数字
+     *
+     * @param msgTip
+     */
+    public void setNewCenterMsgTip(int msgTip) {
+        LCLogUtils.E(TAG, "setNewCenterMsgTip:" + msgTip);
+        if (msgTip > 0) {
+            centerBadge.setText("N");
+            centerBadge.show();
+        } else {
+            centerBadge.hide();
+        }
+    }
+
+    private void checkUserVerifyMsg() {
+        FriendInfoManager infoManager = new FriendInfoManager(this, null);
+        infoManager.getVerifyMessageNoDialog(new FriendInfoManager.LoadVerifyListener() {
+            @Override
+            public void onSuccess(List<VerifyMessageItem> result) {
+                int waitNum = 0;
+                for (VerifyMessageItem item : result) {
+                    if (item.getStatus() != 2) {
+                        waitNum++;
+                    }
+                }
+                if (waitNum > 0) {
+                    CenterNotification.setCenterNotify(MainActivity.this, CenterNotification.NewFriendVF);
+                }else {
+                    CenterNotification.resetCenterNotify(MainActivity.this,CenterNotification.DealNewFriendVF);
+                }
+                setNewCenterMsgTip(CenterNotification.getCenterNotifyState(MainActivity.this));
+            }
+
+            @Override
+            public void onFail(String msg) {
+                setNewCenterMsgTip(CenterNotification.getCenterNotifyState(MainActivity.this));
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        try {
+            setNewCenterMsgTip(CenterNotification.getCenterNotifyState(MainActivity.this));
+        } catch (Exception ex) {
+
+        }
+        super.onResume();
+    }
+
     /**
      * 设置默认页面
      */
+
     private void setDefaultFragment() {
         NoDeviceFragment noDeviceFragment = new NoDeviceFragment();
         devFragmentMap.put(NoDeviceTag, noDeviceFragment);
@@ -366,7 +456,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
         if (2 != position) {
             hideKeyboard();
+        }
 
+        if (3 != position) {
+            setNewCenterMsgTip(CenterNotification.getCenterNotifyState(MainActivity.this));
         }
 
         switch (position) {
@@ -495,6 +588,22 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                             && !loginToken.endsWith(OznerPreference.getUserToken(MainActivity.this))) {
                         BaseActivity.reLogin(MainActivity.this);
                     }
+                    break;
+                case OznerBroadcastAction.OBA_NewFriendVF:
+                    CenterNotification.setCenterNotify(getBaseContext(), CenterNotification.NewFriendVF);
+                    setNewCenterMsgTip(CenterNotification.getCenterNotifyState(MainActivity.this));
+                    break;
+                case OznerBroadcastAction.OBA_NewCenterMsg:
+                    CenterNotification.setCenterNotify(getBaseContext(), CenterNotification.NewMessage);
+                    setNewCenterMsgTip(CenterNotification.getCenterNotifyState(MainActivity.this));
+                    break;
+                case OznerBroadcastAction.OBA_NewRank:
+                    CenterNotification.setCenterNotify(getBaseContext(), CenterNotification.NewRank);
+                    setNewCenterMsgTip(CenterNotification.getCenterNotifyState(MainActivity.this));
+                    break;
+                case OznerBroadcastAction.OBA_NewFriend:
+                    CenterNotification.setCenterNotify(getBaseContext(), CenterNotification.NewFriend);
+                    setNewCenterMsgTip(CenterNotification.getCenterNotifyState(MainActivity.this));
                     break;
             }
         }

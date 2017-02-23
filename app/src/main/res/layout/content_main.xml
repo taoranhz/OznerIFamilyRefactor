@@ -16,14 +16,24 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
-    <ImageView
-        android:background="@color/font_gray"
+
+    <LinearLayout
+        android:id="@+id/llay_bottom"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="1px"/>
-    <com.ashokvarma.bottomnavigation.BottomNavigationBar
-        android:id="@+id/bn_bootom_nav_bar"
-        android:layout_gravity="bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/font_gray"/>
+
+        <com.ashokvarma.bottomnavigation.BottomNavigationBar
+            android:id="@+id/bn_bootom_nav_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"/>
+    </LinearLayout>
+
 
 </LinearLayout>
