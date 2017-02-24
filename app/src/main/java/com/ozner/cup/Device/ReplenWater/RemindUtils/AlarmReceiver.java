@@ -9,16 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
-import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeterMgr;
-import com.ozner.cup.Bean.Contacts;
-import com.ozner.cup.Command.UserDataPreference;
-import com.ozner.cup.DBHelper.DBManager;
-import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
 
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * Created by ozner_67 on 2017/2/8.
@@ -63,55 +57,5 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setDefaults(Notification.DEFAULT_ALL);
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(reqCode, builder.build());
-    }
-
-    /**
-     * 重新提醒
-     */
-    private void reRemind(final Context context) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<OznerDeviceSettings> deviceSettings = DBManager.getInstance(context).getDeviceSettingList(UserDataPreference.GetUserData(context, UserDataPreference.UserId, ""));
-                if (deviceSettings != null && deviceSettings.size() > 0) {
-                    for (OznerDeviceSettings setting : deviceSettings) {
-                        if (WaterReplenishmentMeterMgr.IsWaterReplenishmentMeter(setting.getDevcieType())) {
-                            RemindUtil reminUtil = new RemindUtil(context);
-                            long time1 = 0, time2 = 0, time3 = 0;
-                            Object ob1 = setting.getAppData(Contacts.DEV_REPLEN_REMIND_TIME_1);
-                            if (ob1 != null) {
-                                time1 = (long) ob1;
-                                Calendar startCal = Calendar.getInstance();
-                                startCal.setTimeInMillis(time1);
-                                startCal.set(Calendar.MILLISECOND, 0);
-                                startCal.set(Calendar.SECOND, 0);
-                                reminUtil.stopRemind(1);
-                                reminUtil.startRemind(1, startCal, 30000);
-                            }
-                            Object ob2 = setting.getAppData(Contacts.DEV_REPLEN_REMIND_TIME_2);
-                            if (ob2 != null) {
-                                time2 = (long) ob2;
-                                Calendar startCal = Calendar.getInstance();
-                                startCal.setTimeInMillis(time2);
-                                startCal.set(Calendar.MILLISECOND, 0);
-                                startCal.set(Calendar.SECOND, 0);
-                                reminUtil.stopRemind(2);
-                                reminUtil.startRemind(2, startCal, 30000);
-                            }
-                            Object ob3 = setting.getAppData(Contacts.DEV_REPLEN_REMIND_TIME_2);
-                            if (ob3 != null) {
-                                reminUtil.stopRemind(3);
-                                time3 = (long) ob3;
-                                Calendar startCal = Calendar.getInstance();
-                                startCal.setTimeInMillis(time3);
-                                startCal.set(Calendar.MILLISECOND, 0);
-                                startCal.set(Calendar.SECOND, 0);
-                                reminUtil.startRemind(3, startCal, 30000);
-                            }
-                        }
-                    }
-                }
-            }
-        }).start();
     }
 }

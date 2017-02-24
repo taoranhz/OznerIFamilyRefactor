@@ -346,7 +346,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                         tvAirQuality.setText(R.string.bads);
                         break;
                     default:
-                        tvAirQuality.setText(R.string.state_null);
+                        tvAirQuality.setText(netWeather.getQlty());
                         break;
                 }
             }

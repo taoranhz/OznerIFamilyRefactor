@@ -31,7 +31,7 @@ import butterknife.OnClick;
 public class SetRemindTimeActivity extends BaseActivity {
     public static final String PREFERENCES = "AlarmClock";
     private static final String TAG = "SetRemindTime";
-    private final long DEFAULT_INTERVAL = 30000;//30s
+    private final long DEFAULT_INTERVAL = 24*3600;//一天
 
     @InjectView(R.id.title)
     TextView title;
@@ -238,12 +238,12 @@ public class SetRemindTimeActivity extends BaseActivity {
                 remindUtil.stopRemind(1);
             }
             if (time2Cal != null && isRemind2) {
-                remindUtil.startRemind(2, time2Cal, 50000);
+                remindUtil.startRemind(2, time2Cal, DEFAULT_INTERVAL);
             } else {
                 remindUtil.stopRemind(2);
             }
             if (time3Cal != null && isRemind3) {
-                remindUtil.startRemind(3, time3Cal, 70000);
+                remindUtil.startRemind(3, time3Cal, DEFAULT_INTERVAL);
             } else {
                 remindUtil.stopRemind(3);
             }
