@@ -157,8 +157,11 @@ public class MyCenterFragment extends BaseFragment {
                 tvGrade.setVisibility(View.VISIBLE);
                 tvGrade.setText(gradeName);
             }
-
-            tvMyMoney.setText(String.valueOf(userinfo.getScore()));
+            LCLogUtils.E(TAG, "score:" + userinfo.getScore());
+            if (userinfo.getScore() != null)
+                tvMyMoney.setText(String.valueOf(userinfo.getScore()));
+            else
+                tvMyMoney.setText("0");
 
             Glide.with(getContext()).load(mUserInfo.getHeadimg()).asBitmap().placeholder(R.drawable.icon_default_headimage).centerCrop().into(new BitmapImageViewTarget(ivHeadImg) {
                 @Override
