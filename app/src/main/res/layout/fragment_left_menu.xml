@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              tools:context="com.ozner.cup.Main.LeftMenuFragment">
+              tools:context="com.ozner.yiquan.Main.LeftMenuFragment">
 
     <LinearLayout
         android:id="@+id/llay_hasDevice"

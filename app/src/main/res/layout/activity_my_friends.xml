@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ozner.cup.MyCenter.MyFriend.MyFriendsActivity">
+    tools:context="com.ozner.yiquan.MyCenter.MyFriend.MyFriendsActivity">
 
     <include layout="@layout/my_friend_toolbar"/>
 

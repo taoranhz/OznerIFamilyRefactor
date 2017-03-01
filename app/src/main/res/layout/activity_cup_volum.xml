@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ozner.cup.Device.Cup.CupVolumActivity">
+    tools:context="com.ozner.yiquan.Device.Cup.CupVolumActivity">
 
     <include layout="@layout/toolbar"/>
 
@@ -162,7 +162,7 @@
                         android:textColor="@color/text_light_selector"/>
                 </RadioGroup>
 
-                <com.ozner.cup.UIView.UIXVolumeChartView
+                <com.ozner.yiquan.UIView.UIXVolumeChartView
                     android:id="@+id/uixVolumeChart"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"

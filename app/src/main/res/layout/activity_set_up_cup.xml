@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ozner.cup.Device.Cup.SetUpCupActivity">
+    tools:context="com.ozner.yiquan.Device.Cup.SetUpCupActivity">
 
     <include layout="@layout/toolbar"/>
 
@@ -313,7 +313,7 @@
                     android:textColor="@color/light_black"/>
 
 
-                <com.ozner.cup.UIView.ColorPickerView
+                <com.ozner.yiquan.UIView.ColorPickerView
                     android:id="@+id/cup_colorpicker"
                     android:layout_width="200dp"
                     android:layout_height="200dp"

@@ -7,7 +7,7 @@
     <include android:id="@+id/top_toolbar" layout="@layout/toolbar"/>
 
 
-    <com.ozner.cup.Chat.EaseUI.widget.EaseChatMessageList
+    <com.ozner.yiquan.Chat.EaseUI.widget.EaseChatMessageList
         android:layout_below="@+id/top_toolbar"
         android:id="@+id/message_list"
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
         android:layout_above="@+id/input_menu"/>
 
 
-    <com.ozner.cup.Chat.EaseUI.widget.EaseChatInputMenu
+    <com.ozner.yiquan.Chat.EaseUI.widget.EaseChatInputMenu
         android:id="@+id/input_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

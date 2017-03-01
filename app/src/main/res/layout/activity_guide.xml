@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.ozner.cup.LoginWelcom.View.GuideActivity">
+    tools:context="com.ozner.yiquan.LoginWelcom.View.GuideActivity">
     <com.bigkoo.convenientbanner.ConvenientBanner
         android:id="@+id/cb_guide"
         app:canLoop="false"

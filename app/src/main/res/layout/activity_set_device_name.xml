@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/gray_bg"
     android:orientation="vertical"
-    tools:context="com.ozner.cup.Device.SetDeviceNameActivity">
+    tools:context="com.ozner.yiquan.Device.SetDeviceNameActivity">
 
     <include layout="@layout/toolbar"/>
 

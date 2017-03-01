@@ -5,18 +5,14 @@ import android.text.format.Time;
 
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScanResponse;
-import com.ozner.cup.CupManager;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
 import com.ozner.util.ByteUtil;
 import com.ozner.util.dbg;
-import com.ozner.wifi.mxchip.MXChipIO;
 
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * Created by zhiyongxu on 16/9/12.

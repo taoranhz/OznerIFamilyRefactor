@@ -9,7 +9,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context="com.ozner.cup.Device.AirPurifier.AirDeskFilterActivity">
+    tools:context="com.ozner.yiquan.Device.AirPurifier.AirDeskFilterActivity">
 
     <include layout="@layout/toolbar"/>
 
@@ -117,7 +117,7 @@
                 </LinearLayout>
 
 
-                <com.ozner.cup.UIView.IndicatorProgressBar
+                <com.ozner.yiquan.UIView.IndicatorProgressBar
                     android:id="@+id/filterProgress"
                     android:layout_marginTop="15dp"
                     android:layout_width="match_parent"

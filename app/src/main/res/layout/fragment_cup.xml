@@ -3,7 +3,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              tools:context="com.ozner.cup.Device.Cup.CupFragment">
+              tools:context="com.ozner.yiquan.Device.Cup.CupFragment">
     <include layout="@layout/toolbar"/>
     <RelativeLayout
         android:layout_width="match_parent"

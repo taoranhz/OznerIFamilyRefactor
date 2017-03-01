@@ -26,7 +26,7 @@
         android:background="#fff"
         android:visibility="gone" >
 
-        <com.ozner.cup.Chat.EaseUI.widget.EaseChatExtendMenu
+        <com.ozner.yiquan.Chat.EaseUI.widget.EaseChatExtendMenu
             android:id="@+id/extend_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

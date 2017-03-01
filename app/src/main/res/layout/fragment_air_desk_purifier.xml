@@ -3,7 +3,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              tools:context="com.ozner.cup.Device.AirPurifier.AirDeskPurifierFragment">
+              tools:context="com.ozner.yiquan.Device.AirPurifier.AirDeskPurifierFragment">
     <include layout="@layout/toolbar"/>
     <LinearLayout
         android:id="@+id/llay_top"
@@ -36,7 +36,7 @@
             android:paddingTop="4dp"
             android:text="@string/air_low_speed"/>
 
-        <com.ozner.cup.UIView.CProessbarView
+        <com.ozner.yiquan.UIView.CProessbarView
             android:id="@+id/cproessbarView"
             android:layout_width="0dp"
             android:layout_height="50dp"

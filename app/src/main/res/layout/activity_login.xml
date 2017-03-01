@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context="com.ozner.cup.LoginWelcom.View.LoginActivity">
+    tools:context="com.ozner.yiquan.LoginWelcom.View.LoginActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -58,7 +58,6 @@
                     android:paddingBottom="5dp"
                     android:paddingLeft="5dp"
                     android:paddingTop="5dp"
-                    android:text="@string/shoujihao"
                     android:textColorHint="@color/font_gray"
                     android:textSize="14dp"/>
 
@@ -106,7 +105,6 @@
                             android:paddingBottom="5dp"
                             android:paddingLeft="5dp"
                             android:paddingTop="5dp"
-                            android:text="@string/yanzhengma"
                             android:textColorHint="@color/font_gray"
                             android:textSize="14dp"/>
                     </LinearLayout>

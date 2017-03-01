@@ -35,7 +35,7 @@
         android:layout_height="170dp"
         android:layout_centerInParent="true">
 
-        <com.ozner.cup.UIView.TdsDetailProgress
+        <com.ozner.yiquan.UIView.TdsDetailProgress
             android:id="@+id/tdsDetailProgress"
             android:layout_width="300dp"
             android:layout_height="160dp"

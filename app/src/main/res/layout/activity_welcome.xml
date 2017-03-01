@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorAccent"
     android:orientation="vertical"
-    tools:context="com.ozner.cup.LoginWelcom.View.WelcomeActivity">
+    tools:context="com.ozner.yiquan.LoginWelcom.View.WelcomeActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
