@@ -13,6 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ozner.yiquan.Base.BaseActivity;
+import com.ozner.yiquan.Base.WebActivity;
+import com.ozner.yiquan.Bean.Contacts;
 import com.ozner.yiquan.LoginWelcom.Presenter.LoginPresenter;
 import com.ozner.yiquan.Main.MainActivity;
 import com.ozner.yiquan.R;
@@ -145,7 +147,9 @@ public class LoginActivity extends BaseActivity implements CompoundButton.OnChec
                 loginPresenter.login();
                 break;
             case R.id.tv_proctol:
-                // TODO: 2016/11/3 打开网页
+                Intent mztkIntent=new Intent(LoginActivity.this, WebActivity.class);
+                mztkIntent.putExtra(Contacts.PARMS_URL,Contacts.exceptions_url);
+                startActivity(mztkIntent);
                 break;
             case R.id.btn_getVoiceCode:
                 loginPresenter.getVoiceVerifyCode();

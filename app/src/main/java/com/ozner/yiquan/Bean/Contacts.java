@@ -89,7 +89,8 @@ public class Contacts {
 
 
     //网络请求基础url
-    public final static String HttpBaseUrl = "http://app.ozner.net:888/";
+//    public final static String HttpBaseUrl = "http://app.ozner.net:888/";
+    public final static String HttpBaseUrl = "http://app.joyro.com.cn:8282/";
 
     //公众号基础url
     public static String weChatBaseUrl = "http://www.oznerwater.com/lktnew/wap/app/Oauth2.aspx?";
@@ -159,7 +160,8 @@ public class Contacts {
 
     // 免责条款
 //    public static String URL_BASE_EXCEPTIONS = "http://cup.ozner.net/app/cn/";
-    public static String exceptions_url = "http://cup.ozner.net/app/cn/mzsm.html";
+//    public static String exceptions_url = "http://cup.ozner.net/app/cn/mzsm.html";
+    public static String exceptions_url = "http://app.joyro.com.cn:8282/jrAPPterm.html";
 
 //    /*
 //    *可单独使用链接

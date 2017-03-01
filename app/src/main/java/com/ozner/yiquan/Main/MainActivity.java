@@ -131,6 +131,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 //        setNewCenterMsgTip(CenterNotification.getCenterNotifyState(this));
         checkUserVerifyMsg();
 
+        //隐藏底部菜单
+        hideBottomNav();
     }
 
 

@@ -34,44 +34,75 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
     Toolbar toolbar;
     @InjectView(R.id.lv_add_list)
     ListView lvAddList;
+//    private int[] deviceNames = new int[]{
+//            R.string.smart_glass,
+//            R.string.water_probe,
+//            R.string.water_tdspen,
+//
+//            R.string.water_purifier,
+//            R.string.air_purifier_ver,
+//
+//            R.string.air_purifier_desk,
+//            R.string.water_replen_meter
+//    };
+//    private int[] connectTypes = new int[]{
+//            R.string.bluetooth_connection,
+//            R.string.bluetooth_connection,
+//            R.string.bluetooth_connection,
+//            R.string.wifi_connection,
+//            R.string.wifi_connection,
+//            R.string.bluetooth_connection,
+//            R.string.bluetooth_connection
+//    };
+//    private int[] devIconRes = new int[]{
+//            R.drawable.device_icon_cup,
+//            R.drawable.device_icon_tap,
+//            R.drawable.device_icon_tdspen,
+//            R.drawable.device_icon_water,
+//            R.drawable.device_icon_air_ver,
+//            R.drawable.device_icon_air_desk,
+//            R.drawable.device_icon_replen
+//    };
+//    private int[] conIconRes = new int[]{
+//            R.mipmap.connect_bluetooth_on,
+//            R.mipmap.connect_bluetooth_on,
+//            R.mipmap.connect_bluetooth_on,
+//            R.mipmap.connect_wifi_on,
+//            R.mipmap.connect_wifi_on,
+//            R.mipmap.connect_bluetooth_on,
+//            R.mipmap.connect_bluetooth_on
+//    };
+//君融科技
     private int[] deviceNames = new int[]{
-            R.string.smart_glass,
             R.string.water_probe,
-            R.string.water_tdspen,
-
             R.string.water_purifier,
-            R.string.air_purifier_ver,
-
-            R.string.air_purifier_desk,
+            R.string.air_purifier,
             R.string.water_replen_meter
     };
     private int[] connectTypes = new int[]{
             R.string.bluetooth_connection,
-            R.string.bluetooth_connection,
-            R.string.bluetooth_connection,
             R.string.wifi_connection,
             R.string.wifi_connection,
             R.string.bluetooth_connection,
-            R.string.bluetooth_connection
     };
     private int[] devIconRes = new int[]{
-            R.drawable.device_icon_cup,
             R.drawable.device_icon_tap,
-            R.drawable.device_icon_tdspen,
             R.drawable.device_icon_water,
             R.drawable.device_icon_air_ver,
-            R.drawable.device_icon_air_desk,
             R.drawable.device_icon_replen
     };
     private int[] conIconRes = new int[]{
             R.mipmap.connect_bluetooth_on,
-            R.mipmap.connect_bluetooth_on,
-            R.mipmap.connect_bluetooth_on,
             R.mipmap.connect_wifi_on,
             R.mipmap.connect_wifi_on,
             R.mipmap.connect_bluetooth_on,
-            R.mipmap.connect_bluetooth_on
     };
+
+
+
+
+
+
     private AddDeviceAdapter mAdapter;
 
     @Override

@@ -20,7 +20,8 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
-            android:src="@drawable/login_icon"/>
+            android:src="@drawable/login_icon"
+            android:id="@+id/imageView" />
     </LinearLayout>
 
     <LinearLayout
