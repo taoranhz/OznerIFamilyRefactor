@@ -89,8 +89,8 @@ public class Contacts {
 
 
     //网络请求基础url
-//    public final static String HttpBaseUrl = "http://app.ozner.net:888/";
-    public final static String HttpBaseUrl = "http://app.joyro.com.cn:8282/";
+    public final static String HttpBaseUrl = "http://app.ozner.net:888/";
+//    public final static String HttpBaseUrl = "http://app.joyro.com.cn:8282/";
 
     //公众号基础url
     public static String weChatBaseUrl = "http://www.oznerwater.com/lktnew/wap/app/Oauth2.aspx?";
