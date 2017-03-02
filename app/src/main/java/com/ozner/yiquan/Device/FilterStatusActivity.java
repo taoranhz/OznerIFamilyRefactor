@@ -19,7 +19,6 @@ import com.google.gson.JsonObject;
 import com.ozner.yiquan.Base.BaseActivity;
 import com.ozner.yiquan.Base.WebActivity;
 import com.ozner.yiquan.Bean.Contacts;
-import com.ozner.yiquan.Bean.OznerBroadcastAction;
 import com.ozner.yiquan.Bean.RankType;
 import com.ozner.yiquan.Command.OznerPreference;
 import com.ozner.yiquan.Command.UserDataPreference;
@@ -32,6 +31,7 @@ import com.ozner.yiquan.HttpHelper.ApiException;
 import com.ozner.yiquan.HttpHelper.HttpMethods;
 import com.ozner.yiquan.HttpHelper.OznerHttpResult;
 import com.ozner.yiquan.HttpHelper.ProgressSubscriber;
+import com.ozner.yiquan.OznerApplication;
 import com.ozner.yiquan.QRCodeScan.activity.CaptureActivity;
 import com.ozner.yiquan.R;
 import com.ozner.yiquan.UIView.FilterProgressView;
@@ -110,6 +110,7 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
         setContentView(R.layout.activity_filter_status);
         ButterKnife.inject(this);
         tvBuyWaterPurifier.setText(R.string.buy_filter);
+        tvBuyWaterPurifier.setVisibility(View.GONE);
         uizMoreProject.setOnItemClickListener(this);
         initToolBar();
         initStaticData();
@@ -420,14 +421,16 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
         uizOnzeService.setAdapter(serviceAdapter);
     }
 
-    @OnClick({R.id.tv_chat_btn, R.id.tv_buy_water_purifier, R.id.tv_scancode_btn})
+//    @OnClick({R.id.tv_chat_btn, R.id.tv_buy_water_purifier, R.id.tv_scancode_btn})
+    @OnClick({R.id.tv_chat_btn,R.id.tv_scancode_btn})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_chat_btn:
 //                // TODO: 2016/12/2
 //                showToastCenter("咨询");
-                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
-                this.finish();
+//                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+//                this.finish();
+                OznerApplication.callSeviceChat(FilterStatusActivity.this);
                 break;
             case R.id.tv_buy_water_purifier:
                 if (userInfo != null && userInfo.getMobile() != null && !userInfo.getMobile().isEmpty()) {

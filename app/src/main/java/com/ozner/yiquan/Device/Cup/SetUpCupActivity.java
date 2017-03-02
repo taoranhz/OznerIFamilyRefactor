@@ -25,7 +25,7 @@ import com.ozner.yiquan.Base.BaseActivity;
 import com.ozner.yiquan.Base.WebActivity;
 import com.ozner.yiquan.Bean.Contacts;
 import com.ozner.yiquan.Command.UserDataPreference;
-import com.ozner.yiquan.Cup;
+import com.ozner.cup.Cup;
 import com.ozner.yiquan.DBHelper.DBManager;
 import com.ozner.yiquan.DBHelper.OznerDeviceSettings;
 import com.ozner.yiquan.Device.SetDeviceNameActivity;

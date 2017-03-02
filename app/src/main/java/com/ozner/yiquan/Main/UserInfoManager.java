@@ -79,14 +79,14 @@ public class UserInfoManager {
                                         listener.onSuccess(userInfo);
                                     }
                                 } else {
-                                    if (jsonObject.get("state").getAsInt() == -10006
-                                            || jsonObject.get("state").getAsInt() == -10007) {
+//                                    if (jsonObject.get("state").getAsInt() == -10006
+//                                            || jsonObject.get("state").getAsInt() == -10007) {
                                         BaseActivity.reLogin((BaseActivity) mContext.get());
-                                    } else {
-                                        if (listener != null) {
-                                            listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
-                                        }
-                                    }
+//                                    } else {
+//                                        if (listener != null) {
+//                                            listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
+//                                        }
+//                                    }
                                 }
                             }
                         } catch (Exception ex) {

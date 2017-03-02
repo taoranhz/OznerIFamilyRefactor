@@ -347,6 +347,7 @@
     <string name="append">添加</string>
     <string name="cancle">取消</string>
     <string name="ensure">确定</string>
+    <string name="Chat_SimCardTips">请检查SIM卡状态</string>
     <string name="yes">是</string>
     <string name="no">否</string>
 
