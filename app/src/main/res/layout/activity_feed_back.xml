@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/gray_bg"
     android:orientation="vertical"
-    tools:context="com.ozner.yiquan.MyCenter.FeedBackActivity">
+    tools:context="com.ozner.cup.MyCenter.FeedBackActivity">
 
     <include layout="@layout/toolbar"/>
 

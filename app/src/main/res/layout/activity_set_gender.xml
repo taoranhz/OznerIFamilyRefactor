@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ozner.yiquan.Device.ReplenWater.ReplenSettings.SetGenderActivity">
+    tools:context="com.ozner.cup.Device.ReplenWater.ReplenSettings.SetGenderActivity">
 
     <include layout="@layout/toolbar"/>
 

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ozner.yiquan.Device.Cup.CupTempActivity">
+    tools:context="com.ozner.cup.Device.Cup.CupTempActivity">
 
 
     <include layout="@layout/toolbar"/>
@@ -185,7 +185,7 @@
                             android:padding="10dp"/>
 
 
-                        <com.ozner.yiquan.UIView.UIXWaterDetailProgress
+                        <com.ozner.cup.UIView.UIXWaterDetailProgress
                             android:id="@+id/uixWaterDetailProgress"
                             android:layout_width="180dp"
                             android:layout_height="180dp"/>
@@ -207,7 +207,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <com.ozner.yiquan.UIView.TDSChartView
+                        <com.ozner.cup.UIView.TDSChartView
                             android:id="@+id/tdsChartView"
                             android:layout_width="match_parent"
                             android:layout_height="140dp"/>

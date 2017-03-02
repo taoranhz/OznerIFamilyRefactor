@@ -34,7 +34,7 @@
         android:layout_height="190dp"
         android:layout_centerInParent="true">
 
-        <com.ozner.yiquan.UIView.PurifierDetailProgress
+        <com.ozner.cup.UIView.PurifierDetailProgress
             android:id="@+id/waterProgress"
             android:layout_width="320dp"
             android:layout_height="190dp"

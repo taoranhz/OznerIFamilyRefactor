@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fg_left_menu"
-        android:name="com.ozner.yiquan.Main.LeftMenuFragment"
+        android:name="com.ozner.cup.Main.LeftMenuFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

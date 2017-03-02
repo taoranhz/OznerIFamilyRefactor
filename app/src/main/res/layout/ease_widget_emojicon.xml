@@ -6,13 +6,13 @@
     android:orientation="vertical"
     >
 
-    <com.ozner.yiquan.Chat.EaseUI.widget.emojicon.EaseEmojiconPagerView
+    <com.ozner.cup.Chat.EaseUI.widget.emojicon.EaseEmojiconPagerView
         android:layout_width="match_parent"
         android:layout_height="142dp"
         android:id="@+id/pager_view"
         />
     
-    <com.ozner.yiquan.Chat.EaseUI.widget.emojicon.EaseEmojiconIndicatorView
+    <com.ozner.cup.Chat.EaseUI.widget.emojicon.EaseEmojiconIndicatorView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/indicator_view"

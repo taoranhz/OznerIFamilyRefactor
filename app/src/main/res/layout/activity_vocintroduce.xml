@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ozner.yiquan.Device.AirPurifier.VOCIntroduceActivity">
+    tools:context="com.ozner.cup.Device.AirPurifier.VOCIntroduceActivity">
 
     <include layout="@layout/toolbar"/>
 

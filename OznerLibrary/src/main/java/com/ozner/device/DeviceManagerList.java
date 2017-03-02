@@ -6,7 +6,7 @@ import com.ozner.AirPurifier.AirPurifierManager;
 import com.ozner.MusicCap.MusicCapMgr;
 import com.ozner.WaterPurifier.WaterPurifierManager;
 import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeterMgr;
-import com.ozner.yiquan.CupManager;
+import com.ozner.cup.CupManager;
 import com.ozner.tap.TapManager;
 
 import java.util.ArrayList;

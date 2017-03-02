@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context="com.ozner.yiquan.Device.FilterStatusActivity">
+    tools:context="com.ozner.cup.Device.FilterStatusActivity">
 
     <include layout="@layout/toolbar"/>
 
@@ -72,7 +72,7 @@
                     android:text="@string/more_products"
                     android:textSize="18dp"/>
 
-                <com.ozner.yiquan.UIView.UIZGridView
+                <com.ozner.cup.UIView.UIZGridView
                     android:id="@+id/uiz_moreProject"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
                     android:text="@string/relieved_service"
                     android:textSize="18dp"/>
 
-                <com.ozner.yiquan.UIView.UIZGridView
+                <com.ozner.cup.UIView.UIZGridView
                     android:id="@+id/uiz_onzeService"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

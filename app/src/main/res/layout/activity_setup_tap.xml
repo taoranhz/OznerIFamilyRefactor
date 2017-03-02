@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/gray_bg"
-    tools:context="com.ozner.yiquan.Device.Tap.SetupTapActivity">
+    tools:context="com.ozner.cup.Device.Tap.SetupTapActivity">
 
     <include layout="@layout/toolbar"/>
 

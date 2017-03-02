@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    tools:context="com.ozner.yiquan.Device.ReplenWater.ReplenWaterIntroduceActivity">
+    tools:context="com.ozner.cup.Device.ReplenWater.ReplenWaterIntroduceActivity">
 
     <include layout="@layout/toolbar"/>
     <TextView

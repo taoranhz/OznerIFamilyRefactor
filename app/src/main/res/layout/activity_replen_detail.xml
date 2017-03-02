@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ozner.yiquan.Device.ReplenWater.ReplenDetailActivity">
+    tools:context="com.ozner.cup.Device.ReplenWater.ReplenDetailActivity">
 
     <include layout="@layout/toolbar"/>
 
@@ -266,7 +266,7 @@
                         android:textColor="@color/text_light_selector"/>
                 </RadioGroup>
 
-                <com.ozner.yiquan.UIView.WaterReplMeterView
+                <com.ozner.cup.UIView.WaterReplMeterView
                     android:id="@+id/wrm_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
