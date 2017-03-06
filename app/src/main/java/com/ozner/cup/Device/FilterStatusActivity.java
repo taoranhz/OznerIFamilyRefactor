@@ -301,7 +301,9 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
             @Override
             public void onResult(WaterPurifierAttr attr) {
                 progressDialog.cancel();
-                updateFilterInfoUI(attr);
+                if (attr != null) {
+                    updateFilterInfoUI(attr);
+                }
 
             }
         });
@@ -528,7 +530,7 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
                     Bundle bundle = data.getExtras();
                     String scanResult = bundle.getString("result");
                     if (null != scanResult && "" != scanResult) {
-                        reNewFilterTime( deviceType == 0 ? RankType.WaterType : RankType.TapType, scanResult);
+                        reNewFilterTime(deviceType == 0 ? RankType.WaterType : RankType.TapType, scanResult);
                     }
                 }
                 break;
@@ -538,6 +540,7 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
 
     /**
      * 更新滤芯服务时间
+     *
      * @param type
      * @param code
      */
@@ -551,15 +554,15 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
 
                     @Override
                     public void onNext(JsonObject jsonObject) {
-                        LCLogUtils.E(TAG,"reNewFilterTime:"+jsonObject.toString());
-                        if(jsonObject!=null){
-                            if(jsonObject.get("state").getAsInt()>0){
-                                if(deviceType == TYPE_TAP_FILTER){
+                        LCLogUtils.E(TAG, "reNewFilterTime:" + jsonObject.toString());
+                        if (jsonObject != null) {
+                            if (jsonObject.get("state").getAsInt() > 0) {
+                                if (deviceType == TYPE_TAP_FILTER) {
                                     loadTapFilterFromNet();
-                                }else {
+                                } else {
                                     loadWaterFilterNet(mac);
                                 }
-                            }else {
+                            } else {
                                 showToastCenter(ApiException.getErrResId(jsonObject.get("state").getAsInt()));
                             }
                         }

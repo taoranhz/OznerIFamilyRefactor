@@ -387,7 +387,9 @@ public class WaterPurifierFragment extends DeviceFragment {
                 waterNetInfoManager.getWaterFilterInfo(mac, new WaterNetInfoManager.IWaterAttr() {
                     @Override
                     public void onResult(WaterPurifierAttr attr) {
-                        updateFilterInfoUI(attr);
+                        if (attr != null) {
+                            updateFilterInfoUI(attr);
+                        }
                     }
                 });
             }
