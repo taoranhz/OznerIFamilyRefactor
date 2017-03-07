@@ -1,11 +1,13 @@
 package com.ozner.cup.Device.AirPurifier;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +25,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.kayvannj.permission_utils.Func;
+import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.ozner.AirPurifier.AirPurifierManager;
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScan;
@@ -95,7 +99,7 @@ public class MatchDeskAirActivity extends BaseActivity {
     private Monitor mMonitor;
     private BaseDeviceIO selDeviceIo;
     private String mUserid;
-    private OznerDeviceSettings oznerSetting;
+    private PermissionUtil.PermissionRequestObject perReqResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +110,34 @@ public class MatchDeskAirActivity extends BaseActivity {
         initActionBar();
         initNormalInfo();
         initFoundDeviceView();
-        startFindDevice();
+//        startFindDevice();
+        beginMatch();
     }
+
+    /**
+     * 检查位置权限，并开始配对
+     */
+    private void beginMatch() {
+        perReqResult = PermissionUtil.with(this).request(Manifest.permission.ACCESS_COARSE_LOCATION)
+                .onAllGranted(new Func() {
+                    @Override
+                    protected void call() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                startFindDevice();
+                            }
+                        });
+                    }
+                }).onAnyDenied(new Func() {
+                    @Override
+                    protected void call() {
+                        showToastCenter(R.string.blue_need_pos);
+                        MatchDeskAirActivity.this.finish();
+                    }
+                }).ask(2);
+    }
+
 
 
     /**
@@ -356,7 +386,7 @@ public class MatchDeskAirActivity extends BaseActivity {
         LinearInterpolator li = new LinearInterpolator();
         animation.setInterpolator(li);
         animation.setFillAfter(false);
-        ivMatchLoading.setAnimation(animation);
+        ivMatchLoading.startAnimation(animation);
 
     }
 
@@ -459,6 +489,14 @@ public class MatchDeskAirActivity extends BaseActivity {
         unRegisterBlueReceiver();
         System.gc();
         super.onDestroy();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (perReqResult != null) {
+            perReqResult.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.ozner.cup.Main;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -26,6 +28,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
+import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.google.gson.JsonObject;
 import com.ozner.AirPurifier.AirPurifierManager;
 import com.ozner.WaterPurifier.WaterPurifierManager;
@@ -98,6 +101,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     private int curBottomIndex = 0;
     private String mUserid;
     private BadgeItem centerBadge;
+    private PermissionUtil.PermissionRequestObject perReqResult;
 
     /**
      * @param savedInstanceState
@@ -122,17 +126,21 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
             startActivity(new Intent(this, LoginActivity.class));
             this.finish();
         }
-//        ((OznerApplication)getApplication()).getService().getDeviceManager().setOwner(mUserid, OznerPreference.getUserToken(MainActivity.this));
 
         //启动百度云推送
         PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, getString(R.string.Baidu_Push_ApiKey));
-
-
-//        setNewCenterMsgTip(CenterNotification.getCenterNotifyState(this));
         checkUserVerifyMsg();
-
         //隐藏底部菜单
 //        hideBottomNav();
+        //检查位置权限
+        checkPosPer();
+    }
+
+    /**
+     * 检查位置权限
+     */
+    private void checkPosPer() {
+        perReqResult = PermissionUtil.with(this).request(Manifest.permission.ACCESS_COARSE_LOCATION).ask(2);
     }
 
 
@@ -609,5 +617,13 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                     break;
             }
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (perReqResult != null) {
+            perReqResult.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
