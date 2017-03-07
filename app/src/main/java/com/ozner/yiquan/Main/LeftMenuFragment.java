@@ -4,9 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,28 +19,33 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.ozner.AirPurifier.AirPurifierManager;
 import com.ozner.WaterPurifier.WaterPurifierManager;
 import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeterMgr;
+import com.ozner.cup.CupManager;
+import com.ozner.device.BaseDeviceIO;
+import com.ozner.device.OznerDevice;
+import com.ozner.device.OznerDeviceManager;
+import com.ozner.tap.TapManager;
 import com.ozner.yiquan.Base.BaseFragment;
 import com.ozner.yiquan.Base.CommonAdapter;
 import com.ozner.yiquan.Base.CommonViewHolder;
 import com.ozner.yiquan.Bean.Contacts;
 import com.ozner.yiquan.Bean.OznerBroadcastAction;
 import com.ozner.yiquan.Command.UserDataPreference;
-import com.ozner.cup.CupManager;
 import com.ozner.yiquan.DBHelper.DBManager;
 import com.ozner.yiquan.DBHelper.OznerDeviceSettings;
+import com.ozner.yiquan.DBHelper.UserInfo;
 import com.ozner.yiquan.Device.AddDevice.AddDeviceActivity;
 import com.ozner.yiquan.Main.Bean.LeftMenuDeviceItem;
+import com.ozner.yiquan.MyCenter.MyCenterActivity;
 import com.ozner.yiquan.R;
-import com.ozner.device.BaseDeviceIO;
-import com.ozner.device.OznerDevice;
-import com.ozner.device.OznerDeviceManager;
-import com.ozner.tap.TapManager;
+import com.ozner.yiquan.Utils.LCLogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +68,12 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
     LinearLayout llayHasNoDevice;
     @InjectView(R.id.llay_root)
     LinearLayout llayRoot;
+    @InjectView(R.id.iv_headImg)
+    ImageView ivHeadImg;
+    @InjectView(R.id.tv_name)
+    TextView tvName;
+    @InjectView(R.id.llay_userHead)
+    LinearLayout llayUserHead;
 
     private LeftMonitor mMonitor;
     private LeftMenuAdapter mLeftAdapter;
@@ -91,10 +105,36 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
         lvMyDevice.setAdapter(mLeftAdapter);
         lvMyDevice.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         lvMyDevice.setOnItemClickListener(this);
-
         initBroadCastFilter();
     }
 
+    /**
+     * 初始化顶部用户信息
+     */
+    private void initHeadInfo() {
+        try {
+            UserInfo userInfo = DBManager.getInstance(getContext()).getUserInfo(mUserid);
+            if (userInfo != null) {
+                tvName.setText(userInfo.getNickname() != null ? userInfo.getNickname() : userInfo.getMobile());
+                Glide.with(getContext()).load(userInfo.getHeadimg()).asBitmap()
+                        .placeholder(R.drawable.icon_default_headimage)
+                        .centerCrop()
+                        .into(new BitmapImageViewTarget(ivHeadImg) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                if (LeftMenuFragment.this.isAdded()) {
+                                    RoundedBitmapDrawable circularBitmapDrawable =
+                                            RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                                    circularBitmapDrawable.setCircular(true);
+                                    ivHeadImg.setImageDrawable(circularBitmapDrawable);
+                                }
+                            }
+                        });
+            }
+        } catch (Exception ex) {
+            LCLogUtils.E(TAG, "inintHeadInfo_Ex:" + ex.getMessage());
+        }
+    }
 
     /**
      * 初始化设备列表
@@ -170,6 +210,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onResume() {
         super.onResume();
+        initHeadInfo();
         initDataList();
     }
 
@@ -180,9 +221,16 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
         getActivity().unregisterReceiver(mMonitor);
     }
 
-    @OnClick(R.id.ib_addDevice)
-    public void onClick() {
-        startActivity(new Intent(getContext(), AddDeviceActivity.class));
+    @OnClick({R.id.ib_addDevice,R.id.iv_headImg})
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.ib_addDevice:
+                startActivity(new Intent(getContext(), AddDeviceActivity.class));
+                break;
+            case R.id.iv_headImg:
+                startActivity(new Intent(getContext(), MyCenterActivity.class));
+                break;
+        }
         ((MainActivity) getActivity()).closeLeftMenu();
     }
 

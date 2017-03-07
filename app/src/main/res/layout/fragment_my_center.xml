@@ -55,12 +55,13 @@
                     android:layout_marginTop="3dp"
                     android:text="银卡代理会员"
                     android:textSize="14dp"
-                    android:visibility="invisible"/>
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <TextView style="@style/HaLineView"/>
 
             <LinearLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -130,9 +131,10 @@
 
             </LinearLayout>
 
-            <TextView style="@style/HaLineView"/>
+            <TextView android:visibility="gone" style="@style/HaLineView"/>
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/rlay_my_order"
                 style="@style/item_click_ripple"
                 android:layout_width="match_parent"
@@ -147,9 +149,10 @@
 
             </RelativeLayout>
 
-            <TextView style="@style/HaLineMarginLeftView"/>
+            <TextView android:visibility="gone" style="@style/HaLineMarginLeftView"/>
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/rlay_redbag"
                 style="@style/item_click_ripple"
                 android:layout_width="match_parent"
@@ -164,9 +167,10 @@
 
             </RelativeLayout>
 
-            <TextView style="@style/HaLineMarginLeftView"/>
+            <TextView android:visibility="gone" style="@style/HaLineMarginLeftView"/>
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/rlay_my_ticket"
                 style="@style/item_click_ripple"
                 android:layout_width="match_parent"
@@ -181,7 +185,7 @@
 
             </RelativeLayout>
 
-            <TextView style="@style/HaLineMarginLeftView"/>
+            <TextView android:visibility="gone" style="@style/HaLineMarginLeftView"/>
 
             <RelativeLayout
                 android:id="@+id/rlay_my_friend"
@@ -214,6 +218,7 @@
             <TextView style="@style/HaLineMarginLeftView"/>
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/rlay_report"
                 style="@style/item_click_ripple"
                 android:layout_width="match_parent"
@@ -228,7 +233,7 @@
 
             </RelativeLayout>
 
-            <TextView style="@style/HaLineMarginLeftView"/>
+            <TextView android:visibility="gone" style="@style/HaLineMarginLeftView"/>
 
             <RelativeLayout
                 android:id="@+id/rlay_feedback"
@@ -261,6 +266,7 @@
                 <ImageView style="@style/ArrowView"/>
 
             </RelativeLayout>
+            <TextView style="@style/HaLineView"/>
         </LinearLayout>
     </ScrollView>
 

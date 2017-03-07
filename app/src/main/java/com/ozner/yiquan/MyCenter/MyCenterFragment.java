@@ -120,7 +120,6 @@ public class MyCenterFragment extends BaseFragment {
         return view;
     }
 
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         if (mUserInfo != null) {
@@ -154,7 +153,7 @@ public class MyCenterFragment extends BaseFragment {
                     gradeName = gradeName.substring(0, index);
                 }
                 gradeName += getString(R.string.act_member);
-                tvGrade.setVisibility(View.VISIBLE);
+//                tvGrade.setVisibility(View.VISIBLE);
                 tvGrade.setText(gradeName);
             }
             LCLogUtils.E(TAG, "score:" + userinfo.getScore());

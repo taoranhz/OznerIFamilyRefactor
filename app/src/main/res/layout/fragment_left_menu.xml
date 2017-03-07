@@ -7,6 +7,39 @@
               tools:context="com.ozner.yiquan.Main.LeftMenuFragment">
 
     <LinearLayout
+        android:id="@+id/llay_userHead"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.3"
+        android:background="@color/theme_blue"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_headImg"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_margin="5dp"
+            android:padding="3dp"
+            android:background="@drawable/personal_user_header_backgroud"/>
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="OZNER"
+            android:textColor="@color/white"
+            android:textSize="16dp"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white"/>
+    <!--有设备时的界面-->
+    <LinearLayout
         android:id="@+id/llay_hasDevice"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -35,20 +68,19 @@
 
     </LinearLayout>
 
+    <!--没有设备时的界面-->
     <LinearLayout
         android:id="@+id/llay_hasNoDevice"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="3"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="20dp">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -81,6 +113,7 @@
 
     </LinearLayout>
 
+    <!--添加设备按钮-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
