@@ -237,7 +237,7 @@
                 </LinearLayout>
 
             </LinearLayout>
-            <include layout="@layout/tds_change_water_health_layout"/>
+            <!--<include layout="@layout/tds_change_water_health_layout"/>-->
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

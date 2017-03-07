@@ -1,4 +1,4 @@
-package com.ozner.yiquan;
+package com.ozner.cup;
 
 import android.content.Context;
 import android.content.Intent;

@@ -302,7 +302,10 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
             @Override
             public void onResult(WaterPurifierAttr attr) {
                 progressDialog.cancel();
-                updateFilterInfoUI(attr);
+                if(attr!=null){
+                    updateFilterInfoUI(attr);
+                }
+
 
             }
         });

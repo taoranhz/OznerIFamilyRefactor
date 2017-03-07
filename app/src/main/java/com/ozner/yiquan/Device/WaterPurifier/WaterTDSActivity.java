@@ -19,9 +19,10 @@ import com.ozner.yiquan.Base.BaseActivity;
 import com.ozner.yiquan.Base.WebActivity;
 import com.ozner.yiquan.Bean.Contacts;
 import com.ozner.yiquan.Bean.OznerBroadcastAction;
-import com.ozner.yiquan.CupRecord;
+import com.ozner.cup.CupRecord;
 import com.ozner.yiquan.Bean.RankType;
 import com.ozner.yiquan.Device.TDSSensorManager;
+import com.ozner.yiquan.OznerApplication;
 import com.ozner.yiquan.R;
 import com.ozner.yiquan.UIView.UIZPurifierExpView;
 import com.ozner.device.OznerDeviceManager;
@@ -331,8 +332,9 @@ public class WaterTDSActivity extends BaseActivity implements RadioGroup.OnCheck
                 this.finish();
                 break;
             case R.id.tv_chat_btn:
-                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
-                this.finish();
+//                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+//                this.finish();
+                OznerApplication.callSeviceChat(WaterTDSActivity.this);
                 break;
         }
     }

@@ -11,7 +11,7 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 
-import com.ozner.yiquan.CupRecord;
+import com.ozner.cup.CupRecord;
 import com.ozner.ui.library.UIXBaseView;
 
 import java.util.LinkedHashMap;

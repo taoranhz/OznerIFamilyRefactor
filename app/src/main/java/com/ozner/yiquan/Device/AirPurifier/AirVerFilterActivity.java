@@ -15,19 +15,19 @@ import android.view.Window;
 import android.widget.TextView;
 
 import com.ozner.AirPurifier.AirPurifier_MXChip;
+import com.ozner.device.BaseDeviceIO;
+import com.ozner.device.OznerDeviceManager;
 import com.ozner.yiquan.Base.BaseActivity;
 import com.ozner.yiquan.Base.WebActivity;
 import com.ozner.yiquan.Bean.Contacts;
-import com.ozner.yiquan.Bean.OznerBroadcastAction;
 import com.ozner.yiquan.Command.OznerPreference;
 import com.ozner.yiquan.Command.UserDataPreference;
 import com.ozner.yiquan.DBHelper.DBManager;
 import com.ozner.yiquan.DBHelper.UserInfo;
+import com.ozner.yiquan.OznerApplication;
 import com.ozner.yiquan.R;
 import com.ozner.yiquan.UIView.FilterProgressView;
 import com.ozner.yiquan.Utils.WeChatUrlUtil;
-import com.ozner.device.BaseDeviceIO;
-import com.ozner.device.OznerDeviceManager;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -57,6 +57,8 @@ public class AirVerFilterActivity extends BaseActivity {
     TextView tvFilterRemind;
     @InjectView(R.id.filterProgress)
     FilterProgressView filterProgress;
+    @InjectView(R.id.tv_buy_filter_btn)
+    TextView tv_buy_filter_btn;
 
     private UserInfo userInfo;
     AirPurifierMonitor airMonitor;
@@ -67,6 +69,7 @@ public class AirVerFilterActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_air_ver_filter);
         ButterKnife.inject(this);
+        tv_buy_filter_btn.setVisibility(View.GONE);
         initToolBar();
         if (Build.VERSION.SDK_INT >= 21) {
             Window window = getWindow();
@@ -264,8 +267,9 @@ public class AirVerFilterActivity extends BaseActivity {
                 }
                 break;
             case R.id.tv_chatbtn:
-                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
-                this.finish();
+//                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+//                this.finish();
+                OznerApplication.callSeviceChat(AirVerFilterActivity.this);
                 break;
         }
     }

@@ -22,7 +22,7 @@ import com.ozner.yiquan.Base.CommonViewHolder;
 import com.ozner.yiquan.Bean.Contacts;
 import com.ozner.yiquan.Bean.OznerBroadcastAction;
 import com.ozner.yiquan.Command.UserDataPreference;
-import com.ozner.yiquan.CupManager;
+import com.ozner.cup.CupManager;
 import com.ozner.yiquan.DBHelper.DBManager;
 import com.ozner.yiquan.DBHelper.OznerDeviceSettings;
 import com.ozner.yiquan.Main.Bean.LeftMenuDeviceItem;

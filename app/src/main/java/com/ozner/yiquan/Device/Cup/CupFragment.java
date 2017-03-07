@@ -18,6 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.ozner.device.BaseDeviceIO;
+import com.ozner.device.OznerDevice;
+import com.ozner.device.OznerDeviceManager;
 import com.ozner.yiquan.Bean.Contacts;
 import com.ozner.yiquan.Command.UserDataPreference;
 import com.ozner.cup.Cup;
@@ -30,9 +33,6 @@ import com.ozner.yiquan.Main.MainActivity;
 import com.ozner.yiquan.MyCenter.Settings.MeasurementUnit;
 import com.ozner.yiquan.R;
 import com.ozner.yiquan.UIView.TdsDetailProgress;
-import com.ozner.device.BaseDeviceIO;
-import com.ozner.device.OznerDevice;
-import com.ozner.device.OznerDeviceManager;
 
 import java.util.Calendar;
 

@@ -37,7 +37,7 @@ import com.ozner.yiquan.Chat.EaseChatFragment;
 import com.ozner.yiquan.Command.CenterNotification;
 import com.ozner.yiquan.Command.OznerPreference;
 import com.ozner.yiquan.Command.UserDataPreference;
-import com.ozner.yiquan.CupManager;
+import com.ozner.cup.CupManager;
 import com.ozner.yiquan.DBHelper.DBManager;
 import com.ozner.yiquan.DBHelper.OznerDeviceSettings;
 import com.ozner.yiquan.DBHelper.UserInfo;

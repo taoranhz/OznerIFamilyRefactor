@@ -1,4 +1,4 @@
-package com.ozner.yiquan;
+package com.ozner.cup;
 
 import com.ozner.util.ByteUtil;
 

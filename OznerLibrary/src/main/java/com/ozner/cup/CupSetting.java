@@ -1,4 +1,4 @@
-package com.ozner.yiquan;
+package com.ozner.cup;
 
 import android.graphics.Color;
 

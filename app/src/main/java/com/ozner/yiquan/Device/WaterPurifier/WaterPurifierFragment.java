@@ -26,7 +26,7 @@ import com.ozner.yiquan.Base.WebActivity;
 import com.ozner.yiquan.Bean.Contacts;
 import com.ozner.yiquan.Command.OznerPreference;
 import com.ozner.yiquan.Command.UserDataPreference;
-import com.ozner.yiquan.CupRecord;
+import com.ozner.cup.CupRecord;
 import com.ozner.yiquan.DBHelper.DBManager;
 import com.ozner.yiquan.DBHelper.OznerDeviceSettings;
 import com.ozner.yiquan.DBHelper.UserInfo;
@@ -387,7 +387,9 @@ public class WaterPurifierFragment extends DeviceFragment {
                 waterNetInfoManager.getWaterFilterInfo(mac, new WaterNetInfoManager.IWaterAttr() {
                     @Override
                     public void onResult(WaterPurifierAttr attr) {
-                        updateFilterInfoUI(attr);
+                        if(attr!=null) {
+                            updateFilterInfoUI(attr);
+                        }
                     }
                 });
             }
