@@ -408,7 +408,7 @@ public class AddFriendActivity extends BaseActivity implements TextView.OnEditor
                         contactList.get(clickPos).setStatus(1);
                         mAdapter.loadData(contactList);
                     }
-                    if (searchInfo.getMobile().equals(mobile)) {
+                    if (searchInfo != null && searchInfo.getMobile().equals(mobile)) {
                         tvBtnAdd.setText(R.string.wait_verify);
                         tvBtnAdd.setEnabled(false);
                     }

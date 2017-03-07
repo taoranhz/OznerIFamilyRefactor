@@ -1,10 +1,12 @@
 package com.ozner.cup.Device;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -15,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.github.kayvannj.permission_utils.Func;
+import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.google.gson.JsonObject;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
@@ -103,6 +107,7 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
     private ProgressDialog progressDialog;
     private UserInfo userInfo;
     SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    private PermissionUtil.PermissionRequestObject perReqResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -453,8 +458,27 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
             case R.id.tv_scancode_btn:
                 // TODO: 2016/12/2  
 //                showToastCenter("扫描二维码");
-                Intent scanIntent = new Intent(FilterStatusActivity.this, CaptureActivity.class);
-                startActivityForResult(scanIntent, SCANNIN_GREQUEST_CODE);
+
+                perReqResult = PermissionUtil.with(this).request(Manifest.permission.CAMERA)
+                        .onAllGranted(new Func() {
+                            @Override
+                            protected void call() {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Intent scanIntent = new Intent(FilterStatusActivity.this, CaptureActivity.class);
+                                        startActivityForResult(scanIntent, SCANNIN_GREQUEST_CODE);
+                                    }
+                                });
+                            }
+                        }).onAnyDenied(new Func() {
+                            @Override
+                            protected void call() {
+                                showToastCenter(R.string.open_camera_permission);
+                            }
+                        }).ask(2);
+//                Intent scanIntent = new Intent(FilterStatusActivity.this, CaptureActivity.class);
+//                startActivityForResult(scanIntent, SCANNIN_GREQUEST_CODE);
                 break;
         }
     }
@@ -568,5 +592,13 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
                         }
                     }
                 }));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (perReqResult != null) {
+            perReqResult.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

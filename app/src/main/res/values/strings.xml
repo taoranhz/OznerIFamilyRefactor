@@ -116,6 +116,7 @@
     <string name="bluetooth_connection">蓝牙连接</string>
     <string name="wifi_connection">WIFI连接</string>
     <string name="blue_need_pos">蓝牙配对需要位置权限</string>
+    <string name="open_camera_permission">没有摄像头权限</string>
 
     <!--配对-->
     <string name="replen_match_tips">按开关键5秒，蓝灯闪烁</string>
