@@ -90,6 +90,7 @@ public class AddFriendActivity extends BaseActivity implements TextView.OnEditor
     private String mMobile;
     private String mUserid;
     private UserInfo searchInfo;
+    private String addMobile = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -408,7 +409,7 @@ public class AddFriendActivity extends BaseActivity implements TextView.OnEditor
                         contactList.get(clickPos).setStatus(1);
                         mAdapter.loadData(contactList);
                     }
-                    if (searchInfo.getMobile().equals(mobile)) {
+                    if (searchInfo != null && searchInfo.getMobile().equals(mobile)) {
                         tvBtnAdd.setText(R.string.wait_verify);
                         tvBtnAdd.setEnabled(false);
                     }
@@ -479,6 +480,7 @@ public class AddFriendActivity extends BaseActivity implements TextView.OnEditor
 //                            Toast.makeText(mContext, "添加：" + position, Toast.LENGTH_SHORT).show();
                             Intent verifyIntent = new Intent(AddFriendActivity.this, SendVerifyActivity.class);
                             verifyIntent.putExtra(Contacts.PARMS_CLICK_POS, position);
+//                            searchInfo.setMobile(item.getMobile());
                             verifyIntent.putExtra(Contacts.PARMS_PHONE, item.getMobile());
                             if (verifyIntent.resolveActivity(getPackageManager()) != null) {
                                 startActivityForResult(verifyIntent, LOCAL_REQUEST_CODE);

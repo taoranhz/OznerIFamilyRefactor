@@ -75,7 +75,10 @@ public class SendVerifyActivity extends BaseActivity {
                 break;
             case R.id.llay_send:
                 if (sendMobile != null && !sendMobile.isEmpty()) {
-                    String verifyMsg = etSendMsg.getText().toString().trim();
+                    String verifyMsg ="";
+                    if(etSendMsg.getText().length()>0){
+                        verifyMsg = etSendMsg.getText().toString().trim();
+                    }
                     sendMessage(sendMobile, verifyMsg);
                 } else {
                     showToastCenter(R.string.Code_P_params_error);
