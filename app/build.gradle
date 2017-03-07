@@ -4,11 +4,11 @@ android {
     compileSdkVersion 24
     buildToolsVersion '25.0.0'
     defaultConfig {
-        applicationId "com.ozner.cup"
+        applicationId "com.ozner.yiquan"
         minSdkVersion 18
         targetSdkVersion 24
-        versionCode 301
-        versionName "3.0.1"
+        versionCode 6
+        versionName "1.0.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -18,12 +18,18 @@ android {
         }
     }
     signingConfigs {
-//        debug {
-//            keyAlias 'ozner'
-//            keyPassword '123456789'
-//            storeFile file('D:/ozner/oznerCup/ozner_new.keystore')
-//            storePassword '1234567890'
-//        }
+        config {
+            keyAlias 'JoRo'
+            keyPassword '123456789'
+            storeFile file('D:/ozner/Joroy/OznerJoRoRefactor/JoRo.jks')
+            storePassword '123456789'
+        }
+        debug {
+            keyAlias 'JoRo'
+            keyPassword '123456789'
+            storeFile file('D:/ozner/Joroy/OznerJoRoRefactor/JoRo.jks')
+            storePassword '123456789'
+        }
     }
     productFlavors {
     }
