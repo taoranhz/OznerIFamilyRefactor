@@ -23,12 +23,14 @@ android {
             keyPassword '123456789'
             storeFile file('D:/ozner/Joroy/OznerJoRoRefactor/JoRo.jks')
             storePassword '123456789'
+            v2SigningEnabled false
         }
         debug {
             keyAlias 'JoRo'
             keyPassword '123456789'
             storeFile file('D:/ozner/Joroy/OznerJoRoRefactor/JoRo.jks')
             storePassword '123456789'
+            v2SigningEnabled false
         }
     }
     productFlavors {
@@ -39,9 +41,9 @@ buildscript {
     repositories {
         mavenCentral()
     }
-    dependencies {
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.0'
-    }
+//    dependencies {
+//        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
+//    }
 }
 
 apply plugin: 'org.greenrobot.greendao'
@@ -75,7 +77,7 @@ dependencies {
     compile 'io.reactivex:rxjava:1.2.1'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'org.greenrobot:greendao:3.2.0'
+
     compile 'com.zcw:togglebutton-library:1.0.0'
     compile 'cz.msebera.android:httpclient:4.4.1.2'
     compile 'com.github.kayvannj:PermissionUtils:1.0.3'
@@ -84,4 +86,5 @@ dependencies {
     compile 'com.bigkoo:convenientbanner:2.0.5'
     testCompile 'junit:junit:4.12'
     compile files('libs/core-3.1.0.jar')
+    compile 'org.greenrobot:greendao:3.2.0'
 }
