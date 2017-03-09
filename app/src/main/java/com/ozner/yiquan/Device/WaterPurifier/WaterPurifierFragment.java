@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +38,7 @@ import com.ozner.yiquan.Device.TDSSensorManager;
 import com.ozner.yiquan.Main.MainActivity;
 import com.ozner.yiquan.R;
 import com.ozner.yiquan.UIView.PurifierDetailProgress;
+import com.ozner.yiquan.Utils.LCLogUtils;
 import com.ozner.yiquan.Utils.WeChatUrlUtil;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
@@ -131,7 +133,6 @@ public class WaterPurifierFragment extends DeviceFragment {
     WaterPurifierAttr purifierAttr;
     private boolean hasHot = false;
     private boolean hasCool = false;
-    private boolean isShowFilterTips = false;
     private String dsn = "";
     private TDSSensorManager tdsSensorManager;
     private String mUserid;
@@ -378,10 +379,11 @@ public class WaterPurifierFragment extends DeviceFragment {
             });
 
             //获取滤芯信息
-            if (purifierAttr != null && purifierAttr.getFilterNowtime() != 0) {
+            if (purifierAttr != null && DateUtils.isToday(purifierAttr.getFilterNowtime())) {
                 Log.e(TAG, "initWaterAttrInfo_filter: " + purifierAttr.getFilterNowtime());
                 updateFilterInfoUI(purifierAttr);
             } else {
+                LCLogUtils.E(TAG, "从网络加载滤芯信息");
                 waterNetInfoManager.getWaterFilterInfo(mac, new WaterNetInfoManager.IWaterAttr() {
                     @Override
                     public void onResult(WaterPurifierAttr attr) {
@@ -391,6 +393,7 @@ public class WaterPurifierFragment extends DeviceFragment {
                     }
                 });
             }
+
         } catch (Exception ex) {
             Log.e(TAG, "initWaterAttrInfo_Ex: " + ex.getMessage());
         }
@@ -419,14 +422,9 @@ public class WaterPurifierFragment extends DeviceFragment {
         endCal.setTimeInMillis(attr.getFilterTime());
 
         //显示滤芯到期提示
-//        if (attr.getIsShowDueDay()) {
-        if (isShowFilterTips) {
-            isShowFilterTips = false;
-            if (attr.getFilterTime() + attr.getDays() * 24 * 3600 * 1000 < new Date().getTime()) {
-                showChangeFilterTips();
-            }
+        if (attr.getFilterTime() + attr.getDays() * 24 * 3600 * 1000 < new Date().getTime()) {
+            showChangeFilterTips();
         }
-//        }
 
         if (endCal.getTimeInMillis() > nowCal.getTimeInMillis()) {
             float remainDay = (endCal.getTimeInMillis() - nowCal.getTimeInMillis()) / (1000.0f * 3600 * 24);
