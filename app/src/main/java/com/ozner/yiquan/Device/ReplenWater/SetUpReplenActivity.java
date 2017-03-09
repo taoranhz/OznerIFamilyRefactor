@@ -71,6 +71,17 @@ public class SetUpReplenActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        try {
+            oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid, mac);
+        }catch (Exception ex){
+
+        }
+
+        super.onResume();
+    }
+
     /**
      * 显示性别
      *

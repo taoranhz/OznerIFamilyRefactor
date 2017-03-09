@@ -32,12 +32,6 @@ public class NotifyActivity extends Activity {
                 dialog.cancel();
                 finish();
             }
-        }).setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                finish();
-            }
         });
         builder.show();
     }

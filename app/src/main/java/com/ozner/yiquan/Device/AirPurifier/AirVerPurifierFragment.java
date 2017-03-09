@@ -27,6 +27,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ozner.AirPurifier.AirPurifier_MXChip;
+import com.ozner.device.BaseDeviceIO;
+import com.ozner.device.OperateCallback;
+import com.ozner.device.OznerDevice;
+import com.ozner.device.OznerDeviceManager;
 import com.ozner.yiquan.Bean.Contacts;
 import com.ozner.yiquan.Command.UserDataPreference;
 import com.ozner.yiquan.DBHelper.DBManager;
@@ -36,10 +40,7 @@ import com.ozner.yiquan.Device.DeviceFragment;
 import com.ozner.yiquan.HttpHelper.NetState;
 import com.ozner.yiquan.Main.MainActivity;
 import com.ozner.yiquan.R;
-import com.ozner.device.BaseDeviceIO;
-import com.ozner.device.OperateCallback;
-import com.ozner.device.OznerDevice;
-import com.ozner.device.OznerDeviceManager;
+import com.ozner.yiquan.Utils.LCLogUtils;
 
 import java.util.Calendar;
 import java.util.Date;

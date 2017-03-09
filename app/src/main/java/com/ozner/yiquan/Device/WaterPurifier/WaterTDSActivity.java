@@ -1,6 +1,5 @@
 package com.ozner.yiquan.Device.WaterPurifier;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
@@ -15,17 +14,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ozner.WaterPurifier.WaterPurifier;
-import com.ozner.yiquan.Base.BaseActivity;
-import com.ozner.yiquan.Base.WebActivity;
-import com.ozner.yiquan.Bean.Contacts;
-import com.ozner.yiquan.Bean.OznerBroadcastAction;
 import com.ozner.cup.CupRecord;
+import com.ozner.device.OznerDeviceManager;
+import com.ozner.yiquan.Base.BaseActivity;
+import com.ozner.yiquan.Bean.Contacts;
 import com.ozner.yiquan.Bean.RankType;
 import com.ozner.yiquan.Device.TDSSensorManager;
 import com.ozner.yiquan.OznerApplication;
 import com.ozner.yiquan.R;
 import com.ozner.yiquan.UIView.UIZPurifierExpView;
-import com.ozner.device.OznerDeviceManager;
 
 import java.util.Calendar;
 
@@ -65,10 +62,10 @@ public class WaterTDSActivity extends BaseActivity implements RadioGroup.OnCheck
     RadioButton rbMonth;
     @InjectView(R.id.uiz_purifierExp)
     UIZPurifierExpView uizPurifierExp;
-    @InjectView(R.id.tv_water_know)
-    TextView tvWaterKnow;
-    @InjectView(R.id.tv_buy_water_purifier)
-    TextView tvBuyWaterPurifier;
+//    @InjectView(R.id.tv_water_know)
+//    TextView tvWaterKnow;
+//    @InjectView(R.id.tv_buy_water_purifier)
+//    TextView tvBuyWaterPurifier;
     @InjectView(R.id.rg_switch)
     RadioGroup rgSwitch;
 
@@ -318,19 +315,19 @@ public class WaterTDSActivity extends BaseActivity implements RadioGroup.OnCheck
         }
     }
 
-    @OnClick({R.id.tv_water_know, R.id.tv_buy_water_purifier, R.id.tv_chat_btn})
+    @OnClick({R.id.tv_chat_btn})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.tv_water_know:
-                Intent knowIntent = new Intent(this, WebActivity.class);
-                knowIntent.putExtra(Contacts.PARMS_URL, Contacts.waterHealthUrl);
-                startActivity(knowIntent);
-                break;
-            case R.id.tv_buy_water_purifier:
-                Intent eshopIntent = new Intent(OznerBroadcastAction.OBA_SWITCH_ESHOP);
-                sendBroadcast(eshopIntent);
-                this.finish();
-                break;
+//            case R.id.tv_water_know:
+//                Intent knowIntent = new Intent(this, WebActivity.class);
+//                knowIntent.putExtra(Contacts.PARMS_URL, Contacts.waterHealthUrl);
+//                startActivity(knowIntent);
+//                break;
+//            case R.id.tv_buy_water_purifier:
+//                Intent eshopIntent = new Intent(OznerBroadcastAction.OBA_SWITCH_ESHOP);
+//                sendBroadcast(eshopIntent);
+//                this.finish();
+//                break;
             case R.id.tv_chat_btn:
 //                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
 //                this.finish();

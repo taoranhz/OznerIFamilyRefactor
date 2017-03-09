@@ -94,15 +94,19 @@ public class DBManager {
     /**
      * 删除净水器属性记录
      *
-     * @param attr
+     * @param mac
      */
-    public void deleteWaterAttr(WaterPurifierAttr attr) {
-        DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
-        DaoSession daoSession = daoMaster.newSession();
-        WaterPurifierAttrDao tapDao = daoSession.getWaterPurifierAttrDao();
-        QueryBuilder<WaterPurifierAttr> qurResQb = tapDao.queryBuilder().where(WaterPurifierAttrDao.Properties.Mac.eq(attr.getMac()));
-        if (qurResQb.count() > 0) {
-            tapDao.delete(qurResQb.unique());
+    public void deleteWaterAttr(String mac) {
+        try {
+            DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
+            DaoSession daoSession = daoMaster.newSession();
+            WaterPurifierAttrDao tapDao = daoSession.getWaterPurifierAttrDao();
+            QueryBuilder<WaterPurifierAttr> qurResQb = tapDao.queryBuilder().where(WaterPurifierAttrDao.Properties.Mac.eq(mac));
+            if (qurResQb.count() > 0) {
+                tapDao.delete(qurResQb.unique());
+            }
+        } catch (Exception ex) {
+
         }
     }
 

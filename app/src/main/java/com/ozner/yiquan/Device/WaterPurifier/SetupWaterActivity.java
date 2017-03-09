@@ -140,6 +140,7 @@ public class SetupWaterActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mWaterPurifier != null) {
+                                    DBManager.getInstance(SetupWaterActivity.this).deleteWaterAttr(mWaterPurifier.Address());
                                     DBManager.getInstance(SetupWaterActivity.this).deleteDeviceSettings(mUserid,mWaterPurifier.Address());
                                     OznerDeviceManager.Instance().remove(mWaterPurifier);
                                     setResult(RESULT_OK);

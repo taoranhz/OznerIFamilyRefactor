@@ -125,12 +125,11 @@ public class SetRemindTimeActivity extends BaseActivity {
                 long time1 = 0;
                 long time2 = 0;
                 long time3 = 0;
-
                 try {
                     isRemind1 = (boolean) oznerSetting.getAppData(Contacts.DEV_REPLEN_IS_REMIND_1);
                     time1 = (long) oznerSetting.getAppData(Contacts.DEV_REPLEN_REMIND_TIME_1);
                 } catch (Exception ex) {
-
+                    LCLogUtils.E(TAG,"time1_Ex:"+ex.getMessage());
                 }
                 try {
                     isRemind2 = (boolean) oznerSetting.getAppData(Contacts.DEV_REPLEN_IS_REMIND_2);

@@ -278,7 +278,7 @@
 
     <string name="device_dis_connect">设备已断开</string>
     <string name="device_close">已关机</string>
-    <string name="device_no_net">设备已断网</string>
+    <string name="device_no_net">设备云已断开</string>
     <string name="phone_nonet">手机未连接网络</string>
     <string name="outdoor_air">室外空气:</string>
     <string name="insidedoor_air">室内空气</string>

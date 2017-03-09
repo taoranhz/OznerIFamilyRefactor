@@ -367,17 +367,15 @@ public class WaterPurifierFragment extends DeviceFragment {
             if (purifierAttr != null && purifierAttr.getDeviceType() != null && !purifierAttr.getDeviceType().isEmpty()) {
                 Log.e(TAG, "initWaterAttrInfo: " + purifierAttr.getDeviceType() + " ,hasHot:" + purifierAttr.getHasHot() + " ,hasCool:" + purifierAttr.getHasCool());
                 refreshWaterSwitcher(purifierAttr);
-            } else {
-                waterNetInfoManager.getMatchineType(mac, new WaterNetInfoManager.IWaterAttr() {
-                    @Override
-                    public void onResult(WaterPurifierAttr attr) {
-                        if (attr != null) {
-                            refreshWaterSwitcher(attr);
-                        }
-                    }
-                });
             }
-
+            waterNetInfoManager.getMatchineType(mac, new WaterNetInfoManager.IWaterAttr() {
+                @Override
+                public void onResult(WaterPurifierAttr attr) {
+                    if (attr != null) {
+                        refreshWaterSwitcher(attr);
+                    }
+                }
+            });
 
             //获取滤芯信息
             if (purifierAttr != null && purifierAttr.getFilterNowtime() != 0) {
@@ -387,7 +385,7 @@ public class WaterPurifierFragment extends DeviceFragment {
                 waterNetInfoManager.getWaterFilterInfo(mac, new WaterNetInfoManager.IWaterAttr() {
                     @Override
                     public void onResult(WaterPurifierAttr attr) {
-                        if(attr!=null) {
+                        if (attr != null) {
                             updateFilterInfoUI(attr);
                         }
                     }
