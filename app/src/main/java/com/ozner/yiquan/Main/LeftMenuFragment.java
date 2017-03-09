@@ -304,6 +304,8 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
                 } else {
                     Toast.makeText(context, R.string.device_unexsit, Toast.LENGTH_SHORT).show();
                 }
+            }else {
+                mLeftAdapter.notifyDataSetChanged();
             }
         }
     }

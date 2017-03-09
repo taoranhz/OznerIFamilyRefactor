@@ -339,19 +339,10 @@ public class ReplenDetailActivity extends BaseActivity {
      * @param index
      */
     private void showSkinStatus(int index) {
-        tvSkinHumidity.setText(String.valueOf(todayValues[index]));
-        if (todayValues[index] > 0 && todayValues[index] <= midValue[index]) {
-            tvSkinState.setText(R.string.dry);
-        } else if (todayValues[index] > midValue[index] && todayValues[index] <= highValue[index]) {
-            tvSkinState.setText(R.string.normal);
-        } else if (todayValues[index] > highValue[index]) {
-            tvSkinState.setText(R.string.wetness);
-        } else {
-            tvSkinState.setText(R.string.state_null);
-        }
-
         if (totalCounts[index] > 0) {
             tvSkinAverage.setText(String.format(getString(R.string.replen_average_value), totalValues[index] / totalCounts[index], totalCounts[index]));
+            if (todayValues[index] <= 0)
+                todayValues[index] = (int) (totalValues[index] / totalCounts[index]);
         } else {
             try {
                 double totalValue = 0;
@@ -375,6 +366,9 @@ public class ReplenDetailActivity extends BaseActivity {
                         break;
                 }
                 if (count > 0) {
+                    if (todayValues[index] <= 0) {
+                        todayValues[index] = (int) totalValue / count;
+                    }
                     tvSkinAverage.setText(String.format(getString(R.string.replen_average_value), totalValue / count, count));
                 } else {
                     tvSkinAverage.setText(String.format(getString(R.string.replen_average_value), 0f, 0));
@@ -383,6 +377,19 @@ public class ReplenDetailActivity extends BaseActivity {
             } catch (Exception ex) {
                 tvSkinAverage.setText(String.format(getString(R.string.replen_average_value), 0f, 0));
             }
+        }
+
+//        LCLogUtils.E(TAG, "todayValue_" + index + ":" + todayValues[index]);
+
+        tvSkinHumidity.setText(String.valueOf(todayValues[index]));
+        if (todayValues[index] > 0 && todayValues[index] <= midValue[index]) {
+            tvSkinState.setText(R.string.dry);
+        } else if (todayValues[index] > midValue[index] && todayValues[index] <= highValue[index]) {
+            tvSkinState.setText(R.string.normal);
+        } else if (todayValues[index] > highValue[index]) {
+            tvSkinState.setText(R.string.wetness);
+        } else {
+            tvSkinState.setText(R.string.state_null);
         }
     }
 
@@ -461,7 +468,11 @@ public class ReplenDetailActivity extends BaseActivity {
                     //获取今日水分值
                     if (todayCal.getTime().equals(tempCal.getTime())) {
                         String snumber = itemObject.get("snumber").getAsString();
+                        LCLogUtils.E(TAG, "snumber:" + snumber);
                         todayValues[index] = Integer.parseInt(snumber.substring(0, snumber.indexOf(".")));
+                    } else {
+                        LCLogUtils.E(TAG, "不是当天数据:" + index);
+//                        todayValues[index] = getTodaySkinPer(index);
                     }
                     int weekday = tempCal.get(Calendar.DAY_OF_WEEK);
                     //DAY_OF_WEEK 获取的值是从周日（1）开始，需要调整为周一（0）开始
@@ -492,7 +503,6 @@ public class ReplenDetailActivity extends BaseActivity {
             LCLogUtils.E(TAG, "handleFenBuData_Ex:" + index + " ,err:" + ex.getMessage());
         }
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

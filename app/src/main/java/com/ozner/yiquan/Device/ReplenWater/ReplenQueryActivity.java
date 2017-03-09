@@ -148,6 +148,7 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
 
     @OnClick(R.id.tv_buy_essence_btn)
     public void onClick() {
+
     }
 
     @Override
