@@ -11,11 +11,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -27,12 +29,15 @@ import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
+import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.Device.AddDevice.AddDeviceActivity;
 import com.ozner.cup.Main.Bean.LeftMenuDeviceItem;
+import com.ozner.cup.MyCenter.CenterEnActivity;
 import com.ozner.cup.R;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
@@ -61,10 +66,13 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
     @InjectView(R.id.llay_root)
     LinearLayout llayRoot;
 
+    private TextView tvUserName;
+
     private LeftMonitor mMonitor;
     private LeftMenuAdapter mLeftAdapter;
     private List<LeftMenuDeviceItem> leftDeviceList;
     private String mUserid;
+    private UserInfo userInfo;
 
     public LeftMenuFragment() {
     }
@@ -86,13 +94,39 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (OznerPreference.isLoginEmail(getContext())) {
+            loadLoginEmailUI();
+        }
         leftDeviceList = new ArrayList<>();
         mLeftAdapter = new LeftMenuAdapter(getContext(), R.layout.left_menu_item);
         lvMyDevice.setAdapter(mLeftAdapter);
         lvMyDevice.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         lvMyDevice.setOnItemClickListener(this);
-
         initBroadCastFilter();
+    }
+
+    /**
+     * 加载英文登录时的界面
+     */
+    private void loadLoginEmailUI() {
+        ViewStub vsHeader = (ViewStub) getView().findViewById(R.id.vs_header);
+        if (vsHeader != null) {
+            View inflatedView = vsHeader.inflate();
+
+            userInfo = DBManager.getInstance(getContext()).getUserInfo(mUserid);
+            if (userInfo != null) {
+                tvUserName = (TextView) inflatedView.findViewById(R.id.tv_username);
+                tvUserName.setText(userInfo.getMobile());
+            }
+
+            inflatedView.findViewById(R.id.iv_headImg).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getContext(), CenterEnActivity.class));
+                    ((MainActivity) getActivity()).closeLeftMenu();
+                }
+            });
+        }
     }
 
 
@@ -170,6 +204,16 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onResume() {
         super.onResume();
+        try {
+            //tvUserName只有在英文情况下不为空
+            if (tvUserName != null) {
+                userInfo = DBManager.getInstance(getContext()).getUserInfo(mUserid);
+                if (userInfo != null)
+                    tvUserName.setText(userInfo.getEmail());
+            }
+        } catch (Exception ex) {
+
+        }
         initDataList();
     }
 

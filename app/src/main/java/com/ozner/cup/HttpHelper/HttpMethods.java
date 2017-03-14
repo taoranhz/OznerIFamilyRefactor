@@ -514,14 +514,30 @@ public class HttpMethods {
      * @param usertoken
      * @param mac
      * @param deivcetype
-     * @param code 二维码值
+     * @param code       二维码值
      * @param subscriber
      */
-    public void reNewFilterTime(String usertoken,String mac,String deivcetype,String code,Subscriber<JsonObject> subscriber){
-        oznerHttpService.reNewFilterTime(usertoken,mac,deivcetype,code)
+    public void reNewFilterTime(String usertoken, String mac, String deivcetype, String code, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.reNewFilterTime(usertoken, mac, deivcetype, code)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
 //                .map(new ResultTransFunc1())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 邮箱登录
+     *
+     * @param email
+     * @param pass
+     * @param miei
+     * @param devicename
+     * @param subscriber
+     */
+    public void emailLogin(String email, String pass, String miei, String devicename, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.emailLogin(email, pass, miei, devicename)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
     }
 }

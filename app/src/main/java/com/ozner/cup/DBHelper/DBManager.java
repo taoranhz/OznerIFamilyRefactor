@@ -83,12 +83,6 @@ public class DBManager {
         DaoSession daoSession = daoMaster.newSession();
         WaterPurifierAttrDao waterDao = daoSession.getWaterPurifierAttrDao();
         waterDao.insertOrReplace(attr);
-//        QueryBuilder<WaterPurifierAttr> qb = waterDao.queryBuilder();
-//        if (qb.where(WaterPurifierAttrDao.Properties.Mac.eq(attr.getMac())).count() > 0) {
-//            waterDao.update(attr);
-//        } else {
-//            waterDao.insert(attr);
-//        }
     }
 
     /**
@@ -133,13 +127,8 @@ public class DBManager {
             DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
             DaoSession daoSession = daoMaster.newSession();
             UserInfoDao userInfoDao = daoSession.getUserInfoDao();
-//            QueryBuilder<UserInfo> qb = userInfoDao.queryBuilder();
+            QueryBuilder<UserInfo> qb = userInfoDao.queryBuilder();
             userInfoDao.insertOrReplace(attr);
-//            if (qb.where(UserInfoDao.Properties.UserId.eq(attr.getUserId())).count() > 0) {
-//                userInfoDao.update(attr);
-//            } else {
-//                userInfoDao.insert(attr);
-//            }
         }
     }
 
@@ -256,11 +245,6 @@ public class DBManager {
                 EMMessageDao msgDao = daoSession.getEMMessageDao();
                 QueryBuilder<EMMessage> qb = msgDao.queryBuilder();
                 msgDao.insertOrReplace(msg);
-//                if (qb.where(qb.and(EMMessageDao.Properties.Userid.eq(msg.getUserid()), EMMessageDao.Properties.Time.eq(msg.getTime()))).count() > 0) {
-//                    msgDao.update(msg);
-//                } else {
-//                    msgDao.insert(msg);
-//                }
             }
         } catch (Exception ex) {
             Log.e(TAG, "updateEMMessage_Ex: " + ex.getMessage());
@@ -297,17 +281,9 @@ public class DBManager {
             DaoMaster daoMaster = new DaoMaster(getWritableDatabase());
             DaoSession daoSession = daoMaster.newSession();
             final EMMessageDao msgDao = daoSession.getEMMessageDao();
-//            QueryBuilder<EMMessage> qurResQb = msgDao.queryBuilder().where(UserInfoDao.Properties.UserId.eq(userid)).list();
             List<EMMessage> msgList = msgDao.queryBuilder().where(UserInfoDao.Properties.UserId.eq(userid)).list();
             msgDao.deleteInTx(msgList);
-//            if (qurResQb.count() > 0) {
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        msgDao.deleteAll();
-//                    }
-//                }).start();
-//            }
+
         } catch (Exception ex) {
             Log.e(TAG, "clearEMMessage_Ex: " + ex.getMessage());
         }

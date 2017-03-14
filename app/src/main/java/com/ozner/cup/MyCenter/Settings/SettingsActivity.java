@@ -14,6 +14,7 @@ import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.LoginWelcom.View.LoginActivity;
+import com.ozner.cup.LoginWelcom.View.LoginEnActivity;
 import com.ozner.cup.R;
 import com.zcw.togglebutton.ToggleButton;
 
@@ -88,9 +89,13 @@ public class SettingsActivity extends BaseActivity {
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UserDataPreference.SetUserData(SettingsActivity.this,UserDataPreference.UserId,"");
-                        OznerPreference.setUserToken(SettingsActivity.this,"");
-                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                        UserDataPreference.SetUserData(SettingsActivity.this, UserDataPreference.UserId, "");
+                        OznerPreference.setUserToken(SettingsActivity.this, "");
+                        if (OznerPreference.isLoginEmail(SettingsActivity.this)) {
+                            startActivity(new Intent(getApplicationContext(), LoginEnActivity.class));
+                        } else {
+                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                        }
                         finishAffinity();
                     }
                 }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {

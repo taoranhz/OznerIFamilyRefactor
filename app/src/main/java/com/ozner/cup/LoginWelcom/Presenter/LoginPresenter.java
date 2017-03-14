@@ -164,6 +164,7 @@ public class LoginPresenter {
                                     if (jsonObject.get("state").getAsInt() > 0) {
                                         OznerPreference.setUserToken(loginContext.get(), jsonObject.get("usertoken").getAsString());
                                         OznerPreference.setIsLogin(loginContext.get(), true);
+                                        OznerPreference.setLoginEmail(loginContext.get(),false);
                                         UserDataPreference.SetUserData(loginContext.get(), UserDataPreference.UserId, jsonObject.get("userid").getAsString());
                                         try {
                                             UserInfo userInfo = DBManager.getInstance(loginContext.get()).getUserInfo(jsonObject.get("userid").getAsString());
@@ -200,33 +201,6 @@ public class LoginPresenter {
             loginView.showErrMsg(R.string.err_miss_phone);
         }
     }
-
-//    public void getVoiceVerifyCode() {
-//        loginView.showErrMsg("");
-//        if (!isNetAvailable()) {
-//            return;
-//        }
-//        if (!loginView.getUserPhone().isEmpty() && loginView.getUserPhone().length() == 11) {
-//            HttpMethods.getInstance().getVoiceVerifyCode(loginView.getUserPhone()
-//                    , new ProgressSubscriber<JsonObject>(loginContext.get()
-//                            , loginContext.get().getString(R.string.verify_code_requesting)
-//                            , false
-//                            , new Action1<JsonObject>() {
-//                        @Override
-//                        public void call(JsonObject jsonObject) {
-//                            Log.e(TAG, "getVoiceVerifyCode: " + jsonObject.toString());
-//                            if (jsonObject.get("state").getAsInt() > 0) {
-//                                loginView.showErrMsg(loginContext.get().getString(R.string.tips_getvoice));
-//                            } else {
-//                                showResultErrMsg(jsonObject.get("state").getAsInt(), jsonObject.get("msg"));
-//                                loginView.showErrMsg(ApiException.getErrResId(jsonObject.get("state").getAsInt()));
-//                            }
-//                        }
-//                    }));
-//        } else {
-//            loginView.showErrMsg(R.string.err_miss_phone);
-//        }
-//    }
 
     public void getVoiceVerifyCode() {
         loginView.showErrMsg("");

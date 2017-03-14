@@ -396,4 +396,17 @@ public interface OznerHttpService {
     @POST("OznerDevice/RenewFilterTime")
     Observable<JsonObject> reNewFilterTime(@Field("usertoken") String usertoken,@Field("mac") String mac,@Field("devicetype") String devicetype,@Field("code") String code);
 
+
+    /**
+     * 邮箱登录
+     * @param email
+     * @param password
+     * @param miei
+     * @param devicename
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/MailLogin")
+    Observable<JsonObject> emailLogin(@Field("username") String email, @Field("password") String password, @Field("miei") String miei,@Field("devicename") String devicename);
 }

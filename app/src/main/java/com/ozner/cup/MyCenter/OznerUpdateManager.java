@@ -91,7 +91,8 @@ public class OznerUpdateManager {
                 new ProgressSubscriber<JsonObject>(mContext.get(), new OznerHttpResult<JsonObject>() {
                     @Override
                     public void onError(Throwable e) {
-                        showCenterToast(mContext.get().getString(R.string.not_obtain_version));
+                        if (isShowMsg)
+                            showCenterToast(mContext.get().getString(R.string.not_obtain_version));
                     }
 
                     @Override
@@ -101,6 +102,7 @@ public class OznerUpdateManager {
                             if (jsonObject != null) {
                                 if (jsonObject.get("state").getAsInt() > 0) {
                                     JsonObject data = jsonObject.get("data").getAsJsonObject();
+                                    LCLogUtils.E(TAG, "update_result:" + data.toString());
                                     downLoadUrl = data.get("url").getAsString();
                                     isMustUpdate = data.get("mustupdata").getAsInt();
                                     netVersionCode = data.get("versioncode").getAsInt();
@@ -115,7 +117,8 @@ public class OznerUpdateManager {
                                         }
                                     }
                                 } else {
-                                    showCenterToast(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
+                                    if (isShowMsg)
+                                        showCenterToast(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));
                                 }
                             } else {
                                 if (isShowMsg) {

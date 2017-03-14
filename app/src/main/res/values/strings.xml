@@ -59,6 +59,16 @@
     <string name="sign_out_tip">下线通知</string>
     <string name="login_on_other_device">您的账号在其他设备登录，请重新登录.</string>
 
+    <string name="email">邮箱</string>
+    <string name="password">密码</string>
+    <string name="reset">重置</string>
+    <string name="register">注册</string>
+    <string name="sign_up">注册账号</string>
+    <string name="input_email">请输入邮箱</string>
+    <string name="input_password">请输入密码</string>
+    <string name="valid_email">邮箱格式不正确</string>
+
+
     <string name="current_filter_state">当前滤芯状态</string>
     <string name="filter_tips">温馨提醒：及时更换滤芯才能保证饮用水的安全</string>
     <string name="left_replace_filter">离更换滤芯还剩</string>
@@ -196,7 +206,7 @@
     <string name="hydra_standard">水润标准</string>
     <string name="skin_condition">今日肌肤状态\t\t</string>
     <string name="replen_skin_notices">您本周的皮肤水分偏离正常，请及时保湿补水。</string>
-    
+
     <string name="water_replenish_oilcontext">\t\t皮肤出油是由于人体皮肤干燥缺水，导致肌肤受损，人体自我修复和保护系统会分泌油脂来保护肌肤！
         大多数男性肌肤多为油性肌肤，所以要想从根本解决出油问题，需要注意肌肤的补水保湿，这样才能从根本改善和保护受损肌肤。</string>
     <string name="water_replenish_humtip">(仅供参考)</string>
@@ -605,7 +615,22 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_set_up_air_ver">SetUpAirVerActivity</string>
 
-    <string name="title_activity_guide">GuideActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="button_send">发送</string>
+    <string name="attach_picture">照片</string>
+    <string name="attach_take_pic">拍照</string>
+    <string name="resend">重新发送</string>
+    <string name="confirm_resend">是否重新发送？</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="prompt">Prompt</string>
+    <string name="not_download">Did not download:</string>
+    <string name="text_ack_msg">Read</string>
+    <string name="text_delivered_msg">Delivered</string>
+
+    <string name="cant_find_pictures">"Can't find pictures"</string>
+    <string name="sd_card_does_not_exist">"SD card does not exist, can't take pictures"</string>
+    <string name="Whether_to_empty_all_chats">Clear all messages?</string>
+    <!--<string name="location_recv">[%1$s location]</string>-->
+    <!--<string name="location_prefix">[my location]</string>-->
 </resources>

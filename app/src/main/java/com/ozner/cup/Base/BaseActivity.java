@@ -20,6 +20,8 @@ import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.LoginWelcom.View.LoginActivity;
 import com.ozner.cup.R;
 
+import java.util.Locale;
+
 /**
  * Created by ozner_67 on 2016/11/1.
  * 邮箱：xinde.zhang@cftcn.com
@@ -47,6 +49,23 @@ public abstract class BaseActivity extends AppCompatActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorAccent));
             //更改底部导航栏颜色(限有底部的手机)
             window.setNavigationBarColor(ContextCompat.getColor(this, R.color.colorAccent));
+        }
+    }
+
+    /**
+     * 是否是英文环境
+     * @return
+     */
+    public boolean isLanguageEn(){
+        try {
+            if (Locale.getDefault().getLanguage().endsWith("zh")) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return true;
         }
     }
 
