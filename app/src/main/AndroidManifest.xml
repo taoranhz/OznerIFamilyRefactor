@@ -104,6 +104,11 @@
             android:name=".QRCodeScan.activity.CaptureActivity"/>
         <activity android:name=".Device.AirPurifier.AirDeskFilterActivity">
         </activity>
+
+        <activity android:name=".Device.ROWaterPurifier.MatchROWaterPuriferActivity"></activity>
+        <activity android:name=".Device.ROWaterPurifier.ROFilterStatusActivity"></activity>
+        <activity android:name=".Device.ROWaterPurifier.SetupROWaterActivity"></activity>
+
         <activity android:name=".Base.WebActivity">
         </activity>
         <activity

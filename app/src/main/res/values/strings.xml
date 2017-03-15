@@ -608,4 +608,12 @@
     <string name="title_activity_guide">GuideActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="water_ropurifier">智能RO水机</string>
+    <string name="reverse_ro">请将RO水机的开关打开</string>
+    <string name="rest_ro_fit">复位</string>
+    <string name="rofit">滤芯状态</string>
+    <string name="ro_fit">清洗前置滤芯</string>
+    <string name="rofilter_need_change">为了您和家人的健康，请及时更换滤芯</string>
+    <string name="warmly_notice">温馨提醒：及时更换滤芯才能保证饮用水的安全</string>
 </resources>

@@ -17,6 +17,7 @@ import com.ozner.cup.Device.AddDevice.bean.AddDeviceListBean;
 import com.ozner.cup.Device.AirPurifier.MatchDeskAirActivity;
 import com.ozner.cup.Device.AirPurifier.MatchVerAirActivity;
 import com.ozner.cup.Device.Cup.MatchCupActivity;
+import com.ozner.cup.Device.ROWaterPurifier.MatchROWaterPuriferActivity;
 import com.ozner.cup.Device.ReplenWater.MatchReplenActivity;
 import com.ozner.cup.Device.Tap.MatchTapActivity;
 import com.ozner.cup.Device.WaterPurifier.MatchWaterPuriferActivity;
@@ -43,7 +44,9 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
             R.string.air_purifier_ver,
 
             R.string.air_purifier_desk,
-            R.string.water_replen_meter
+            R.string.water_replen_meter,
+
+            R.string.water_ropurifier,
     };
     private int[] connectTypes = new int[]{
             R.string.bluetooth_connection,
@@ -52,7 +55,8 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
             R.string.wifi_connection,
             R.string.wifi_connection,
             R.string.bluetooth_connection,
-            R.string.bluetooth_connection
+            R.string.bluetooth_connection,
+            R.string.bluetooth_connection,
     };
     private int[] devIconRes = new int[]{
             R.drawable.device_icon_cup,
@@ -61,7 +65,8 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
             R.drawable.device_icon_water,
             R.drawable.device_icon_air_ver,
             R.drawable.device_icon_air_desk,
-            R.drawable.device_icon_replen
+            R.drawable.device_icon_replen,
+            R.drawable.device_icon_rowater,
     };
     private int[] conIconRes = new int[]{
             R.mipmap.connect_bluetooth_on,
@@ -69,6 +74,7 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
             R.mipmap.connect_bluetooth_on,
             R.mipmap.connect_wifi_on,
             R.mipmap.connect_wifi_on,
+            R.mipmap.connect_bluetooth_on,
             R.mipmap.connect_bluetooth_on,
             R.mipmap.connect_bluetooth_on
     };
@@ -145,6 +151,9 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
                 break;
             case R.drawable.device_icon_replen:
                 startActivity(new Intent(this, MatchReplenActivity.class));
+                break;
+            case R.drawable.device_icon_rowater:
+                startActivity(new Intent(this, MatchROWaterPuriferActivity.class));
                 break;
         }
 

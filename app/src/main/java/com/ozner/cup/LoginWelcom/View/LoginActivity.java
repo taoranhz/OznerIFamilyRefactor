@@ -13,6 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Base.WebActivity;
+import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.LoginWelcom.Presenter.LoginPresenter;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
@@ -145,7 +147,10 @@ public class LoginActivity extends BaseActivity implements CompoundButton.OnChec
                 loginPresenter.login();
                 break;
             case R.id.tv_proctol:
-                // TODO: 2016/11/3 打开网页
+                // 增加免责条款的可点击
+                Intent mztkIntent=new Intent(LoginActivity.this, WebActivity.class);
+                mztkIntent.putExtra(Contacts.PARMS_URL,Contacts.exceptions_url);
+                startActivity(mztkIntent);
                 break;
             case R.id.btn_getVoiceCode:
                 loginPresenter.getVoiceVerifyCode();
