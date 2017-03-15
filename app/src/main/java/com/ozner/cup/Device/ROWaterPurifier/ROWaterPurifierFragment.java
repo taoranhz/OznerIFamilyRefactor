@@ -46,7 +46,7 @@ import static com.ozner.cup.R.id.llay_tds_detail;
 
 
 public class ROWaterPurifierFragment extends DeviceFragment {
-    private static final String TAG = "WaterPurifier";
+    private static final String TAG = "ROWaterPurifier";
     private static final int TextSize = 40;
     private static final int NumSize = 50;
 
