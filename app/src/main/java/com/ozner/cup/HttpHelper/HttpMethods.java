@@ -540,4 +540,47 @@ public class HttpMethods {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
     }
+
+    /**
+     * 获取邮箱验证码
+     *
+     * @param email
+     * @param subscriber
+     */
+    public void getEmailCode(String email, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.getEmailCode(email)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 重置密码
+     *
+     * @param email
+     * @param password
+     * @param code
+     * @param subscriber
+     */
+    public void resetPassword(String email, String password, String code, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.resetPassword(email, password, code)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * 注册邮箱账号
+     *
+     * @param email
+     * @param password
+     * @param code
+     * @param subscriber
+     */
+    public void signUpMail(String email, String password, String code, Subscriber<JsonObject> subscriber) {
+        oznerHttpService.signUpMail(email, password, code)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
 }

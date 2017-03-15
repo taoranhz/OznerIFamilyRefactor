@@ -62,11 +62,20 @@
     <string name="email">邮箱</string>
     <string name="password">密码</string>
     <string name="reset">重置</string>
+    <string name="resetpassword">重置密码</string>
     <string name="register">注册</string>
     <string name="sign_up">注册账号</string>
     <string name="input_email">请输入邮箱</string>
     <string name="input_password">请输入密码</string>
     <string name="valid_email">邮箱格式不正确</string>
+    <string name="verify_code">验证码</string>
+    <string name="newpassword">新密码</string>
+    <string name="confirm_password">确认密码</string>
+    <string name="sendingEmailCode">正在发送验证码...</string>
+    <string name="fail_to_get_code">验证码发送失败</string>
+    <string name="different_pwd">密码不一致</string>
+    <string name="reset_pwd_success">密码重置成功，请重新登录</string>
+    <string name="regSucc">注册成功</string>
 
 
     <string name="current_filter_state">当前滤芯状态</string>

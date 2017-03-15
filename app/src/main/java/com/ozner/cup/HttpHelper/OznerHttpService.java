@@ -376,7 +376,6 @@ public interface OznerHttpService {
      * @param mac
      *
      * @return 返回数据示例：{"state":3,"data":[{"id":138,"userid":"b376615c-0718-43b4-9103-d3906d02d2b9","mac":"E2:68:46:AC:F7:88","ynumber":null,"snumber":null,"times":4,"action":"FaceSkinValue","updatetime":"/Date(1484809092587)/"},{"id":139,"userid":"b376615c-0718-43b4-9103-d3906d02d2b9","mac":"E2:68:46:AC:F7:88","ynumber":null,"snumber":null,"times":1,"action":"EyesSkinValue","updatetime":"/Date(1484879958607)/"},{"id":140,"userid":"b376615c-0718-43b4-9103-d3906d02d2b9","mac":"E2:68:46:AC:F7:88","ynumber":null,"snumber":null,"times":1,"action":"NeckSkinValue","updatetime":"/Date(1484880218780)/"}]}
-     *
      */
     @FormUrlEncoded
     @POST("OznerDevice/GetTimesCountBuShui")
@@ -385,6 +384,7 @@ public interface OznerHttpService {
 
     /**
      * 更新滤芯服务时间
+     *
      * @param usertoken
      * @param mac
      * @param devicetype
@@ -394,11 +394,12 @@ public interface OznerHttpService {
      */
     @FormUrlEncoded
     @POST("OznerDevice/RenewFilterTime")
-    Observable<JsonObject> reNewFilterTime(@Field("usertoken") String usertoken,@Field("mac") String mac,@Field("devicetype") String devicetype,@Field("code") String code);
+    Observable<JsonObject> reNewFilterTime(@Field("usertoken") String usertoken, @Field("mac") String mac, @Field("devicetype") String devicetype, @Field("code") String code);
 
 
     /**
      * 邮箱登录
+     *
      * @param email
      * @param password
      * @param miei
@@ -408,5 +409,40 @@ public interface OznerHttpService {
      */
     @FormUrlEncoded
     @POST("OznerServer/MailLogin")
-    Observable<JsonObject> emailLogin(@Field("username") String email, @Field("password") String password, @Field("miei") String miei,@Field("devicename") String devicename);
+    Observable<JsonObject> emailLogin(@Field("username") String email, @Field("password") String password, @Field("miei") String miei, @Field("devicename") String devicename);
+
+    /**
+     * 获取邮箱验证码
+     *
+     * @param email
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/GetEmailCode")
+    Observable<JsonObject> getEmailCode(@Field("email") String email);
+
+    /**
+     * 重置密码
+     * @param email
+     * @param password
+     * @param code
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/ResetPassword")
+    Observable<JsonObject> resetPassword(@Field("username") String email, @Field("password") String password, @Field("code") String code);
+
+    /**
+     * 注册邮箱账号
+     * @param email
+     * @param password
+     * @param code
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("OznerServer/MailRegister")
+    Observable<JsonObject> signUpMail(@Field("username") String email,@Field("password") String password,@Field("code") String code);
 }

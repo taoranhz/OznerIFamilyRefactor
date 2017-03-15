@@ -23,6 +23,7 @@
             android:background="@color/colorLine"/>
 
         <LinearLayout
+            android:id="@+id/llay_pushMsg"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -51,6 +52,7 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/tv_pushMsgLine"
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_marginLeft="15dp"

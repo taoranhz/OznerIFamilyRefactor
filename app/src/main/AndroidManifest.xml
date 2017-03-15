@@ -284,6 +284,10 @@
         </activity>
         <activity android:name=".MyCenter.CenterEnActivity">
         </activity>
+        <activity android:name=".LoginWelcom.View.ResetPwdActivity">
+        </activity>
+        <activity android:name=".LoginWelcom.View.SignUpActivity">
+        </activity>
     </application>
 
 </manifest>

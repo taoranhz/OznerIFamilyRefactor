@@ -15,11 +15,10 @@ import com.ozner.cup.LoginWelcom.View.ILoginEnView;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.MobileInfoUtil;
+import com.ozner.cup.Utils.VerifyUtil;
 import com.ozner.device.OznerDeviceManager;
 
 import java.lang.ref.WeakReference;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by ozner_67 on 2017/3/14.
@@ -41,7 +40,7 @@ public class LoginEnPresenter {
             return;
         if (loginView.getEmail().length() > 0) {
             if (loginView.getPassword().length() > 0) {
-                if (isEmail(loginView.getEmail())) {
+                if (VerifyUtil.isEmail(loginView.getEmail())) {
                     loginHttp(loginView.getEmail(), loginView.getPassword());
                 } else {
                     loginView.showErrMsg(R.string.valid_email);
@@ -64,7 +63,7 @@ public class LoginEnPresenter {
      */
     private void loginHttp(String email, String pass) {
         loginView.showErrMsg("");
-        if (!isNetAvailable()) {
+        if (!VerifyUtil.isNetAvailable(mContext.get())) {
             LCLogUtils.E(TAG, "login: 网络中断");
             loginView.showErrMsg(R.string.err_net_outline);
             return;
@@ -116,27 +115,5 @@ public class LoginEnPresenter {
                         }
                     }
                 }));
-    }
-
-    /**
-     * 判断邮箱是否合法
-     *
-     * @param email
-     *
-     * @return
-     */
-    public static boolean isEmail(String email) {
-        if (null == email || "".equals(email)) return false;
-        //Pattern p = Pattern.compile("\\w+@(\\w+.)+[a-z]{2,3}"); //简单匹配
-        Pattern p = Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");//复杂匹配
-        Matcher m = p.matcher(email);
-        return m.matches();
-    }
-
-    private boolean isNetAvailable() {
-        if (!MobileInfoUtil.isNetworkAvailable(mContext.get())) {
-            return false;
-        }
-        return true;
     }
 }

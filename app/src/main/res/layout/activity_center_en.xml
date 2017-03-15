@@ -10,7 +10,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/cup_detail_bg"
+        android:background="@color/theme_blue"
         android:orientation="vertical"
         android:paddingBottom="17dp">
         <ImageButton
@@ -96,5 +96,5 @@
 
     </RelativeLayout>
 
-    <TextView style="@style/HaLineMarginLeftView"/>
+    <TextView style="@style/HaLineView"/>
 </LinearLayout>

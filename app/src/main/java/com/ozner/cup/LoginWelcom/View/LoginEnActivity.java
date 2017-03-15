@@ -16,7 +16,8 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 public class LoginEnActivity extends BaseActivity implements ILoginEnView {
-
+    private final int RESET_REQ_CODE = 1;
+    private final int SIGNUP_REQ_CODE = 2;
     @InjectView(R.id.et_email)
     EditText etEmail;
     @InjectView(R.id.et_password)
@@ -38,14 +39,34 @@ public class LoginEnActivity extends BaseActivity implements ILoginEnView {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_reset:
+                startActivityForResult(new Intent(this, ResetPwdActivity.class), RESET_REQ_CODE);
                 break;
             case R.id.btn_login:
                 tvWrong.setText("");
                 loginEnPresenter.login();
                 break;
             case R.id.tv_register:
+                startActivityForResult(new Intent(this, SignUpActivity.class), SIGNUP_REQ_CODE);
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+//            if (requestCode == RESET_REQ_CODE) {
+            String email = data.getStringExtra("email");
+            if (email != null) {
+                etEmail.setText(email);
+            }
+//            }else if (requestCode == SIGNUP_REQ_CODE){
+//                String email = data.getStringExtra("email");
+//                if (email != null) {
+//                    etEmail.setText(email);
+//                }
+//            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
