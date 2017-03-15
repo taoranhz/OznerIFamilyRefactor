@@ -59,6 +59,7 @@ import com.ozner.cup.LoginWelcom.View.LoginActivity;
 import com.ozner.cup.MyCenter.MyCenterFragment;
 import com.ozner.cup.MyCenter.MyFriend.FriendInfoManager;
 import com.ozner.cup.MyCenter.MyFriend.bean.VerifyMessageItem;
+import com.ozner.cup.MyCenter.OznerUpdateManager;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.MobileInfoUtil;
@@ -127,7 +128,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
             startActivity(new Intent(this, LoginActivity.class));
             this.finish();
         }
-
+        new OznerUpdateManager(this, false).checkUpdate();
         //启动百度云推送
         PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, getString(R.string.Baidu_Push_ApiKey));
         checkUserVerifyMsg();
@@ -135,6 +136,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 //        hideBottomNav();
         //检查位置权限
         checkPosPer();
+        if(OznerPreference.isLoginEmail(this)){
+            initLoginEmail();
+        }
     }
 
     /**
@@ -142,6 +146,11 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
      */
     private void checkPosPer() {
         perReqResult = PermissionUtil.with(this).request(Manifest.permission.ACCESS_COARSE_LOCATION).ask(2);
+    }
+
+    private void initLoginEmail(){
+        //隐藏底部菜单
+        hideBottomNav();
     }
 
 
@@ -215,44 +224,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         }
         super.onDestroy();
     }
-
-//    /**
-//     * 设置主页的标题
-//     *
-//     * @param title
-//     */
-//    public void setCustomTitle(String title) {
-////        try {
-////            if (!isDestroyed())
-////                customTitle.setText(title);
-////        } catch (Exception ex) {
-////
-////        }
-//    }
-//
-//    /**
-//     * 设置主页的标题
-//     *
-//     * @param resId
-//     */
-//    public void setCustomTitle(int resId) {
-////        try {
-////            if (!isDestroyed())
-////                customTitle.setText(resId);
-////        } catch (Exception ex) {
-////
-////        }
-//    }
-
-//    /**
-//     * 设置toolbar背景色
-//     *
-//     * @param resId
-//     */
-//    public void setToolBarColor(int resId) {
-////        if (!isDestroyed())
-////            toolbar.setBackgroundColor(ContextCompat.getColor(this, resId));
-//    }
 
     /**
      * 初始化底部菜单

@@ -624,6 +624,19 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_set_up_air_ver">SetUpAirVerActivity</string>
 
+<<<<<<< HEAD
+    <string name="title_activity_guide">GuideActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="water_ropurifier">智能RO水机</string>
+    <string name="reverse_ro">请将RO水机的开关打开</string>
+    <string name="rest_ro_fit">复位</string>
+    <string name="rofit">滤芯状态</string>
+    <string name="ro_fit">清洗前置滤芯</string>
+    <string name="rofilter_need_change">为了您和家人的健康，请及时更换滤芯</string>
+    <string name="warmly_notice">温馨提醒：及时更换滤芯才能保证饮用水的安全</string>
+=======
     <string name="button_send">发送</string>
     <string name="attach_picture">照片</string>
     <string name="attach_take_pic">拍照</string>
@@ -636,16 +649,11 @@
     <string name="not_download">Did not download:</string>
     <string name="text_ack_msg">Read</string>
     <string name="text_delivered_msg">Delivered</string>
-    <string name="water_ropurifier">智能RO水机</string>
-    <string name="reverse_ro">请将RO水机的开关打开</string>
-    <string name="rest_ro_fit">复位</string>
-    <string name="rofit">滤芯状态</string>
-    <string name="ro_fit">清洗前置滤芯</string>
-    <string name="rofilter_need_change">为了您和家人的健康，请及时更换滤芯</string>
-    <string name="warmly_notice">温馨提醒：及时更换滤芯才能保证饮用水的安全</string>
+
     <string name="cant_find_pictures">"Can't find pictures"</string>
     <string name="sd_card_does_not_exist">"SD card does not exist, can't take pictures"</string>
     <string name="Whether_to_empty_all_chats">Clear all messages?</string>
     <!--<string name="location_recv">[%1$s location]</string>-->
     <!--<string name="location_prefix">[my location]</string>-->
+>>>>>>> master
 </resources>

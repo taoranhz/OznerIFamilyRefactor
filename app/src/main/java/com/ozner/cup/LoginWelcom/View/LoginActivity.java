@@ -10,7 +10,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
@@ -195,7 +194,7 @@ public class LoginActivity extends BaseActivity implements CompoundButton.OnChec
 
     @Override
     public void showResultErrMsg(String errMsg) {
-        Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show();
+       showToastCenter(errMsg);
     }
 
     @Override

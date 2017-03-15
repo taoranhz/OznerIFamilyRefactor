@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -131,7 +132,6 @@ public class WaterPurifierFragment extends DeviceFragment {
     WaterPurifierAttr purifierAttr;
     private boolean hasHot = false;
     private boolean hasCool = false;
-    private boolean isShowFilterTips = false;
     private String dsn = "";
     private TDSSensorManager tdsSensorManager;
     private String mUserid;
@@ -367,20 +367,18 @@ public class WaterPurifierFragment extends DeviceFragment {
             if (purifierAttr != null && purifierAttr.getDeviceType() != null && !purifierAttr.getDeviceType().isEmpty()) {
                 Log.e(TAG, "initWaterAttrInfo: " + purifierAttr.getDeviceType() + " ,hasHot:" + purifierAttr.getHasHot() + " ,hasCool:" + purifierAttr.getHasCool());
                 refreshWaterSwitcher(purifierAttr);
-            } else {
-                waterNetInfoManager.getMatchineType(mac, new WaterNetInfoManager.IWaterAttr() {
-                    @Override
-                    public void onResult(WaterPurifierAttr attr) {
-                        if (attr != null) {
-                            refreshWaterSwitcher(attr);
-                        }
-                    }
-                });
             }
-
+            waterNetInfoManager.getMatchineType(mac, new WaterNetInfoManager.IWaterAttr() {
+                @Override
+                public void onResult(WaterPurifierAttr attr) {
+                    if (attr != null) {
+                        refreshWaterSwitcher(attr);
+                    }
+                }
+            });
 
             //获取滤芯信息
-            if (purifierAttr != null && purifierAttr.getFilterNowtime() != 0) {
+            if (purifierAttr != null && DateUtils.isToday(purifierAttr.getFilterNowtime())) {
                 Log.e(TAG, "initWaterAttrInfo_filter: " + purifierAttr.getFilterNowtime());
                 updateFilterInfoUI(purifierAttr);
             } else {
@@ -421,14 +419,9 @@ public class WaterPurifierFragment extends DeviceFragment {
         endCal.setTimeInMillis(attr.getFilterTime());
 
         //显示滤芯到期提示
-//        if (attr.getIsShowDueDay()) {
-        if (isShowFilterTips) {
-            isShowFilterTips = false;
-            if (attr.getFilterTime() + attr.getDays() * 24 * 3600 * 1000 < new Date().getTime()) {
-                showChangeFilterTips();
-            }
+        if (attr.getFilterTime() + attr.getDays() * 24 * 3600 * 1000 < new Date().getTime()) {
+            showChangeFilterTips();
         }
-//        }
 
         if (endCal.getTimeInMillis() > nowCal.getTimeInMillis()) {
             float remainDay = (endCal.getTimeInMillis() - nowCal.getTimeInMillis()) / (1000.0f * 3600 * 24);

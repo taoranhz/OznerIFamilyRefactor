@@ -20,6 +20,7 @@ public class UserInfo {
      * Score : 0
      * Status : 0
      * device_id:4017995850221438505
+     * Email:xinde.zhang@cftcn.com
      * channel_id:5
      * sex:男
      */
@@ -35,11 +36,11 @@ public class UserInfo {
     private String deviceId;
     private String channelId;
     private String sex;
+    private String email;
 
-
-    @Generated(hash = 97911111)
+    @Generated(hash = 444017559)
     public UserInfo(String userId, String mobile, String nickname, String headimg, String GradeName, String Score, int Status, String deviceId,
-            String channelId, String sex) {
+                    String channelId, String sex, String email) {
         this.userId = userId;
         this.mobile = mobile;
         this.nickname = nickname;
@@ -50,12 +51,12 @@ public class UserInfo {
         this.deviceId = deviceId;
         this.channelId = channelId;
         this.sex = sex;
+        this.email = email;
     }
 
     @Generated(hash = 1279772520)
     public UserInfo() {
     }
-
 
     public String getUserId() {
         return userId;
@@ -137,6 +138,14 @@ public class UserInfo {
         this.Status = Status;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
     @Override
     public String toString() {
         return
@@ -150,6 +159,7 @@ public class UserInfo {
                         + "\nStatus:" + Status
                         + "\ndeviceId:" + deviceId
                         + "\nsex:" + sex
+                        + "\nEmail:" + email
                         + "\n======================";
     }
 }

@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.LoginWelcom.View.LoginActivity;
+import com.ozner.cup.LoginWelcom.View.LoginEnActivity;
 import com.ozner.cup.R;
 import com.zcw.togglebutton.ToggleButton;
 
@@ -29,6 +31,10 @@ public class SettingsActivity extends BaseActivity {
     Toolbar toolbar;
     @InjectView(R.id.tb_allowPushMsg)
     ToggleButton tbAllowPushMsg;
+    @InjectView(R.id.llay_pushMsg)
+    LinearLayout llayPushMsg;
+    @InjectView(R.id.tv_pushMsgLine)
+    TextView tvPushMsgLine;
 
     private boolean isAllowPushMsg = true;
 
@@ -38,20 +44,24 @@ public class SettingsActivity extends BaseActivity {
         setContentView(R.layout.activity_settings);
         ButterKnife.inject(this);
         initToolBar();
-
-        isAllowPushMsg = Boolean.parseBoolean(UserDataPreference.GetUserData(this, UserDataPreference.IsAllowPushMessage, "true"));
-
-        if (isAllowPushMsg) {
-            tbAllowPushMsg.setToggleOn();
+        if (OznerPreference.isLoginEmail(this)) {
+            llayPushMsg.setVisibility(View.GONE);
+            tvPushMsgLine.setVisibility(View.GONE);
         } else {
-            tbAllowPushMsg.setToggleOff();
-        }
-        tbAllowPushMsg.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
-            @Override
-            public void onToggle(boolean on) {
-                UserDataPreference.SetUserData(SettingsActivity.this, UserDataPreference.IsAllowPushMessage, String.valueOf(on));
+            isAllowPushMsg = Boolean.parseBoolean(UserDataPreference.GetUserData(this, UserDataPreference.IsAllowPushMessage, "true"));
+
+            if (isAllowPushMsg) {
+                tbAllowPushMsg.setToggleOn();
+            } else {
+                tbAllowPushMsg.setToggleOff();
             }
-        });
+            tbAllowPushMsg.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
+                @Override
+                public void onToggle(boolean on) {
+                    UserDataPreference.SetUserData(SettingsActivity.this, UserDataPreference.IsAllowPushMessage, String.valueOf(on));
+                }
+            });
+        }
     }
 
     private void initToolBar() {
@@ -88,9 +98,13 @@ public class SettingsActivity extends BaseActivity {
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UserDataPreference.SetUserData(SettingsActivity.this,UserDataPreference.UserId,"");
-                        OznerPreference.setUserToken(SettingsActivity.this,"");
-                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                        UserDataPreference.SetUserData(SettingsActivity.this, UserDataPreference.UserId, "");
+                        OznerPreference.setUserToken(SettingsActivity.this, "");
+                        if (isLanguageEn()) {
+                            startActivity(new Intent(getApplicationContext(), LoginEnActivity.class));
+                        } else {
+                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                        }
                         finishAffinity();
                     }
                 }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {

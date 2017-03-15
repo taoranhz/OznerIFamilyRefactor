@@ -100,8 +100,7 @@
         </activity>
         <activity android:name=".Device.FilterStatusActivity">
         </activity>
-        <activity
-            android:name=".QRCodeScan.activity.CaptureActivity"/>
+        <activity android:name=".QRCodeScan.activity.CaptureActivity"/>
         <activity android:name=".Device.AirPurifier.AirDeskFilterActivity">
         </activity>
 
@@ -285,6 +284,14 @@
         </receiver>
 
         <activity android:name=".LoginWelcom.View.GuideActivity">
+        </activity>
+        <activity android:name=".LoginWelcom.View.LoginEnActivity">
+        </activity>
+        <activity android:name=".MyCenter.CenterEnActivity">
+        </activity>
+        <activity android:name=".LoginWelcom.View.ResetPwdActivity">
+        </activity>
+        <activity android:name=".LoginWelcom.View.SignUpActivity">
         </activity>
     </application>
 

@@ -32,6 +32,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         public final static Property DeviceId = new Property(7, String.class, "deviceId", false, "DEVICE_ID");
         public final static Property ChannelId = new Property(8, String.class, "channelId", false, "CHANNEL_ID");
         public final static Property Sex = new Property(9, String.class, "sex", false, "SEX");
+        public final static Property Email = new Property(10, String.class, "email", false, "EMAIL");
     }
 
 
@@ -56,7 +57,8 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
                 "\"STATUS\" INTEGER NOT NULL ," + // 6: Status
                 "\"DEVICE_ID\" TEXT," + // 7: deviceId
                 "\"CHANNEL_ID\" TEXT," + // 8: channelId
-                "\"SEX\" TEXT);"); // 9: sex
+                "\"SEX\" TEXT," + // 9: sex
+                "\"EMAIL\" TEXT);"); // 10: email
     }
 
     /** Drops the underlying database table. */
@@ -114,6 +116,11 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         if (sex != null) {
             stmt.bindString(10, sex);
         }
+ 
+        String email = entity.getEmail();
+        if (email != null) {
+            stmt.bindString(11, email);
+        }
     }
 
     @Override
@@ -165,6 +172,11 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         if (sex != null) {
             stmt.bindString(10, sex);
         }
+ 
+        String email = entity.getEmail();
+        if (email != null) {
+            stmt.bindString(11, email);
+        }
     }
 
     @Override
@@ -184,7 +196,8 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
             cursor.getInt(offset + 6), // Status
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // deviceId
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // channelId
-            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9) // sex
+            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // sex
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10) // email
         );
         return entity;
     }
@@ -201,6 +214,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         entity.setDeviceId(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setChannelId(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setSex(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
+        entity.setEmail(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
      }
     
     @Override

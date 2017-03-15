@@ -134,7 +134,7 @@ public class MatchVerAirActivity extends BaseActivity {
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         this.registerReceiver(monitor, filter);
-        wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         initActionBar();
         initStaticValue();
         initFoundDeviceView();

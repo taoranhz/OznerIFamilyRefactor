@@ -18,12 +18,8 @@ import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
-import com.ozner.cup.Chat.EaseUI.model.MessageDirect;
-import com.ozner.cup.Chat.EaseUI.model.MessageType;
 import com.ozner.cup.DBHelper.EMMessage;
-import com.ozner.cup.R;
 
 import java.util.List;
 
@@ -65,64 +61,64 @@ public class EaseCommonUtils {
         return null;
 	}
 
-	/**
-     * Get digest according message type and content
-     * 
-     * @param message
-     * @param context
-     * @return
-     */
-    public static String getMessageDigest(EMMessage message, Context context) {
-        String digest = "";
-        switch (message.getMType()) {
-        case MessageType.LOCATION:
-            if (message.getMDirect() == MessageDirect.RECEIVE) {
-                digest = getString(context, R.string.location_recv);
-//                digest = String.format(digest, message.getFrom());
-                return digest;
-            } else {
-                digest = getString(context, R.string.location_prefix);
-            }
-            break;
-        case MessageType.IMAGE:
-            digest = getString(context, R.string.picture);
-            break;
-        case MessageType.VOICE:
-            digest = getString(context, R.string.voice_prefix);
-            break;
-        case MessageType.VIDEO:
-            digest = getString(context, R.string.video);
-            break;
-        case MessageType.TXT:
-//            EMTextMessageBody txtBody = (EMTextMessageBody) message.getBody();
-//            if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_VOICE_CALL, false)){
-//                digest = getString(context, R.string.voice_call) + txtBody.getMessage();
-//            }else if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_VIDEO_CALL, false)){
-//                digest = getString(context, R.string.video_call) + txtBody.getMessage();
-//            }else if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)){
-//                if(!TextUtils.isEmpty(txtBody.getMessage())){
-//                    digest = txtBody.getMessage();
-//                }else{
-//                    digest = getString(context, R.string.dynamic_expression);
-//                }
-//            }else{
-//                digest = txtBody.getMessage();
+//	/**
+//     * Get digest according message type and content
+//     *
+//     * @param message
+//     * @param context
+//     * @return
+//     */
+//    public static String getMessageDigest(EMMessage message, Context context) {
+//        String digest = "";
+//        switch (message.getMType()) {
+//        case MessageType.LOCATION:
+//            if (message.getMDirect() == MessageDirect.RECEIVE) {
+//                digest = getString(context, R.string.location_recv);
+////                digest = String.format(digest, message.getFrom());
+//                return digest;
+//            } else {
+//                digest = getString(context, R.string.location_prefix);
 //            }
-            break;
-        case MessageType.FILE:
-            digest = getString(context, R.string.file);
-            break;
-        default:
-            Log.e(TAG, "getMessageDigest: error, unknow type");
-            return "";
-        }
-
-        return digest;
-    }
-    
-    static String getString(Context context, int resId){
-        return context.getResources().getString(resId);
-    }
+//            break;
+//        case MessageType.IMAGE:
+//            digest = getString(context, R.string.picture);
+//            break;
+//        case MessageType.VOICE:
+//            digest = getString(context, R.string.voice_prefix);
+//            break;
+//        case MessageType.VIDEO:
+//            digest = getString(context, R.string.video);
+//            break;
+//        case MessageType.TXT:
+////            EMTextMessageBody txtBody = (EMTextMessageBody) message.getBody();
+////            if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_VOICE_CALL, false)){
+////                digest = getString(context, R.string.voice_call) + txtBody.getMessage();
+////            }else if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_VIDEO_CALL, false)){
+////                digest = getString(context, R.string.video_call) + txtBody.getMessage();
+////            }else if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)){
+////                if(!TextUtils.isEmpty(txtBody.getMessage())){
+////                    digest = txtBody.getMessage();
+////                }else{
+////                    digest = getString(context, R.string.dynamic_expression);
+////                }
+////            }else{
+////                digest = txtBody.getMessage();
+////            }
+//            break;
+//        case MessageType.FILE:
+//            digest = getString(context, R.string.file);
+//            break;
+//        default:
+//            Log.e(TAG, "getMessageDigest: error, unknow type");
+//            return "";
+//        }
+//
+//        return digest;
+//    }
+//
+//    static String getString(Context context, int resId){
+//        return context.getResources().getString(resId);
+//    }
 	
 	/**
 	 * get top activity

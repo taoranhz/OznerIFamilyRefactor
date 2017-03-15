@@ -71,6 +71,9 @@ public class UserInfoManager {
                                         userInfo.setSex(data.get("Sex").getAsString());
                                     if (!data.get("Score").isJsonNull())
                                         userInfo.setScore(data.get("Score").getAsString());
+                                    if (!data.get("Email").isJsonNull()) {
+                                        userInfo.setEmail(data.get("Email").getAsString());
+                                    }
                                     if (userInfo != null) {
                                         DBManager.getInstance(mContext.get()).updateUserInfo(userInfo);
                                     }
@@ -81,7 +84,7 @@ public class UserInfoManager {
                                 } else {
 //                                    if (jsonObject.get("state").getAsInt() == -10006
 //                                            || jsonObject.get("state").getAsInt() == -10007) {
-                                        BaseActivity.reLogin((BaseActivity) mContext.get());
+                                    BaseActivity.reLogin((BaseActivity) mContext.get());
 //                                    } else {
 //                                        if (listener != null) {
 //                                            listener.onFail(mContext.get().getString(ApiException.getErrResId(jsonObject.get("state").getAsInt())));

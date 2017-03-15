@@ -6,6 +6,11 @@
               android:orientation="vertical"
               tools:context="com.ozner.cup.Main.LeftMenuFragment">
 
+    <ViewStub
+        android:layout="@layout/left_header_en"
+        android:id="@+id/vs_header"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"/>
     <LinearLayout
         android:id="@+id/llay_hasDevice"
         android:layout_width="match_parent"
@@ -47,8 +52,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="20dp">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -69,7 +73,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="3">
+            android:layout_weight="4">
 
             <ImageView
                 android:id="@+id/iv_left_center"

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ozner.cup.MyCenter.CenterEnActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/theme_blue"
+        android:orientation="vertical"
+        android:paddingBottom="17dp">
+        <ImageButton
+            android:id="@+id/ib_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back"
+            android:background="@null"
+            android:padding="20dp"/>
+
+
+        <ImageView
+            android:layout_marginTop="25dp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/iv_headImg"
+            android:layout_width="83dp"
+            android:layout_height="83dp"
+            android:background="@drawable/personal_user_header_backgroud"
+            android:padding="3dp"
+            android:src="@drawable/icon_default_headimage"/>
+
+
+        <TextView
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/iv_headImg"
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:textColor="@color/white"
+            android:textSize="18dp"/>
+
+    </RelativeLayout>
+
+    <TextView style="@style/HaLineView"/>
+
+    <RelativeLayout
+        android:id="@+id/rlay_my_device"
+        style="@style/item_click_ripple"
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <TextView
+            style="@style/CenterFragmentItemTextStyle"
+            android:drawableLeft="@mipmap/center_myorder"
+            android:text="@string/my_device"/>
+
+        <ImageView style="@style/ArrowView"/>
+
+    </RelativeLayout>
+
+    <TextView style="@style/HaLineMarginLeftView"/>
+
+    <RelativeLayout
+        android:id="@+id/rlay_feedback"
+        style="@style/item_click_ripple"
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <TextView
+            style="@style/CenterFragmentItemTextStyle"
+            android:drawableLeft="@mipmap/center_myorder"
+            android:text="@string/my_feedback"/>
+
+        <ImageView style="@style/ArrowView"/>
+
+    </RelativeLayout>
+
+    <TextView style="@style/HaLineMarginLeftView"/>
+
+    <RelativeLayout
+        android:id="@+id/rlay_settings"
+        style="@style/item_click_ripple"
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <TextView
+            style="@style/CenterFragmentItemTextStyle"
+            android:drawableLeft="@mipmap/center_myorder"
+            android:text="@string/settings"/>
+
+        <ImageView style="@style/ArrowView"/>
+
+    </RelativeLayout>
+
+    <TextView style="@style/HaLineView"/>
+</LinearLayout>

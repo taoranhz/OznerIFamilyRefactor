@@ -37,14 +37,22 @@ public class WelcomeActivity extends BaseActivity {
             @Override
             public void run() {
                 if (isFirstStart) {
-                    startActivity(new Intent(WelcomeActivity.this, GuideActivity.class));
+                    if (isLanguageEn()) {
+                        startActivity(new Intent(WelcomeActivity.this, LoginEnActivity.class));
+                    } else {
+                        startActivity(new Intent(WelcomeActivity.this, GuideActivity.class));
+                    }
                     WelcomeActivity.this.finish();
                 } else {
                     userInfoManager = new UserInfoManager(WelcomeActivity.this);
                     if (usertoken != null && !usertoken.isEmpty()) {
                         checkLogin();
                     } else {
-                        startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
+                        if (isLanguageEn()) {
+                            startActivity(new Intent(WelcomeActivity.this, LoginEnActivity.class));
+                        } else {
+                            startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
+                        }
                         WelcomeActivity.this.finish();
                     }
                 }
@@ -67,7 +75,11 @@ public class WelcomeActivity extends BaseActivity {
             @Override
             public void onFail(String msg) {
                 Log.e(TAG, "onFail: " + msg);
-                startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
+                if (isLanguageEn()) {
+                    startActivity(new Intent(WelcomeActivity.this, LoginEnActivity.class));
+                } else {
+                    startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
+                }
                 WelcomeActivity.this.finish();
             }
         });
