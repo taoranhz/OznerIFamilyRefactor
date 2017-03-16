@@ -23,14 +23,20 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
+import com.ozner.cup.CupRecord;
+import com.ozner.device.BaseDeviceIO;
+import com.ozner.device.OznerDevice;
+import com.ozner.device.OznerDeviceManager;
+import com.ozner.tap.Tap;
+import com.ozner.tap.TapRecord;
 import com.ozner.yiquan.Bean.Contacts;
 import com.ozner.yiquan.Command.OznerPreference;
 import com.ozner.yiquan.Command.UserDataPreference;
-import com.ozner.cup.CupRecord;
 import com.ozner.yiquan.DBHelper.DBManager;
 import com.ozner.yiquan.DBHelper.OznerDeviceSettings;
 import com.ozner.yiquan.Device.DeviceFragment;
 import com.ozner.yiquan.Device.FilterStatusActivity;
+import com.ozner.yiquan.Device.TDSSensorManager;
 import com.ozner.yiquan.HttpHelper.HttpMethods;
 import com.ozner.yiquan.HttpHelper.OznerHttpResult;
 import com.ozner.yiquan.HttpHelper.ProgressSubscriber;
@@ -41,11 +47,6 @@ import com.ozner.yiquan.UIView.TapTDSChartView;
 import com.ozner.yiquan.UIView.TdsDetailProgress;
 import com.ozner.yiquan.Utils.LCLogUtils;
 import com.ozner.yiquan.Utils.MobileInfoUtil;
-import com.ozner.device.BaseDeviceIO;
-import com.ozner.device.OznerDevice;
-import com.ozner.device.OznerDeviceManager;
-import com.ozner.tap.Tap;
-import com.ozner.tap.TapRecord;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -116,6 +117,8 @@ public class TapFragment extends DeviceFragment {
     private OznerDeviceSettings oznerSetting;
     SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     int[] tdsDatas = new int[31];
+    private TDSSensorManager tdsSensroManager;
+    private int beatPer;
 
     ChartAdapter recordAdapter = new ChartAdapter() {
 
@@ -182,6 +185,7 @@ public class TapFragment extends DeviceFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
+        tdsSensroManager = new TDSSensorManager(getContext());
         initAnimation();
         try {
             Bundle bundle = getArguments();
@@ -324,6 +328,32 @@ public class TapFragment extends DeviceFragment {
     }
 
     /**
+     * 上传TDS获取排名
+     *
+     * @param tds
+     */
+    private void updateTdsSensor(int tds) {
+        if (tdsSensroManager != null && mTap != null) {
+            tdsSensroManager.updateTds(mTap.Address(), mTap.Type(), String.valueOf(tds), null, null, new TDSSensorManager.TDSListener() {
+                @Override
+                public void onSuccess(int result) {
+                    try {
+                        beatPer = result;
+                        refreshUIData();
+                    } catch (Exception ex) {
+                        Log.e(TAG, "onSuccess_Ex: " + ex.getMessage());
+                    }
+                }
+
+                @Override
+                public void onFail(String msg) {
+                    Log.e(TAG, "onFail: " + msg);
+                }
+            });
+        }
+    }
+
+    /**
      * 显示滤芯信息
      */
     private void showFilterInfo(int ret) {
@@ -438,7 +468,6 @@ public class TapFragment extends DeviceFragment {
 
             //数字跑马灯
             if (tdsValue != 0) {
-//                if (oldTdsValue != tdsValue) {
                 tvTdsValue.setTextSize(NumSize);
                 final ValueAnimator animator = ValueAnimator.ofInt(oldTdsValue, tdsValue);
                 animator.setDuration(500);
@@ -460,12 +489,12 @@ public class TapFragment extends DeviceFragment {
                 if (tdsValue > 250) {
                     tdsDetailProgress.update(100);
                 } else {
-//                    double s = (tdsValue / 250.00) * 100;
-//                    tdsDetailProgress.update((int) s);
                     tdsDetailProgress.update((tdsValue << 1) / 5);
                 }
-                oldTdsValue = tdsValue;
-//                }
+                if (oldTdsValue != tdsValue) {
+                    oldTdsValue = tdsValue;
+                    updateTdsSensor(tdsValue);
+                }
             } else {
                 tvTdsState.setText(R.string.state_null);
                 ivTdsState.setVisibility(View.GONE);
