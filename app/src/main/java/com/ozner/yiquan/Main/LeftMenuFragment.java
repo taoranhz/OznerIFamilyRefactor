@@ -140,7 +140,6 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
      * 初始化设备列表
      */
     private void initDataList() {
-
         loadDeviceList();
         showDatalist(mLeftAdapter.getCount() > 0);
     }
@@ -151,8 +150,6 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
      * @param position
      */
     public void selectDevice(int position, boolean isAuto) {
-//        if (!mLeftAdapter.getItem(position).Address().equals(UserDataPreference.GetUserData(getContext(), UserDataPreference.SelMac, ""))) {
-//            UserDataPreference.SetUserData(getContext(), UserDataPreference.SelMac, mLeftAdapter.getItem(position).Address());
         mLeftAdapter.setSelectPosition(position);
         if (position >= 0 && position < lvMyDevice.getCount()) {
             lvMyDevice.setItemChecked(position, true);
@@ -221,9 +218,9 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
         getActivity().unregisterReceiver(mMonitor);
     }
 
-    @OnClick({R.id.ib_addDevice,R.id.iv_headImg})
+    @OnClick({R.id.ib_addDevice, R.id.iv_headImg})
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.ib_addDevice:
                 startActivity(new Intent(getContext(), AddDeviceActivity.class));
                 break;
@@ -232,6 +229,27 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
                 break;
         }
         ((MainActivity) getActivity()).closeLeftMenu();
+    }
+
+    private void saveDeviceToDB(String userid, OznerDevice device) {
+        try {
+            OznerDeviceSettings oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(userid, device.Address());
+            if (oznerSetting != null) {
+                DBManager.getInstance(getContext()).deleteDeviceSettings(userid, device.Address());
+            }
+            oznerSetting = new OznerDeviceSettings();
+            oznerSetting.setCreateTime(String.valueOf(System.currentTimeMillis()));
+            oznerSetting.setUserId(userid);
+            oznerSetting.setMac(device.Address());
+            oznerSetting.setName(device.Setting().name());
+            oznerSetting.setDevicePosition("");
+            oznerSetting.setStatus(0);
+            oznerSetting.setDevcieType(device.Type());
+            DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LCLogUtils.E(TAG, "saveDeviceToDB_Ex:" + ex.getMessage());
+        }
     }
 
     /**
@@ -247,19 +265,34 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
 
         mLeftAdapter.clear();
         List<OznerDeviceSettings> oznerSettings = DBManager.getInstance(getContext()).getDeviceSettingList(mUserid);
-//        for (OznerDevice device : OznerDeviceManager.Instance().getDevices()) {
-//            mLeftAdapter.addData(device);
-//        }
         leftDeviceList.clear();
         int settingCount = oznerSettings.size();
-        for (int i = 0; i < settingCount; i++) {
-            LeftMenuDeviceItem item = new LeftMenuDeviceItem();
-            item.setName(oznerSettings.get(i).getName());
-            item.setUsePos(oznerSettings.get(i).getDevicePosition());
-            item.setMac(oznerSettings.get(i).getMac());
-            item.setType(oznerSettings.get(i).getDevcieType());
-            item.setDevice(OznerDeviceManager.Instance().getDevice(oznerSettings.get(i).getMac()));
-            leftDeviceList.add(item);
+        int oldCount = OznerDeviceManager.Instance().getDevices().length;
+        LCLogUtils.E(TAG, "旧数据数量：" + oldCount);
+        if (settingCount > 0) {
+            for (int i = 0; i < settingCount; i++) {
+                LeftMenuDeviceItem item = new LeftMenuDeviceItem();
+                item.setName(oznerSettings.get(i).getName());
+                item.setUsePos(oznerSettings.get(i).getDevicePosition());
+                item.setMac(oznerSettings.get(i).getMac());
+                item.setType(oznerSettings.get(i).getDevcieType());
+                item.setDevice(OznerDeviceManager.Instance().getDevice(oznerSettings.get(i).getMac()));
+                leftDeviceList.add(item);
+            }
+        } else if (oldCount > 0) {
+            // TODO: 2017/3/16 导入旧数据
+            for (int i = 0; i < oldCount; i++) {
+                OznerDevice oznerdevice = OznerDeviceManager.Instance().getDevices()[i];
+                LeftMenuDeviceItem leftItem = new LeftMenuDeviceItem();
+                leftItem.setName(oznerdevice.getName());
+                leftItem.setUsePos("");
+                leftItem.setMac(oznerdevice.Address());
+                leftItem.setType(oznerdevice.Type());
+                leftItem.setDevice(oznerdevice);
+
+                saveDeviceToDB(mUserid, oznerdevice);
+                leftDeviceList.add(leftItem);
+            }
         }
         mLeftAdapter.loadData(leftDeviceList);
         if (mLeftAdapter.getCount() > 0) {
@@ -304,7 +337,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
                 } else {
                     Toast.makeText(context, R.string.device_unexsit, Toast.LENGTH_SHORT).show();
                 }
-            }else {
+            } else {
                 mLeftAdapter.notifyDataSetChanged();
             }
         }
