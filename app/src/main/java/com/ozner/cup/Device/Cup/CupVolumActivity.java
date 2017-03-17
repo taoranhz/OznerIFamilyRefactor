@@ -17,6 +17,7 @@ import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
@@ -88,7 +89,7 @@ public class CupVolumActivity extends BaseActivity implements RadioGroup.OnCheck
             window.setNavigationBarColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
         }
         try {
-            mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+            mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             volumeRank = getIntent().getIntExtra(Contacts.PARMS_RANK, 0);
             Log.e(TAG, "onCreate: mac:" + mac);
@@ -106,6 +107,11 @@ public class CupVolumActivity extends BaseActivity implements RadioGroup.OnCheck
         initToolBar();
         initDataAdater();
         initRecordCal();
+
+        if (UserDataPreference.isLoginEmail(this)) {
+            findViewById(R.id.il_rank_en).setVisibility(View.GONE);
+            findViewById(R.id.il_bottom).setVisibility(View.GONE);
+        }
     }
 
 

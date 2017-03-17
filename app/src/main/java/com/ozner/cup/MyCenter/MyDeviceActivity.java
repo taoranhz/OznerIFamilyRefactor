@@ -21,7 +21,7 @@ import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
-import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.CupManager;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
@@ -62,7 +62,7 @@ public class MyDeviceActivity extends BaseActivity implements AdapterView.OnItem
         setContentView(R.layout.activity_my_device);
         ButterKnife.inject(this);
         mDeviceList = new ArrayList<>();
-        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         initToolBar();
         mAdapter = new DeviceAdapter(this, R.layout.my_device_item);
         gvDevice.setEmptyView(tvNodevice);

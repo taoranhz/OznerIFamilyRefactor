@@ -22,6 +22,7 @@ import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Bean.RankType;
+import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.CupRecordList;
@@ -135,7 +136,12 @@ public class CupTDSActivity extends BaseActivity implements RadioGroup.OnChecked
             ex.printStackTrace();
             LCLogUtils.E(TAG, "onCreate_Ex: " + ex.getMessage());
         }
-        loadTdsFriendRank();
+        if (UserDataPreference.isLoginEmail(this)) {
+            findViewById(R.id.il_rank_en).setVisibility(View.GONE);
+            findViewById(R.id.il_bottom).setVisibility(View.GONE);
+        } else {
+            loadTdsFriendRank();
+        }
     }
 
 

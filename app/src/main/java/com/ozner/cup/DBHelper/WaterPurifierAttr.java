@@ -265,7 +265,7 @@ public class WaterPurifierAttr {
             setBuylinkurl(jsonObject.get("buylinkurl").getAsString());
             setTips(jsonObject.get("tips").getAsString());
             setDays(jsonObject.get("days").getAsInt());
-            setBoolshow(jsonObject.get("boolshow").getAsBoolean());
+            setBoolshow(jsonObject.get("boolshow").getAsInt() == 1?true:false);
 
             String attr = jsonObject.get("Attr").getAsString();
             setAttr(attr);

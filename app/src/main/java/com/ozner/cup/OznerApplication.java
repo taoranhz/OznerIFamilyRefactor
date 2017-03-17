@@ -4,7 +4,6 @@ import android.content.Intent;
 
 import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Command.OznerPreference;
-import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.Utils.LCLogUtils;
 
 /**
@@ -21,7 +20,7 @@ public class OznerApplication extends OznerBaseApplication {
 
     @Override
     protected void onBindService() {
-        String userid = UserDataPreference.GetUserData(getBaseContext(), UserDataPreference.UserId, "Ozner");
+        String userid = OznerPreference.GetValue(getBaseContext(), OznerPreference.UserId, "Ozner");
         String usertoken = OznerPreference.getUserToken(getBaseContext());
         getService().getDeviceManager().setOwner(userid, usertoken);
         this.sendBroadcast(new Intent(OznerBroadcastAction.OBA_Service_Init));

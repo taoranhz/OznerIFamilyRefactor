@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
@@ -38,6 +39,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 import static com.ozner.cup.Bean.Contacts.PARMS_MAC;
+import static com.ozner.cup.R.id.rlay_aboutTap;
 
 public class SetupTapActivity extends BaseActivity {
     private static final String TAG = "SetupTapActivity";
@@ -68,6 +70,9 @@ public class SetupTapActivity extends BaseActivity {
     LinearLayout llaySecondTime;
     @InjectView(R.id.tv_delete_device)
     TextView tvDeleteDevice;
+    @InjectView(rlay_aboutTap)
+    RelativeLayout rlayAboutTap;
+
     private String mac = "";
     private String deviceNewName = null, deviceNewPos = null;
     private Tap mTap;
@@ -82,7 +87,12 @@ public class SetupTapActivity extends BaseActivity {
         setContentView(R.layout.activity_setup_tap);
         ButterKnife.inject(this);
         initToolBar();
-        mUserid = UserDataPreference.GetUserData(this,UserDataPreference.UserId,"");
+
+        if(UserDataPreference.isLoginEmail(this)){
+            rlayAboutTap.setVisibility(View.GONE);
+        }
+
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         try {
             mac = getIntent().getStringExtra(PARMS_MAC);
             Log.e(TAG, "onCreate: mac:" + mac);
@@ -118,7 +128,7 @@ public class SetupTapActivity extends BaseActivity {
             deviceNewName = mTap.getName();
 //            String usePos = "";//(String) mTap.Setting().get(Contacts.DEV_USE_POS, "");
 //            tv_customTitle.setText(deviceNewName);
-            if(oznerSetting!=null){
+            if (oznerSetting != null) {
                 deviceNewName = oznerSetting.getName();
                 deviceNewPos = oznerSetting.getDevicePosition();
             }
@@ -219,15 +229,15 @@ public class SetupTapActivity extends BaseActivity {
         return true;
     }
 
-    @OnClick({R.id.rlay_aboutTap, R.id.rlay_device_name, R.id.llay_first_time, R.id.llay_second_time, R.id.tv_delete_device})
+    @OnClick({rlay_aboutTap, R.id.rlay_device_name, R.id.llay_first_time, R.id.llay_second_time, R.id.tv_delete_device})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.rlay_aboutTap:
+            case rlay_aboutTap:
                 if (mTap != null) {
                     Intent webIntent = new Intent(this, WebActivity.class);
                     webIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutTap);
                     startActivity(webIntent);
-                }else {
+                } else {
                     showToastCenter(R.string.Not_found_device);
                 }
                 break;
@@ -286,7 +296,7 @@ public class SetupTapActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mTap != null) {
-                                    DBManager.getInstance(SetupTapActivity.this).deleteDeviceSettings(mUserid,mTap.Address());
+                                    DBManager.getInstance(SetupTapActivity.this).deleteDeviceSettings(mUserid, mTap.Address());
                                     OznerDeviceManager.Instance().remove(mTap);
                                     setResult(RESULT_OK);
                                     SetupTapActivity.this.finish();

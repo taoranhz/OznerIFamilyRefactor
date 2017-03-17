@@ -13,7 +13,7 @@ import android.widget.TimePicker;
 
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Bean.Contacts;
-import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.ReplenWater.RemindUtils.RemindUtil;
@@ -68,7 +68,7 @@ public class SetRemindTimeActivity extends BaseActivity {
         setContentView(R.layout.activity_set_remind_time);
         ButterKnife.inject(this);
         initToolBar();
-        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         remindUtil = new RemindUtil(this);
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);

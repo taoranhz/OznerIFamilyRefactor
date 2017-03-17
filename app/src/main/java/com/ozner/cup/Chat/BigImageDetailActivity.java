@@ -6,7 +6,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.ozner.cup.Base.BaseActivity;
-import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.EMMessage;
 import com.ozner.cup.R;
@@ -42,7 +42,7 @@ public class BigImageDetailActivity extends BaseActivity {
 
         try {
             msgId = getIntent().getIntExtra(PARAMS_MSG_ID, 0);
-            String userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+            String userid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
             if (msgId > 0 && !userid.isEmpty()) {
                 emMessage = DBManager.getInstance(this).getChatMessage(userid, msgId);
             }

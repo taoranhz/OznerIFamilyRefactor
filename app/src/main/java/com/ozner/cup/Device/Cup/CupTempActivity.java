@@ -22,6 +22,7 @@ import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.CupRecordList;
@@ -137,6 +138,11 @@ public class CupTempActivity extends BaseActivity implements RadioGroup.OnChecke
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
+        }
+
+        if(UserDataPreference.isLoginEmail(this)){
+            findViewById(R.id.llay_chat).setVisibility(View.GONE);
+            findViewById(R.id.il_bottom).setVisibility(View.GONE);
         }
     }
 

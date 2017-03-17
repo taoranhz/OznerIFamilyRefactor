@@ -11,7 +11,8 @@ import android.content.SharedPreferences;
 public class OznerPreference {
     public final static String Ozner = "ozner";
     public final static String IsLogin = "islogin";
-    public final static String IsEmail = "isEmail";
+    public final static String UserId = "UserId";
+
     public final static String ISBDBind = "isBdBind";//设备id是否已经绑定
     public final static String BDDeivceID = "bd_deviceid";//百度推送设备id
     public final static String IsFirstStart = "is_first_start";//是否是第一次启动
@@ -49,13 +50,6 @@ public class OznerPreference {
         SharedPreferences.Editor ozner = InitEditor(myContext);
         ozner.putBoolean(IsLogin, islogin);
         ozner.commit();
-    }
-
-    public static void setLoginEmail(Context mContext, boolean isEmail){
-        SetValue(mContext,IsEmail,String.valueOf(isEmail));
-    }
-    public static boolean isLoginEmail(Context mContext){
-        return Boolean.parseBoolean(GetValue(mContext,IsEmail,"false"));
     }
 
     public static void setUserToken(Context myContext, String userToken) {

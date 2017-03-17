@@ -19,8 +19,9 @@ import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
-import com.ozner.cup.CupRecord;
 import com.ozner.cup.Bean.RankType;
+import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.CupRecord;
 import com.ozner.cup.Device.TDSSensorManager;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.UIZPurifierExpView;
@@ -91,6 +92,7 @@ public class WaterTDSActivity extends BaseActivity implements RadioGroup.OnCheck
             //更改底部导航栏颜色(限有底部的手机)
             window.setNavigationBarColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
         }
+
         initToolBar();
         initDefaultData();
         rgSwitch.setOnCheckedChangeListener(this);
@@ -105,7 +107,13 @@ public class WaterTDSActivity extends BaseActivity implements RadioGroup.OnCheck
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
         }
-        loadTdsFriendRank();
+
+        if (UserDataPreference.isLoginEmail(this)) {
+            findViewById(R.id.il_hide_En).setVisibility(View.GONE);
+            findViewById(R.id.il_bottom).setVisibility(View.GONE);
+        } else {
+            loadTdsFriendRank();
+        }
     }
 
     /**

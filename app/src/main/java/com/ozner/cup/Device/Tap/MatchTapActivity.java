@@ -29,6 +29,7 @@ import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScan;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
@@ -99,7 +100,7 @@ public class MatchTapActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_tap);
         ButterKnife.inject(this);
-        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         initActionBar();
         initFoundDeviceView();
 //        startFindDevice();

@@ -18,7 +18,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.ozner.cup.Chat.EaseUI.Adapter.EaseMessageAdapter;
 import com.ozner.cup.Chat.EaseUI.model.MessageDirect;
 import com.ozner.cup.Chat.EaseUI.widget.EaseChatMessageList;
-import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.EMMessage;
 import com.ozner.cup.DBHelper.UserInfo;
@@ -63,7 +63,7 @@ public abstract class EaseChatRow extends LinearLayout {
         this.position = position;
         this.adapter = adapter;
         inflater = LayoutInflater.from(context);
-        UserInfo userInfo = DBManager.getInstance(context).getUserInfo(UserDataPreference.GetUserData(context, UserDataPreference.UserId, null));
+        UserInfo userInfo = DBManager.getInstance(context).getUserInfo(OznerPreference.GetValue(context, OznerPreference.UserId, null));
         headImgUrl = userInfo.getHeadimg();
         initView();
     }

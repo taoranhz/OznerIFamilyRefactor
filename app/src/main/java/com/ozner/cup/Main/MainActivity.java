@@ -64,6 +64,7 @@ import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.MobileInfoUtil;
 import com.ozner.cup.Utils.WeChatUrlUtil;
 import com.ozner.device.OznerDevice;
+import com.ozner.device.OznerDeviceManager;
 import com.ozner.tap.TapManager;
 
 import java.util.HashMap;
@@ -117,7 +118,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         initNavBar();
 //        refreshBottomBadge(0);
         initBroadCastFilter();
-        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, null);
         if (mUserid != null && !mUserid.isEmpty()) {
             Log.e(TAG, "onCreate: mUserid:" + mUserid + ",usertoken:" + OznerPreference.getUserToken(this));
             userInfo = DBManager.getInstance(this).getUserInfo(mUserid);
@@ -133,11 +134,16 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         checkUserVerifyMsg();
         //隐藏底部菜单
 //        hideBottomNav();
+        OznerDeviceManager.Instance().setOwner(mUserid,OznerPreference.getUserToken(this));
         //检查位置权限
         checkPosPer();
-        if(OznerPreference.isLoginEmail(this)){
+
+        LCLogUtils.E(TAG,"邮箱登录方式:"+UserDataPreference.isLoginEmail(this));
+        if(UserDataPreference.isLoginEmail(this)){
             initLoginEmail();
         }
+
+        LCLogUtils.I("ozner","oldDeviceSize:"+OznerDeviceManager.Instance().getDevices().length);
     }
 
     /**
@@ -500,6 +506,13 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         }
     }
 
+    /**
+     * 转移保存设备
+     */
+    private void transfeSaveDevice(){
+
+    }
+
     class MainReceiver extends BroadcastReceiver {
 
         @Override
@@ -550,6 +563,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                                         || jsonObject.get("state").getAsInt() == -10007) {
                                     BaseActivity.reLogin(MainActivity.this);
                                 } else {
+                                    if(!UserDataPreference.isLoginEmail(MainActivity.this))
                                     showToastCenter(R.string.bd_bind_fail);
 //                                    Toast.makeText(MainActivity.this, "百度推送绑定失败", Toast.LENGTH_SHORT).show();
                                 }
@@ -565,7 +579,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                             && loginToken != null
                             && loginUserid != null
                             && !miei.equals(MobileInfoUtil.getImie(MainActivity.this))
-                            && loginUserid.equals(UserDataPreference.GetUserData(MainActivity.this, UserDataPreference.UserId, null))
+                            && loginUserid.equals(OznerPreference.GetValue(MainActivity.this, OznerPreference.UserId, null))
                             && !loginToken.endsWith(OznerPreference.getUserToken(MainActivity.this))) {
                         BaseActivity.reLogin(MainActivity.this);
                     }

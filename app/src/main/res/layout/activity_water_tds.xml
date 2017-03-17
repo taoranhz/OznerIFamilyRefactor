@@ -121,6 +121,7 @@
                 </LinearLayout>
 
                 <include
+                    android:id="@+id/il_hide_En"
                     layout="@layout/tds_top_right_rank_chat"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -187,8 +188,8 @@
                         android:button="@null"
                         android:checked="true"
                         android:gravity="center"
-                        android:textColor="@color/text_light_selector"
-                        android:text="@string/week"/>
+                        android:text="@string/week"
+                        android:textColor="@color/text_light_selector"/>
 
                     <RadioButton
                         android:id="@+id/rb_month"
@@ -196,10 +197,10 @@
                         android:layout_height="30dp"
                         android:layout_weight="1"
                         android:background="@drawable/cup_remind_way_tds"
-                        android:textColor="@color/text_light_selector"
                         android:button="@null"
                         android:gravity="center"
-                        android:text="@string/month"/>
+                        android:text="@string/month"
+                        android:textColor="@color/text_light_selector"/>
                 </RadioGroup>
 
                 <com.ozner.cup.UIView.UIZPurifierExpView
@@ -237,7 +238,10 @@
                 </LinearLayout>
 
             </LinearLayout>
-            <include layout="@layout/tds_change_water_health_layout"/>
+
+            <include
+                android:id="@+id/il_bottom"
+                layout="@layout/tds_change_water_health_layout"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

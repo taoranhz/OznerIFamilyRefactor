@@ -28,7 +28,6 @@ import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeter;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.OznerPreference;
-import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.DeviceFragment;
@@ -165,7 +164,7 @@ public class ReplenWaterFragment extends DeviceFragment {
     public void onCreate(Bundle savedInstanceState) {
         initAnimation();
         mUserToken = OznerPreference.getUserToken(getContext());
-        mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
         try {
             Bundle bundle = getArguments();
             replenWater = (WaterReplenishmentMeter) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));

@@ -28,7 +28,7 @@ import android.widget.TextView;
 import com.ozner.AirPurifier.AirPurifier_Bluetooth;
 import com.ozner.AirPurifier.AirPurifier_MXChip;
 import com.ozner.cup.Bean.Contacts;
-import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.AirPurifier.bean.NetWeather;
@@ -223,7 +223,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
         airPresenter = new AirPurifierPresenter(getContext());
         getOutDoorInfo();
         initAnimation();
@@ -707,11 +707,11 @@ public class AirDeskPurifierFragment extends DeviceFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTED)
-                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTING)
-                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED)) {
-                showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
-            }
+//            if (intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTED)
+//                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTING)
+//                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED)) {
+//            }
+            showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
             refreshUIData();
         }
     }

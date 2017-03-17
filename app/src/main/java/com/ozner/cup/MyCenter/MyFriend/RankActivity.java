@@ -26,7 +26,7 @@ import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.RankType;
-import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.MyCenter.MyFriend.bean.CenterRankItem;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
@@ -71,7 +71,7 @@ public class RankActivity extends BaseActivity {
         dataList = new ArrayList<>();
         initToolBar();
         try {
-            userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+            userid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
             mRankType = getIntent().getStringExtra(Contacts.PARMS_RANK_TYPE);
             initTitle(mRankType);
             lvRank.setEmptyView(tvDataEmpty);

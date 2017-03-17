@@ -18,6 +18,7 @@ import com.ozner.WaterPurifier.WaterPurifier;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
@@ -47,6 +48,8 @@ public class SetupWaterActivity extends BaseActivity {
     TextView tvDeleteDevice;
     @InjectView(R.id.tv_mac)
     TextView tvMac;
+    @InjectView(R.id.rlay_about_purifier)
+    RelativeLayout rlayAboutPurifier;
 
     private String deviceNewName = null, deviceNewPos = null;
     private WaterPurifier mWaterPurifier;
@@ -61,13 +64,16 @@ public class SetupWaterActivity extends BaseActivity {
         setContentView(R.layout.activity_setup_water);
         ButterKnife.inject(this);
         initToolBar();
-        mUserid = UserDataPreference.GetUserData(this,UserDataPreference.UserId,"");
+        if(UserDataPreference.isLoginEmail(this)){
+            rlayAboutPurifier.setVisibility(View.GONE);
+        }
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
 //            url = getIntent().getStringExtra(Contacts.PARMS_URL);
             Log.e(TAG, "onCreate: mac:" + mac);
             mWaterPurifier = (WaterPurifier) OznerDeviceManager.Instance().getDevice(mac);
-            oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid,mac);
+            oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid, mac);
             initViewData();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -95,7 +101,7 @@ public class SetupWaterActivity extends BaseActivity {
             tvMac.setText(mWaterPurifier.Address());
             deviceNewName = mWaterPurifier.getName();
 //            String usePos = (String) mWaterPurifier.Setting().get(Contacts.DEV_USE_POS, "");
-            if(oznerSetting!=null){
+            if (oznerSetting != null) {
                 deviceNewName = oznerSetting.getName();
                 deviceNewPos = oznerSetting.getDevicePosition();
             }
@@ -141,7 +147,7 @@ public class SetupWaterActivity extends BaseActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mWaterPurifier != null) {
                                     DBManager.getInstance(SetupWaterActivity.this).deleteWaterAttr(mWaterPurifier.Address());
-                                    DBManager.getInstance(SetupWaterActivity.this).deleteDeviceSettings(mUserid,mWaterPurifier.Address());
+                                    DBManager.getInstance(SetupWaterActivity.this).deleteDeviceSettings(mUserid, mWaterPurifier.Address());
                                     OznerDeviceManager.Instance().remove(mWaterPurifier);
                                     setResult(RESULT_OK);
                                     SetupWaterActivity.this.finish();

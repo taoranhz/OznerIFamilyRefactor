@@ -24,7 +24,6 @@ import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.CenterNotification;
 import com.ozner.cup.Command.OznerPreference;
-import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.LoginWelcom.View.LoginActivity;
@@ -91,7 +90,7 @@ public class MyCenterFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         userToken = OznerPreference.getUserToken(getContext());
         userInfoManager = new UserInfoManager(getContext());
-        userid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
+        userid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
         mUserInfo = DBManager.getInstance(getContext()).getUserInfo(userid);
         userInfoManager.loadUserNickImage(mUserInfo, new UserInfoManager.LoadUserInfoListener() {
             @Override
@@ -152,6 +151,13 @@ public class MyCenterFragment extends BaseFragment {
                 if (gradeName.contains("会员")) {
                     int index = gradeName.indexOf("会员");
                     gradeName = gradeName.substring(0, index);
+                }
+                if (isLanguageEn()) {
+                    switch (gradeName) {
+                        case "银卡":
+                            gradeName = "Sliver ";
+                            break;
+                    }
                 }
                 gradeName += getString(R.string.act_member);
                 tvGrade.setVisibility(View.VISIBLE);

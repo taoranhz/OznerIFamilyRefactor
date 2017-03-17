@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.google.gson.JsonObject;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Command.OznerPreference;
-import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.HttpHelper.ApiException;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.HttpHelper.OznerHttpResult;
@@ -47,7 +46,7 @@ public class FeedBackActivity extends BaseActivity {
         ButterKnife.inject(this);
         initToolBar();
         try {
-            userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
+            userid = OznerPreference.GetValue(this, OznerPreference.UserId, null);
             userToken = OznerPreference.getUserToken(this);
         } catch (Exception ex) {
             ex.printStackTrace();

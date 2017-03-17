@@ -49,13 +49,14 @@
                         android:id="@+id/tv_TempState"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="适中"
+                        android:text="@string/temp_moderation"
                         android:textColor="@color/detail_textblue"
                         android:textSize="30dp"/>
                 </LinearLayout>
 
 
                 <LinearLayout
+                    android:id="@+id/llay_chat"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -219,8 +220,8 @@
                             android:layout_alignParentBottom="true"
                             android:layout_marginTop="15dp"
                             android:orientation="horizontal"
-                            android:paddingLeft="16.5dp"
-                            android:paddingRight="16.5dp">
+                            android:paddingLeft="10.5dp"
+                            android:paddingRight="10.5dp">
 
                             <RelativeLayout
                                 android:layout_width="0dp"
@@ -310,7 +311,7 @@
 
             </LinearLayout>
 
-            <include layout="@layout/tds_change_water_health_layout"/>
+            <include android:id="@+id/il_bottom" layout="@layout/tds_change_water_health_layout"/>
 
         </LinearLayout>
     </ScrollView>

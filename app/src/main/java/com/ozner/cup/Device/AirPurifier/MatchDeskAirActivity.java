@@ -31,6 +31,7 @@ import com.ozner.AirPurifier.AirPurifierManager;
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScan;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
@@ -106,7 +107,7 @@ public class MatchDeskAirActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_desk_air);
         ButterKnife.inject(this);
-        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         initActionBar();
         initNormalInfo();
         initFoundDeviceView();
@@ -209,6 +210,7 @@ public class MatchDeskAirActivity extends BaseActivity {
             try {
                 deviceIOs = OznerDeviceManager.Instance().getNotBindDevices();
             } catch (Exception ex) {
+                LCLogUtils.E(TAG,"loadFoundDevices_ex:"+ex.getMessage());
                 ex.printStackTrace();
                 deviceIOs = null;
             }
@@ -217,7 +219,7 @@ public class MatchDeskAirActivity extends BaseActivity {
                     //只添加 台式空净  并且在配对模式
                     if (AirPurifierManager.IsBluetoothAirPurifier(device.getType())
                             && OznerDeviceManager.Instance().checkisBindMode(device)) {
-                        if (mDevAdpater.hasDevice(device)) {
+                        if (!mDevAdpater.hasDevice(device)) {
                             mDevAdpater.addItem(device);
                         }
                     }
@@ -339,6 +341,7 @@ public class MatchDeskAirActivity extends BaseActivity {
      * 显示搜索失败界面
      */
     private void showNoFoundDevice() {
+
         stopRotate();
         isShowFound = false;
         tvSuccesHolder.setVisibility(View.GONE);

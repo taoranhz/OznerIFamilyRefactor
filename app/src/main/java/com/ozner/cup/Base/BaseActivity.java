@@ -16,7 +16,6 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.ozner.cup.Command.OznerPreference;
-import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.LoginWelcom.View.LoginActivity;
 import com.ozner.cup.R;
 
@@ -119,7 +118,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.ensure, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UserDataPreference.SetUserData(activity, UserDataPreference.UserId, "");
+                        OznerPreference.SetValue(activity, OznerPreference.UserId, "");
                         OznerPreference.setUserToken(activity, "");
                         activity.startActivity(new Intent(activity.getApplicationContext(), LoginActivity.class));
                         activity.finishAffinity();

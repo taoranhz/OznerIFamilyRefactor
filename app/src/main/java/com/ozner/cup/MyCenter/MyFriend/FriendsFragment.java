@@ -18,7 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.ozner.cup.Base.BaseFragment;
-import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.MyCenter.MyFriend.bean.FriendItem;
 import com.ozner.cup.MyCenter.MyFriend.bean.LeaveMessageItem;
@@ -66,7 +66,7 @@ public class FriendsFragment extends BaseFragment implements ExpandableListView.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         try {
-            mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
+            mUserid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
             mMobile = DBManager.getInstance(getContext()).getUserInfo(mUserid).getMobile();
         } catch (Exception ex) {
 

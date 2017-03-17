@@ -26,7 +26,6 @@ import com.ozner.WaterPurifier.WaterPurifier;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.OznerPreference;
-import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
@@ -185,7 +184,7 @@ public class WaterPurifierFragment extends DeviceFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
         tdsSensorManager = new TDSSensorManager(getContext());
         initAnimation();
         try {
@@ -402,6 +401,7 @@ public class WaterPurifierFragment extends DeviceFragment {
      * @param attr
      */
     private void refreshWaterSwitcher(WaterPurifierAttr attr) {
+        purifierAttr = attr;
         hasCool = attr.getHasCool();
         hasHot = attr.getHasHot();
     }
@@ -412,7 +412,7 @@ public class WaterPurifierFragment extends DeviceFragment {
      * @param attr
      */
     private void updateFilterInfoUI(final WaterPurifierAttr attr) {
-
+        purifierAttr = attr;
         Calendar nowCal = Calendar.getInstance();
         nowCal.setTimeInMillis(attr.getFilterNowtime());
         Calendar endCal = Calendar.getInstance();
@@ -500,7 +500,7 @@ public class WaterPurifierFragment extends DeviceFragment {
      * 购买滤芯
      */
     private void buyFilter() {
-        String userid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, null);
+        String userid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, null);
         if (userid != null) {
             UserInfo info = DBManager.getInstance(getContext()).getUserInfo(userid);
             if (info != null && info.getMobile() != null && !info.getMobile().isEmpty()) {

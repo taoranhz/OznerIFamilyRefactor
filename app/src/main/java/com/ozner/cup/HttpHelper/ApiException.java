@@ -49,6 +49,7 @@ public class ApiException extends RuntimeException {
         ErrMap.put(-10021, R.string.Code_Fiflter_DeviceNotfound);
         ErrMap.put(-10022, R.string.Code_UserNotFound);
         ErrMap.put(-10023, R.string.Code_Login_Error);
+        ErrMap.put(-10024, R.string.Code_Has_regist);
     }
 
 //    public static String getErrMsgResId(int errCode) {

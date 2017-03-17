@@ -29,6 +29,7 @@ import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.IndicatorProgressBar;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.WeChatUrlUtil;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
@@ -37,6 +38,8 @@ import com.ozner.device.OznerDeviceManager;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+
+import static com.ozner.cup.R.id.ll_en_no;
 
 public class AirDeskFilterActivity extends BaseActivity {
     private static final String TAG = "AirDeskFilterActivity";
@@ -58,7 +61,7 @@ public class AirDeskFilterActivity extends BaseActivity {
     TextView tvChatBtn;
     @InjectView(R.id.tv_buy_purifier)
     TextView tvBuyPurifier;
-    @InjectView(R.id.ll_en_no)
+    @InjectView(ll_en_no)
     LinearLayout llEnNo;
 
     AirPurifierMonitor airMonitor;
@@ -79,9 +82,12 @@ public class AirDeskFilterActivity extends BaseActivity {
             //更改底部导航栏颜色(限有底部的手机)
             window.setNavigationBarColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
         }
-        String userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
+        String userid = OznerPreference.GetValue(this, OznerPreference.UserId, null);
         if (userid != null && !userid.isEmpty()) {
             userInfo = DBManager.getInstance(this).getUserInfo(userid);
+        }
+        if(UserDataPreference.isLoginEmail(this)){
+            llEnNo.setVisibility(View.GONE);
         }
 
         filterProgress.setThumb(R.drawable.filter_status_thumb);
@@ -214,7 +220,7 @@ public class AirDeskFilterActivity extends BaseActivity {
         if (mDeskAirPurifier != null) {
             int pm25 = mDeskAirPurifier.sensor().PM25();
             if (pm25 == 65535) {
-                tvPmValue.setText(R.string.disconnect);
+                tvPmValue.setText(R.string.air_disconnect);
             } else if (pm25 > 0 && pm25 < 1000) {
                 tvPmValue.setText(String.valueOf(pm25));
             } else {
@@ -268,12 +274,14 @@ public class AirDeskFilterActivity extends BaseActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTED)
-                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTING)
-                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED)) {
-                showFilterStatus();
-            }
-            refreshPM25();
+//            if (intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTED)
+//                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTING)
+//                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED)) {
+//            }
+//            showFilterStatus();
+//            refreshPM25();
+            LCLogUtils.E(TAG,"AirPurifierMonitor:"+intent.getAction());
+            refreshUIData();
         }
     }
 }

@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ozner.cup.Base.BaseActivity;
-import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.MyCenter.Settings.SettingsActivity;
@@ -33,7 +33,7 @@ public class CenterEnActivity extends BaseActivity {
         setContentView(R.layout.activity_center_en);
         ButterKnife.inject(this);
         try {
-            mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+            mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
             LCLogUtils.E(TAG,"userid:"+mUserid);
             userInfo = DBManager.getInstance(this).getUserInfo(mUserid);
             if (userInfo != null) {
@@ -51,6 +51,7 @@ public class CenterEnActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.rlay_my_device:
                 startActivity(new Intent(this, MyDeviceActivity.class));
+                finish();
                 break;
             case R.id.rlay_feedback:
                 startActivity(new Intent(this, FeedBackActivity.class));

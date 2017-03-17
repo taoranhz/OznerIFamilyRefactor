@@ -17,7 +17,7 @@ import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeter;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
-import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.ReplenWater.ReplenSettings.SetGenderActivity;
@@ -55,7 +55,7 @@ public class SetUpReplenActivity extends BaseActivity {
         setContentView(R.layout.activity_set_up_replen);
         ButterKnife.inject(this);
         initToolBar();
-        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             replenWater = (WaterReplenishmentMeter) OznerDeviceManager.Instance().getDevice(mac);

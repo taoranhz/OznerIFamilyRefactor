@@ -61,12 +61,10 @@ public class ResetPwdActivity extends BaseActivity implements IResetPwdView {
                 this.finish();
                 break;
             case R.id.tv_verifyCode:
-//                startTimer();
                 siginUpPresenter.getVerifyCode();
                 break;
             case R.id.btn_sign_up:
                 siginUpPresenter.resetPassword();
-//                stopTimer();
                 break;
         }
     }

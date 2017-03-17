@@ -24,6 +24,7 @@ import android.widget.TimePicker;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.Cup;
 import com.ozner.cup.DBHelper.DBManager;
@@ -104,6 +105,8 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
     ColorPickerView cupColorpicker;
     @InjectView(R.id.tb_cupRemind)
     ToggleButton tbCupRemind;
+    @InjectView(R.id.rlay_about_cup)
+    RelativeLayout rlayAboutCup;
 
     private String mac;
     private Cup mCup;
@@ -130,7 +133,7 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
         initIntervalList();
         initTodayStatusListener();
         try {
-            mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+            mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             Log.e(TAG, "onCreate: mac:" + mac);
             mCup = (Cup) OznerDeviceManager.Instance().getDevice(mac);
@@ -164,6 +167,10 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
                 }
             }
         });
+
+        if (UserDataPreference.isLoginEmail(this)) {
+            rlayAboutCup.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -277,11 +284,6 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
      * @param isChecked
      */
     private void updateWaterGoal(boolean isChecked) {
-//        try {
-//            mWaterGoal = Integer.parseInt(etVolum.getText().toString().trim());
-//        } catch (Exception ex) {
-//            mWaterGoal = 0;
-//        }
         if (isChecked) {
             mWaterGoal += Status_Add_Goal;
         } else {
@@ -301,7 +303,6 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
 
             //初始化设备名字
             deviceNewName = mCup.getName();
-//            String usePos = "";//(String) mCup.Setting().get(Contacts.DEV_USE_POS, "");
 
             if (oznerSetting != null) {
                 if (oznerSetting.getName() != null && !oznerSetting.getName().isEmpty()) {
@@ -335,18 +336,6 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
             }
             tvDeviceName.setText(deviceNameBuf.toString());
 
-
-            //初始化用户体重
-//            mWeight = (int) mCup.Setting().get(Contacts.DEV_USER_WEIGHT, -1);
-//            if (-1 == mWeight) {
-//                mWeight = DEFAULT_WEIGHT;
-//            }
-//
-//            //初始化饮水目标
-////            mWaterGoal = (int) mCup.Setting().get(Contacts.DEV_USER_WATER_GOAL, -1);
-//            if (-1 == mWaterGoal) {
-//
-//            }
             LCLogUtils.E(TAG, "Goal:" + mWaterGoal);
 
             etWeight.setText(String.valueOf(mWeight));
@@ -361,7 +350,7 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
      */
     private void initTodayStatus() {
         if (mCup != null) {
-            if(oznerSetting!=null&&oznerSetting.getAppData(Contacts.Cup_Today_Status)!=null){
+            if (oznerSetting != null && oznerSetting.getAppData(Contacts.Cup_Today_Status) != null) {
                 checkState = (int) oznerSetting.getAppData(Contacts.Cup_Today_Status);
             }
 //            checkState = (int) mCup.Setting().get(Contacts.Cup_Today_Status, 0);
@@ -392,12 +381,15 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
 
             //初始化饮水提醒时间
             int startHour = mCup.Setting().remindStart() / 3600;
+            int startMin = mCup.Setting().remindStart() % 3600 / 60;
             int endHour = mCup.Setting().remindEnd() / 3600;
+            int endMin = mCup.Setting().remindEnd() % 3600 / 60;
+            LCLogUtils.E(TAG, "开始时间：" + mCup.Setting().remindStart() + " ,结束时间：" + mCup.Setting().remindEnd());
             tipStartCal.set(Calendar.HOUR_OF_DAY, startHour);
-            tipStartCal.set(Calendar.MINUTE, 0);
+            tipStartCal.set(Calendar.MINUTE, startMin);
             tipStartCal.set(Calendar.SECOND, 0);
             tipEndCal.set(Calendar.HOUR_OF_DAY, endHour);
-            tipEndCal.set(Calendar.MINUTE, 0);
+            tipEndCal.set(Calendar.MINUTE, endMin);
             tipEndCal.set(Calendar.SECOND, 0);
             tvRemindStarttime.setText(DateUtils.hourMinFormt(tipStartCal.getTime()));
             tvRemindEndtime.setText(DateUtils.hourMinFormt(tipEndCal.getTime()));
@@ -461,33 +453,32 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
                     showToastCenter(R.string.input_device_name);
                     return;
                 }
-//                //保存使用位置
-//                if (deviceNewPos != null) {
-//                    mCup.Setting().put(Contacts.DEV_USE_POS, deviceNewPos);
-//                }
+
                 //保存体重
                 if (etWeight.getText().toString().isEmpty()) {
                     showToastCenter(R.string.weight_can_not_empty);
                     return;
                 }
-//                else {
-//                    mCup.Setting().put(Contacts.DEV_USER_WEIGHT, Integer.parseInt(etWeight.getText().toString().trim()));
-//                }
+
                 //保存饮水目标
                 if (etVolum.getText().toString().isEmpty()) {
                     showToastCenter(R.string.water_goal_cannot_empty);
                     return;
                 }
-//                    mCup.Setting().put(Contacts.DEV_USER_WATER_GOAL, Integer.parseInt(etVolum.getText().toString().trim()));
 
                 //保存灯带颜色
                 mCup.Setting().haloColor(cupColor);
                 //保存提醒间隔
                 mCup.Setting().remindInterval(Integer.parseInt(tvRemindInterval.getText().toString().trim()));
-//                //保存今日状态
-//                mCup.Setting().put(Contacts.Cup_Today_Status, checkState);
+
                 //保存是否打开提醒功能
                 mCup.Setting().RemindEnable(isRemindEnable);
+                int starHour = tipStartCal.get(Calendar.HOUR_OF_DAY);
+                int startMin = tipStartCal.get(Calendar.MINUTE);
+                int endHour = tipEndCal.get(Calendar.HOUR_OF_DAY);
+                int endMin = tipEndCal.get(Calendar.MINUTE);
+                mCup.Setting().remindStart(starHour * 3600 + startMin * 60);
+                mCup.Setting().remindEnd(endHour * 3600 + endMin * 60);
                 mCup.updateSettings();
 
                 if (oznerSetting == null) {
@@ -534,7 +525,7 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mCup != null) {
-                                    DBManager.getInstance(SetUpCupActivity.this).deleteDeviceSettings(mUserid,mCup.Address());
+                                    DBManager.getInstance(SetUpCupActivity.this).deleteDeviceSettings(mUserid, mCup.Address());
                                     OznerDeviceManager.Instance().remove(mCup);
                                     setResult(RESULT_OK);
                                     SetUpCupActivity.this.finish();
@@ -577,6 +568,8 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
                                         }
                                         tipStartCal.set(Calendar.HOUR_OF_DAY, startTimePicker.getCurrentHour());
                                         tipStartCal.set(Calendar.MINUTE, startTimePicker.getCurrentMinute());
+                                        tipStartCal.set(Calendar.SECOND, 0);
+                                        tipStartCal.set(Calendar.MILLISECOND, 0);
                                         tvRemindStarttime.setText(DateUtils.hourMinFormt(tipStartCal.getTime()));
                                     }
                                 });
@@ -607,6 +600,8 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
 
                                         tipEndCal.set(Calendar.HOUR_OF_DAY, endTimePicker.getCurrentHour());
                                         tipEndCal.set(Calendar.MINUTE, endTimePicker.getCurrentMinute());
+                                        tipEndCal.set(Calendar.SECOND, 0);
+                                        tipEndCal.set(Calendar.MILLISECOND, 0);
                                         tvRemindEndtime.setText(DateUtils.hourMinFormt(tipEndCal.getTime()));
                                     }
                                 });
@@ -617,13 +612,9 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
                 showReIntervalDialog();
                 break;
             case R.id.rlay_about_cup:
-                if (mCup != null) {
-                    Intent webIntent = new Intent(this, WebActivity.class);
-                    webIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutCup);
-                    startActivity(webIntent);
-                } else {
-                    showToastCenter(R.string.Not_found_device);
-                }
+                Intent webIntent = new Intent(this, WebActivity.class);
+                webIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutCup);
+                startActivity(webIntent);
                 break;
         }
     }
@@ -667,7 +658,7 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
         if (isCheck) {
             tvBelow.setText(R.string.temp_blow);
             tvMiddle.setText(R.string.temp_middle);
-            tvHight.setText(R.string.temp_hot);
+            tvHight.setText(R.string.temp_up);
         }
     }
 

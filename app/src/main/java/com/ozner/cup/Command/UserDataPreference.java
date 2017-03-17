@@ -10,7 +10,7 @@ import android.support.annotation.StringDef;
  */
 
 public class UserDataPreference {
-    public final static String UserId = "UserId";
+    public final static String IsEmail = "isEmail";
     public final static String SelMac = "SelMac";
     //个人中心
     public final static String CenterNotify = "centernotify";//个人中心通知状态
@@ -33,10 +33,26 @@ public class UserDataPreference {
 
     public static SharedPreferences Init(Context context) {
         if (context != null) {
-            String file = OznerPreference.GetValue(context, UserDataPreference.UserId, "Oznerser");
+            String file = OznerPreference.GetValue(context, OznerPreference.UserId, "Oznerser");
             return context.getSharedPreferences(file, Context.MODE_PRIVATE);
         } else
             return null;
+    }
+
+    public static void setLoginEmail(Context mContext, boolean isEmail) {
+
+        SharedPreferences.Editor ozner = Init(mContext).edit();
+        ozner.putBoolean(IsEmail, isEmail);
+        ozner.commit();
+    }
+
+    public static boolean isLoginEmail(Context mContext) {
+        try {
+            SharedPreferences ozner = Init(mContext);
+            return ozner.getBoolean(IsEmail, false);
+        } catch (Exception ex) {
+            return Boolean.parseBoolean(GetUserData(mContext,IsEmail,"false"));
+        }
     }
 
     public static String GetUserData(Context context, String key, String value) {

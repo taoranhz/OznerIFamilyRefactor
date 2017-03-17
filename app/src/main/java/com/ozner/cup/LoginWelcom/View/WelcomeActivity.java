@@ -7,10 +7,12 @@ import android.util.Log;
 
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Command.OznerPreference;
+import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.Main.UserInfoManager;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.LCLogUtils;
 
 import butterknife.ButterKnife;
 
@@ -28,6 +30,16 @@ public class WelcomeActivity extends BaseActivity {
         setContentView(R.layout.activity_welcome);
         ButterKnife.inject(this);
         usertoken = OznerPreference.getUserToken(this);
+        //把存储在旧位置的userid转移到新的地方
+        try {
+            String olduserid = UserDataPreference.GetUserData(this, "UserId", "");
+            if (olduserid != null && olduserid.length() > 0) {
+                UserDataPreference.SetUserData(this, "UserId", "");
+                OznerPreference.SetValue(this, OznerPreference.UserId, olduserid);
+            }
+        } catch (Exception ex) {
+            LCLogUtils.E(TAG, "转移userid_Ex:" + ex.getMessage());
+        }
         try {
             isFirstStart = Boolean.parseBoolean(OznerPreference.GetValue(this, OznerPreference.IsFirstStart, "true"));
         } catch (Exception ex) {
@@ -84,5 +96,4 @@ public class WelcomeActivity extends BaseActivity {
             }
         });
     }
-
 }
