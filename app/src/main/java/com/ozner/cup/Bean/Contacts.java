@@ -160,9 +160,8 @@ public class Contacts {
     public static String aboutTdsPen = "file:///android_asset/hz_tdspen.html";
 
     // 免责条款
-//    public static String URL_BASE_EXCEPTIONS = "http://cup.ozner.net/app/cn/";
-//    public static String exceptions_url = "http://cup.ozner.net/app/cn/mzsm.html";
-    public static String exceptions_url = "http://app.joyro.com.cn:8282/jrAPPterm.html";
+    public static String exceptions_url = "http://cup.ozner.net/app/cn/mzsm.html";
+//    public static String exceptions_url = "http://app.joyro.com.cn:8282/jrAPPterm.html";
 
 //    /*
 //    *可单独使用链接

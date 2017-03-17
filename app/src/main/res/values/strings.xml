@@ -147,6 +147,7 @@
     <string name="problem_notice_tap">Check the battery,Bluetooth status and then try to match</string>
     <string name="problem_notice_replen">You can check the water meter Bluetooth enabled before pairing</string>
     <string name="input_tap_name">Enter the name of water tester</string>
+    <string name="input_tdspen_name">Enter TDS pen name</string>
     <string name="input_weight">Enter the weight</string>
     <string name="beat_users">Beat the %1$d%% of users</string>
 
@@ -356,6 +357,7 @@
     <string name="detection_time2">Detection time 2</string>
     <string name="tap_attention">Remind in case filter cartridge can be used for less than 10 days</string>
     <string name="about_tap">About water tester</string>
+    <string name="about_tdspen">About</string>
     <string name="delete_this_device">Delete the device</string>
     <string name="add">Add</string>
     <string name="add_pos">Add place</string>

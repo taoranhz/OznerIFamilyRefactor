@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.RankType;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupRecord;
@@ -109,6 +110,10 @@ public class TapFragment extends DeviceFragment {
     TextView title;
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
+    @InjectView(R.id.rlay_tds_bottom)
+    RelativeLayout rlayTdsBottom;
+    @InjectView(R.id.llay_battary)
+    LinearLayout llayBattary;
     private Tap mTap;
     private TapMonitor tapMonitor;
     //    private RotateAnimation rotateAnimation;
@@ -179,7 +184,6 @@ public class TapFragment extends DeviceFragment {
             mTap = (Tap) device;
             refreshUIData();
         }
-//        refreshTapFilterInfo();
     }
 
     @Override
@@ -192,7 +196,6 @@ public class TapFragment extends DeviceFragment {
             mTap = (Tap) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
             oldTdsValue = 0;
             oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mTap.Address());
-//            refreshTapFilterInfo();
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -219,6 +222,14 @@ public class TapFragment extends DeviceFragment {
         ButterKnife.inject(this, view);
         toolbar.setTitle("");
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        if (oznerSetting != null && oznerSetting.getDevcieType().equals(RankType.TdsPenType)) {
+            rlayTdsBottom.setVisibility(View.GONE);
+            rlayFilter.setVisibility(View.GONE);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(llayBattary.getLayoutParams());
+            lp.removeRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+            llayBattary.setLayoutParams(lp);
+        }
         return view;
     }
 
@@ -245,7 +256,9 @@ public class TapFragment extends DeviceFragment {
         try {
             setBarColor(R.color.cup_detail_bg);
             setToolbarColor(R.color.cup_detail_bg);
-            refreshTapFilterInfo();
+            if (oznerSetting != null && !oznerSetting.getDevcieType().equals(RankType.TdsPenType)) {
+                refreshTapFilterInfo();
+            }
         } catch (Exception ex) {
 
         }

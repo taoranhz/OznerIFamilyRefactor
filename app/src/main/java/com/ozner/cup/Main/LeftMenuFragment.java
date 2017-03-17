@@ -29,6 +29,7 @@ import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Bean.RankType;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
@@ -477,7 +478,14 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
             } else if (TapManager.IsTap(deviceType)) {
                 // TODO: 2016/11/4 水探头
                 typeResId = R.mipmap.connect_bluetooth_on;
-                setItemSelected(holder, isSelected, R.mipmap.icon_tap_on, R.mipmap.icon_tap_off);
+                if (DBManager.getInstance(getContext()).getDeviceSettings(mUserid, item.getMac()).getDevcieType().equals(RankType.TdsPenType)) {
+                    setItemSelected(holder, isSelected, R.mipmap.icon_tap_on, R.mipmap.icon_tap_off);
+                } else {
+                    setItemSelected(holder, isSelected, R.mipmap.icon_tap_on, R.mipmap.icon_tap_off);
+                }
+            }else if(deviceType.equals(RankType.TdsPenType)){
+                typeResId = R.mipmap.connect_bluetooth_on;
+                setItemSelected(holder, isSelected, R.mipmap.icon_tdspen_on, R.mipmap.icon_tdspen_off);
             } else if (WaterPurifierManager.IsWaterPurifier(deviceType)) {
                 // TODO: 2016/11/4 水机
                 typeResId = R.mipmap.connect_wifi_on;

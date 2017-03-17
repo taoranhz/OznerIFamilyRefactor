@@ -14,4 +14,7 @@ public class RankType {
     public static final String AirPurifierTypeVer = "FOG_HAOZE_AIR";
     public static final String AirPurifierTypeTai = "FLT001";
     public static final String CupVolumType = "SCOO1VOLUME";
+
+    //tds笔自定义类型，用来区分水探头类型
+    public static final String TdsPenType = "TDSPEN";
 }

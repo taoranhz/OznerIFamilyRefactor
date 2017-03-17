@@ -153,6 +153,7 @@
     <string name="input_cup_name">输入水杯名字</string>
     <string name="input_air_name">输入空气净化器名字</string>
     <string name="input_replen_name">输入补水仪名字</string>
+    <string name="input_tdspen_name">输入水质检测笔名称</string>
     <string name="select_gender_tips">请选择设定您的性别</string>
     <string name="man">男</string>
     <string name="women">女</string>
@@ -355,6 +356,7 @@
     <string name="detection_time2">检测时间2</string>
     <string name="tap_attention">滤芯不足10天会显示提醒</string>
     <string name="about_tap">关于水探头</string>
+    <string name="about_tdspen">关于水质检测笔</string>
     <string name="delete_this_device">删除此设备</string>
     <string name="add">新增</string>
     <string name="add_pos">添加地点</string>

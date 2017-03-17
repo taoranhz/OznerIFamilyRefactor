@@ -8,9 +8,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.RankType;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
@@ -72,7 +75,18 @@ public class SetupTapActivity extends BaseActivity {
     TextView tvDeleteDevice;
     @InjectView(rlay_aboutTap)
     RelativeLayout rlayAboutTap;
+    @InjectView(R.id.tv_chektime_tip)
+    TextView tvChektimeTip;
+    @InjectView(R.id.llay_chektime)
+    LinearLayout llayChektime;
+    @InjectView(R.id.tv_remind_tip)
+    TextView tvRemindTip;
+    @InjectView(R.id.tv_about)
+    TextView tvAbout;
+    @InjectView(R.id.tv_name_lable)
+    TextView tvNameLable;
 
+    private EditText et_newname;
     private String mac = "";
     private String deviceNewName = null, deviceNewPos = null;
     private Tap mTap;
@@ -88,7 +102,7 @@ public class SetupTapActivity extends BaseActivity {
         ButterKnife.inject(this);
         initToolBar();
 
-        if(UserDataPreference.isLoginEmail(this)){
+        if (UserDataPreference.isLoginEmail(this)) {
             rlayAboutTap.setVisibility(View.GONE);
         }
 
@@ -106,6 +120,9 @@ public class SetupTapActivity extends BaseActivity {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
         }
+        if (oznerSetting.getDevcieType().equals(RankType.TdsPenType)) {
+            initTdsPenView();
+        }
     }
 
 
@@ -117,6 +134,18 @@ public class SetupTapActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         tv_customTitle.setText(R.string.my_tap);
         toolbar.setNavigationIcon(R.drawable.back);
+    }
+
+    /**
+     * TDS笔初始化
+     */
+    private void initTdsPenView() {
+        tvChektimeTip.setVisibility(View.GONE);
+        llayChektime.setVisibility(View.GONE);
+        tvRemindTip.setVisibility(View.GONE);
+        tvAbout.setText(R.string.about_tdspen);
+        tv_customTitle.setText(R.string.water_tdspen);
+        tvNameLable.setText(R.string.water_tdspen);
     }
 
     /**
@@ -176,9 +205,6 @@ public class SetupTapActivity extends BaseActivity {
                 toast.show();
                 return;
             }
-//            if (deviceNewPos != null) {
-//                mTap.Setting().put(Contacts.DEV_USE_POS, deviceNewPos);
-//            }
 
             mTap.Setting().isDetectTime1(true);
             mTap.Setting().DetectTime1(time1.getHours() * 3600 + time1.getMinutes() * 60);
@@ -190,9 +216,9 @@ public class SetupTapActivity extends BaseActivity {
                 oznerSetting = new OznerDeviceSettings();
                 oznerSetting.setUserId(mUserid);
                 oznerSetting.setCreateTime(String.valueOf(new Date().getTime()));
+                oznerSetting.setDevcieType(mTap.Type());
             }
             oznerSetting.setName(deviceNewName);
-            oznerSetting.setDevcieType(mTap.Type());
             oznerSetting.setStatus(0);
             oznerSetting.setMac(mTap.Address());
             oznerSetting.setDevicePosition(deviceNewPos);
@@ -235,16 +261,24 @@ public class SetupTapActivity extends BaseActivity {
             case rlay_aboutTap:
                 if (mTap != null) {
                     Intent webIntent = new Intent(this, WebActivity.class);
-                    webIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutTap);
+                    if (oznerSetting != null && oznerSetting.getDevcieType().equals(RankType.TdsPenType)) {
+                        webIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutTdsPen);
+                    } else {
+                        webIntent.putExtra(Contacts.PARMS_URL, Contacts.aboutTap);
+                    }
                     startActivity(webIntent);
                 } else {
                     showToastCenter(R.string.Not_found_device);
                 }
                 break;
             case R.id.rlay_device_name:
-                Intent setNameIntent = new Intent(this, SetDeviceNameActivity.class);
-                setNameIntent.putExtra(Contacts.PARMS_MAC, mac);
-                startActivityForResult(setNameIntent, SET_NAME_REQ_CODE);
+                if (oznerSetting != null && oznerSetting.getDevcieType().equals(RankType.TdsPenType)) {
+                    showSetNameDialog();
+                } else {
+                    Intent setNameIntent = new Intent(this, SetDeviceNameActivity.class);
+                    setNameIntent.putExtra(Contacts.PARMS_MAC, mac);
+                    startActivityForResult(setNameIntent, SET_NAME_REQ_CODE);
+                }
                 break;
             case R.id.llay_first_time:
                 tvFirstDesc.setTextColor(ContextCompat.getColor(this, R.color.faq_text_blue));
@@ -310,6 +344,39 @@ public class SetupTapActivity extends BaseActivity {
                 }).show();
                 break;
         }
+    }
+
+    /**
+     * 显示设置名字对话框
+     */
+    private void showSetNameDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(SetupTapActivity.this, AlertDialog.THEME_HOLO_LIGHT);
+
+        final View inputView = LayoutInflater.from(SetupTapActivity.this).inflate(R.layout.add_pos_view, null);
+        builder.setView(inputView);
+        et_newname = (EditText) inputView.findViewById(R.id.et_addPos);
+
+//        builder.setTitle(R.string.add_pos);
+        et_newname.setHint(R.string.input_tdspen_name);
+
+        builder.setPositiveButton(R.string.ensure, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, int which) {
+                if (et_newname.getText().toString().trim().length() > 0) {
+                    deviceNewName = et_newname.getText().toString().trim();
+                    deviceNewPos = "";
+                    tvDeviceName.setText(et_newname.getText().toString().trim());
+                }
+                dialog.cancel();
+            }
+        });
+        builder.setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.create().show();
     }
 
     @Override
