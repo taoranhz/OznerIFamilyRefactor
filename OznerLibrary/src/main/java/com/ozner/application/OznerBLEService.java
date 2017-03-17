@@ -87,7 +87,11 @@ public class OznerBLEService extends Service implements ActivityLifecycleCallbac
 
     @Override
     public void onDestroy() {
-        mManager.stop();
+        try {
+            mManager.stop();
+        } catch (Exception ex) {
+
+        }
         super.onDestroy();
     }
 
