@@ -191,7 +191,7 @@ public class AirDeskFilterActivity extends BaseActivity {
                             public void run() {
                                 refreshUIData();
                             }
-                        }, 300);
+                        }, 700);
                     }
 
                     @Override
@@ -268,11 +268,11 @@ public class AirDeskFilterActivity extends BaseActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTED)
-                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTING)
-                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED)) {
-                showFilterStatus();
-            }
+//            if (intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTED)
+//                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTING)
+//                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED)) {
+//            }
+            showFilterStatus();
             refreshPM25();
         }
     }

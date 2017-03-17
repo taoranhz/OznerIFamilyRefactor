@@ -80,6 +80,8 @@ public class ReplenDetailActivity extends BaseActivity {
     WaterReplMeterView wrmView;
     @InjectView(R.id.activity_replen_detail)
     LinearLayout activityReplenDetail;
+    @InjectView(R.id.tv_tips)
+    TextView tvTips;
 
     /**
      * 各部位在数组中的位置
@@ -384,12 +386,16 @@ public class ReplenDetailActivity extends BaseActivity {
         tvSkinHumidity.setText(String.valueOf(todayValues[index]));
         if (todayValues[index] > 0 && todayValues[index] <= midValue[index]) {
             tvSkinState.setText(R.string.dry);
+            tvTips.setVisibility(View.VISIBLE);
         } else if (todayValues[index] > midValue[index] && todayValues[index] <= highValue[index]) {
             tvSkinState.setText(R.string.normal);
+            tvTips.setVisibility(View.VISIBLE);
         } else if (todayValues[index] > highValue[index]) {
             tvSkinState.setText(R.string.wetness);
+            tvTips.setVisibility(View.GONE);
         } else {
             tvSkinState.setText(R.string.state_null);
+            tvTips.setVisibility(View.GONE);
         }
     }
 

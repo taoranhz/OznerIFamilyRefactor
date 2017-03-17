@@ -135,6 +135,7 @@
 
 
     <RelativeLayout
+        android:visibility="gone"
         style="@style/item_click_ripple"
         android:id="@+id/rlay_buy_essence"
         android:layout_width="match_parent"
@@ -160,6 +161,7 @@
     </RelativeLayout>
 
     <TextView
+        android:visibility="gone"
         android:drawableLeft="@drawable/icon_attention"
         android:textSize="12dp"
         android:layout_marginLeft="15dp"

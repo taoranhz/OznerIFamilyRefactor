@@ -187,7 +187,7 @@ public class MatchDeskAirActivity extends BaseActivity {
                     //只添加 台式空净  并且在配对模式
                     if (AirPurifierManager.IsBluetoothAirPurifier(device.getType())
                             && OznerDeviceManager.Instance().checkisBindMode(device)) {
-                        if (mDevAdpater.hasDevice(device)) {
+                        if (!mDevAdpater.hasDevice(device)) {
                             mDevAdpater.addItem(device);
                         }
                     }

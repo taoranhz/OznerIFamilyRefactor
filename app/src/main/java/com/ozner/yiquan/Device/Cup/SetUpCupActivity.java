@@ -392,12 +392,14 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
 
             //初始化饮水提醒时间
             int startHour = mCup.Setting().remindStart() / 3600;
+            int startMin = mCup.Setting().remindStart() % 3600 / 60;
             int endHour = mCup.Setting().remindEnd() / 3600;
+            int endMin = mCup.Setting().remindEnd() % 3600 / 60;
             tipStartCal.set(Calendar.HOUR_OF_DAY, startHour);
-            tipStartCal.set(Calendar.MINUTE, 0);
+            tipStartCal.set(Calendar.MINUTE, startMin);
             tipStartCal.set(Calendar.SECOND, 0);
             tipEndCal.set(Calendar.HOUR_OF_DAY, endHour);
-            tipEndCal.set(Calendar.MINUTE, 0);
+            tipEndCal.set(Calendar.MINUTE, endMin);
             tipEndCal.set(Calendar.SECOND, 0);
             tvRemindStarttime.setText(DateUtils.hourMinFormt(tipStartCal.getTime()));
             tvRemindEndtime.setText(DateUtils.hourMinFormt(tipEndCal.getTime()));
@@ -488,6 +490,12 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
 //                mCup.Setting().put(Contacts.Cup_Today_Status, checkState);
                 //保存是否打开提醒功能
                 mCup.Setting().RemindEnable(isRemindEnable);
+                int starHour = tipStartCal.get(Calendar.HOUR_OF_DAY);
+                int startMin = tipStartCal.get(Calendar.MINUTE);
+                int endHour = tipEndCal.get(Calendar.HOUR_OF_DAY);
+                int endMin = tipEndCal.get(Calendar.MINUTE);
+                mCup.Setting().remindStart(starHour * 3600 + startMin * 60);
+                mCup.Setting().remindEnd(endHour * 3600 + endMin * 60);
                 mCup.updateSettings();
 
                 if (oznerSetting == null) {
@@ -577,6 +585,8 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
                                         }
                                         tipStartCal.set(Calendar.HOUR_OF_DAY, startTimePicker.getCurrentHour());
                                         tipStartCal.set(Calendar.MINUTE, startTimePicker.getCurrentMinute());
+                                        tipStartCal.set(Calendar.SECOND, 0);
+                                        tipStartCal.set(Calendar.MILLISECOND, 0);
                                         tvRemindStarttime.setText(DateUtils.hourMinFormt(tipStartCal.getTime()));
                                     }
                                 });
@@ -607,6 +617,8 @@ public class SetUpCupActivity extends BaseActivity implements CompoundButton.OnC
 
                                         tipEndCal.set(Calendar.HOUR_OF_DAY, endTimePicker.getCurrentHour());
                                         tipEndCal.set(Calendar.MINUTE, endTimePicker.getCurrentMinute());
+                                        tipEndCal.set(Calendar.SECOND, 0);
+                                        tipEndCal.set(Calendar.MILLISECOND, 0);
                                         tvRemindEndtime.setText(DateUtils.hourMinFormt(tipEndCal.getTime()));
                                     }
                                 });

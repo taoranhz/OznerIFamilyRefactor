@@ -707,11 +707,11 @@ public class AirDeskPurifierFragment extends DeviceFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTED)
-                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTING)
-                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED)) {
-                showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
-            }
+//            if (intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTED)
+//                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTING)
+//                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED)) {
+//            }
+            showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
             refreshUIData();
         }
     }
