@@ -38,7 +38,7 @@ public class SiginUpPresenter {
             resetView.showToastMsg(mContext.get().getString(R.string.input_email));
             return;
         }
-        if (VerifyUtil.isEmail(resetView.getEmail())) {
+        if (!VerifyUtil.isEmail(resetView.getEmail())) {
             resetView.showToastMsg(mContext.get().getString(R.string.valid_email));
         }
 
