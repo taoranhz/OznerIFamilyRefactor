@@ -383,33 +383,6 @@ public class ROWaterPurifierFragment extends DeviceFragment {
                     }
                 });
             }
-
-
-            //获取滤芯信息
-            status=mWaterPurifer.connectStatus().toString();
-            if("Disconnect".equals(status)){
-                Log.e("trstatus",status+"===========");
-                isOffLine=true;
-            }else{
-                isOffLine=false;
-            }
-            if (!isOffLine) {
-                filter_A_Time = mWaterPurifer.filterInfo.Filter_A_Percentage;
-                filter_B_Time = mWaterPurifer.filterInfo.Filter_B_Percentage;
-                filter_C_Time = mWaterPurifer.filterInfo.Filter_C_Percentage;
-                filter_median1 = Math.min(filter_A_Time, filter_B_Time);
-                filter_median2 = Math.min(filter_median1, filter_C_Time);
-                setFilterState(filter_median2);
-                Log.e("trfilterTime", "A------" + filter_A_Time + "\nB------" + filter_B_Time + "\nC------" + filter_C_Time + "\nMIN------" + filter_median2);
-            }else{
-                filter_A_Time = -1;
-                filter_B_Time = -1;
-                filter_C_Time = -1;
-                Log.e("trfilterTime", "A-----@" + filter_A_Time + "\nB------@" + filter_B_Time + "\nC------@" + filter_C_Time);
-            }
-
-
-
         } catch (Exception ex) {
             Log.e(TAG, "initWaterAttrInfo_Ex: " + ex.getMessage());
         }
@@ -550,6 +523,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
                 title.setText(mWaterPurifer.getName());
             }
             showTdsState();
+
         }
     }
 
@@ -606,6 +580,29 @@ public class ROWaterPurifierFragment extends DeviceFragment {
             }
 
             waterProgress.update(Math.round((tdsPre / 250f) * 100), Math.round((tdsThen / 250f) * 100));
+        }
+
+        //获取滤芯信息
+        status=mWaterPurifer.connectStatus().toString();
+        if("Disconnect".equals(status)){
+            Log.e("trstatus",status+"===========");
+            isOffLine=true;
+        }else{
+            isOffLine=false;
+        }
+        if (!isOffLine) {
+            filter_A_Time = mWaterPurifer.filterInfo.Filter_A_Percentage;
+            filter_B_Time = mWaterPurifer.filterInfo.Filter_B_Percentage;
+            filter_C_Time = mWaterPurifer.filterInfo.Filter_C_Percentage;
+            filter_median1 = Math.min(filter_A_Time, filter_B_Time);
+            filter_median2 = Math.min(filter_median1, filter_C_Time);
+            setFilterState(filter_median2);
+            Log.e("trfilterTime", "A------" + filter_A_Time + "\nB------" + filter_B_Time + "\nC------" + filter_C_Time + "\nMIN------" + filter_median2);
+        }else{
+            filter_A_Time = -1;
+            filter_B_Time = -1;
+            filter_C_Time = -1;
+            Log.e("trfilterTime", "A-----@" + filter_A_Time + "\nB------@" + filter_B_Time + "\nC------@" + filter_C_Time);
         }
     }
 

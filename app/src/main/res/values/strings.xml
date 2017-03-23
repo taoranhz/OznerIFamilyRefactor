@@ -641,6 +641,8 @@
     <string name="rest_ro_fit">复位</string>
     <string name="rofit">滤芯状态</string>
     <string name="ro_fit">清洗前置滤芯</string>
+    <string name="rofilter_success">复位成功</string>
+    <string name="rofilter_fail">复位失败</string>
     <string name="rofilter_need_change">为了您和家人的健康，请及时更换滤芯</string>
     <string name="warmly_notice">温馨提醒：及时更换滤芯才能保证饮用水的安全</string>
     <string name="cant_find_pictures">"Can't find pictures"</string>
