@@ -1,0 +1,626 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="shoujihao">13166398575</string>
+    <string name="yanzhengma">2254</string>
+    <string name="app_name">浩泽净水家</string>
+    <!--<string name="app_name">New浩泽</string>-->
+    <string name="ozner_copyright">COPYRIGHT©2015 OZNER.ALL RIGHTS RESERVED</string>
+    <string name="Baidu_Push_ApiKey">0si8AI4XyFKDbK7dWGIZG424</string>
+
+    <string name="navigation_drawer_open">打开侧边栏</string>
+    <string name="navigation_drawer_close">关闭侧边栏</string>
+    <string name="settings">设置</string>
+    <string name="PressToExit">再按一次退出程序</string>
+    <string name="times">次</string>
+    <string name="no_more_messages">没有更多信息了</string>
+    <!--<string name= "no_more_messages">no more messages</string>-->
+
+    <!--底部菜单-->
+    <string name="device">设备</string>
+    <string name="eshop">商城</string>
+    <string name="chat">咨询</string>
+    <string name="mine">我的</string>
+
+    <string name="ozner_eshop">浩泽商城</string>
+
+    <!--错误信息提示-->
+    <string name="exception_tips">异常信息</string>
+    <string name="err_net_outline">网络中断，请检查您的网络状态</string>
+    <string name="not_obtain_version">未获取到版本信息</string>
+
+    <string name="err_miss_phone">请输入11位手机号</string>
+    <string name="err_miss_verify_code">请输入验证码</string>
+    <string name="err_miss_proctol">请先同意《浩泽净水家免责条款》</string>
+    <string name="bd_bind_fail">百度推送绑定失败</string>
+    <string name="device_address_err">设备地址错误</string>
+    <string name="Filter_Scan">扫一扫</string>
+    <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
+
+    <!--登录-->
+    <string name="login_phone_hint">请输入手机号</string>
+    <string name="input_userphone">请输入手机号</string>
+    <string name="login_code_hint">请输入验证码</string>
+    <string name="input_verifycode">请输入验证码</string>
+    <string name="get_verify_code">获取验证码</string>
+    <string name="login">登  录</string>
+    <string name="get_voice_code">获取语音验证码</string>
+    <string name="agree_proctol">我已阅读并同意</string>
+    <string name="ozner_proctol">《浩泽净水家免责条款》</string>
+    <string name="login_no_code">未收到验证码？</string>
+    <string name="login_btn_voi">获取语音验证码</string>
+    <string name="verify_code_requesting">正在获取验证码...</string>
+    <string name="logining">登录中...</string>
+    <string name="tips_getcode">验证码将以短信的形式发送给您,请注意查收</string>
+    <string name="tips_getvoice">您将会收到来自400电话语音，请注意接听。</string>
+    <string name="sign_out_tip">下线通知</string>
+    <string name="login_on_other_device">您的账号在其他设备登录，请重新登录.</string>
+
+    <string name="email">邮箱</string>
+    <string name="password">密码</string>
+    <string name="reset">重置</string>
+    <string name="resetpassword">重置密码</string>
+    <string name="sign_up">注册账号</string>
+    <string name="input_email">请输入邮箱</string>
+    <string name="input_password">请输入密码</string>
+    <string name="valid_email">邮箱格式不正确</string>
+    <string name="verify_code">验证码</string>
+    <string name="newpassword">新密码</string>
+    <string name="confirm_password">确认密码</string>
+    <string name="sendingEmailCode">正在发送验证码...</string>
+    <string name="fail_to_get_code">验证码发送失败</string>
+    <string name="different_pwd">密码不一致</string>
+    <string name="reset_pwd_success">密码重置成功，请重新登录</string>
+    <string name="regSucc">注册成功</string>
+
+
+    <string name="current_filter_state">当前滤芯状态</string>
+    <string name="filter_tips">温馨提醒：及时更换滤芯才能保证饮用水的安全</string>
+    <string name="left_replace_filter">离更换滤芯还剩</string>
+    <string name="scancode">扫描二维码</string>
+    <string name="scancode_text">扫描滤芯包装上的二维码，激活APP并启动滤芯复位。</string>
+    <string name="more_products">更多产品</string>
+    <string name="relieved_service">浩泽安心服务</string>
+
+    <string name="Filter_Project1">浩泽智能水探头</string>
+    <string name="Filter_Project2">金色伊泉系列</string>
+    <string name="Filter_Project3">浩泽智能杯</string>
+
+    <string name="Filter_Service_up_00">365天滤芯寿命</string>
+    <string name="Filter_Service_up_01">每年上门更换</string>
+    <string name="Filter_Service_up_10">10项智能</string>
+    <string name="Filter_Service_up_11">上门整机维修</string>
+    <string name="Filter_Service_up_20">安全断水</string>
+    <string name="Filter_Service_up_21">24小时客服咨询</string>
+    <string name="Filter_Service_up_30">定期水质监测</string>
+    <string name="Filter_Service_up_31">产品智能软件升级</string>
+
+    <string name="Filter_Service_down_00">监测与预警</string>
+    <string name="Filter_Service_down_01">标准滤芯材料一次</string>
+    <string name="Filter_Service_down_10">安全净水服务</string>
+    <string name="Filter_Service_down_11">零配件更换服务</string>
+    <string name="Filter_Service_down_20">更换滤芯提醒</string>
+
+    <!--设备-->
+    <string name="connected">已连接</string>
+    <string name="connecting">连接中</string>
+    <string name="device_connecting">正在连接中</string>
+    <string name="device_unconnected">设备未连接</string>
+    <string name="disconnect">断开</string>
+    <string name="air_disconnect">断开</string>
+    <string name="add_device">添加设备</string>
+    <string name="nodevice_add_device">请添加设备</string>
+    <string name="start_ozner_smart">开启浩泽智能生活</string>
+    <string name="match_device">设备配对</string>
+    <string name="add_newDevice">添加新设备</string>
+    <string name="select_ozner_device">选择智能设备</string>
+    <string name="ozner_smart_service">浩泽智能化生活服务</string>
+    <string name="start_smart_service">立即添加设备，开始体验浩泽智能化生活服务。</string>
+    <string name="device_name">设备名字</string>
+    <string name="use_position">使用地点</string>
+    <!--设备名字-->
+    <string name="smart_glass">智能杯</string>
+    <string name="water_probe">水探头</string>
+    <string name="water_purifier">净水器</string>
+    <string name="water_tdspen">水质检测笔</string>
+    <string name="air_purifier">空气净化器</string>
+    <string name="air_purifier_ver">空气净化器\n(立式)</string>
+    <string name="air_purifier_desk">空气净化器\n(台式)</string>
+    <string name="water_replen_meter">智能补水仪</string>
+
+    <!--配对方式-->
+    <string name="bluetooth_connection">蓝牙连接</string>
+    <string name="wifi_connection">WIFI连接</string>
+    <string name="blue_need_pos">蓝牙配对需要位置权限</string>
+    <string name="open_camera_permission">没有摄像头权限</string>
+
+    <!--配对-->
+    <string name="replen_match_tips">按开关键5秒，蓝灯闪烁</string>
+    <string name="rember_password">下次记住密码</string>
+    <string name="match_notice_tap">长按下start按钮3秒</string>
+    <string name="matching_bluetooth">正在进行蓝牙配对</string>
+    <string name="found_device">已搜索到设备</string>
+    <string name="rematch">重新配对</string>
+    <string name="match_successed">配对成功</string>
+    <string name="match_failed">配对超时</string>
+    <string name="common_problem">常见问题</string>
+    <string name="problem_notice_tap">您可以检查水探头电量、蓝牙开启状态后再进行配对</string>
+    <string name="problem_notice_replen">您可以检查补水仪蓝牙开启状态后再进行配对</string>
+    <string name="input_tap_name">输入水探头名字</string>
+    <string name="input_weight">输入体重</string>
+    <string name="beat_users">击败了%1$d%%的用户</string>
+
+    <string name="reverse_cup">请将智能水杯倒置</string>
+    <string name="input_cup_name">输入水杯名字</string>
+    <string name="input_air_name">输入空气净化器名字</string>
+    <string name="input_replen_name">输入补水仪名字</string>
+    <string name="input_tdspen_name">输入水质检测笔名称</string>
+    <string name="select_gender_tips">请选择设定您的性别</string>
+    <string name="man">男</string>
+    <string name="women">女</string>
+    <string name="secrecy">保密</string>
+    <string name="gender">性别</string>
+    <string name="time_to_moisturizing">补水时间到了，亲</string>
+    <string name="replen_remind">补水提醒</string>
+    <string name="replen_remind_time">补水提醒时间</string>
+    <string name="replen_tips">建议每天补水2-3次</string>
+    <string name="replen_use_replen_tips">坚持使用精华水，能有效改善肌肤状态</string>
+    <string name="replen_use_des">补水仪使用说明</string>
+    <string name="replen_low_power_setting_tips">当电量低于15%时，APP会进行提示！</string>
+    <string name="office">办公室</string>
+    <string name="finish">完成</string>
+    <string name="no_success">未成功</string>
+    <string name="device_disConnect">设备连接已断开</string>
+    <string name="not_support">不支持此功能</string>
+
+    <string name="connect_wlan">连接WLAN</string>
+    <string name="inpu_water_name">输入净水器名字</string>
+    <string name="input_airpurifier_name">输入净化器名称</string>
+
+    <string name="select_useful_wifi">选择一个可用的WLAN，让设备接入网络</string>
+    <string name="Purifier_RouterConnecting">路由器正在尝试与云端建立联系</string>
+    <string name="Purifier_CheckToReMatch">您可以检查WiFi连接状态后再进行配对</string>
+    <string name="Purifier_SendConfig">正在发送配置信息</string>
+    <string name="next_step">下一步</string>
+    <string name="Purifier_WaitRestart">等待设备重启</string>
+    <string name="Purifier_WaitRegist">等待设备激活</string>
+
+    <string name="sync_press">同时按下</string>
+    <string name="and">和</string>
+    <string name="lamp_blinks">，WIFI指示灯闪烁</string>
+    <string name="matching_wifi">正在进行WiFi配对</string>
+
+    <string name="notice_bottom_air_desk">检查滤芯状态和蓝牙开启状态后再尝试配对</string>
+
+    <string name="replen_query_title">肤质查询</string>
+    <string name="replen_your_skin">您的肤质</string>
+    <string name="replen_never_test">您还从未检测过哦</string>
+    <string name="time1">时间1</string>
+    <string name="time2">时间2</string>
+    <string name="time3">时间3</string>
+    <string name="change_deivce_name">修改名称</string>
+
+    <string name="face">脸</string>
+    <string name="eyes">眼</string>
+    <string name="hand">手</string>
+    <string name="neck">颈</string>
+    <string name="part_face">脸部</string>
+    <string name="part_eye">眼部</string>
+    <string name="part_hand">手部</string>
+    <string name="part_neck">颈部</string>
+    <string name="replen_oil">油分</string>
+    <string name="replen_water">水分</string>
+    <string name="hydra_standard">水润标准</string>
+    <string name="skin_condition">今日肌肤状态\t\t</string>
+    <string name="replen_skin_notices">您本周的皮肤水分偏离正常，请及时保湿补水。</string>
+
+    <string name="water_replenish_oilcontext">\t\t皮肤出油是由于人体皮肤干燥缺水，导致肌肤受损，人体自我修复和保护系统会分泌油脂来保护肌肤！
+        大多数男性肌肤多为油性肌肤，所以要想从根本解决出油问题，需要注意肌肤的补水保湿，这样才能从根本改善和保护受损肌肤。</string>
+    <string name="water_replenish_humtip">(仅供参考)</string>
+
+    <string name="replen_water_introduce" formatted="false">眼部\t35%-45%\n脸部\t32%-42%\n颈部\t35%-45%\n手部\t32%-38%\n(仅供参考)</string>
+    <string name="replen_water_season_tip">不同季节各部分水分数值将有所不同。</string>
+    <string name="replen_water_season_tip_value" formatted="false">夏季水分率正常值相差3%，冬季水分率正常值相差5%。</string>
+    <string name="replen_water_introduce_title">人体部位正常水分率</string>
+    <string name="replen_low_power_tips">电池电量低，请及时充电！！！</string>
+    <string name="replen_click_tips">请点击您想要检测的身体部位</string>
+    <string name="replen_skin_null">您的肤质\t%s</string>
+    <string name="replen_last_test">上一次检测</string>
+    <string name="replen_average">平均值</string>
+    <string name="replen_test_face_tips">请将补水仪\n放置脸部</string>
+    <string name="replen_test_eye_tips">请将补水仪\n放置眼部</string>
+    <string name="replen_test_hand_tips">请将补水仪\n放置手部</string>
+    <string name="replen_test_neck_tips">请将补水仪\n放置颈部</string>
+    <string name="replen_water_low">水分太低</string>
+    <string name="dry">干燥</string>
+    <string name="normal">正常</string>
+    <string name="wetness">湿润</string>
+    <string name="replen_test_less_time">您的检测时间未满5秒...</string>
+    <string name="replen_average_value">%1$2.1f%%(%2$d次)</string>
+    <string name="replen_face_notice_dry">脸颊两边皮肤干燥起皮，T区油腻毛孔粗大痘痘横行 脸部亟需补水哦！</string>
+    <string name="replen_face_notice_normal">皮肤不油也不干，脸部缺水问题暂时得到缓解。</string>
+    <string name="replen_face_notice_wetness"> 脸部细腻红润有光泽 补水到位 面色也不一样哦！</string>
+    <string name="replen_eye_notice_dry">眼部肌肤干燥，易出现皱纹及水肿。此处皮肤松弛较难恢复原状态。补水是延缓衰老的根本保障。</string>
+    <string name="replen_eye_notice_normal">眼部现在的皮肤水分属于正常水平，但是略显疲惫，请注意保湿！</string>
+    <string name="replen_eye_notice_wetness">眼部现在的肌肤已经喝饱了水分！请注意保持呦！</string>
+    <string name="replen_hand_notice_dry"> 手部干燥细纹也跑出来啦 手指的肉刺也变多 需要赶快补充水分哦！</string>
+    <string name="replen_hand_notice_normal"> 手部现在的肌肤水份得到补充 果然光滑许多</string>
+    <string name="replen_hand_notice_wetness">手部润滑有弹性 喝饱水的肌肤果然让人爱不释手呢！</string>
+    <string name="replen_neck_notice_dry">颈部组织薄弱，油脂分泌少，水分难以保持，皱纹容易产生，补水显得格外重要！</string>
+    <string name="replen_neck_notice_normal">颈部水份已达标，别让颈纹泄露了你的年龄。</string>
+    <string name="replen_neck_notice_wetness">颈部现在很水润，但不要松懈哦！</string>
+    <string name="replen_query_data_less">数据累计不足，无法查询你的肤质类型，请再接再励！</string>
+    <string name="replen_test_count">累计检测次数</string>
+    <string name="replen_query_notice">温馨提示：肤质评估仅供参考，涂抹化妆品及其他护理后会影响检测结果。</string>
+    <string name="replen_other_skin_type">其他肤质类型</string>
+    <string name="replen_skin_dry">干性</string>
+    <string name="replen_skin_oil">油性</string>
+    <string name="replen_skin_neture">中性</string>
+    <string name="replen_skin_dry_notice">干性肌肤需要进行深层补水，另外，肌肤营养缺乏会加速保水能力衰弱，定期使用适量净化补水也能改善您的干性特质哦！</string>
+    <string name="replen_skin_neture_notice">您的肌肤正处于相对健康的肤质状态哦，请注意及时补水保湿维持住您吹弹可破的肌肤状态哦！</string>
+    <string name="replen_skin_oil_notice">皮肤通道是先吸收水，再吸收油。当肌底极度缺水干燥的时候，为保护皮肤，油脂才会分泌过盛。水油已严重失衡啦，请注意控油补水！</string>
+    <string name="replen_times_tips">通过数据累计统计，仅供参考。</string>
+    <string name="replen_buy_essence">购买精华水</string>
+    <string name="warm_remind_colon">温馨提醒:</string>
+    <string name="replen_detail_title">智能补水仪详情</string>
+
+    <!--Tds-->
+    <string name="tds_months">本月水质纯净指数分布</string>
+    <string name="tdsTitle">水质纯净值TDS</string>
+    <string name="state_null">暂无</string>
+    <string name="no_data">暂无数据</string>
+    <string name="tds_rank">击败了%1$d的用户</string>
+    <string name="data_loading">数据加载中</string>
+    <string name="filter_need_change">请及时更换滤芯</string>
+    <string name="filter_status">滤芯状态</string>
+    <string name="health">健康</string>
+    <string name="soso">一般</string>
+    <string name="bad">较差</string>
+    <string name="safety">安全</string>
+
+    <string name="pre_purifier">净化前</string>
+    <string name="after_purifier">净化后</string>
+    <string name="purifierDetail_after">经过净化后的水质健康，适合您直饮</string>
+    <string name="warm">加热</string>
+    <string name="refrigeration">制冷</string>
+    <string name="power">电源</string>
+    <string name="please_open_power">请先打开电源开关</string>
+    <string name="send_status_fail">发送失败</string>
+    <string name="send_status_success">发送成功</string>
+    <string name="command_sending">命令发送中</string>
+    <string name="Iknow">我知道了</string>
+    <string name="buy_filter">购买滤芯</string>
+    <string name="filter_reset">滤芯重置</string>
+
+
+    <string name="device_dis_connect">设备已断开</string>
+    <string name="device_close">已关机</string>
+    <string name="device_no_net">设备云已断开</string>
+    <string name="phone_nonet">手机未连接网络</string>
+    <string name="outdoor_air">室外空气:</string>
+    <string name="insidedoor_air">室内空气</string>
+    <string name="voc">VOC</string>
+    <string name="air_open">开关</string>
+    <string name="air_mode">模式</string>
+    <string name="air_timing">定时</string>
+    <string name="air_lock">童锁</string>
+    <string name="show_belt_color">显示灯带颜色</string>
+    <string name="air_purifier_lamplight_tips">空气质量灯光提醒</string>
+    <string name="bad_less">污染较少</string>
+    <string name="bad_more">污染严重</string>
+
+
+    <string name="air_low_speed">低风速</string>
+    <string name="air_high_speed">高风速</string>
+    <string name="air_middle_speed">中风速</string>
+
+    <string name="air_purifier_use_instru">空气净化器使用说明</string>
+
+    <string name="in_test">检测中</string>
+    <string name="excellent">优</string>
+    <string name="good">良</string>
+    <string name="bads">差</string>
+    <string name="ordinary">一般</string>
+
+
+    <string name="cup_waterVolum">今日饮水量:</string>
+    <string name="cup_volumGoal">饮水目标:</string>
+    <string name="temp_null">无法测量当前温度</string>
+    <string name="water_temp_no_dot">水温</string>
+    <string name="water_temp">水温:</string>
+    <string name="temp_cool">偏凉</string>
+    <string name="temp_hot">偏烫</string>
+    <string name="temp_moderation">适中</string>
+    <string name="can_drink">当前水温适宜饮用</string>
+    <string name="can_not_drink">当前水温不适宜饮用</string>
+    <string name="water_volum">饮水量</string>
+
+    <!--设置-->
+    <string name="my_water_purifier">我的净水器</string>
+    <string name="my_tap">我的水探头</string>
+    <string name="my_cup">我的水杯</string>
+    <string name="my_air_purifier">我的空气净化器</string>
+    <string name="my_repen">我的补水仪</string>
+
+    <string name="water_mac">水机编号</string>
+    <string name="about_water_purifier">关于净水器</string>
+
+    <string name="Not_found_device">未发现设备</string>
+    <string name="input_device_name">请输入设备名字</string>
+    <string name="weight_can_not_empty">体重不能为空</string>
+    <string name="water_goal_cannot_empty">饮水目标不能为空</string>
+
+    <string name="save">保存</string>
+    <string name="save_successful">保存成功</string>
+    <string name="detection_time">检测时间</string>
+    <string name="detection_time1">检测时间1</string>
+    <string name="detection_time2">检测时间2</string>
+    <string name="tap_attention">滤芯不足10天会显示提醒</string>
+    <string name="about_tap">关于水探头</string>
+    <string name="about_tdspen">关于水质检测笔</string>
+    <string name="delete_this_device">删除此设备</string>
+    <string name="add">新增</string>
+    <string name="add_pos">添加地点</string>
+    <string name="add_property">添加属性</string>
+    <string name="input_new_pos">输入新的地点</string>
+    <string name="input_new_property">输入新的属性</string>
+    <string name="append">添加</string>
+    <string name="cancle">取消</string>
+    <string name="ensure">确定</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+
+    <string name="pos_toilets">洗手间</string>
+    <string name="pos_kitchen">厨房</string>
+
+    <string name="pos_home">家</string>
+    <string name="pos_office">办公室</string>
+
+    <string name="pos_living_room">客厅</string>
+    <string name="pos_bedroom">卧室</string>
+
+    <string name="property">属性</string>
+
+    <string name="cup_mine">我的水杯</string>
+    <string name="cup_family">家人水杯</string>
+    <string name="cup_friend">朋友水杯</string>
+    <string name="weight_and_volum">体重与饮水量</string>
+    <string name="today_state">今日状态</string>
+    <string name="cup_catch_cold">感冒发烧</string>
+    <string name="cup_sport_sweat">运动出汗</string>
+    <string name="cup_hotday">天气炎热</string>
+    <string name="cup_period">大姨妈来了</string>
+    <string name="cup_takewater_remind">饮水提醒</string>
+    <string name="cup_take_water_time">饮水提醒时间段</string>
+    <string name="cup_take_water_interval">饮水提醒时间间隔</string>
+    <string name="minute">分钟</string>
+    <string name="cup_remind_sound">水杯声音提醒</string>
+    <string name="takewater_temp">饮水温度</string>
+    <string name="takewater_tds">饮水纯净指数TDS</string>
+
+    <string name="tds_blow">50以下</string>
+    <string name="tds_middle">50-200</string>
+    <string name="tds_high">200以上</string>
+    <string name="temp_blow">25℃以下</string>
+    <string name="temp_middle">25℃-50℃</string>
+    <string name="temp_up">50℃以上</string>
+    <string name="cup_setting_attention">注意：电量低于10%时，光圈双闪。</string>
+    <string name="about_cup">关于智能杯</string>
+    <string name="set_start_time">设置开始时间</string>
+    <string name="set_end_time">设置结束时间</string>
+    <string name="set_remind_interval">设置饮水提醒间隔</string>
+
+
+    <string name="sky">天</string>
+    <string name="month">月</string>
+    <string name="week">周</string>
+    <string name="day">日</string>
+    <string name="friend_rank">好友排名</string>
+    <string name="tdsDetailTitle">水质纯净值</string>
+    <string name="water_volum_finish">今日饮水完成</string>
+    <string name="water_volum_exp">饮水量指数分布</string>
+
+    <string name="tds_exp">水质纯净值分布</string>
+    <string name="day_tds_exp">今日饮水纯净指数分布</string>
+    <string name="week_tds_exp">本周饮水纯净指数分布</string>
+    <string name="month_tds_exp">本月饮水纯净指数分布</string>
+    <string name="tds_quality_exp">水质纯净指数分布</string>
+    <string name="tds_good_tips">完美水质，体内每个细胞都说好！</string>
+    <string name="tds_normal_tips">饮水安全须谨慎，你值的拥有更好的。</string>
+    <string name="tds_bad_tips">当前杂质较多，请放心给对手饮用。</string>
+
+    <string name="temp_exp">饮水水温分布</string>
+    <string name="day_temp_exp">今日饮水水温分布</string>
+    <string name="week_temp_exp">本周饮水水温分布</string>
+    <string name="month_temp_exp">本月饮水水温分布</string>
+    <string name="temp_cool_tips">水温太凉啦！让胃暖起来，心才会暖！</string>
+    <string name="temp_mid_tips">不凉不烫，要的就是刚刚好！</string>
+    <string name="temp_hot_tips">水温偏烫再凉一凉吧，心急可是会受伤的哦！</string>
+
+    <string name="change_your_health">改善您的饮水健康</string>
+    <string name="water_know">健康水知道</string>
+    <string name="buy_water_purifier">购买净水器</string>
+
+<!--anion releasing-->
+    <string name="anion_release">负离子释放中</string>
+    <string name="air_indoor_detail">室内空气质量详情</string>
+    <string name="pm25_introduce">PM2.5为空气中细颗粒物</string>
+    <string name="voc_introduce">VOC为空气中挥发性有机化合物</string>
+    <string name="air_cleans_tips">空气净化器当前总净化量，更新周期1分钟</string>
+    <string name="filter_remain">滤芯还剩</string>
+    <string name="air_remind">温馨提醒：及时更换滤芯，享纯净空气</string>
+
+    <string name="what_is_pm25">什么是PM2.5</string>
+    <string name="pm_introduce_title">细颗粒物(PM2.5)</string>
+    <string name="pm_introduce_content">\t\tPM2.5是直径小于或等于2.5微米的颗粒物，也称为细颗粒物或可入肺颗粒物，可直接进入肺部。PM2.5沉淀进肺泡后无法排除，会对呼吸系统和心血管系统造成很大伤害，引起包括支气管炎，哮喘，冠心病等疾病。</string>
+
+    <string name="what_is_voc">什么是VOC</string>
+    <string name="voc_introduce_title">挥发性有机化合物 </string>
+    <string name="voc_introduce_sub_title">Volatile Organic Comounds,缩写VOC</string>
+    <string name="voc_introduce_content">\t\t通常指在常温下容易挥发的有机化物。较常见的苯 、甲苯、二甲苯、乙苯、苯乙烯、甲醛、TVOC(6-16个碳的烷烃）、酮类等。 这些化合物具有易挥发和亲油等特点，被广泛应用于鞋类、玩具、油漆和石墨、粘合剂、化妆品、室内和汽车装饰材料等工业领域。VOC对人体健康有巨大的影响，会伤害人的肝脏、肾脏、大脑和神经系统，造成记忆力减退等严重后果，甚至可能致癌。</string>
+    <string name="filter_reset_title">重置滤芯</string>
+    <string name="filter_reset_tips">重置后将对滤芯使用时间重新计时，这将会影响到空气净化效果。确认是否重置？</string>
+
+
+    <string name="unknown">未知</string>
+    <string name="out_door_air">室外空气</string>
+    <string name="city_legend">城市：</string>
+    <string name="pm_legend">细颗粒物(PM2.5)：</string>
+    <string name="AQI_legend">空气质量指数(AQI)：</string>
+    <string name="temp_legend">温度：</string>
+    <string name="humidity_legend">湿度：</string>
+    <string name="data_from_legend">数据来源：</string>
+    <string name="I_got_it">我知道了</string>
+
+
+    <string name="url_null">URL参数为空</string>
+    <string name="userinfo_miss">用户信息不全</string>
+
+
+    <string name="click_to_login">点击登录</string>
+    <string name="my_device">我的设备</string>
+    <string name="cathc_redbag">领红包</string>
+    <string name="my_order">我的订单</string>
+    <string name="my_ticket">我的券</string>
+    <string name="my_burse">我的小金库</string>
+    <string name="share_card">分享礼卡</string>
+    <string name="my_friend">我的好友</string>
+    <string name="view_report">查看水质检测报告</string>
+    <string name="my_feedback">我要提意见</string>
+    <string name="chat_call">客服</string>
+    <string name="permission_call_phone_denied">电话权限被拒绝</string>
+    <string name="no_permission">没有相应的访问权限</string>
+
+    <string name="act_member">代理会员</string>
+
+    <string name="rank_tap_tds">水探头水质纯净值TDS</string>
+    <string name="rank_water_purifier_tds">净水器水质纯净值TDS</string>
+    <string name="rank_cup_tds">智能杯水质纯净值TDS</string>
+    <string name="rank_cup_vol">智能杯饮水量</string>
+    <string name="rank">排名</string>
+    <string name="today_best_tds">您今日最佳(TDS)</string>
+    <string name="get_mark">获得点赞</string>
+    <string name="rank_data_is_empty">暂无排名数据</string>
+    <string name="nin">您</string>
+    <string name="obtainChamp">%1$s夺得%2$s月排行榜冠军</string>
+    <string name="like_me">赞我的人</string>
+    <string name="is_delete">是否删除？</string>
+    <string name="water_purifier_tds_rank">净水器TDS排行</string>
+    <string name="tap_tds_rank">水探头TDS排行</string>
+    <string name="cup_tds_rank">智能杯TDS排行</string>
+    <string name="cup_volume_rank">智能杯饮水量排行</string>
+    <string name="montyDayTime">%1$d月%2$d日</string>
+    <string name="immediately_add">立即添加</string>
+    <string name="device_friend">设备好友</string>
+    <string name="no_friend_tip_up">与好友一起开始体验</string>
+    <string name="no_friend_tip_down">浩泽智能化生活服务</string>
+    <string name="number_message">条留言</string>
+    <string name="send">发送</string>
+    <string name="replay">回复 %s:</string>
+    <string name="no_leave_msg">没有留言</string>
+    <string name="sending">正在发送</string>
+    <string name="submiting">正在提交</string>
+    <string name="no_verify_msg">没有验证信息</string>
+    <string name="submit">提交</string>
+    <string name="adsive">我要提意见</string>
+
+    <string name="verify_msg">验证消息</string>
+    <string name="add_friend">添加朋友</string>
+    <string name="added">已添加</string>
+    <string name="loading">正在加载...</string>
+    <string name="no_contacts_friend">没有通讯录好友</string>
+    <string name="wait_verify">等待验证</string>
+    <string name="friend_search_fail">没有搜索到好友</string>
+    <string name="is_not_ozner_user">不是浩泽用户</string>
+    <string name="input_right_phone">请输入正确的手机号</string>
+    <string name="searching">正在查找</string>
+    <string name="input_friend_phone">请输入好友手机号</string>
+    <string name="send_verify_tips">您需要发送验证申请，等待对方通过</string>
+    <string name="user_deny_red_contacts">用户拒绝访问通讯录</string>
+    <string name="user_deny_write_storge">用户拒绝写入SD卡</string>
+
+    <string name="feed_back_tips">如果您在使用过程中，有任何问题或建议，请留下你宝贵的意见与建议，我们会努力解决您的问题。</string>
+    <string name="need_login_first">请先登录</string>
+    <string name="input_advise">请输入要提交的意见</string>
+    <string name="submit_fail">提交失败</string>
+    <string name="advise_result_up">感谢您的宝贵意见</string>
+    <string name="advise_result_down">我们会尽快处理</string>
+
+    <string name="allow_push_msg">允许推送消息</string>
+    <string name="unit">计量单位</string>
+    <string name="about_ozner">关于浩泽净水家</string>
+    <string name="logout">退出登录</string>
+    <string name="islogout">是否退出登录？</string>
+    <string name="setting">设置</string>
+    <string name="check_version">检查更新版本</string>
+    <string name="current_version">当前版本</string>
+    <string name="rate_ozner">评个分吧</string>
+    <string name="latest_version">已经是最新版本</string>
+    <string name="version_checking">正在检查更新</string>
+    <string name="no_device">您还没有设备\n请先添加设备</string>
+    <string name="device_unexsit">设备列表不存在该设备</string>
+
+    <string name="soft_update_title">软件更新</string>
+    <string name="soft_update_info">检测到新版本，立即更新吗</string>
+    <string name="soft_update">更新</string>
+    <string name="soft_update_later">稍后更新</string>
+    <string name="soft_updating">正在更新</string>
+    <string name="soft_update_cancel">取消</string>
+
+    <string name="Center_Temp">温度</string>
+    <string name="Center_Volumn">水量</string>
+    <string name="Center_Centigrade">摄氏度</string>
+    <string name="Center_Centigrade_Unit">(℃)</string>
+    <string name="Center_Fahrenheit">华氏度</string>
+    <string name="Center_fahrenheit_Unit">(℉)</string>
+    <string name="Center_ML">毫升</string>
+    <string name="Center_ML_Unit">(ML)</string>
+    <string name="Center_DL">分升</string>
+    <string name="Center_DL_Unit">(DL)</string>
+    <string name="Center_OZ">盎司</string>
+    <string name="Center_OZ_Unit">(OZ)</string>
+
+    <!--错误码-->
+    <string name="Code_Accept_nofound">没有发现对应请求</string>
+    <string name="Code_AddFriend_exists">已经发送过请求</string>
+    <string name="Code_C_TokenNull">Token验证失败</string>
+    <string name="Code_Code_TimeOut">验证码过期</string>
+    <string name="Code_Code_Wrong">验证码错误</string>
+    <string name="Code_Device_Notfound">设备没有发现</string>
+    <string name="Code_Exception">异常错误</string>
+    <string name="Code_Failed">未获取到数据</string>
+    <string name="Code_Friend_NoGx">和目标用户没有好友关系</string>
+    <string name="Code_Friend_NoUser">对方不是浩泽用户</string>
+    <string name="Code_P_NotNull">参数不能为空</string>
+    <string name="Code_P_params_empty">参数不能为空</string>
+    <string name="Code_P_params_error">参数错误</string>
+    <string name="Code_Success">Success</string>
+    <string name="Code_W_AddUser">添加用户异常</string>
+    <string name="Code_W_TokenWrite">Token写入数据库失败</string>
+    <string name="Code_W_Uname">用户名错误</string>
+    <string name="Code_Baidu_idwrong">用户没有绑定baidu设备id或者手机类型</string>
+    <string name="Code_Baidu_nouser">没有此用户</string>
+    <string name="Code_Like_Liked">已经点过赞了</string>
+    <string name="Code_Fiflter_CodeNotfound">二维码无效</string>
+    <string name="Code_Fiflter_CodeUsed">二维码已经使用过了</string>
+    <string name="Code_Fiflter_DeviceNotfound">设备未绑定</string>
+    <string name="Code_Login_Error">登录失败,检查用户名和密码是否正确</string>
+    <string name="Code_UserNotFound">没有发现此用户</string>
+    <string name="Code_Has_regist">用户已经注册过了</string>
+
+    <string name="button_send">发送</string>
+    <string name="attach_picture">照片</string>
+    <string name="attach_take_pic">拍照</string>
+    <string name="resend">重新发送</string>
+    <string name="confirm_resend">是否重新发送？</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="prompt">Prompt</string>
+    <string name="not_download">Did not download:</string>
+    <string name="text_ack_msg">Read</string>
+    <string name="text_delivered_msg">Delivered</string>
+
+    <string name="cant_find_pictures">"Can't find pictures"</string>
+    <string name="sd_card_does_not_exist">"SD card does not exist, can't take pictures"</string>
+    <string name="Whether_to_empty_all_chats">Clear all messages?</string>
+</resources>

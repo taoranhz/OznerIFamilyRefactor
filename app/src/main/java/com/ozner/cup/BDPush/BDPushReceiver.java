@@ -10,7 +10,6 @@ import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Chat.EaseUI.model.MessageDirect;
 import com.ozner.cup.Chat.EaseUI.utils.MessageCreator;
 import com.ozner.cup.Command.OznerPreference;
-import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.EMMessage;
 import com.ozner.cup.Utils.LCLogUtils;
@@ -99,7 +98,7 @@ public class BDPushReceiver extends PushMessageReceiver {
                     } else {
                         msg = jsonObj.getString("data");
                     }
-                    String userid = UserDataPreference.GetUserData(context, UserDataPreference.UserId, "");
+                    String userid = OznerPreference.GetValue(context, OznerPreference.UserId, "");
                     boolean isLogin = OznerPreference.IsLogin(context);
 
                     if (isLogin && !msg.isEmpty()) {

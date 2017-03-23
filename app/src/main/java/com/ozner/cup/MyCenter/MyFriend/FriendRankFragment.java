@@ -32,7 +32,7 @@ import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.RankType;
-import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.FriendRankItem;
 import com.ozner.cup.R;
@@ -73,7 +73,7 @@ public class FriendRankFragment extends BaseFragment implements IRankView, Adapt
     @Override
     public void onCreate(Bundle savedInstanceState) {
         rankAdapter = new RankAdapter(getContext(), R.layout.friend_rank_item);
-        userid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
+        userid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
         infoManager = new FriendInfoManager(getContext(), this);
         infoManager.loadFriendRank();
         super.onCreate(savedInstanceState);

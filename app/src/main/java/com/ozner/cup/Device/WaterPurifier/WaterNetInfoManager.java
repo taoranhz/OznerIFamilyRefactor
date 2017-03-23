@@ -10,6 +10,7 @@ import com.ozner.cup.DBHelper.WaterPurifierAttr;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
+import com.ozner.cup.Utils.LCLogUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
@@ -53,6 +54,7 @@ public class WaterNetInfoManager {
                     @Override
                     public void onNext(JsonObject jsonObject) {
                         if (jsonObject != null) {
+                            LCLogUtils.E(TAG,"MachineType:"+jsonObject.toString());
                             if (jsonObject.get("state").getAsInt() > 0) {
                                 WaterPurifierAttr attr = DBManager.getInstance(mContext.get()).getWaterAttr(mac);
                                 if (null == attr) {

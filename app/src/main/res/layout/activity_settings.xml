@@ -23,6 +23,7 @@
             android:background="@color/colorLine"/>
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/llay_pushMsg"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -52,6 +53,7 @@
         </LinearLayout>
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/tv_pushMsgLine"
             android:layout_width="match_parent"
             android:layout_height="1px"

@@ -137,7 +137,8 @@ public class Contacts {
     //台式净水器滤芯购买链接
 //    public static String deskPurifierUrl = "http://www.oznerwater.com/lktnew/wap/shopping/confirmOrderFromQrcode.aspx?gid=69";
     public static String deskPurifierUrl = "http://www.oznerwater.com/lktnew/wap/shopping/confirmOrderFromQrcode.aspx?gid=65";
-
+    //补水仪精华液购买链接
+    public static String buyReplenWaterUrl = "http://www.oznerwater.com/lktnew/wap/mall/goodsDetail.aspx?gid=203";
 
     //空净常见问题
     public static String air_faq = "file:///android_asset/air_faq.html";
@@ -160,7 +161,10 @@ public class Contacts {
     public static String aboutTdsPen = "file:///android_asset/hz_tdspen.html";
 
     // 免责条款
+<<<<<<< HEAD
 //    public static String URL_BASE_EXCEPTIONS = "http://cup.ozner.net/app/cn/";
+=======
+>>>>>>> master
     public static String exceptions_url = "http://cup.ozner.net/app/cn/mzsm.html";
 //    public static String exceptions_url = "http://app.joyro.com.cn:8282/jrAPPterm.html";
 

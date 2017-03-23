@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupRecord;
@@ -154,7 +155,7 @@ public class CupFragment extends DeviceFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
         tdsSensroManager = new TDSSensorManager(getContext());
         initAnimation();
         try {
@@ -177,6 +178,9 @@ public class CupFragment extends DeviceFragment {
         ButterKnife.inject(this, view);
         toolbar.setTitle("");
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        if (UserDataPreference.isLoginEmail(getContext())) {
+            tvTdsRank.setVisibility(View.INVISIBLE);
+        }
         return view;
     }
 
@@ -360,7 +364,8 @@ public class CupFragment extends DeviceFragment {
 
                 if (oldVolumeValue != record.Volume) {
                     oldVolumeValue = record.Volume;
-                    updateVolumeSensor(String.valueOf(record.Volume));
+                    if (!UserDataPreference.isLoginEmail(getContext()))
+                        updateVolumeSensor(String.valueOf(record.Volume));
                 }
             }
         }
@@ -423,9 +428,10 @@ public class CupFragment extends DeviceFragment {
         if (tdsValue > 5000) {//传感器无数据
             showNoData();
         } else {
-            tvTdsRank.setVisibility(View.VISIBLE);
-            tvTdsRank.setText(String.format(getString(R.string.beat_users), beatPer));
-
+            if (!UserDataPreference.isLoginEmail(getContext())) {
+                tvTdsRank.setVisibility(View.VISIBLE);
+                tvTdsRank.setText(String.format(getString(R.string.beat_users), beatPer));
+            }
             //显示tds对应状态
             if (tdsValue > 0 && tdsValue <= CupRecord.TDS_Good_Value) {
                 ivTdsState.setVisibility(View.VISIBLE);
@@ -453,7 +459,8 @@ public class CupFragment extends DeviceFragment {
                 if (oldTdsValue != tdsValue) {
                     oldTdsValue = tdsValue;
                     // TODO: 2016/12/8 updateTDSSensor
-                    updateTdsSensor(tdsValue);
+                    if (!UserDataPreference.isLoginEmail(getContext()))
+                        updateTdsSensor(tdsValue);
                 }
             } else {
                 showNoData();

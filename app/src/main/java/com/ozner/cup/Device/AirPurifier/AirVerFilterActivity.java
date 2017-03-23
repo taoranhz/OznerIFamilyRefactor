@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ozner.AirPurifier.AirPurifier_MXChip;
@@ -57,6 +58,8 @@ public class AirVerFilterActivity extends BaseActivity {
     TextView tvFilterRemind;
     @InjectView(R.id.filterProgress)
     FilterProgressView filterProgress;
+    @InjectView(R.id.llay_bottom)
+    LinearLayout llayBottom;
 
     private UserInfo userInfo;
     AirPurifierMonitor airMonitor;
@@ -76,8 +79,11 @@ public class AirVerFilterActivity extends BaseActivity {
             window.setNavigationBarColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
         }
         filterProgress.setThumb(R.drawable.filter_status_thumb);
+        if (UserDataPreference.isLoginEmail(this)) {
+            llayBottom.setVisibility(View.GONE);
+        }
 
-        String userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
+        String userid = OznerPreference.GetValue(this, OznerPreference.UserId, null);
         if (userid != null && !userid.isEmpty()) {
             userInfo = DBManager.getInstance(this).getUserInfo(userid);
         }
@@ -132,7 +138,7 @@ public class AirVerFilterActivity extends BaseActivity {
         if (mAirPurifier != null) {
             int pm25 = mAirPurifier.sensor().PM25();
             if (pm25 == 65535) {
-                tvPmValue.setText(R.string.disconnect);
+                tvPmValue.setText(R.string.air_disconnect);
             } else if (pm25 > 0 && pm25 < 1000) {
                 tvPmValue.setText(String.valueOf(pm25));
             } else {
@@ -242,7 +248,7 @@ public class AirVerFilterActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    @OnClick({R.id.tv_pmQuestion, R.id.tv_vocQuestion,R.id.tv_buy_filter_btn,R.id.tv_chatbtn})
+    @OnClick({R.id.tv_pmQuestion, R.id.tv_vocQuestion, R.id.tv_buy_filter_btn, R.id.tv_chatbtn})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_pmQuestion:

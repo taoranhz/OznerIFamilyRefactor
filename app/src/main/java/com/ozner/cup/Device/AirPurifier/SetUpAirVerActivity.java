@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ozner.AirPurifier.AirPurifier;
@@ -16,6 +17,7 @@ import com.ozner.AirPurifier.AirPurifier_MXChip;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
@@ -41,6 +43,10 @@ public class SetUpAirVerActivity extends BaseActivity {
     Toolbar toolbar;
     @InjectView(R.id.tv_device_name)
     TextView tvDeviceName;
+    @InjectView(R.id.rlay_introduct)
+    RelativeLayout rlayIntroduct;
+    @InjectView(R.id.llay_faq)
+    RelativeLayout llayFaq;
     private String mac = "";
     private AirPurifier mAirPurifier;
     private String deviceNewName = null, deviceNewPos = null;
@@ -55,7 +61,7 @@ public class SetUpAirVerActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         initToolBar();
-        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             Log.e(TAG, "onCreate: mac:" + mac);
@@ -65,6 +71,13 @@ public class SetUpAirVerActivity extends BaseActivity {
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
+        }
+
+        if(UserDataPreference.isLoginEmail(this)){
+            llayFaq.setVisibility(View.GONE);
+        }
+        if(isLanguageEn()){
+            rlayIntroduct.setVisibility(View.GONE);
         }
     }
 
@@ -162,7 +175,7 @@ public class SetUpAirVerActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mAirPurifier != null) {
-                                    DBManager.getInstance(SetUpAirVerActivity.this).deleteDeviceSettings(mUserid,mAirPurifier.Address());
+                                    DBManager.getInstance(SetUpAirVerActivity.this).deleteDeviceSettings(mUserid, mAirPurifier.Address());
                                     OznerDeviceManager.Instance().remove(mAirPurifier);
                                     setResult(RESULT_OK);
                                     SetUpAirVerActivity.this.finish();

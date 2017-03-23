@@ -146,10 +146,17 @@ public class LoginActivity extends BaseActivity implements CompoundButton.OnChec
                 loginPresenter.login();
                 break;
             case R.id.tv_proctol:
+<<<<<<< HEAD
                 // 增加免责条款的可点击
                 Intent mztkIntent=new Intent(LoginActivity.this, WebActivity.class);
                 mztkIntent.putExtra(Contacts.PARMS_URL,Contacts.exceptions_url);
                 startActivity(mztkIntent);
+=======
+                // TODO: 2016/11/3 打开网页
+                Intent proctolIntent = new Intent(this, WebActivity.class);
+                proctolIntent.putExtra(Contacts.PARMS_URL,Contacts.exceptions_url);
+                startActivity(proctolIntent);
+>>>>>>> master
                 break;
             case R.id.btn_getVoiceCode:
                 loginPresenter.getVoiceVerifyCode();

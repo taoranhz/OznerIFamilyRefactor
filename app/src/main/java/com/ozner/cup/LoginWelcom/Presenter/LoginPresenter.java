@@ -163,9 +163,9 @@ public class LoginPresenter {
                                     Log.e(TAG, "login_result: " + jsonObject.toString());
                                     if (jsonObject.get("state").getAsInt() > 0) {
                                         OznerPreference.setUserToken(loginContext.get(), jsonObject.get("usertoken").getAsString());
+                                        OznerPreference.SetValue(loginContext.get(), OznerPreference.UserId, jsonObject.get("userid").getAsString());
                                         OznerPreference.setIsLogin(loginContext.get(), true);
-                                        OznerPreference.setLoginEmail(loginContext.get(),false);
-                                        UserDataPreference.SetUserData(loginContext.get(), UserDataPreference.UserId, jsonObject.get("userid").getAsString());
+                                        UserDataPreference.setLoginEmail(loginContext.get(),false);
                                         try {
                                             UserInfo userInfo = DBManager.getInstance(loginContext.get()).getUserInfo(jsonObject.get("userid").getAsString());
                                             if (userInfo == null) {

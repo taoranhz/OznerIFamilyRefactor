@@ -27,7 +27,8 @@
     <TextView
         android:gravity="center"
         android:id="@+id/tv_btn_add"
-        android:layout_width="70dp"
+        android:layout_width="wrap_content"
+        android:minWidth="70dp"
         android:layout_height="wrap_content"
         android:background="@drawable/deal_vf_btn_bg"
         android:paddingBottom="6dp"

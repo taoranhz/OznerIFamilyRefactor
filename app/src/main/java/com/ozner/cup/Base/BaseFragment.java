@@ -3,6 +3,8 @@ package com.ozner.cup.Base;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
+import java.util.Locale;
+
 /**
  * Created by ozner_67 on 2016/11/1.
  * 邮箱：xinde.zhang@cftcn.com
@@ -24,5 +26,22 @@ public class BaseFragment extends Fragment {
         size[0] = view.getMeasuredWidth();
         size[1] = view.getMeasuredHeight();
         return size;
+    }
+
+    /**
+     * 是否是英文环境
+     * @return
+     */
+    public boolean isLanguageEn(){
+        try {
+            if (Locale.getDefault().getLanguage().endsWith("zh")) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return true;
+        }
     }
 }

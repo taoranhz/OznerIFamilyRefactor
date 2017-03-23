@@ -71,6 +71,7 @@
 
 
                 <include
+                    android:id="@+id/il_rank_en"
                     layout="@layout/tds_top_right_rank_chat"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -174,7 +175,7 @@
 
             </LinearLayout>
 
-            <include layout="@layout/tds_change_water_health_layout"/>
+            <include android:id="@+id/il_bottom" layout="@layout/tds_change_water_health_layout"/>
 
 
         </LinearLayout>

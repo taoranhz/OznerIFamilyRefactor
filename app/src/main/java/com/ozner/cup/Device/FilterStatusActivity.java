@@ -115,10 +115,12 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
         setContentView(R.layout.activity_filter_status);
         ButterKnife.inject(this);
         tvBuyWaterPurifier.setText(R.string.buy_filter);
-        uizMoreProject.setOnItemClickListener(this);
+        if (!UserDataPreference.isLoginEmail(this)) {
+            uizMoreProject.setOnItemClickListener(this);
+        }
         initToolBar();
         initStaticData();
-        userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
+        userid = OznerPreference.GetValue(this, OznerPreference.UserId, null);
         if (userid != null) {
             userInfo = DBManager.getInstance(this).getUserInfo(userid);
         }
@@ -145,6 +147,11 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
             }
         } catch (Exception ex) {
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
+        }
+
+        if(UserDataPreference.isLoginEmail(this)){
+            tvChatBtn.setVisibility(View.GONE);
+            tvBuyWaterPurifier.setVisibility(View.GONE);
         }
     }
 

@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.MyCenter.MyFriend.bean.FriendItem;
 import com.ozner.cup.MyCenter.MyFriend.bean.LeaveMessageItem;
@@ -50,7 +50,7 @@ public class FriendExpandListAdapter extends BaseExpandableListAdapter {
         friendList = new ArrayList<>();
         leMsgList = new ArrayList<>();
         try {
-            mUserid = UserDataPreference.GetUserData(mContext.get(), UserDataPreference.UserId, "");
+            mUserid = OznerPreference.GetValue(mContext.get(), OznerPreference.UserId, "");
             mMobile = DBManager.getInstance(mContext.get()).getUserInfo(mUserid).getMobile();
         } catch (Exception ex) {
             LCLogUtils.E(TAG, "FriendExpandListAdapter_Ex" + ex.getMessage());

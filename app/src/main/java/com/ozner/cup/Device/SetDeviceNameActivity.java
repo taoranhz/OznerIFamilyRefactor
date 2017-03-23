@@ -24,6 +24,7 @@ import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
 import com.ozner.cup.DBHelper.DBManager;
@@ -70,7 +71,7 @@ public class SetDeviceNameActivity extends BaseActivity {
         ButterKnife.inject(this);
         initToolBar();
         initPosList();
-        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             mDevice = OznerDeviceManager.Instance().getDevice(mac);

@@ -1,5 +1,6 @@
 package com.ozner.cup.Device.ReplenWater;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -17,20 +18,25 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
+import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
+import com.ozner.cup.Utils.WeChatUrlUtil;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+
+import static com.ozner.cup.R.id.llay_bottom_btn;
 
 public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
     private static final String TAG = "ReplenQuery";
@@ -54,7 +60,7 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
     ImageView ivSkinStatus;
     @InjectView(R.id.tv_skin_status_notice)
     TextView tvSkinStatusNotice;
-    @InjectView(R.id.llay_bottom_btn)
+    @InjectView(llay_bottom_btn)
     LinearLayout llayBottomBtn;
     @InjectView(R.id.rb_skin_dry)
     RadioButton rbSkinDry;
@@ -69,6 +75,7 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
     private OznerDeviceSettings oznerSetting;
     private int gender = 0;
     private int countTotal = 0;
+    private UserInfo mUserInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +91,8 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
         ButterKnife.inject(this);
         initToolBar();
         mUserToken = OznerPreference.getUserToken(this);
-        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
+        mUserInfo = DBManager.getInstance(this).getUserInfo(mUserid);
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid, mac);
@@ -93,6 +101,9 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
             LCLogUtils.E(TAG, "onCreate_Ex:" + ex.getMessage());
         }
 
+        if (UserDataPreference.isLoginEmail(this)) {
+            llayBottomBtn.setVisibility(View.GONE);
+        }
         initView();
         loadTestTimes();
         loadBuShuiFenbu();
@@ -125,10 +136,18 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
     private void initView() {
         rgSkinStatus.setOnCheckedChangeListener(this);
         if (gender == 0) {
-            loadImg(ivSkinStatus, R.drawable.img_women_query_dry);
+            if (isLanguageEn()) {
+                loadImg(ivSkinStatus, R.drawable.img_women_query_dry_en);
+            } else {
+                loadImg(ivSkinStatus, R.drawable.img_women_query_dry);
+            }
             loadImg(ivSkinNull, R.drawable.img_women_query_null);
         } else {
-            loadImg(ivSkinStatus, R.drawable.img_man_query_dry);
+            if(isLanguageEn()){
+                loadImg(ivSkinStatus, R.drawable.img_man_query_dry_en);
+            }else {
+                loadImg(ivSkinStatus, R.drawable.img_man_query_dry);
+            }
             loadImg(ivSkinNull, R.drawable.img_man_query_null);
         }
     }
@@ -148,6 +167,16 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
 
     @OnClick(R.id.tv_buy_essence_btn)
     public void onClick() {
+        if (!UserDataPreference.isLoginEmail(this)) {
+            if (mUserInfo != null) {
+                Intent shopIntent = new Intent(this, WebActivity.class);
+                String shopUrl = WeChatUrlUtil.formatUrl(Contacts.buyReplenWaterUrl, mUserInfo.getMobile(), mUserToken, "zh", "zh");
+                shopIntent.putExtra(Contacts.PARMS_URL, shopUrl);
+                startActivity(shopIntent);
+            } else {
+                showToastCenter(R.string.userinfo_miss);
+            }
+        }
     }
 
     @Override
@@ -157,33 +186,65 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
             case R.id.rb_skin_dry:
                 tvSkinStatusNotice.setText(R.string.replen_skin_dry_notice);
                 if (gender == 0) {
-                    skinStatusResId = R.drawable.img_women_query_dry;
+                    if (isLanguageEn()) {
+                        skinStatusResId = R.drawable.img_women_query_dry_en;
+                    } else {
+                        skinStatusResId = R.drawable.img_women_query_dry;
+                    }
                 } else {
-                    skinStatusResId = R.drawable.img_man_query_dry;
+                    if (isLanguageEn()) {
+                        skinStatusResId = R.drawable.img_man_query_dry_en;
+                    } else {
+                        skinStatusResId = R.drawable.img_man_query_dry;
+                    }
                 }
                 break;
             case R.id.rb_skin_oil:
                 tvSkinStatusNotice.setText(R.string.replen_skin_oil_notice);
                 if (gender == 0) {
-                    skinStatusResId = R.drawable.img_women_query_oil;
+                    if (isLanguageEn()) {
+                        skinStatusResId = R.drawable.img_women_query_oil_en;
+                    } else {
+                        skinStatusResId = R.drawable.img_women_query_oil;
+                    }
                 } else {
-                    skinStatusResId = R.drawable.img_man_query_oil;
+                    if (isLanguageEn()) {
+                        skinStatusResId = R.drawable.img_man_query_oil_en;
+                    } else {
+                        skinStatusResId = R.drawable.img_man_query_oil;
+                    }
                 }
                 break;
             case R.id.rb_skin_neture:
                 tvSkinStatusNotice.setText(R.string.replen_skin_neture_notice);
                 if (gender == 0) {
-                    skinStatusResId = R.drawable.img_women_query_neutral;
+                    if (isLanguageEn()) {
+                        skinStatusResId = R.drawable.img_women_query_neture_en;
+                    } else {
+                        skinStatusResId = R.drawable.img_women_query_neutral;
+                    }
                 } else {
-                    skinStatusResId = R.drawable.img_man_query_neture;
+                    if (isLanguageEn()) {
+                        skinStatusResId = R.drawable.img_man_query_neture_en;
+                    } else {
+                        skinStatusResId = R.drawable.img_man_query_neture;
+                    }
                 }
                 break;
             default:
                 tvSkinStatusNotice.setText(R.string.replen_skin_dry_notice);
                 if (gender == 0) {
-                    skinStatusResId = R.drawable.img_women_query_dry;
+                    if (isLanguageEn()) {
+                        skinStatusResId = R.drawable.img_women_query_dry_en;
+                    } else {
+                        skinStatusResId = R.drawable.img_women_query_dry;
+                    }
                 } else {
-                    skinStatusResId = R.drawable.img_man_query_dry;
+                    if (isLanguageEn()) {
+                        skinStatusResId = R.drawable.img_man_query_dry_en;
+                    } else {
+                        skinStatusResId = R.drawable.img_man_query_dry;
+                    }
                 }
                 break;
         }
@@ -297,7 +358,7 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
                                 } catch (Exception ex) {
                                     LCLogUtils.E(TAG, "loadTestTimes_Ex:" + ex.getMessage());
                                 }
-                            }else {
+                            } else {
                                 if (jsonObject.get("state").getAsInt() == -10006
                                         || jsonObject.get("state").getAsInt() == -10007) {
                                     BaseActivity.reLogin(ReplenQueryActivity.this);
@@ -350,7 +411,7 @@ public class ReplenQueryActivity extends BaseActivity implements RadioGroup.OnCh
                                         refreshSkinStatus(oilTotal, timeTotal);
                                     }
                                 }
-                            }else {
+                            } else {
                                 if (jsonObject.get("state").getAsInt() == -10006
                                         || jsonObject.get("state").getAsInt() == -10007) {
                                     BaseActivity.reLogin(ReplenQueryActivity.this);

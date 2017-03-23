@@ -90,9 +90,9 @@ public class LoginEnPresenter {
                             String usertoken = jsonObject.get("usertoken").getAsString();
                             String userid = jsonObject.get("userid").getAsString();
                             OznerPreference.setUserToken(mContext.get(), usertoken);
+                            OznerPreference.SetValue(mContext.get(), OznerPreference.UserId, userid);
                             OznerPreference.setIsLogin(mContext.get(), true);
-                            OznerPreference.setLoginEmail(mContext.get(), true);
-                            UserDataPreference.SetUserData(mContext.get(), UserDataPreference.UserId, userid);
+                            UserDataPreference.setLoginEmail(mContext.get(), true);
                             OznerDeviceManager.Instance().setOwner(userid, usertoken);
                             try {
                                 UserInfo userInfo = DBManager.getInstance(mContext.get()).getUserInfo(jsonObject.get("userid").getAsString());

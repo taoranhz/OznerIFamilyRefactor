@@ -8,7 +8,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Command.OznerPreference;
-import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.HttpHelper.ApiException;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.HttpHelper.OznerHttpResult;
@@ -119,7 +118,7 @@ public class TDSSensorManager {
                             if (jsonObject != null) {
                                 if (jsonObject.get("state").getAsInt() > 0) {
                                     int rank = 0;
-                                    String userid = UserDataPreference.GetUserData(mContext.get(), UserDataPreference.UserId, null);
+                                    String userid = OznerPreference.GetValue(mContext.get(), OznerPreference.UserId, null);
                                     JsonArray array = jsonObject.get("data").getAsJsonArray();
                                     for (JsonElement element : array) {
                                         if (userid.equals(element.getAsJsonObject().get("userid").getAsString())) {

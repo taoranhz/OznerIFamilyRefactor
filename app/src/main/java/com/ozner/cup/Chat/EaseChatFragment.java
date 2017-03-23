@@ -147,7 +147,7 @@ public class EaseChatFragment extends EaseBaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         isSending = false;
-        userid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, null);
+        userid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, null);
         UserInfo userInfo = DBManager.getInstance(getContext()).getUserInfo(userid);
         mMobile = userInfo.getMobile();
         mDeviceId = OznerPreference.GetValue(getContext(), OznerPreference.BDDeivceID, "");
@@ -246,7 +246,7 @@ public class EaseChatFragment extends EaseBaseFragment {
 
         fragmentArgs = getArguments();
 
-        toChatUsername = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
+        toChatUsername = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -999,7 +999,7 @@ public class EaseChatFragment extends EaseBaseFragment {
                     .onAllGranted(new Func() {
                         @Override
                         protected void call() {
-                            cameraFile = new File(Environment.getExternalStorageDirectory().getPath() + "/OnzerCache/", UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "ozner")
+                            cameraFile = new File(Environment.getExternalStorageDirectory().getPath() + "/OnzerCache/", OznerPreference.GetValue(getContext(), OznerPreference.UserId, "ozner")
                                     + System.currentTimeMillis() + ".jpg");
                             //noinspection ResultOfMethodCallIgnored
                             cameraFile.getParentFile().mkdirs();

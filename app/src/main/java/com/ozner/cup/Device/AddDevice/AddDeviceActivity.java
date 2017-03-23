@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
+import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.RankType;
 import com.ozner.cup.Device.AddDevice.bean.AddDeviceListBean;
 import com.ozner.cup.Device.AirPurifier.MatchDeskAirActivity;
 import com.ozner.cup.Device.AirPurifier.MatchVerAirActivity;
@@ -139,6 +141,9 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
                 startActivity(new Intent(this, MatchTapActivity.class));
                 break;
             case R.drawable.device_icon_tdspen:
+                Intent tdsPenIntent = new Intent(this,MatchTapActivity.class);
+                tdsPenIntent.putExtra(Contacts.PARMS_RANK_TYPE, RankType.TdsPenType);
+                startActivity(tdsPenIntent);
                 break;
             case R.drawable.device_icon_water:
                 startActivity(new Intent(this, MatchWaterPuriferActivity.class));

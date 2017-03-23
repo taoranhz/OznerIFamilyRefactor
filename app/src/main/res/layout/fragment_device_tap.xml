@@ -22,6 +22,7 @@
             android:paddingRight="20dp">
 
             <LinearLayout
+                android:id="@+id/llay_battary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -107,6 +108,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rlay_tds_bottom"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

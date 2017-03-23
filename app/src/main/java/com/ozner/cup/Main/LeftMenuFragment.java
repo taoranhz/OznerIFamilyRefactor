@@ -29,6 +29,7 @@ import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
+import com.ozner.cup.Bean.RankType;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupManager;
@@ -39,6 +40,7 @@ import com.ozner.cup.Device.AddDevice.AddDeviceActivity;
 import com.ozner.cup.Main.Bean.LeftMenuDeviceItem;
 import com.ozner.cup.MyCenter.CenterEnActivity;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
@@ -80,7 +82,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
     }
 
     @Override
@@ -94,7 +96,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (OznerPreference.isLoginEmail(getContext())) {
+        if (UserDataPreference.isLoginEmail(getContext())) {
             loadLoginEmailUI();
         }
         leftDeviceList = new ArrayList<>();
@@ -134,7 +136,6 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
      * 初始化设备列表
      */
     private void initDataList() {
-
         loadDeviceList();
         showDatalist(mLeftAdapter.getCount() > 0);
     }
@@ -145,14 +146,11 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
      * @param position
      */
     public void selectDevice(int position, boolean isAuto) {
-//        if (!mLeftAdapter.getItem(position).Address().equals(UserDataPreference.GetUserData(getContext(), UserDataPreference.SelMac, ""))) {
-//            UserDataPreference.SetUserData(getContext(), UserDataPreference.SelMac, mLeftAdapter.getItem(position).Address());
         mLeftAdapter.setSelectPosition(position);
         if (position >= 0 && position < lvMyDevice.getCount()) {
             lvMyDevice.setItemChecked(position, true);
             ((MainActivity) getActivity()).onDeviceItemClick(mLeftAdapter.getItem(position).getDevice(), mLeftAdapter.getItem(position).getMac(), isAuto);
         }
-//        }
     }
 
     public OznerDevice getSelectedDevice() {
@@ -231,6 +229,33 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
     }
 
     /**
+     * 将旧数据同步到OznerDeivceSetting数据表
+     *
+     * @param userid
+     * @param device
+     */
+    private void saveDeviceToDB(String userid, OznerDevice device) {
+        try {
+            OznerDeviceSettings oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(userid, device.Address());
+            if (oznerSetting != null) {
+                DBManager.getInstance(getContext()).deleteDeviceSettings(userid, device.Address());
+            }
+            oznerSetting = new OznerDeviceSettings();
+            oznerSetting.setCreateTime(String.valueOf(System.currentTimeMillis()));
+            oznerSetting.setUserId(userid);
+            oznerSetting.setMac(device.Address());
+            oznerSetting.setName(device.Setting().name());
+            oznerSetting.setDevicePosition("");
+            oznerSetting.setStatus(0);
+            oznerSetting.setDevcieType(device.Type());
+            DBManager.getInstance(getContext()).updateDeviceSettings(oznerSetting);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LCLogUtils.E(TAG, "saveDeviceToDB_Ex:" + ex.getMessage());
+        }
+    }
+
+    /**
      * 加载已配对设备
      */
     private void loadDeviceList() {
@@ -243,20 +268,36 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
 
         mLeftAdapter.clear();
         List<OznerDeviceSettings> oznerSettings = DBManager.getInstance(getContext()).getDeviceSettingList(mUserid);
-//        for (OznerDevice device : OznerDeviceManager.Instance().getDevices()) {
-//            mLeftAdapter.addData(device);
-//        }
         leftDeviceList.clear();
         int settingCount = oznerSettings.size();
-        for (int i = 0; i < settingCount; i++) {
-            LeftMenuDeviceItem item = new LeftMenuDeviceItem();
-            item.setName(oznerSettings.get(i).getName());
-            item.setUsePos(oznerSettings.get(i).getDevicePosition());
-            item.setMac(oznerSettings.get(i).getMac());
-            item.setType(oznerSettings.get(i).getDevcieType());
-            item.setDevice(OznerDeviceManager.Instance().getDevice(oznerSettings.get(i).getMac()));
-            leftDeviceList.add(item);
+        int oldCount = OznerDeviceManager.Instance().getDevices().length;
+        LCLogUtils.E(TAG, "旧数据数量：" + oldCount + " ,新数据：" + settingCount);
+        if (settingCount > 0) {
+            for (int i = 0; i < settingCount; i++) {
+                LeftMenuDeviceItem item = new LeftMenuDeviceItem();
+                item.setName(oznerSettings.get(i).getName());
+                item.setUsePos(oznerSettings.get(i).getDevicePosition());
+                item.setMac(oznerSettings.get(i).getMac());
+                item.setType(oznerSettings.get(i).getDevcieType());
+                item.setDevice(OznerDeviceManager.Instance().getDevice(oznerSettings.get(i).getMac()));
+                leftDeviceList.add(item);
+            }
+        } else if (oldCount > 0) {
+            // TODO: 2017/3/16 导入旧数据
+            for (int i = 0; i < oldCount; i++) {
+                OznerDevice oznerdevice = OznerDeviceManager.Instance().getDevices()[i];
+                LeftMenuDeviceItem leftItem = new LeftMenuDeviceItem();
+                leftItem.setName(oznerdevice.getName());
+                leftItem.setUsePos("");
+                leftItem.setMac(oznerdevice.Address());
+                leftItem.setType(oznerdevice.Type());
+                leftItem.setDevice(oznerdevice);
+
+                saveDeviceToDB(mUserid, oznerdevice);
+                leftDeviceList.add(leftItem);
+            }
         }
+
         mLeftAdapter.loadData(leftDeviceList);
         if (mLeftAdapter.getCount() > 0) {
             //设置侧边栏默认选中
@@ -437,7 +478,14 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
             } else if (TapManager.IsTap(deviceType)) {
                 // TODO: 2016/11/4 水探头
                 typeResId = R.mipmap.connect_bluetooth_on;
-                setItemSelected(holder, isSelected, R.mipmap.icon_tap_on, R.mipmap.icon_tap_off);
+                if (DBManager.getInstance(getContext()).getDeviceSettings(mUserid, item.getMac()).getDevcieType().equals(RankType.TdsPenType)) {
+                    setItemSelected(holder, isSelected, R.mipmap.icon_tap_on, R.mipmap.icon_tap_off);
+                } else {
+                    setItemSelected(holder, isSelected, R.mipmap.icon_tap_on, R.mipmap.icon_tap_off);
+                }
+            }else if(deviceType.equals(RankType.TdsPenType)){
+                typeResId = R.mipmap.connect_bluetooth_on;
+                setItemSelected(holder, isSelected, R.mipmap.icon_tdspen_on, R.mipmap.icon_tdspen_off);
             } else if (WaterPurifierManager.IsWaterPurifier(deviceType)) {
                 if("Ozner RO".equals(deviceType)){
                     typeResId = R.mipmap.connect_bluetooth_on;

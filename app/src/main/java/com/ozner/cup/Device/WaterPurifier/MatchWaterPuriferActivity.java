@@ -132,7 +132,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
         setContentView(R.layout.activity_match_water_purifer);
         ButterKnife.inject(this);
         monitor = new Monitor();
-        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);

@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.RankType;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.CupRecord;
@@ -31,6 +32,7 @@ import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Device.FilterStatusActivity;
+import com.ozner.cup.Device.TDSSensorManager;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
@@ -108,6 +110,10 @@ public class TapFragment extends DeviceFragment {
     TextView title;
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
+    @InjectView(R.id.rlay_tds_bottom)
+    RelativeLayout rlayTdsBottom;
+    @InjectView(R.id.llay_battary)
+    LinearLayout llayBattary;
     private Tap mTap;
     private TapMonitor tapMonitor;
     //    private RotateAnimation rotateAnimation;
@@ -116,6 +122,8 @@ public class TapFragment extends DeviceFragment {
     private OznerDeviceSettings oznerSetting;
     SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     int[] tdsDatas = new int[31];
+    private TDSSensorManager tdsSensroManager;
+    private int beatPer;
 
     ChartAdapter recordAdapter = new ChartAdapter() {
 
@@ -176,19 +184,18 @@ public class TapFragment extends DeviceFragment {
             mTap = (Tap) device;
             refreshUIData();
         }
-//        refreshTapFilterInfo();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
+        tdsSensroManager = new TDSSensorManager(getContext());
         initAnimation();
         try {
             Bundle bundle = getArguments();
             mTap = (Tap) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
             oldTdsValue = 0;
             oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mTap.Address());
-//            refreshTapFilterInfo();
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -215,6 +222,14 @@ public class TapFragment extends DeviceFragment {
         ButterKnife.inject(this, view);
         toolbar.setTitle("");
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        if (oznerSetting != null && oznerSetting.getDevcieType().equals(RankType.TdsPenType)) {
+            rlayTdsBottom.setVisibility(View.GONE);
+            rlayFilter.setVisibility(View.GONE);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(llayBattary.getLayoutParams());
+            lp.removeRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+            llayBattary.setLayoutParams(lp);
+        }
         return view;
     }
 
@@ -241,7 +256,9 @@ public class TapFragment extends DeviceFragment {
         try {
             setBarColor(R.color.cup_detail_bg);
             setToolbarColor(R.color.cup_detail_bg);
-            refreshTapFilterInfo();
+            if (oznerSetting != null && !oznerSetting.getDevcieType().equals(RankType.TdsPenType)) {
+                refreshTapFilterInfo();
+            }
         } catch (Exception ex) {
 
         }
@@ -320,6 +337,33 @@ public class TapFragment extends DeviceFragment {
                             }
                         }
                     }));
+        }
+    }
+
+
+    /**
+     * 上传TDS获取排名
+     *
+     * @param tds
+     */
+    private void updateTdsSensor(int tds) {
+        if (tdsSensroManager != null && mTap != null) {
+            tdsSensroManager.updateTds(mTap.Address(), mTap.Type(), String.valueOf(tds), null, null, new TDSSensorManager.TDSListener() {
+                @Override
+                public void onSuccess(int result) {
+                    try {
+                        beatPer = result;
+                        refreshUIData();
+                    } catch (Exception ex) {
+                        Log.e(TAG, "onSuccess_Ex: " + ex.getMessage());
+                    }
+                }
+
+                @Override
+                public void onFail(String msg) {
+                    Log.e(TAG, "onFail: " + msg);
+                }
+            });
         }
     }
 
@@ -414,13 +458,18 @@ public class TapFragment extends DeviceFragment {
      * @param tdsValue
      */
     private void showTdsState(int tdsValue) {
-        if (tdsValue == 65535) {//传感器无数据
+        if (tdsValue > 5000) {//传感器无数据
             tvTdsValue.setTextSize(TextSize);
             tvTdsValue.setText(R.string.no_data);
             ivTdsState.setVisibility(View.GONE);
             tvTdsState.setText(R.string.state_null);
             tvTdsRank.setVisibility(View.INVISIBLE);
         } else {
+            if (!UserDataPreference.isLoginEmail(getContext())) {
+                tvTdsRank.setVisibility(View.VISIBLE);
+                tvTdsRank.setText(String.format(getString(R.string.beat_users), beatPer));
+            }
+
             //显示tds对应状态
             if (tdsValue > 0 && tdsValue <= CupRecord.TDS_Good_Value) {
                 ivTdsState.setVisibility(View.VISIBLE);
@@ -438,7 +487,6 @@ public class TapFragment extends DeviceFragment {
 
             //数字跑马灯
             if (tdsValue != 0) {
-//                if (oldTdsValue != tdsValue) {
                 tvTdsValue.setTextSize(NumSize);
                 final ValueAnimator animator = ValueAnimator.ofInt(oldTdsValue, tdsValue);
                 animator.setDuration(500);
@@ -460,12 +508,13 @@ public class TapFragment extends DeviceFragment {
                 if (tdsValue > 250) {
                     tdsDetailProgress.update(100);
                 } else {
-//                    double s = (tdsValue / 250.00) * 100;
-//                    tdsDetailProgress.update((int) s);
                     tdsDetailProgress.update((tdsValue << 1) / 5);
                 }
-                oldTdsValue = tdsValue;
-//                }
+                if (oldTdsValue != tdsValue) {
+                    oldTdsValue = tdsValue;
+                    if (!UserDataPreference.isLoginEmail(getContext()))
+                        updateTdsSensor(tdsValue);
+                }
             } else {
                 tvTdsState.setText(R.string.state_null);
                 ivTdsState.setVisibility(View.GONE);

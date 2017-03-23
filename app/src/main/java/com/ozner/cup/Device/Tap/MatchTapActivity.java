@@ -29,6 +29,9 @@ import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScan;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.RankType;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
@@ -49,6 +52,7 @@ import butterknife.OnClick;
 
 public class MatchTapActivity extends BaseActivity {
     private static final String TAG = "MatchTap";
+
     @InjectView(R.id.title)
     TextView tv_title;
     @InjectView(R.id.toolbar)
@@ -93,13 +97,24 @@ public class MatchTapActivity extends BaseActivity {
     private BaseDeviceIO selDeviceIo;
     private String mUserid;
     private PermissionUtil.PermissionRequestObject perReqResult;
+    private String tapType = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_tap);
         ButterKnife.inject(this);
-        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+        try {
+            tapType = getIntent().getStringExtra(Contacts.PARMS_RANK_TYPE);
+        } catch (Exception ex) {
+            LCLogUtils.E(TAG, "onCreate_Ex:" + ex.getMessage());
+            tapType = "";
+        }
+
+        if(tapType.equals(RankType.TdsPenType)){
+            etDeviceName.setHint(R.string.input_tdspen_name);
+        }
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         initActionBar();
         initFoundDeviceView();
 //        startFindDevice();
@@ -146,7 +161,11 @@ public class MatchTapActivity extends BaseActivity {
      * 初始化RecyleView
      */
     private void initFoundDeviceView() {
-        mDevAdpater = new FoundDevcieAdapter(this, R.drawable.found_tap_selected, R.drawable.found_tap_unselected);
+        if (tapType.equals(RankType.TdsPenType)) {
+            mDevAdpater = new FoundDevcieAdapter(this, R.drawable.found_tdspen_selected, R.drawable.found_tdspen_selected);
+        } else {
+            mDevAdpater = new FoundDevcieAdapter(this, R.drawable.found_tap_selected, R.drawable.found_tap_unselected);
+        }
         mDevAdpater.setOnItemClickListener(new FoundDevcieAdapter.ClientClickListener() {
             @Override
             public void onItemClick(int position, BaseDeviceIO deviceIO) {
@@ -247,7 +266,11 @@ public class MatchTapActivity extends BaseActivity {
                 if (etDeviceName.getText().length() > 0) {
                     device.Setting().name(etDeviceName.getText().toString().trim());
                 } else {
-                    device.Setting().name(getString(R.string.water_probe));
+                    if (tapType.isEmpty()) {
+                        device.Setting().name(getString(R.string.water_probe));
+                    } else {
+                        device.Setting().name(getString(R.string.water_tdspen));
+                    }
                 }
                 device.updateSettings();
                 saveDeviceToDB(mUserid, device);
@@ -273,9 +296,14 @@ public class MatchTapActivity extends BaseActivity {
             oznerSetting.setUserId(userid);
             oznerSetting.setMac(device.Address());
             oznerSetting.setName(device.Setting().name());
-            oznerSetting.setDevicePosition(etDevicePosition.getText().toString().trim());
             oznerSetting.setStatus(0);
-            oznerSetting.setDevcieType(device.Type());
+            if (tapType.isEmpty()) {
+                oznerSetting.setDevicePosition(etDevicePosition.getText().toString().trim());
+                oznerSetting.setDevcieType(device.Type());
+            } else {
+                oznerSetting.setDevicePosition("");
+                oznerSetting.setDevcieType(RankType.TdsPenType);
+            }
             DBManager.getInstance(this).updateDeviceSettings(oznerSetting);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -294,7 +322,11 @@ public class MatchTapActivity extends BaseActivity {
         tvMatchType.setVisibility(View.VISIBLE);
         tvMatchType.setText(getString(R.string.matching_bluetooth));
         tvMatchNotice.setText(getString(R.string.match_notice_tap));
-        ivMatchIcon.setImageResource(R.drawable.match_device_tap);
+        if (tapType.equals(RankType.TdsPenType)) {
+            ivMatchIcon.setImageResource(R.drawable.match_device_tdspen);
+        } else {
+            ivMatchIcon.setImageResource(R.drawable.match_device_tap);
+        }
         ivMatchLoading.setImageResource(R.drawable.match_loading);
         ivMatchLoading.setVisibility(View.VISIBLE);
         ivMatchIcon.setVisibility(View.VISIBLE);
@@ -316,7 +348,11 @@ public class MatchTapActivity extends BaseActivity {
         llayFoundDevice.setVisibility(View.VISIBLE);
         tvMatchNotice.setVisibility(View.INVISIBLE);
         tvMatchType.setVisibility(View.INVISIBLE);
-        ivMatchLoading.setImageResource(R.drawable.found_tap_selected);
+        if (tapType.equals(RankType.TdsPenType)) {
+            ivMatchLoading.setImageResource(R.drawable.found_tdspen_selected);
+        } else {
+            ivMatchLoading.setImageResource(R.drawable.found_tap_selected);
+        }
         llayFoundDevice.setVisibility(View.VISIBLE);
         tvSuccesHolder.setVisibility(View.VISIBLE);
     }

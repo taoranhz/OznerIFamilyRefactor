@@ -23,11 +23,14 @@ import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
+import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
+import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.HttpHelper.OznerHttpResult;
 import com.ozner.cup.HttpHelper.ProgressSubscriber;
@@ -35,6 +38,7 @@ import com.ozner.cup.R;
 import com.ozner.cup.UIView.WaterReplMeterView;
 import com.ozner.cup.Utils.DateUtils;
 import com.ozner.cup.Utils.LCLogUtils;
+import com.ozner.cup.Utils.WeChatUrlUtil;
 
 import java.util.Calendar;
 
@@ -80,6 +84,10 @@ public class ReplenDetailActivity extends BaseActivity {
     WaterReplMeterView wrmView;
     @InjectView(R.id.activity_replen_detail)
     LinearLayout activityReplenDetail;
+    @InjectView(R.id.llay_bottom)
+    LinearLayout llayBottom;
+    @InjectView(R.id.tv_tips)
+    TextView tvTips;
 
     /**
      * 各部位在数组中的位置
@@ -103,6 +111,7 @@ public class ReplenDetailActivity extends BaseActivity {
     private String mac;
     private String mUserid;
     private String mUserToken;
+    private UserInfo mUserInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,8 +119,12 @@ public class ReplenDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_replen_detail);
         ButterKnife.inject(this);
         initToolBar();
+        if (UserDataPreference.isLoginEmail(this)) {
+            llayBottom.setVisibility(View.GONE);
+        }
         mUserToken = OznerPreference.getUserToken(this);
-        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
+        mUserInfo = DBManager.getInstance(this).getUserInfo(mUserid);
         rgTime.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -166,7 +179,7 @@ public class ReplenDetailActivity extends BaseActivity {
     }
 
     @OnClick({R.id.llay_face, R.id.llay_hand, R.id.llay_eye, R.id.llay_neck,
-            R.id.tv_skin_oil, R.id.tv_skin_water, R.id.tv_chat_btn})
+            R.id.tv_skin_oil, R.id.tv_skin_water, R.id.tv_chat_btn, R.id.tv_btn_buy})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.llay_face:
@@ -193,7 +206,21 @@ public class ReplenDetailActivity extends BaseActivity {
                 startActivity(new Intent(this, ReplenWaterIntroduceActivity.class));
                 break;
             case R.id.tv_chat_btn:
-                takePhone();
+                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+                this.finish();
+//                takePhone();
+                break;
+            case R.id.tv_btn_buy:
+                if (!UserDataPreference.isLoginEmail(this)) {
+                    if (mUserInfo != null) {
+                        Intent shopIntent = new Intent(this, WebActivity.class);
+                        String shopUrl = WeChatUrlUtil.formatUrl(Contacts.buyReplenWaterUrl, mUserInfo.getMobile(), mUserToken, "zh", "zh");
+                        shopIntent.putExtra(Contacts.PARMS_URL, shopUrl);
+                        startActivity(shopIntent);
+                    } else {
+                        showToastCenter(R.string.userinfo_miss);
+                    }
+                }
                 break;
         }
     }
@@ -342,8 +369,8 @@ public class ReplenDetailActivity extends BaseActivity {
 
         if (totalCounts[index] > 0) {
             tvSkinAverage.setText(String.format(getString(R.string.replen_average_value), totalValues[index] / totalCounts[index], totalCounts[index]));
-            if(todayValues[index]<=0){
-                todayValues[index] = (int)(totalValues[index]/totalCounts[index]);
+            if (todayValues[index] <= 0) {
+                todayValues[index] = (int) (totalValues[index] / totalCounts[index]);
             }
         } else {
             try {
@@ -384,12 +411,16 @@ public class ReplenDetailActivity extends BaseActivity {
         tvSkinHumidity.setText(String.valueOf(todayValues[index]));
         if (todayValues[index] > 0 && todayValues[index] <= midValue[index]) {
             tvSkinState.setText(R.string.dry);
+            tvTips.setVisibility(View.VISIBLE);
         } else if (todayValues[index] > midValue[index] && todayValues[index] <= highValue[index]) {
             tvSkinState.setText(R.string.normal);
+            tvTips.setVisibility(View.VISIBLE);
         } else if (todayValues[index] > highValue[index]) {
             tvSkinState.setText(R.string.wetness);
+            tvTips.setVisibility(View.GONE);
         } else {
             tvSkinState.setText(R.string.state_null);
+            tvTips.setVisibility(View.GONE);
         }
     }
 

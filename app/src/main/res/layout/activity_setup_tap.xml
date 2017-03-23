@@ -21,6 +21,7 @@
         android:padding="15dp">
 
         <TextView
+            android:id="@+id/tv_name_lable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -47,6 +48,7 @@
     </RelativeLayout>
 
     <TextView
+        android:id="@+id/tv_chektime_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
@@ -54,6 +56,7 @@
         android:text="@string/detection_time"/>
 
     <LinearLayout
+        android:id="@+id/llay_chektime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -145,27 +148,32 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="15dp">
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:padding="15dp">-->
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/icon_attention"/>
+        <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/icon_attention"/>-->
 
         <TextView
+            android:id="@+id/tv_remind_tip"
+            android:layout_margin="15dp"
+            android:drawablePadding="5dp"
+            android:drawableLeft="@drawable/icon_attention"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="@string/tap_attention"
             android:textSize="12dp"/>
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
     <RelativeLayout
+        android:layout_marginTop="1dp"
         android:id="@+id/rlay_aboutTap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -173,6 +181,7 @@
         android:padding="15dp">
 
         <TextView
+            android:id="@+id/tv_about"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"

@@ -44,7 +44,7 @@ public class SettingsActivity extends BaseActivity {
         setContentView(R.layout.activity_settings);
         ButterKnife.inject(this);
         initToolBar();
-        if (OznerPreference.isLoginEmail(this)) {
+        if (UserDataPreference.isLoginEmail(this)) {
             llayPushMsg.setVisibility(View.GONE);
             tvPushMsgLine.setVisibility(View.GONE);
         } else {
@@ -98,7 +98,7 @@ public class SettingsActivity extends BaseActivity {
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UserDataPreference.SetUserData(SettingsActivity.this, UserDataPreference.UserId, "");
+                        OznerPreference.SetValue(SettingsActivity.this, OznerPreference.UserId, "");
                         OznerPreference.setUserToken(SettingsActivity.this, "");
                         if (isLanguageEn()) {
                             startActivity(new Intent(getApplicationContext(), LoginEnActivity.class));

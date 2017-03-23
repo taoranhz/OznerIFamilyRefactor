@@ -18,7 +18,7 @@ import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.RankType;
-import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.MyCenter.MyFriend.bean.LikeMeItem;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.DateUtils;
@@ -57,7 +57,7 @@ public class LikeMeActivity extends BaseActivity {
         lvRank.setAdapter(mAdapter);
         infoManager = new FriendInfoManager(this, null);
         try {
-            userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+            userid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
             mType = getIntent().getStringExtra(Contacts.PARMS_RANK_TYPE);
             LCLogUtils.E(TAG, "mType:" + mType);
         } catch (Exception ex) {

@@ -34,7 +34,6 @@ import com.ozner.cup.Base.CommonAdapter;
 import com.ozner.cup.Base.CommonViewHolder;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.OznerPreference;
-import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.HttpHelper.HttpMethods;
@@ -100,7 +99,7 @@ public class AddFriendActivity extends BaseActivity implements TextView.OnEditor
         mAdapter = new ContactAdatper(this, R.layout.contact_msg_item);
         lvContacts.setAdapter(mAdapter);
         try {
-            mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+            mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
             mMobile = DBManager.getInstance(this).getUserInfo(mUserid).getMobile();
         } catch (Exception ex) {
             LCLogUtils.E(TAG, "onCreate_Ex:" + ex.getMessage());

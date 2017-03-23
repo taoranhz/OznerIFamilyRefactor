@@ -29,6 +29,7 @@ import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScan;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.Cup;
 import com.ozner.cup.CupManager;
@@ -46,6 +47,8 @@ import java.util.Date;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+
+import static com.ozner.cup.R.id.et_device_position;
 
 public class MatchCupActivity extends BaseActivity {
     private static final String TAG = "MatchCup";
@@ -70,7 +73,7 @@ public class MatchCupActivity extends BaseActivity {
     LinearLayout llayFoundDevice;
     @InjectView(R.id.et_device_name)
     EditText etDeviceName;
-    @InjectView(R.id.et_device_position)
+    @InjectView(et_device_position)
     EditText etDevicePosition;
     @InjectView(R.id.iv_place_icon)
     ImageView ivPlaceIcon;
@@ -97,7 +100,7 @@ public class MatchCupActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_cup);
         ButterKnife.inject(this);
-        mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         initActionBar();
         initNormalInfo();
         initFoundDeviceView();
@@ -144,6 +147,7 @@ public class MatchCupActivity extends BaseActivity {
     private void initNormalInfo() {
         etDeviceName.setHint(R.string.input_cup_name);
         tvMatchNotice.setText(R.string.reverse_cup);
+        etDevicePosition.setText(R.string.cup_mine);
     }
 
     /**
