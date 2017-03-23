@@ -28,7 +28,6 @@ import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Command.OznerPreference;
-import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.DBHelper.WaterPurifierAttr;
@@ -137,7 +136,7 @@ public class ROFilterStatusActivity extends BaseActivity implements AdapterView.
         uizMoreProject.setOnItemClickListener(this);
         initToolBar();
         initStaticData();
-        userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
+        userid =OznerPreference.GetValue(this, OznerPreference.UserId, "");
         if (userid != null) {
             userInfo = DBManager.getInstance(this).getUserInfo(userid);
         }

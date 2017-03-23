@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.ozner.WaterPurifier.WaterPurifier_RO_BLE;
 import com.ozner.cup.Bean.Contacts;
-import com.ozner.cup.Command.UserDataPreference;
+import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
@@ -192,7 +192,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        mUserid = UserDataPreference.GetUserData(getContext(), UserDataPreference.UserId, "");
+        mUserid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
         tdsSensorManager = new TDSSensorManager(getContext());
         initAnimation();
         try {
