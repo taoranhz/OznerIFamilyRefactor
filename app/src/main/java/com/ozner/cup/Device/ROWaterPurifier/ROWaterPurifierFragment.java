@@ -2,12 +2,14 @@ package com.ozner.cup.Device.ROWaterPurifier;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,11 +22,13 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ozner.WaterPurifier.WaterPurifier_RO_BLE;
+import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
+import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.DBHelper.WaterPurifierAttr;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Device.TDSSensorManager;
@@ -33,6 +37,7 @@ import com.ozner.cup.Device.WaterPurifier.WaterTDSActivity;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.PurifierDetailProgress;
+import com.ozner.cup.Utils.WeChatUrlUtil;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
 import com.ozner.device.OznerDevice;
@@ -426,10 +431,12 @@ public class ROWaterPurifierFragment extends DeviceFragment {
                         if (0 == tempPre) {
                             tvFilterTips.setText(R.string.filter_need_change);
                             ivFilterIcon.setImageResource(R.drawable.filter_state0);
-                        } else if (tempPre > 0 && tempPre <= 8) {
+                        } else if (tempPre > 0 && tempPre <= 10) {
                             tvFilterTips.setText(R.string.filter_need_change);
                             ivFilterIcon.setImageResource(R.drawable.filter_state1);
-                        } else if (tempPre > 8 && tempPre <= 60) {
+                            //ro水机一级页面的滤芯提醒
+                            told();
+                        } else if (tempPre > 10 && tempPre <= 60) {
                             tvFilterTips.setText(R.string.filter_status);
                             ivFilterIcon.setImageResource(R.drawable.filter_state2);
                         } else {
@@ -441,7 +448,38 @@ public class ROWaterPurifierFragment extends DeviceFragment {
             }
         });
     }
+    private void told() {
+        new AlertDialog.Builder(getContext())
+                .setMessage(getString(R.string.filter_need_change))
+                .setPositiveButton(getString(R.string.buy_filter), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        buyFilter();
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton(getString(R.string.I_got_it), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        }).show();
+    }
 
+    private void buyFilter() {
+        String userId=OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
+        if (userId != null) {
+            UserInfo userInfo = DBManager.getInstance(getContext()).getUserInfo(userId);
+            String usertoken = OznerPreference.getUserToken(getContext());
+            String shopUrl = WeChatUrlUtil.getMallUrl(userInfo.getMobile(), usertoken, "zh", "zh");
+            startWebActivity(shopUrl);
+        }
+
+    }
+    private void startWebActivity(String url) {
+        Intent filterIntent = new Intent(getActivity(), WebActivity.class);
+        filterIntent.putExtra(Contacts.PARMS_URL, url);
+        startActivity(filterIntent);
+    }
     @Override
     public void onResume() {
         try {
@@ -533,6 +571,15 @@ public class ROWaterPurifierFragment extends DeviceFragment {
      */
     private void showTdsState() {
         int tdsPre, tdsThen;
+        //获取滤芯信息
+        status=mWaterPurifer.connectStatus().toString();
+        if("Disconnect".equals(status)){
+            Log.e("trstatus",status+"===========");
+            isOffLine=true;
+        }else{
+            isOffLine=false;
+        }
+
         //获取净化前后的TDS值
         if (mWaterPurifer.waterInfo.TDS1> 0 && mWaterPurifer.waterInfo.TDS2> 0
                 && mWaterPurifer.waterInfo.TDS1 != 65535 && mWaterPurifer.waterInfo.TDS2 != 65535) {
@@ -557,7 +604,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
             oldThenValue = tdsThen;
 
             //净化前后的值都不为0，并且都不为65535
-            if (tdsPre != 0) {
+            if (tdsPre != 0&&!isOffLine) {
                 tvPreValue.setText(String.valueOf(tdsPre));
                 tvAfterValue.setText(String.valueOf(tdsThen));
                 tvPreValue.setTextSize(NumSize);
@@ -580,15 +627,6 @@ public class ROWaterPurifierFragment extends DeviceFragment {
             }
 
             waterProgress.update(Math.round((tdsPre / 250f) * 100), Math.round((tdsThen / 250f) * 100));
-        }
-
-        //获取滤芯信息
-        status=mWaterPurifer.connectStatus().toString();
-        if("Disconnect".equals(status)){
-            Log.e("trstatus",status+"===========");
-            isOffLine=true;
-        }else{
-            isOffLine=false;
         }
         if (!isOffLine) {
             filter_A_Time = mWaterPurifer.filterInfo.Filter_A_Percentage;

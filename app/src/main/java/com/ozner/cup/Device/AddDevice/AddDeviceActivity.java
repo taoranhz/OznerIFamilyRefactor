@@ -138,7 +138,9 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
                 startActivity(new Intent(this, MatchCupActivity.class));
                 break;
             case R.drawable.device_icon_tap:
-                startActivity(new Intent(this, MatchTapActivity.class));
+                Intent tapIntent = new Intent(this,MatchTapActivity.class);
+                tapIntent.putExtra(Contacts.PARMS_RANK_TYPE, RankType.TapType);
+                startActivity(tapIntent);
                 break;
             case R.drawable.device_icon_tdspen:
                 Intent tdsPenIntent = new Intent(this,MatchTapActivity.class);

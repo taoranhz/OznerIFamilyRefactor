@@ -266,7 +266,7 @@ public class MatchTapActivity extends BaseActivity {
                 if (etDeviceName.getText().length() > 0) {
                     device.Setting().name(etDeviceName.getText().toString().trim());
                 } else {
-                    if (tapType.isEmpty()) {
+                    if (tapType.equals(RankType.TapType)) {
                         device.Setting().name(getString(R.string.water_probe));
                     } else {
                         device.Setting().name(getString(R.string.water_tdspen));
@@ -297,7 +297,7 @@ public class MatchTapActivity extends BaseActivity {
             oznerSetting.setMac(device.Address());
             oznerSetting.setName(device.Setting().name());
             oznerSetting.setStatus(0);
-            if (tapType.isEmpty()) {
+            if (tapType.equals(RankType.TapType)) {
                 oznerSetting.setDevicePosition(etDevicePosition.getText().toString().trim());
                 oznerSetting.setDevcieType(device.Type());
             } else {
