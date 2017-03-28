@@ -1,5 +1,7 @@
 package com.ozner.cup.Device.AddDevice;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,6 +38,8 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
     Toolbar toolbar;
     @InjectView(R.id.lv_add_list)
     ListView lvAddList;
+    BluetoothManager bluetoothManager;
+    BluetoothAdapter blueAdapter;
     private int[] deviceNames = new int[]{
             R.string.smart_glass,
             R.string.water_probe,
@@ -82,6 +86,8 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_device);
         ButterKnife.inject(this);
+        bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        blueAdapter = bluetoothManager.getAdapter();
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.back);
@@ -129,15 +135,35 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
     private void dealItemClick(int devIconResId) {
         switch (devIconResId) {
             case R.drawable.device_icon_cup:
-                startActivity(new Intent(this, MatchCupActivity.class));
+                if (!blueAdapter.isEnabled()) {
+                    blueAdapter.enable();
+                }
+                if (blueAdapter.isEnabled()) {
+                    startActivity(new Intent(this, MatchCupActivity.class));
+                    this.finish();
+                }
                 break;
             case R.drawable.device_icon_tap:
-                startActivity(new Intent(this, MatchTapActivity.class));
+                if (!blueAdapter.isEnabled()) {
+                    blueAdapter.enable();
+                }
+                if (blueAdapter.isEnabled()) {
+                    Intent tapIntent = new Intent(this, MatchTapActivity.class);
+                    tapIntent.putExtra(Contacts.PARMS_RANK_TYPE, RankType.TapType);
+                    startActivity(tapIntent);
+                    this.finish();
+                }
                 break;
             case R.drawable.device_icon_tdspen:
-                Intent tdsPenIntent = new Intent(this,MatchTapActivity.class);
-                tdsPenIntent.putExtra(Contacts.PARMS_RANK_TYPE, RankType.TdsPenType);
-                startActivity(tdsPenIntent);
+                if (!blueAdapter.isEnabled()) {
+                    blueAdapter.enable();
+                }
+                if (blueAdapter.isEnabled()) {
+                    Intent tdsPenIntent = new Intent(this, MatchTapActivity.class);
+                    tdsPenIntent.putExtra(Contacts.PARMS_RANK_TYPE, RankType.TdsPenType);
+                    startActivity(tdsPenIntent);
+                    this.finish();
+                }
                 break;
             case R.drawable.device_icon_water:
                 startActivity(new Intent(this, MatchWaterPuriferActivity.class));
@@ -146,14 +172,24 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
                 startActivity(new Intent(this, MatchVerAirActivity.class));
                 break;
             case R.drawable.device_icon_air_desk:
-                startActivity(new Intent(this, MatchDeskAirActivity.class));
+                if (!blueAdapter.isEnabled()) {
+                    blueAdapter.enable();
+                }
+                if (blueAdapter.isEnabled()) {
+                    startActivity(new Intent(this, MatchDeskAirActivity.class));
+                    this.finish();
+                }
                 break;
             case R.drawable.device_icon_replen:
-                startActivity(new Intent(this, MatchReplenActivity.class));
+                if (!blueAdapter.isEnabled()) {
+                    blueAdapter.enable();
+                }
+                if (blueAdapter.isEnabled()) {
+                    startActivity(new Intent(this, MatchReplenActivity.class));
+                    this.finish();
+                }
                 break;
         }
-
-        this.finish();
     }
 
 

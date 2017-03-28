@@ -97,7 +97,7 @@ public class MatchTapActivity extends BaseActivity {
     private BaseDeviceIO selDeviceIo;
     private String mUserid;
     private PermissionUtil.PermissionRequestObject perReqResult;
-    private String tapType = "";
+    private String tapType = RankType.TapType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,10 +108,10 @@ public class MatchTapActivity extends BaseActivity {
             tapType = getIntent().getStringExtra(Contacts.PARMS_RANK_TYPE);
         } catch (Exception ex) {
             LCLogUtils.E(TAG, "onCreate_Ex:" + ex.getMessage());
-            tapType = "";
+            tapType = RankType.TapType;
         }
 
-        if(tapType.equals(RankType.TdsPenType)){
+        if (tapType != null && tapType.equals(RankType.TdsPenType)) {
             etDeviceName.setHint(R.string.input_tdspen_name);
         }
         mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
@@ -266,7 +266,7 @@ public class MatchTapActivity extends BaseActivity {
                 if (etDeviceName.getText().length() > 0) {
                     device.Setting().name(etDeviceName.getText().toString().trim());
                 } else {
-                    if (tapType.isEmpty()) {
+                    if (tapType.equals(RankType.TapType)) {
                         device.Setting().name(getString(R.string.water_probe));
                     } else {
                         device.Setting().name(getString(R.string.water_tdspen));
@@ -297,7 +297,7 @@ public class MatchTapActivity extends BaseActivity {
             oznerSetting.setMac(device.Address());
             oznerSetting.setName(device.Setting().name());
             oznerSetting.setStatus(0);
-            if (tapType.isEmpty()) {
+            if (tapType.equals(RankType.TapType)) {
                 oznerSetting.setDevicePosition(etDevicePosition.getText().toString().trim());
                 oznerSetting.setDevcieType(device.Type());
             } else {
