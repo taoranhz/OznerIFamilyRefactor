@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.ozner.yiquan">
 
+    <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
@@ -30,7 +31,6 @@
 
     <!-- 适配Android N系统必需的ContentProvider写权限声明，写权限包含应用包名 -->
     <uses-permission android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.com.ozner.yiquan"/>
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <permission
         android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.com.ozner.yiquan"

@@ -1,5 +1,7 @@
 package com.ozner.yiquan.Device.AddDevice;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,45 +36,9 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
     Toolbar toolbar;
     @InjectView(R.id.lv_add_list)
     ListView lvAddList;
-//    private int[] deviceNames = new int[]{
-//            R.string.smart_glass,
-//            R.string.water_probe,
-//            R.string.water_tdspen,
-//
-//            R.string.water_purifier,
-//            R.string.air_purifier_ver,
-//
-//            R.string.air_purifier_desk,
-//            R.string.water_replen_meter
-//    };
-//    private int[] connectTypes = new int[]{
-//            R.string.bluetooth_connection,
-//            R.string.bluetooth_connection,
-//            R.string.bluetooth_connection,
-//            R.string.wifi_connection,
-//            R.string.wifi_connection,
-//            R.string.bluetooth_connection,
-//            R.string.bluetooth_connection
-//    };
-//    private int[] devIconRes = new int[]{
-//            R.drawable.device_icon_cup,
-//            R.drawable.device_icon_tap,
-//            R.drawable.device_icon_tdspen,
-//            R.drawable.device_icon_water,
-//            R.drawable.device_icon_air_ver,
-//            R.drawable.device_icon_air_desk,
-//            R.drawable.device_icon_replen
-//    };
-//    private int[] conIconRes = new int[]{
-//            R.mipmap.connect_bluetooth_on,
-//            R.mipmap.connect_bluetooth_on,
-//            R.mipmap.connect_bluetooth_on,
-//            R.mipmap.connect_wifi_on,
-//            R.mipmap.connect_wifi_on,
-//            R.mipmap.connect_bluetooth_on,
-//            R.mipmap.connect_bluetooth_on
-//    };
-//君融科技
+    BluetoothManager bluetoothManager;
+    BluetoothAdapter blueAdapter;
+    //君融科技
     private int[] deviceNames = new int[]{
             R.string.water_probe,
             R.string.water_purifier,
@@ -97,12 +63,6 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
             R.mipmap.connect_wifi_on,
             R.mipmap.connect_bluetooth_on,
     };
-
-
-
-
-
-
     private AddDeviceAdapter mAdapter;
 
     @Override
@@ -110,6 +70,8 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_device);
         ButterKnife.inject(this);
+        bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        blueAdapter = bluetoothManager.getAdapter();
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.back);
@@ -158,29 +120,45 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
         switch (devIconResId) {
             case R.drawable.device_icon_cup:
                 startActivity(new Intent(this, MatchCupActivity.class));
+                this.finish();
                 break;
             case R.drawable.device_icon_tap:
-                startActivity(new Intent(this, MatchTapActivity.class));
+                if (!blueAdapter.isEnabled()) {
+                    blueAdapter.enable();
+                }
+                if(blueAdapter.isEnabled()){
+                    startActivity(new Intent(AddDeviceActivity.this, MatchTapActivity.class));
+                    this.finish();
+                }
                 break;
             case R.drawable.device_icon_tdspen:
+                this.finish();
                 break;
             case R.drawable.device_icon_water:
                 startActivity(new Intent(this, MatchWaterPuriferActivity.class));
+                this.finish();
                 break;
             case R.drawable.device_icon_air_ver:
                 startActivity(new Intent(this, MatchVerAirActivity.class));
+                this.finish();
                 break;
             case R.drawable.device_icon_air_desk:
                 startActivity(new Intent(this, MatchDeskAirActivity.class));
+                this.finish();
                 break;
             case R.drawable.device_icon_replen:
-                startActivity(new Intent(this, MatchReplenActivity.class));
+                if (!blueAdapter.isEnabled()) {
+                    blueAdapter.enable();
+                }
+                if(blueAdapter.isEnabled()){
+                    startActivity(new Intent(AddDeviceActivity.this, MatchReplenActivity.class));
+                    this.finish();
+                }
                 break;
         }
 
-        this.finish();
+//        this.finish();
     }
-
 
     public class AddDeviceAdapter extends CommonAdapter<AddDeviceListBean> {
 

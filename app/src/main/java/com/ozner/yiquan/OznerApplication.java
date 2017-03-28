@@ -12,6 +12,7 @@ import com.ozner.yiquan.Bean.OznerBroadcastAction;
 import com.ozner.yiquan.Command.OznerPreference;
 import com.ozner.yiquan.Command.UserDataPreference;
 import com.ozner.yiquan.Utils.LCLogUtils;
+import com.tencent.bugly.crashreport.CrashReport;
 
 /**
  * Created by ozner_67 on 2016/11/1.
@@ -22,6 +23,8 @@ public class OznerApplication extends OznerBaseApplication {
     @Override
     public void onCreate() {
         LCLogUtils.init(getApplicationContext());
+//        CrashReport.initCrashReport(getApplicationContext(), "注册时申请的APPID", false);
+        CrashReport.initCrashReport(getApplicationContext(),"d2df1ab42b",false);
         super.onCreate();
     }
 

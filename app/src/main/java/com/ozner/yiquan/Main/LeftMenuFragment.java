@@ -268,7 +268,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
         leftDeviceList.clear();
         int settingCount = oznerSettings.size();
         int oldCount = OznerDeviceManager.Instance().getDevices().length;
-        LCLogUtils.E(TAG, "旧数据数量：" + oldCount);
+        LCLogUtils.E(TAG, "旧数据数量：" + oldCount+",新数据数量："+settingCount);
         if (settingCount > 0) {
             for (int i = 0; i < settingCount; i++) {
                 LeftMenuDeviceItem item = new LeftMenuDeviceItem();

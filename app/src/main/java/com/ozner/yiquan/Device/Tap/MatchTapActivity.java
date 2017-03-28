@@ -28,6 +28,11 @@ import com.github.kayvannj.permission_utils.Func;
 import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScan;
+import com.ozner.device.BaseDeviceIO;
+import com.ozner.device.OznerDevice;
+import com.ozner.device.OznerDeviceManager;
+import com.ozner.tap.Tap;
+import com.ozner.tap.TapManager;
 import com.ozner.yiquan.Base.BaseActivity;
 import com.ozner.yiquan.Command.UserDataPreference;
 import com.ozner.yiquan.DBHelper.DBManager;
@@ -35,11 +40,6 @@ import com.ozner.yiquan.DBHelper.OznerDeviceSettings;
 import com.ozner.yiquan.Device.Adapter.FoundDevcieAdapter;
 import com.ozner.yiquan.R;
 import com.ozner.yiquan.Utils.LCLogUtils;
-import com.ozner.device.BaseDeviceIO;
-import com.ozner.device.OznerDevice;
-import com.ozner.device.OznerDeviceManager;
-import com.ozner.tap.Tap;
-import com.ozner.tap.TapManager;
 
 import java.util.Date;
 
@@ -94,11 +94,13 @@ public class MatchTapActivity extends BaseActivity {
     private String mUserid;
     private PermissionUtil.PermissionRequestObject perReqResult;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_tap);
         ButterKnife.inject(this);
+
         mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, "");
         initActionBar();
         initFoundDeviceView();
@@ -111,7 +113,7 @@ public class MatchTapActivity extends BaseActivity {
      * 检查位置权限，并开始配对
      */
     private void beginMatch() {
-        perReqResult = PermissionUtil.with(this).request(Manifest.permission.ACCESS_COARSE_LOCATION)
+        perReqResult = PermissionUtil.with(MatchTapActivity.this).request(Manifest.permission.ACCESS_COARSE_LOCATION)
                 .onAllGranted(new Func() {
                     @Override
                     protected void call() {
@@ -128,7 +130,7 @@ public class MatchTapActivity extends BaseActivity {
                         showToastCenter(R.string.blue_need_pos);
                         MatchTapActivity.this.finish();
                     }
-                }).ask(2);
+                }).ask(3);
     }
 
     /**
