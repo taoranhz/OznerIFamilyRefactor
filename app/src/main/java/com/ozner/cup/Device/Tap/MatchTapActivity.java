@@ -97,7 +97,7 @@ public class MatchTapActivity extends BaseActivity {
     private BaseDeviceIO selDeviceIo;
     private String mUserid;
     private PermissionUtil.PermissionRequestObject perReqResult;
-    private String tapType = "";
+    private String tapType = RankType.TapType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,10 +108,10 @@ public class MatchTapActivity extends BaseActivity {
             tapType = getIntent().getStringExtra(Contacts.PARMS_RANK_TYPE);
         } catch (Exception ex) {
             LCLogUtils.E(TAG, "onCreate_Ex:" + ex.getMessage());
-            tapType = "";
+            tapType = RankType.TapType;
         }
 
-        if(tapType.equals(RankType.TdsPenType)){
+        if (tapType != null && tapType.equals(RankType.TdsPenType)) {
             etDeviceName.setHint(R.string.input_tdspen_name);
         }
         mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
