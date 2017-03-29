@@ -8,7 +8,7 @@
 
     <string name="shoujihao">13166398575</string>
     <string name="yanzhengma">2254</string>
-    <string name="app_name">浩泽依泉净品</string>
+    <string name="app_name">浩泽伊泉净品</string>
     <!--<string name="app_name">New浩泽</string>-->
     <string name="ozner_copyright">COPYRIGHT©2015 OZNER.ALL RIGHTS RESERVED</string>
     <string name="Baidu_Push_ApiKey">0si8AI4XyFKDbK7dWGIZG424</string>
@@ -36,7 +36,7 @@
 
     <string name="err_miss_phone">请输入11位手机号</string>
     <string name="err_miss_verify_code">请输入验证码</string>
-    <string name="err_miss_proctol">请先同意《浩泽依泉净品免责条款》</string>
+    <string name="err_miss_proctol">请先同意《浩泽伊泉净品免责条款》</string>
     <string name="bd_bind_fail">百度推送绑定失败</string>
     <string name="device_address_err">设备地址错误</string>
     <string name="Filter_Scan">扫一扫</string>
@@ -49,7 +49,7 @@
     <string name="login">登  录</string>
     <string name="get_voice_code">获取语音验证码</string>
     <string name="agree_proctol">我已阅读并同意</string>
-    <string name="ozner_proctol">《浩泽依泉净品免责条款》</string>
+    <string name="ozner_proctol">《浩泽伊泉净品免责条款》</string>
     <string name="login_no_code">未收到验证码？</string>
     <string name="login_btn_voi">获取语音验证码</string>
     <string name="verify_code_requesting">正在获取验证码...</string>
@@ -94,12 +94,12 @@
     <string name="disconnect">断开</string>
     <string name="add_device">添加设备</string>
     <string name="nodevice_add_device">请添加设备</string>
-    <string name="start_ozner_smart">开启浩泽依泉净品智能生活</string>
+    <string name="start_ozner_smart">开启浩泽伊泉净品智能生活</string>
     <string name="match_device">设备配对</string>
     <string name="add_newDevice">添加新设备</string>
     <string name="select_ozner_device">选择智能设备</string>
-    <string name="ozner_smart_service">浩泽依泉净品智能化生活服务</string>
-    <string name="start_smart_service">立即添加设备，开始体验浩泽依泉净品智能化生活服务。</string>
+    <string name="ozner_smart_service">浩泽伊泉净品智能化生活服务</string>
+    <string name="start_smart_service">立即添加设备，开始体验浩泽伊泉净品智能化生活服务。</string>
     <string name="device_name">设备名字</string>
     <string name="use_position">使用地点</string>
     <!--设备名字-->
@@ -500,7 +500,7 @@
     <string name="immediately_add">立即添加</string>
     <string name="device_friend">设备好友</string>
     <string name="no_friend_tip_up">与好友一起开始体验</string>
-    <string name="no_friend_tip_down">浩泽依泉净品智能化生活服务</string>
+    <string name="no_friend_tip_down">浩泽伊泉净品智能化生活服务</string>
     <string name="number_message">条留言</string>
     <string name="send">发送</string>
     <string name="replay">回复 %s:</string>
@@ -535,7 +535,7 @@
 
     <string name="allow_push_msg">允许推送消息</string>
     <string name="unit">计量单位</string>
-    <string name="about_ozner">关于浩泽依泉净品</string>
+    <string name="about_ozner">关于浩泽伊泉净品</string>
     <string name="logout">退出登录</string>
     <string name="islogout">是否退出登录？</string>
     <string name="setting">设置</string>
