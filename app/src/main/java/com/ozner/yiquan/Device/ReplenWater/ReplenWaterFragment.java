@@ -147,7 +147,12 @@ public class ReplenWaterFragment extends DeviceFragment {
         timeTotal = 0;
         oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, device.Address());
         if (oznerSetting != null) {
-            gender = (int) oznerSetting.getAppData(Contacts.DEV_REPLEN_GENDER);
+            try {
+                gender = (int) oznerSetting.getAppData(Contacts.DEV_REPLEN_GENDER);
+            } catch (Exception ex) {
+                gender = 0;
+                oznerSetting.setAppData(Contacts.DEV_REPLEN_GENDER,0);
+            }
         }
         if (replenWater != null) {
             if (replenWater.Address() != device.Address()) {
