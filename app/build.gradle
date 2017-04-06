@@ -1,5 +1,10 @@
+apply plugin: 'bugly'
 apply plugin: 'com.android.application'
 
+bugly {
+    appId = '900033413' // 注册时分配的App ID
+    appKey = 'HWQoPpUek9ocIcFF' // 注册时分配的App Key
+}
 android {
     compileSdkVersion 24
     buildToolsVersion '25.0.0'
@@ -74,6 +79,7 @@ dependencies {
     //权限管理工具
     //    compile 'org.jsoup:jsoup:1.10.1'
     //好友排名用到的动画库
+    compile 'com.tencent.bugly:crashreport:latest.release'
     compile files('libs/core-3.1.0.jar')
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
