@@ -275,6 +275,7 @@ public abstract class OznerDevice extends XObject {
                 deviceIO.reCallDoReady();
             }
         } else {
+            old.close();
             glb_timerLoop.removeDevice(this);
         }
 

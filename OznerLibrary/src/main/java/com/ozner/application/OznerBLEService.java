@@ -101,7 +101,7 @@ public class OznerBLEService extends Service implements ActivityLifecycleCallbac
         BluetoothManager bluetoothManager = (BluetoothManager) this
                 .getSystemService(Context.BLUETOOTH_SERVICE);
         BluetoothAdapter adapter = bluetoothManager.getAdapter();
-        if (adapter.getState() == BluetoothAdapter.STATE_OFF) {
+        if (adapter != null && adapter.getState() == BluetoothAdapter.STATE_OFF) {
             adapter.enable();
         }
         XObject.setRunningMode(getApplicationContext(), XObject.RunningMode.Foreground);

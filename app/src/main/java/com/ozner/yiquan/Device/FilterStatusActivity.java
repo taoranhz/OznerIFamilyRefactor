@@ -2,7 +2,6 @@ package com.ozner.yiquan.Device;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +19,8 @@ import android.widget.TextView;
 import com.github.kayvannj.permission_utils.Func;
 import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.google.gson.JsonObject;
+import com.ozner.WaterPurifier.WaterPurifier;
+import com.ozner.device.OznerDeviceManager;
 import com.ozner.yiquan.Base.BaseActivity;
 import com.ozner.yiquan.Base.WebActivity;
 import com.ozner.yiquan.Bean.Contacts;
@@ -31,6 +32,7 @@ import com.ozner.yiquan.DBHelper.OznerDeviceSettings;
 import com.ozner.yiquan.DBHelper.UserInfo;
 import com.ozner.yiquan.DBHelper.WaterPurifierAttr;
 import com.ozner.yiquan.Device.WaterPurifier.WaterNetInfoManager;
+import com.ozner.yiquan.Device.WaterPurifier.WaterPurifierFragment;
 import com.ozner.yiquan.HttpHelper.ApiException;
 import com.ozner.yiquan.HttpHelper.HttpMethods;
 import com.ozner.yiquan.HttpHelper.OznerHttpResult;
@@ -104,7 +106,6 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
     private String mac = "";
     private String userid = "";
     private int deviceType = TYPE_WATER_FILTER;
-    private ProgressDialog progressDialog;
     private UserInfo userInfo;
     SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private PermissionUtil.PermissionRequestObject perReqResult;
@@ -262,59 +263,69 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
                 }));
     }
 
-    /**
-     * 初始化净水器滤芯状态
-     *
-     * @param mac
-     */
     private void initWaterPurifierFilter(String mac) {
         try {
-
-            if (null == waterNetInfoManager) {
-                waterNetInfoManager = new WaterNetInfoManager(this);
-            }
-
-            //获取滤芯信息
-            if (purifierAttr != null && purifierAttr.getFilterNowtime() != 0) {
-                Log.e(TAG, "initWaterAttrInfo_filter: " + purifierAttr.getFilterNowtime());
-
-                long dayTimeMill = purifierAttr.getFilterNowtime() / (24 * 3600 * 1000);
-                long todayTimeMill = Calendar.getInstance().getTimeInMillis() / (24 * 3600 * 1000);
-                if (dayTimeMill != todayTimeMill) {
-                    loadWaterFilterNet(mac);
+            WaterPurifier mWaterPurifer = (WaterPurifier) OznerDeviceManager.Instance().getDevice(mac);
+            if (mWaterPurifer != null) {
+                LCLogUtils.E(TAG, "filter_time:" + mWaterPurifer.sensor().FilterValue());
+                //获取滤芯使用时间，单位秒转换成天
+                int filterRemind = Math.round(mWaterPurifer.sensor().FilterValue() / 3600.f / 24.f);
+                LCLogUtils.E(TAG, "filter_used:" + filterRemind);
+                int per = 0;
+                if (filterRemind > 0 && filterRemind < WaterPurifierFragment.MAX_FILTER_TIME) {
+                    per = Math.round(filterRemind * 100.0f / WaterPurifierFragment.MAX_FILTER_TIME);
                 } else {
-                    updateFilterInfoUI(purifierAttr);
+                    per = 0;
                 }
-            } else {
-                loadWaterFilterNet(mac);
+                Log.e(TAG, "updateFilterInfoUI:per: " + per);
+                if (filterRemind < 0) {
+                    filterRemind = 0;
+                }
+                updatePurifierFilterUI(filterRemind, per);
             }
         } catch (Exception ex) {
-            Log.e(TAG, "initWaterPurifierFilter_Ex: " + ex.getMessage());
+            ex.printStackTrace();
+            LCLogUtils.E(TAG, "initWaterPurifierFilter_ex:" + ex.getMessage());
         }
     }
 
+
+//    /**
+//     * 从网络加载水机滤芯数据
+//     *
+//     * @param mac
+//     */
+//    private void loadWaterFilterNet(String mac) {
+//        progressDialog = new ProgressDialog(this);//, null, getString(R.string.data_loading));
+//        progressDialog.setMessage(getString(R.string.data_loading));
+//        progressDialog.setCanceledOnTouchOutside(false);
+//        progressDialog.setCancelable(false);
+//        progressDialog.show();
+//        waterNetInfoManager.getWaterFilterInfo(mac, new WaterNetInfoManager.IWaterAttr() {
+//            @Override
+//            public void onResult(WaterPurifierAttr attr) {
+//                progressDialog.cancel();
+//                if (attr != null) {
+//                    updateFilterInfoUI(attr);
+//                }
+//
+//
+//            }
+//        });
+//    }
+
     /**
-     * 从网络加载水机滤芯数据
+     * 更新净水器滤芯有效期
      *
-     * @param mac
+     * @param remindDay
+     * @param reminPer
      */
-    private void loadWaterFilterNet(String mac) {
-        progressDialog = new ProgressDialog(this);//, null, getString(R.string.data_loading));
-        progressDialog.setMessage(getString(R.string.data_loading));
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-        waterNetInfoManager.getWaterFilterInfo(mac, new WaterNetInfoManager.IWaterAttr() {
-            @Override
-            public void onResult(WaterPurifierAttr attr) {
-                progressDialog.cancel();
-                if(attr!=null){
-                    updateFilterInfoUI(attr);
-                }
-
-
-            }
-        });
+    private void updatePurifierFilterUI(int remindDay, int reminPer) {
+        filterProgress.setShowTime(false);
+        LCLogUtils.E(TAG, "remindDay:" + reminPer * filterProgress.getWarranty() / 100);
+        filterProgress.update((100 - reminPer) * filterProgress.getWarranty() / 100);
+        tvRemainPre.setText(String.valueOf(reminPer));
+        tvRemainTime.setText(String.valueOf(remindDay));
     }
 
     /**
@@ -430,8 +441,8 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
         uizOnzeService.setAdapter(serviceAdapter);
     }
 
-//    @OnClick({R.id.tv_chat_btn, R.id.tv_buy_water_purifier, R.id.tv_scancode_btn})
-    @OnClick({R.id.tv_chat_btn,R.id.tv_scancode_btn})
+    //    @OnClick({R.id.tv_chat_btn, R.id.tv_buy_water_purifier, R.id.tv_scancode_btn})
+    @OnClick({R.id.tv_chat_btn, R.id.tv_scancode_btn})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_chat_btn:
@@ -558,7 +569,7 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
                     Bundle bundle = data.getExtras();
                     String scanResult = bundle.getString("result");
                     if (null != scanResult && "" != scanResult) {
-                        reNewFilterTime( deviceType == 0 ? RankType.WaterType : RankType.TapType, scanResult);
+                        reNewFilterTime(deviceType == 0 ? RankType.WaterType : RankType.TapType, scanResult);
                     }
                 }
                 break;
@@ -568,6 +579,7 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
 
     /**
      * 更新滤芯服务时间
+     *
      * @param type
      * @param code
      */
@@ -581,15 +593,15 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
 
                     @Override
                     public void onNext(JsonObject jsonObject) {
-                        LCLogUtils.E(TAG,"reNewFilterTime:"+jsonObject.toString());
-                        if(jsonObject!=null){
-                            if(jsonObject.get("state").getAsInt()>0){
-                                if(deviceType == TYPE_TAP_FILTER){
+                        LCLogUtils.E(TAG, "reNewFilterTime:" + jsonObject.toString());
+                        if (jsonObject != null) {
+                            if (jsonObject.get("state").getAsInt() > 0) {
+                                if (deviceType == TYPE_TAP_FILTER) {
                                     loadTapFilterFromNet();
-                                }else {
-                                    loadWaterFilterNet(mac);
+                                } else {
+                                    initWaterPurifierFilter(mac);
                                 }
-                            }else {
+                            } else {
                                 showToastCenter(ApiException.getErrResId(jsonObject.get("state").getAsInt()));
                             }
                         }

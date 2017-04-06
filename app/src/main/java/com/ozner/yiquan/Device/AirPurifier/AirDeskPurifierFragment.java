@@ -40,6 +40,7 @@ import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
+import com.ozner.yiquan.Utils.LCLogUtils;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -316,7 +317,9 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                         if (isThisAdd()) {
                             refreshMainOutDoorInfo();
                         }
-                        Log.e(TAG, "getWeatherOutSide_onResult: " + weather.toString());
+                        if (weather != null) {
+                            LCLogUtils.E(TAG, "getWeatherOutSide_onResult: " + weather.toString());
+                        }
                     }
                 });
             } else {
@@ -382,7 +385,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
             ((TextView) airDialog.findViewById(R.id.tv_outside_temp)).setText(netWeather.getTmp());
             ((TextView) airDialog.findViewById(R.id.tv_airOutside_humidity)).setText(netWeather.getHum());
 //            ((TextView) airDialog.findViewById(R.id.tv_outside_data)).setText(netWeather.getWeatherform());
-            ((TextView) airDialog.findViewById(R.id.tv_outside_data)).setText(String.format("%s  %s",netWeather.getWeatherform(),netWeather.getUpdateLocTime()));
+            ((TextView) airDialog.findViewById(R.id.tv_outside_data)).setText(String.format("%s  %s", netWeather.getWeatherform(), netWeather.getUpdateLocTime()));
         }
         airDialog.show();
     }

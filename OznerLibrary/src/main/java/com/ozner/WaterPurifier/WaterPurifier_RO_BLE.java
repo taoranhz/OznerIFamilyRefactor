@@ -182,6 +182,11 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
     }
 
     @Override
+    protected int getFilterValue() {
+        return waterInfo.FilterVolume;
+    }
+
+    @Override
     public String toString() {
 
         StringBuilder sb=new StringBuilder();

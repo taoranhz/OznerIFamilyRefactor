@@ -3,7 +3,6 @@ package com.ozner.WaterPurifier;
 import android.content.Context;
 import android.content.Intent;
 
-import com.ozner.XObject;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
 import com.ozner.device.OperateCallbackProxy;
@@ -127,6 +126,14 @@ public class WaterPurifier_MXChip extends WaterPurifier {
     }
 
 
+    /**
+     * 获取水机滤芯使用时间
+     * @return
+     */
+    @Override
+    protected int getFilterValue(){
+        return statusPacket.FilterTime;
+    }
 
     @Override
     protected int getTDS1() {

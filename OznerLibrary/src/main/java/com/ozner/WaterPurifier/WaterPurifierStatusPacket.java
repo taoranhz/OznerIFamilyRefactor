@@ -24,6 +24,7 @@ class WaterPurifierStatusPacket {
      */
     public Boolean Sterilization = false;
 
+    public int FilterTime = -1;
     public int TDS1 = WaterPurifierError;
     public int TDS2 = WaterPurifierError;
     public WaterPurifierStatusPacket()
@@ -46,6 +47,7 @@ class WaterPurifierStatusPacket {
         this.Sterilization = bytes[15] != 0;
         this.TDS1 = ByteUtil.getShort(bytes, 16);
         this.TDS2 = ByteUtil.getShort(bytes, 18);
+        this.FilterTime = ByteUtil.getInt(bytes,20);
     }
 
     public byte[] toBytes() {

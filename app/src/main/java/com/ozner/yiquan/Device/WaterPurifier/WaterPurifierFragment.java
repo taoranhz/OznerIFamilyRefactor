@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +22,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ozner.WaterPurifier.WaterPurifier;
+import com.ozner.cup.CupRecord;
+import com.ozner.device.BaseDeviceIO;
+import com.ozner.device.OperateCallback;
+import com.ozner.device.OznerDevice;
+import com.ozner.device.OznerDeviceManager;
 import com.ozner.yiquan.Base.WebActivity;
 import com.ozner.yiquan.Bean.Contacts;
 import com.ozner.yiquan.Command.OznerPreference;
 import com.ozner.yiquan.Command.UserDataPreference;
-import com.ozner.cup.CupRecord;
 import com.ozner.yiquan.DBHelper.DBManager;
 import com.ozner.yiquan.DBHelper.OznerDeviceSettings;
 import com.ozner.yiquan.DBHelper.UserInfo;
@@ -40,10 +43,6 @@ import com.ozner.yiquan.R;
 import com.ozner.yiquan.UIView.PurifierDetailProgress;
 import com.ozner.yiquan.Utils.LCLogUtils;
 import com.ozner.yiquan.Utils.WeChatUrlUtil;
-import com.ozner.device.BaseDeviceIO;
-import com.ozner.device.OperateCallback;
-import com.ozner.device.OznerDevice;
-import com.ozner.device.OznerDeviceManager;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -57,7 +56,7 @@ public class WaterPurifierFragment extends DeviceFragment {
     private static final String TAG = "WaterPurifier";
     private static final int TextSize = 40;
     private static final int NumSize = 50;
-
+    public static final int MAX_FILTER_TIME = 180;//最大滤芯时间180天
     @InjectView(R.id.iv_deviceConnectIcon)
     ImageView ivDeviceConnectIcon;
     @InjectView(R.id.tv_deviceConnectTips)
@@ -279,7 +278,7 @@ public class WaterPurifierFragment extends DeviceFragment {
                 }
                 break;
             case R.id.rlay_hotswitch:
-                if (hasHot) {
+//                if (hasHot) {
                     if (mWaterPurifer != null
                             && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
                             && !mWaterPurifer.isOffline()) {
@@ -293,9 +292,9 @@ public class WaterPurifierFragment extends DeviceFragment {
                     } else {
                         showCenterToast(R.string.device_disConnect);
                     }
-                } else {
-                    showCenterToast(R.string.not_support);
-                }
+//                } else {
+//                    showCenterToast(R.string.not_support);
+//                }
                 break;
             case R.id.rlay_coolswitch:
                 if (hasCool) {
@@ -378,21 +377,21 @@ public class WaterPurifierFragment extends DeviceFragment {
                 }
             });
 
-            //获取滤芯信息
-            if (purifierAttr != null && DateUtils.isToday(purifierAttr.getFilterNowtime())) {
-                Log.e(TAG, "initWaterAttrInfo_filter: " + purifierAttr.getFilterNowtime());
-                updateFilterInfoUI(purifierAttr);
-            } else {
-                LCLogUtils.E(TAG, "从网络加载滤芯信息");
-                waterNetInfoManager.getWaterFilterInfo(mac, new WaterNetInfoManager.IWaterAttr() {
-                    @Override
-                    public void onResult(WaterPurifierAttr attr) {
-                        if (attr != null) {
-                            updateFilterInfoUI(attr);
-                        }
-                    }
-                });
-            }
+//            //获取滤芯信息
+//            if (purifierAttr != null && DateUtils.isToday(purifierAttr.getFilterNowtime())) {
+//                Log.e(TAG, "initWaterAttrInfo_filter: " + purifierAttr.getFilterNowtime());
+//                updateFilterInfoUI(purifierAttr);
+//            } else {
+//                LCLogUtils.E(TAG, "从网络加载滤芯信息");
+//                waterNetInfoManager.getWaterFilterInfo(mac, new WaterNetInfoManager.IWaterAttr() {
+//                    @Override
+//                    public void onResult(WaterPurifierAttr attr) {
+//                        if (attr != null) {
+//                            updateFilterInfoUI(attr);
+//                        }
+//                    }
+//                });
+//            }
 
         } catch (Exception ex) {
             Log.e(TAG, "initWaterAttrInfo_Ex: " + ex.getMessage());
@@ -407,6 +406,35 @@ public class WaterPurifierFragment extends DeviceFragment {
     private void refreshWaterSwitcher(WaterPurifierAttr attr) {
         hasCool = attr.getHasCool();
         hasHot = attr.getHasHot();
+    }
+
+    /**
+     * 更新净水器滤芯状态
+     * 从水机读取滤芯使用时间，仅限君融产品
+     */
+    private void updateFilterInfoUI() {
+        if (mWaterPurifer != null && mWaterPurifer.status().Power()) {
+            LCLogUtils.E(TAG, "filter_time:" + mWaterPurifer.sensor().FilterValue());
+            //获取滤芯使用时间，单位秒转换成天
+            if (mWaterPurifer.sensor().FilterValue() >= 0) {
+                int filterRemind = Math.round(mWaterPurifer.sensor().FilterValue() / 3600.f / 24.f);
+                LCLogUtils.E(TAG, "filter_used:" + filterRemind);
+                int per = 0;
+                if (filterRemind > 0 && filterRemind < MAX_FILTER_TIME) {
+                    per = Math.round(filterRemind * 100.0f / WaterPurifierFragment.MAX_FILTER_TIME);
+                } else {
+                    per = 0;
+                }
+                Log.e(TAG, "updateFilterInfoUI:per: " + per);
+                setFilterState(per);
+            } else {
+                tvFilterValue.setText(R.string.state_null);
+                tvFilterTips.setText(R.string.filter_status);
+            }
+        } else {
+            tvFilterValue.setText(R.string.state_null);
+            tvFilterTips.setText(R.string.filter_status);
+        }
     }
 
     /**
@@ -544,6 +572,7 @@ public class WaterPurifierFragment extends DeviceFragment {
                 refreshConnectState();
                 refreshSensorData();
                 refreshSwitchState();
+                updateFilterInfoUI();
             } else {
                 llayDeviceConnectTip.setVisibility(View.INVISIBLE);
                 tvPreValue.setText(R.string.state_null);
