@@ -425,6 +425,11 @@ public class ROWaterPurifierFragment extends DeviceFragment {
                         tvFilterValue.setText(getResources().getString(R.string.state_null));
                         tvFilterTips.setText(R.string.filter_status);
                         rlayFilter.setEnabled(false);
+                        tvAfterValue.setText(getResources().getString(R.string.state_null));
+                        tvPreValue.setText(getResources().getString(R.string.state_null));
+                        filter_A_Time = -1;
+                        filter_B_Time = -1;
+                        filter_C_Time = -1;
                     }else {
                         rlayFilter.setEnabled(true);
                         tvFilterValue.setText(tempPre + "%");
@@ -628,20 +633,21 @@ public class ROWaterPurifierFragment extends DeviceFragment {
 
             waterProgress.update(Math.round((tdsPre / 250f) * 100), Math.round((tdsThen / 250f) * 100));
         }
-        if (!isOffLine) {
-            filter_A_Time = mWaterPurifer.filterInfo.Filter_A_Percentage;
-            filter_B_Time = mWaterPurifer.filterInfo.Filter_B_Percentage;
-            filter_C_Time = mWaterPurifer.filterInfo.Filter_C_Percentage;
+//        if (!isOffLine) {
+//            ddds
+            filter_A_Time = Math.round(((float)mWaterPurifer.filterInfo.Filter_A_Percentage / 10)) * 10;
+            filter_B_Time = Math.round(((float)mWaterPurifer.filterInfo.Filter_B_Percentage / 10)) * 10;
+            filter_C_Time = Math.round(((float)mWaterPurifer.filterInfo.Filter_C_Percentage / 10)) * 10;
             filter_median1 = Math.min(filter_A_Time, filter_B_Time);
             filter_median2 = Math.min(filter_median1, filter_C_Time);
             setFilterState(filter_median2);
             Log.e("trfilterTime", "A------" + filter_A_Time + "\nB------" + filter_B_Time + "\nC------" + filter_C_Time + "\nMIN------" + filter_median2);
-        }else{
-            filter_A_Time = -1;
-            filter_B_Time = -1;
-            filter_C_Time = -1;
-            Log.e("trfilterTime", "A-----@" + filter_A_Time + "\nB------@" + filter_B_Time + "\nC------@" + filter_C_Time);
-        }
+//        }else{
+//        filter_A_Time = -1;
+//        filter_B_Time = -1;
+//        filter_C_Time = -1;
+//        Log.e("trfilterTime", "A-----@" + filter_A_Time + "\nB------@" + filter_B_Time + "\nC------@" + filter_C_Time);
+//    }
     }
 
     /**
