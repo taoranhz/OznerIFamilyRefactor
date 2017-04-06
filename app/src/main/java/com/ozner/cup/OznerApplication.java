@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Utils.LCLogUtils;
+import com.tencent.bugly.crashreport.CrashReport;
 
 /**
  * Created by ozner_67 on 2016/11/1.
@@ -15,6 +16,7 @@ public class OznerApplication extends OznerBaseApplication {
     @Override
     public void onCreate() {
         LCLogUtils.init(getApplicationContext());
+        CrashReport.initCrashReport(getApplicationContext(), "900033413", false);
         super.onCreate();
     }
 

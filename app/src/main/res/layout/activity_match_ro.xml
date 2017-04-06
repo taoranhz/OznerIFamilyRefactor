@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_match_cup"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ozner.cup.Device.Cup.MatchCupActivity">
+
+    <include
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!--蓝牙设备配对中-->
+    <include
+        layout="@layout/match_device_loading"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"/>
+
+    <!--配对失败-->
+    <LinearLayout
+        android:id="@+id/llay_match_fail"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+        <include
+            layout="@layout/match_device_fail_bottom"/>
+    </LinearLayout>
+
+    <!--输入设备信息并完成-->
+    <LinearLayout
+        android:id="@+id/llay_inputInfo"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+        <include
+            layout="@layout/match_success"/>
+
+    </LinearLayout>
+
+    <!--配对成功占位用-->
+    <TextView
+        android:id="@+id/tv_succes_holder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/colorAccent"></TextView>
+</LinearLayout>

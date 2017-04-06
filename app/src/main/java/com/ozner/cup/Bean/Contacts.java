@@ -149,6 +149,7 @@ public class Contacts {
     public static String aboutCup = "http://cup.ozner.net/app/gyznb/gyznb.html";//http://cup.ozner.net/app/us/gyznb_us.html英文版
     //关于净水器
     public static String aboutWaterPurifier = "http://cup.ozner.net/app/gyysj/gyysj.html";
+    public static String aboutRo = "http://app.ozner.net:888/RoWaterPurifier.html";
     //关于补水仪
 //    public static String aboutWRM = "http://app.ozner.net:888//Public/Index";
     public static String aboutWRM = "http://app.joyro.com.cn:8282/BeautyInstrument.html";
@@ -160,6 +161,9 @@ public class Contacts {
     public static String aboutTdsPen = "file:///android_asset/hz_tdspen.html";
 
     // 免责条款
+
+//    public static String URL_BASE_EXCEPTIONS = "http://cup.ozner.net/app/cn/";
+
     public static String exceptions_url = "http://cup.ozner.net/app/cn/mzsm.html";
 //    public static String exceptions_url = "http://app.joyro.com.cn:8282/jrAPPterm.html";
 

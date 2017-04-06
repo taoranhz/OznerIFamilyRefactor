@@ -619,8 +619,18 @@
     <string name="not_download">Did not download:</string>
     <string name="text_ack_msg">Read</string>
     <string name="text_delivered_msg">Delivered</string>
-
+    <string name="water_ropurifier">Intelligent RO water machine</string>
+    <string name="reverse_ro">Please turn on the switch on the RO water machine</string>
+    <string name="rest_ro_fit">Reset</string>
+    <string name="rofit">Filter status</string>
+    <string name="ro_fit">Cleaning filter element</string>
+    <string name="rofilter_success">Reset success</string>
+    <string name="rofilter_fail">Reset failed</string>
+    <string name="rofilter_need_change">For the sake of your health, please replace the filter</string>
+    <string name="warmly_notice">Warm reminder: timely replacement of the filter to ensure the safety of drinking water</string>
     <string name="cant_find_pictures">"Can't find pictures"</string>
     <string name="sd_card_does_not_exist">"SD card does not exist, can't take pictures"</string>
     <string name="Whether_to_empty_all_chats">Clear all messages?</string>
+
+    <string name="save_device">Save Settings？</string>
 </resources>

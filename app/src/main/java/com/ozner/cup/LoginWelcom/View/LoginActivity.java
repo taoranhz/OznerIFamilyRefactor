@@ -150,6 +150,7 @@ public class LoginActivity extends BaseActivity implements CompoundButton.OnChec
                 Intent proctolIntent = new Intent(this, WebActivity.class);
                 proctolIntent.putExtra(Contacts.PARMS_URL,Contacts.exceptions_url);
                 startActivity(proctolIntent);
+
                 break;
             case R.id.btn_getVoiceCode:
                 loginPresenter.getVoiceVerifyCode();

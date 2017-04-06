@@ -1,4 +1,4 @@
-package com.ozner.cup.Device.WaterPurifier;
+package com.ozner.cup.Device.ROWaterPurifier;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -19,10 +19,8 @@ import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.OznerPreference;
-import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
-import com.ozner.cup.DBHelper.WaterPurifierAttr;
 import com.ozner.cup.Device.SetDeviceNameActivity;
 import com.ozner.cup.R;
 import com.ozner.device.OznerDeviceManager;
@@ -33,7 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class SetupWaterActivity extends BaseActivity {
+public class SetupROWaterActivity extends BaseActivity {
     private static final String TAG = "SetupWater";
     private final int SET_NAME_REQ_CODE = 0x101;//设置名字请求码
     @InjectView(R.id.title)
@@ -48,8 +46,6 @@ public class SetupWaterActivity extends BaseActivity {
     TextView tvDeleteDevice;
     @InjectView(R.id.tv_mac)
     TextView tvMac;
-    @InjectView(R.id.rlay_about_purifier)
-    RelativeLayout rlayAboutPurifier;
 
     private String deviceNewName = null, deviceNewPos = null;
     private WaterPurifier mWaterPurifier;
@@ -64,16 +60,13 @@ public class SetupWaterActivity extends BaseActivity {
         setContentView(R.layout.activity_setup_water);
         ButterKnife.inject(this);
         initToolBar();
-        if(UserDataPreference.isLoginEmail(this)){
-            rlayAboutPurifier.setVisibility(View.GONE);
-        }
         mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         try {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
 //            url = getIntent().getStringExtra(Contacts.PARMS_URL);
             Log.e(TAG, "onCreate: mac:" + mac);
             mWaterPurifier = (WaterPurifier) OznerDeviceManager.Instance().getDevice(mac);
-            oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid, mac);
+            oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid,mac);
             initViewData();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -101,7 +94,7 @@ public class SetupWaterActivity extends BaseActivity {
             tvMac.setText(mWaterPurifier.Address());
             deviceNewName = mWaterPurifier.getName();
 //            String usePos = (String) mWaterPurifier.Setting().get(Contacts.DEV_USE_POS, "");
-            if (oznerSetting != null) {
+            if(oznerSetting!=null){
                 deviceNewName = oznerSetting.getName();
                 deviceNewPos = oznerSetting.getDevicePosition();
             }
@@ -128,11 +121,7 @@ public class SetupWaterActivity extends BaseActivity {
                 break;
             case R.id.rlay_about_purifier:
                 if (mWaterPurifier != null) {
-                    WaterPurifierAttr waterPurifierAttr = DBManager.getInstance(this).getWaterAttr(mWaterPurifier.Address());
-                    String aboutUrl = Contacts.aboutWaterPurifier;
-                    if (waterPurifierAttr != null && waterPurifierAttr.getSmlinkurl() != null && !waterPurifierAttr.getSmlinkurl().isEmpty()) {
-                        aboutUrl = waterPurifierAttr.getSmlinkurl();
-                    }
+                    String aboutUrl = Contacts.aboutRo;
                     Intent webIntent = new Intent(this, WebActivity.class);
                     webIntent.putExtra(Contacts.PARMS_URL, aboutUrl);
                     startActivity(webIntent);
@@ -146,11 +135,10 @@ public class SetupWaterActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mWaterPurifier != null) {
-                                    DBManager.getInstance(SetupWaterActivity.this).deleteWaterAttr(mWaterPurifier.Address());
-                                    DBManager.getInstance(SetupWaterActivity.this).deleteDeviceSettings(mUserid, mWaterPurifier.Address());
+                                    DBManager.getInstance(SetupROWaterActivity.this).deleteDeviceSettings(mUserid,mWaterPurifier.Address());
                                     OznerDeviceManager.Instance().remove(mWaterPurifier);
                                     setResult(RESULT_OK);
-                                    SetupWaterActivity.this.finish();
+                                    SetupROWaterActivity.this.finish();
                                 }
                             }
                         }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -172,7 +160,7 @@ public class SetupWaterActivity extends BaseActivity {
             if (deviceNewName != null && deviceNewName.trim().length() > 0) {
                 mWaterPurifier.Setting().name(deviceNewName);
             } else {
-                Toast toast = Toast.makeText(SetupWaterActivity.this, getString(R.string.input_device_name), Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(SetupROWaterActivity.this, getString(R.string.input_device_name), Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
                 return;
@@ -196,7 +184,7 @@ public class SetupWaterActivity extends BaseActivity {
 
             this.finish();
         } else {
-            Toast toast = Toast.makeText(SetupWaterActivity.this, getString(R.string.Not_found_device), Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(SetupROWaterActivity.this, getString(R.string.Not_found_device), Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
         }
@@ -230,6 +218,7 @@ public class SetupWaterActivity extends BaseActivity {
         MenuItem item = menu.add(0, 0, 0, getString(R.string.save));
 
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -238,11 +227,11 @@ public class SetupWaterActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                new AlertDialog.Builder(SetupWaterActivity.this).setTitle("").setMessage(getString(R.string.save_device))
+                new AlertDialog.Builder(SetupROWaterActivity.this).setTitle("").setMessage(getString(R.string.save_device))
                         .setPositiveButton(getString(R.string.yes), new AlertDialog.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                SetupWaterActivity.this.finish();
+                                SetupROWaterActivity.this.finish();
                             }
                         })
                         .setNegativeButton(getString(R.string.no), new AlertDialog.OnClickListener() {
@@ -254,13 +243,13 @@ public class SetupWaterActivity extends BaseActivity {
                         }).show();
                 break;
             case 0:
-                new AlertDialog.Builder(SetupWaterActivity.this).setTitle("").setMessage(getString(R.string.save_device))
+                new AlertDialog.Builder(SetupROWaterActivity.this).setTitle("").setMessage(getString(R.string.save_device))
                         .setPositiveButton(getString(R.string.yes), new AlertDialog.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 //                                mWaterPurifier.updateSettings();
                                 saveSettings();
-                                SetupWaterActivity.this.finish();
+                                SetupROWaterActivity.this.finish();
                             }
                         })
                         .setNegativeButton(getString(R.string.no), new AlertDialog.OnClickListener() {
