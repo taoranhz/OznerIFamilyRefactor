@@ -7,8 +7,8 @@ android {
         applicationId "com.ozner.cup"
         minSdkVersion 18
         targetSdkVersion 24
-        versionCode 301
-        versionName "3.0.1"
+        versionCode 317
+        versionName "3.1.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -18,12 +18,12 @@ android {
         }
     }
     signingConfigs {
-//        debug {
-//            keyAlias 'ozner'
-//            keyPassword '123456789'
-//            storeFile file('D:/ozner/oznerCup/ozner_new.keystore')
-//            storePassword '1234567890'
-//        }
+        debug {
+            keyAlias 'ozner'
+            keyPassword '123456789'
+            storeFile file('D:/OznerNewJR/ozner_new.keystore')
+            storePassword '1234567890'
+        }
     }
     productFlavors {
     }

@@ -194,6 +194,7 @@ public class SetupTapActivity extends BaseActivity {
     /**
      * 保存设置
      */
+
     private void saveSettings() {
         // TODO: 2016/11/9 处理保存事件
         if (mTap != null) {
@@ -246,10 +247,38 @@ public class SetupTapActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                this.finish();
+                new AlertDialog.Builder(SetupTapActivity.this).setTitle("").setMessage(getString(R.string.save_device))
+                        .setPositiveButton(getString(R.string.yes), new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                SetupTapActivity.this.finish();
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.no), new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                finish();
+                            }
+                        }).show();
                 break;
             case 0:
-                saveSettings();
+                new AlertDialog.Builder(SetupTapActivity.this).setTitle("").setMessage(getString(R.string.save_device))
+                        .setPositiveButton(getString(R.string.yes), new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+//                                mWaterPurifier.updateSettings();
+                                saveSettings();
+                                SetupTapActivity.this.finish();
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.no), new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                finish();
+                            }
+                        }).show();
                 break;
         }
         return true;

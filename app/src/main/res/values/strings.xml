@@ -619,16 +619,18 @@
     <string name="not_download">Did not download:</string>
     <string name="text_ack_msg">Read</string>
     <string name="text_delivered_msg">Delivered</string>
-    <string name="water_ropurifier">智能RO水机</string>
-    <string name="reverse_ro">请将RO水机的开关打开</string>
-    <string name="rest_ro_fit">复位</string>
-    <string name="rofit">滤芯状态</string>
-    <string name="ro_fit">清洗前置滤芯</string>
-    <string name="rofilter_success">复位成功</string>
-    <string name="rofilter_fail">复位失败</string>
-    <string name="rofilter_need_change">为了您和家人的健康，请及时更换滤芯</string>
-    <string name="warmly_notice">温馨提醒：及时更换滤芯才能保证饮用水的安全</string>
+    <string name="water_ropurifier">Intelligent RO water machine</string>
+    <string name="reverse_ro">Please turn on the switch on the RO water machine</string>
+    <string name="rest_ro_fit">Reset</string>
+    <string name="rofit">Filter status</string>
+    <string name="ro_fit">Cleaning filter element</string>
+    <string name="rofilter_success">Reset success</string>
+    <string name="rofilter_fail">Reset failed</string>
+    <string name="rofilter_need_change">For the sake of your health, please replace the filter</string>
+    <string name="warmly_notice">Warm reminder: timely replacement of the filter to ensure the safety of drinking water</string>
     <string name="cant_find_pictures">"Can't find pictures"</string>
     <string name="sd_card_does_not_exist">"SD card does not exist, can't take pictures"</string>
     <string name="Whether_to_empty_all_chats">Clear all messages?</string>
+
+    <string name="save_device">Save Settings？</string>
 </resources>

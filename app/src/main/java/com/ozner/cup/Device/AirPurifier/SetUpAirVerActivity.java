@@ -105,10 +105,37 @@ public class SetUpAirVerActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                this.finish();
+                new AlertDialog.Builder(SetUpAirVerActivity.this).setTitle("").setMessage(getString(R.string.save_device))
+                        .setPositiveButton(getString(R.string.yes), new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                SetUpAirVerActivity.this.finish();
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.no), new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                finish();
+                            }
+                        }).show();
                 break;
             case 0:
-                saveSettings();
+                new AlertDialog.Builder(SetUpAirVerActivity.this).setTitle("").setMessage(getString(R.string.save_device))
+                        .setPositiveButton(getString(R.string.yes), new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                saveSettings();
+                                SetUpAirVerActivity.this.finish();
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.no), new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                finish();
+                            }
+                        }).show();
                 break;
         }
         return true;

@@ -218,6 +218,7 @@ public class SetupROWaterActivity extends BaseActivity {
         MenuItem item = menu.add(0, 0, 0, getString(R.string.save));
 
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -226,10 +227,38 @@ public class SetupROWaterActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                this.finish();
+                new AlertDialog.Builder(SetupROWaterActivity.this).setTitle("").setMessage(getString(R.string.save_device))
+                        .setPositiveButton(getString(R.string.yes), new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                SetupROWaterActivity.this.finish();
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.no), new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                finish();
+                            }
+                        }).show();
                 break;
             case 0:
-                saveSettings();
+                new AlertDialog.Builder(SetupROWaterActivity.this).setTitle("").setMessage(getString(R.string.save_device))
+                        .setPositiveButton(getString(R.string.yes), new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+//                                mWaterPurifier.updateSettings();
+                                saveSettings();
+                                SetupROWaterActivity.this.finish();
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.no), new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                finish();
+                            }
+                        }).show();
                 break;
         }
         return true;
