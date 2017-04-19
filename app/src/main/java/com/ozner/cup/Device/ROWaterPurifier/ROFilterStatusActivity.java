@@ -18,7 +18,6 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.google.gson.JsonObject;
@@ -202,7 +201,8 @@ public class ROFilterStatusActivity extends BaseActivity implements AdapterView.
         }
         //复位键的显示
         if((Integer.parseInt(fit_a) ==0) || (Integer.parseInt(fit_b)==0)||(Integer.parseInt(fit_c)==0)){
-            tv_ro_filterRest.setVisibility(View.VISIBLE);
+//            tv_ro_filterRest.setVisibility(View.VISIBLE);
+            tv_ro_filterRest.setVisibility(View.INVISIBLE);
         }else{
             tv_ro_filterRest.setVisibility(View.INVISIBLE);
         }
@@ -391,21 +391,22 @@ public class ROFilterStatusActivity extends BaseActivity implements AdapterView.
                                     @Override
                                     public void onSuccess(Void var1) {
                                         Log.e("trfilter", "复位成功" );
-                                        Toast.makeText(ROFilterStatusActivity.this,getString(R.string.rofilter_success)+roWaterPurifier.filterInfo.Filter_A_Percentage,Toast.LENGTH_SHORT).show();
+//                                        Toast.makeText(ROFilterStatusActivity.this,getString(R.string.rofilter_success),Toast.LENGTH_SHORT).show();
                                         tv_ro_filterRest.setVisibility(View.INVISIBLE);
-                                        tv_rolxa.setText(roWaterPurifier.filterInfo.Filter_A_Percentage+"");
-                                        tv_rolxb.setText(roWaterPurifier.filterInfo.Filter_B_Percentage+"");
-                                        tv_rolxc.setText(roWaterPurifier.filterInfo.Filter_C_Percentage+"");
+//                                        tv_rolxa.setText(roWaterPurifier.filterInfo.Filter_A_Percentage+"%");
+//                                        tv_rolxb.setText(roWaterPurifier.filterInfo.Filter_B_Percentage+"%");
+//                                        tv_rolxc.setText(roWaterPurifier.filterInfo.Filter_C_Percentage+"%");
                                     }
 
                                     @Override
                                     public void onFailure(Throwable var1) {
                                         Log.e("trfilter", "复位失败" );
-                                        Toast.makeText(ROFilterStatusActivity.this,getString(R.string.rofilter_fail),Toast.LENGTH_SHORT).show();
-                                        tv_ro_filterRest.setVisibility(View.VISIBLE);
-                                        tv_rolxa.setText(fit_a+"");
-                                        tv_rolxb.setText(fit_b+"");
-                                        tv_rolxc.setText(fit_c+"");
+//                                        Toast.makeText(ROFilterStatusActivity.this,getString(R.string.rofilter_fail),Toast.LENGTH_SHORT).show();
+//                                        tv_ro_filterRest.setVisibility(View.VISIBLE);
+                                        tv_ro_filterRest.setVisibility(View.INVISIBLE);
+//                                        tv_rolxa.setText(fit_a+"%");
+//                                        tv_rolxb.setText(fit_b+"%");
+//                                        tv_rolxc.setText(fit_c+"%");
                                     }
                                 });
                             } else {

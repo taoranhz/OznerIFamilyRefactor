@@ -199,7 +199,6 @@ public class ROWaterPurifierFragment extends DeviceFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         mUserid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
         tdsSensorManager = new TDSSensorManager(getContext());
-        initAnimation();
         try {
             Bundle bundle = getArguments();
             mWaterPurifer = (WaterPurifier_RO_BLE) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
@@ -211,6 +210,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
         }
+        initAnimation();
         super.onCreate(savedInstanceState);
     }
 
@@ -420,17 +420,6 @@ public class ROWaterPurifierFragment extends DeviceFragment {
                     if (tempPre < 0) {
                         tempPre = 0;
                     }
-
-                    if(filter_median2==0&&isOffLine){
-                        tvFilterValue.setText(getResources().getString(R.string.state_null));
-                        tvFilterTips.setText(R.string.filter_status);
-                        rlayFilter.setEnabled(false);
-                        tvAfterValue.setText(getResources().getString(R.string.state_null));
-                        tvPreValue.setText(getResources().getString(R.string.state_null));
-                        filter_A_Time = -1;
-                        filter_B_Time = -1;
-                        filter_C_Time = -1;
-                    }else {
                         rlayFilter.setEnabled(true);
                         tvFilterValue.setText(tempPre + "%");
                         if (0 == tempPre) {
@@ -448,7 +437,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
                             tvFilterTips.setText(R.string.filter_status);
                             ivFilterIcon.setImageResource(R.drawable.filter_state3);
                         }
-                    }
+
                 }
             }
         });
@@ -509,6 +498,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
                 Log.e(TAG, "refreshUIData: ");
                 refreshConnectState();
                 refreshSensorData();
+                refreshFilterInfo();
             } else {
                 llayDeviceConnectTip.setVisibility(View.INVISIBLE);
                 tvPreValue.setText(R.string.state_null);
@@ -518,8 +508,26 @@ public class ROWaterPurifierFragment extends DeviceFragment {
                 ivTdsStateIcon.setVisibility(View.GONE);
                 tvTdsStateText.setText(R.string.state_null);
                 waterProgress.update(0, 0);
+                if(filter_median2==0){
+                    tvFilterValue.setText(getResources().getString(R.string.state_null));
+                    tvFilterTips.setText(R.string.filter_status);
+                    rlayFilter.setEnabled(false);
+                }
             }
         }
+    }
+
+    /**
+     * 刷新滤芯状态
+     */
+    private void refreshFilterInfo() {
+        filter_A_Time = Math.round(((float)mWaterPurifer.filterInfo.Filter_A_Percentage / 10)) * 10;
+        filter_B_Time = Math.round(((float)mWaterPurifer.filterInfo.Filter_B_Percentage / 10)) * 10;
+        filter_C_Time = Math.round(((float)mWaterPurifer.filterInfo.Filter_C_Percentage / 10)) * 10;
+        filter_median1 = Math.min(filter_A_Time, filter_B_Time);
+        filter_median2 = Math.min(filter_median1, filter_C_Time);
+        Log.e("trfilterTime", "A------" + filter_A_Time + "\nB------" + filter_B_Time + "\nC------" + filter_C_Time + "\nMIN------" + filter_median2);
+        setFilterState(filter_median2);
     }
 
 
@@ -570,21 +578,11 @@ public class ROWaterPurifierFragment extends DeviceFragment {
         }
     }
 
-
     /**
      * 处理TDS显示相关
      */
     private void showTdsState() {
         int tdsPre, tdsThen;
-        //获取滤芯信息
-        status=mWaterPurifer.connectStatus().toString();
-        if("Disconnect".equals(status)){
-            Log.e("trstatus",status+"===========");
-            isOffLine=true;
-        }else{
-            isOffLine=false;
-        }
-
         //获取净化前后的TDS值
         if (mWaterPurifer.waterInfo.TDS1> 0 && mWaterPurifer.waterInfo.TDS2> 0
                 && mWaterPurifer.waterInfo.TDS1 != 65535 && mWaterPurifer.waterInfo.TDS2 != 65535) {
@@ -600,14 +598,11 @@ public class ROWaterPurifierFragment extends DeviceFragment {
             //有任何一个不大于0或者有任何一个为65535，就全部置为0
             tdsPre = tdsThen = 0;
         }
-
         Log.e(TAG, "showTdsState: oldPre:" + oldPreValue + " , oldThen:" + oldThenValue);
         //只有当数据和上次不一样时才更新刷新
         if (oldPreValue != tdsPre || oldThenValue != tdsThen) {
-
             oldPreValue = tdsPre;
             oldThenValue = tdsThen;
-
             //净化前后的值都不为0，并且都不为65535
             if (tdsPre != 0&&!isOffLine) {
                 tvPreValue.setText(String.valueOf(tdsPre));
@@ -621,33 +616,16 @@ public class ROWaterPurifierFragment extends DeviceFragment {
                 tvPreValue.setTextSize(TextSize);
                 tvAfterValue.setTextSize(TextSize);
             }
-
+            // 根据净化后的tds显示状态
             showTdsStateTips(tdsThen);
-
             if (tdsPre > 250) {
                 tdsPre = 250;
             }
             if (tdsThen > 250) {
                 tdsThen = 250;
             }
-
             waterProgress.update(Math.round((tdsPre / 250f) * 100), Math.round((tdsThen / 250f) * 100));
         }
-//        if (!isOffLine) {
-//            ddds
-            filter_A_Time = Math.round(((float)mWaterPurifer.filterInfo.Filter_A_Percentage / 10)) * 10;
-            filter_B_Time = Math.round(((float)mWaterPurifer.filterInfo.Filter_B_Percentage / 10)) * 10;
-            filter_C_Time = Math.round(((float)mWaterPurifer.filterInfo.Filter_C_Percentage / 10)) * 10;
-            filter_median1 = Math.min(filter_A_Time, filter_B_Time);
-            filter_median2 = Math.min(filter_median1, filter_C_Time);
-            setFilterState(filter_median2);
-            Log.e("trfilterTime", "A------" + filter_A_Time + "\nB------" + filter_B_Time + "\nC------" + filter_C_Time + "\nMIN------" + filter_median2);
-//        }else{
-//        filter_A_Time = -1;
-//        filter_B_Time = -1;
-//        filter_C_Time = -1;
-//        Log.e("trfilterTime", "A-----@" + filter_A_Time + "\nB------@" + filter_B_Time + "\nC------@" + filter_C_Time);
-//    }
     }
 
     /**
@@ -660,7 +638,6 @@ public class ROWaterPurifierFragment extends DeviceFragment {
         } else {
             llayTdsTips.setVisibility(View.INVISIBLE);
         }
-
         if (thenTds == 0) {
             ivTdsStateIcon.setVisibility(View.GONE);
             tvTdsStateText.setText(R.string.state_null);
@@ -792,7 +769,8 @@ public class ROWaterPurifierFragment extends DeviceFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-//            Log.e(TAG, "onReceive: " + mCup.toString());
+            Log.e(TAG, "onReceive: " + mWaterPurifer.toString());
+//            Toast.makeText(getActivity(),"onReceive: " + mWaterPurifer.toString(),Toast.LENGTH_LONG).show();
             refreshUIData();
         }
     }

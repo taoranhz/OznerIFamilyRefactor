@@ -116,6 +116,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+//                                Toast.makeText(MatchROWaterPuriferActivity.this,"ro水机beginMatch------startFindDevice",Toast.LENGTH_SHORT).show();
                                 startFindDevice();
                             }
                         });
@@ -148,6 +149,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
         ivMatchIcon.setVisibility(View.VISIBLE);
         tvSuccesHolder.setVisibility(View.VISIBLE);
 
+        //开始旋转动画
         startRotate();
         registerBlueReceiver();
     }
@@ -235,6 +237,8 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
         }
     }
 
+
+
     private void saveDeviceToDB(String userid, OznerDevice device) {
         try {
             OznerDeviceSettings oznerSetting = DBManager.getInstance(this).getDeviceSettings(userid, device.Address());
@@ -279,10 +283,14 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
      */
     private void registerBlueReceiver() {
         if (monitor == null) {
+//            Toast.makeText(MatchROWaterPuriferActivity.this,"ro水机配对monitor为空",Toast.LENGTH_LONG).show();
             monitor = new Monitor();
             IntentFilter filter = new IntentFilter();
             filter.addAction(BluetoothScan.ACTION_SCANNER_FOUND);
+            loadFoundDevices();
             this.registerReceiver(monitor, filter);
+        }else{
+//            Toast.makeText(MatchROWaterPuriferActivity.this,"ro水机配对monitor不为空",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -400,12 +408,14 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
                 if (deviceIOs != null) {
                     for (BaseDeviceIO device : deviceIOs) {
                         //添加ro水机
-                        if ( WaterPurifierManager.IsWaterPurifier(device.getType())) {
+                        if ("Ozner RO".equals(device.getType())) {
                             if (device instanceof BluetoothIO) {
                                 BluetoothIO bluetoothIO = (BluetoothIO) device;
-                                if (WaterPurifier_RO_BLE.isBindMode(bluetoothIO))
-                                    if (!mDevAdpater.hasDevice(device))
+                                if (WaterPurifier_RO_BLE.isBindMode(bluetoothIO)) {
+                                    if (!mDevAdpater.hasDevice(device)) {
                                         mDevAdpater.addItem(device);
+                                    }
+                                }
                             }
                         }
                     }
