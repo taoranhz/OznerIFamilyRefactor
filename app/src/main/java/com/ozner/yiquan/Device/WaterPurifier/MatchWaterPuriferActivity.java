@@ -217,7 +217,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
      */
     private void startMatch() {
         if (tvSelectedWifi.getText().length() > 0) {
-            if (etPassword.getText().length() > 0) {
+//            if (etPassword.getText().length() > 0) {
                 if (isRemPass) {
                     remPassWord(tvSelectedWifi.getText().toString(), etPassword.getText().toString());
                 } else {
@@ -235,9 +235,9 @@ public class MatchWaterPuriferActivity extends BaseActivity {
                     Log.e(TAG, "matchDevice_Ex: " + ex.getMessage());
                     showMatchFail();
                 }
-            } else {
-                showToastCenter("请输入密码");
-            }
+//            } else {
+//                showToastCenter("请输入密码");
+//            }
         } else {
             showToastCenter("未连接WIFI");
         }
