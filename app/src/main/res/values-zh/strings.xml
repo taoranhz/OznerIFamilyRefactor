@@ -35,6 +35,7 @@
     <string name="device_address_err">设备地址错误</string>
     <string name="Filter_Scan">扫一扫</string>
     <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
+    <string name="not_connect_Wifi">未连接WIFI</string>
 
     <!--登录-->
     <string name="login_phone_hint">请输入手机号</string>

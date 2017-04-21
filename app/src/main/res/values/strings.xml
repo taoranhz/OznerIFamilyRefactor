@@ -35,6 +35,7 @@
     <string name="device_address_err">Device address wrong</string>
     <string name="Filter_Scan">Scan</string>
     <string name="scan_text">Put QR code into the box to scan</string>
+    <string name="not_connect_Wifi">Not connected wi-fi</string>
 
     <!--登录-->
     <string name="login_phone_hint">Phone number</string>
