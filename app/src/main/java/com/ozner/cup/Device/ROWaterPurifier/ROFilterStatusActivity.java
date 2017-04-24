@@ -332,7 +332,7 @@ public class ROFilterStatusActivity extends BaseActivity implements AdapterView.
     private void loadServiceData() {
         serviceList.clear();
         for (int i = 0; i < serviceImgs.length; i++) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
+            HashMap<String, Object>  map = new HashMap<String, Object>();
             map.put("itemImg", serviceImgs[i]);
             map.put("itemTextUp", serviceUpStr[i]);
             map.put("itemTextDown", serviceDownStr[i]);

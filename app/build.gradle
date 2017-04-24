@@ -12,36 +12,24 @@ android {
         applicationId "com.ozner.cup"
         minSdkVersion 18
         targetSdkVersion 24
-        versionCode 301
-        versionName "3.0.1"
+        versionCode 317
+        versionName "3.1.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        //打包不成功时添加
+        multiDexEnabled true
     }
     buildTypes {
         release {
             minifyEnabled false
-//            shrinkResources false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     signingConfigs {
-        config {
-            keyAlias 'ozner'
-            keyPassword '123456789'
-            storeFile file('D:/ozner/oznerCup/ozner_new.keystore')
-            storePassword '1234567890'
-            v2SigningEnabled false
-        }
-//        config {
-//            keyAlias 'JoRo'
-//            keyPassword '123456789'
-//            storeFile file('D:/ozner/Joroy/OznerJoRoRefactor/JoRo.jks')
-//            storePassword '123456789'
-//            v2SigningEnabled false
-//        }
         debug {
             keyAlias 'ozner'
             keyPassword '123456789'
-            storeFile file('D:/ozner/oznerCup/ozner_new.keystore')
+            storeFile file('D:/OznerNewJR/ozner_new.keystore')
             storePassword '1234567890'
             v2SigningEnabled false
         }
@@ -54,9 +42,9 @@ buildscript {
     repositories {
         mavenCentral()
     }
-//    dependencies {
-//        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.0'
-//    }
+    dependencies {
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.0'
+    }
 }
 
 apply plugin: 'org.greenrobot.greendao'
@@ -70,7 +58,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile project(':OznerLibrary')
+    compile project(path: ':OznerLibrary')
     compile project(':xzy_ui_lib')
     //图片加载工具
     //数据库管理工具
@@ -101,4 +89,5 @@ dependencies {
     compile 'com.bigkoo:convenientbanner:2.0.5'
 //    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+
 }
