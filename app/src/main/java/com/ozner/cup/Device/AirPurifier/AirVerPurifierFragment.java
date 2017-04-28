@@ -207,7 +207,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
 
     @Override
     public void setDevice(OznerDevice device) {
-        oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mVerAirPurifier.Address());
+        oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, device.Address());
 //        refreshMainOutDoorInfo();
         getOutDoorInfo();
 //        initColor();
