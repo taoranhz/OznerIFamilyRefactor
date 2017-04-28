@@ -29,9 +29,6 @@ import com.ozner.yiquan.R;
 import com.ozner.yiquan.UIView.FilterProgressView;
 import com.ozner.yiquan.Utils.WeChatUrlUtil;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -79,6 +76,7 @@ public class AirVerFilterActivity extends BaseActivity {
             window.setNavigationBarColor(ContextCompat.getColor(this, R.color.cup_detail_bg));
         }
         filterProgress.setThumb(R.drawable.filter_status_thumb);
+        filterProgress.setShowTime(false);
 
         String userid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
         if (userid != null && !userid.isEmpty()) {
@@ -181,9 +179,11 @@ public class AirVerFilterActivity extends BaseActivity {
      */
     private void refeshClean() {
         if (mAirPurifier != null) {
-            int clean = mAirPurifier.sensor().TotalClean() / 1000;
-            Log.e(TAG, "refeshClean: " + clean);
-            if (clean > 0 && clean < 65535) {
+            Log.e(TAG, "refeshClean: totalClean:"+mAirPurifier.sensor().TotalClean());
+            if (mAirPurifier.sensor().TotalClean() > 0
+                    && mAirPurifier.sensor().TotalClean() != 65535) {
+                int clean = mAirPurifier.sensor().TotalClean() / 1000;
+                Log.e(TAG, "refeshClean:clean: " + clean);
                 tvCleanValue.setText(String.valueOf(clean));
             } else {
                 tvCleanValue.setText("0");
@@ -195,27 +195,46 @@ public class AirVerFilterActivity extends BaseActivity {
      * 刷新滤芯状态
      */
     private void refreshFilter() {
+
+        int lvXinRemaind = 0;
         if (mAirPurifier != null) {
-            Date proDate = mAirPurifier.sensor().FilterStatus().lastTime;
-            Date stopDate = mAirPurifier.sensor().FilterStatus().stopTime;
-            long proMill = proDate.getTime();
-            long stopMill = stopDate.getTime();
-            long currentMill = Calendar.getInstance().getTimeInMillis();
-            long totalTime = (stopMill - proMill) / (24 * 3600 * 1000);
-            long useTime = (currentMill - proMill) / (24 * 3600 * 1000);
-            int lvXin = 0;
-            try {
-                lvXin = Math.round((totalTime - useTime) * 100 / totalTime);
-                if (lvXin < 0 || lvXin > 100) {
-                    lvXin = 0;
-                }
-            } catch (Exception ex) {
-                Log.e(TAG, "refreshFilter_Ex: " + ex.getMessage());
-            }
-            tvFilterRemind.setText(String.valueOf(lvXin));
-            filterProgress.initTime(proDate, stopDate);
-            filterProgress.update(Calendar.getInstance().getTime());
+
+            int workTime = mAirPurifier.sensor().FilterStatus().workTime;
+            int maxTime = mAirPurifier.sensor().FilterStatus().maxWorkTime;
+            Log.e(TAG, "refreshFilter: workTime:" + workTime + " ,maxTime:" + maxTime);
+            float lvXinTemp = 0;
+            if (maxTime > 0)
+                lvXinTemp = 1 - (float) workTime / maxTime;
+            lvXinTemp = Math.min(1, lvXinTemp);
+            lvXinTemp = Math.max(0, lvXinTemp);
+
+            lvXinRemaind = (int) (lvXinTemp * 100);
         }
+
+        tvFilterRemind.setText(String.valueOf(lvXinRemaind));
+        filterProgress.update((100 - lvXinRemaind) * filterProgress.getWarranty() / 100);
+
+//        if (mAirPurifier != null) {
+//            Date proDate = mAirPurifier.sensor().FilterStatus().lastTime;
+//            Date stopDate = mAirPurifier.sensor().FilterStatus().stopTime;
+//            long proMill = proDate.getTime();
+//            long stopMill = stopDate.getTime();
+//            long currentMill = Calendar.getInstance().getTimeInMillis();
+//            long totalTime = (stopMill - proMill) / (24 * 3600 * 1000);
+//            long useTime = (currentMill - proMill) / (24 * 3600 * 1000);
+//            int lvXin = 0;
+//            try {
+//                lvXin = Math.round((totalTime - useTime) * 100 / totalTime);
+//                if (lvXin < 0 || lvXin > 100) {
+//                    lvXin = 0;
+//                }
+//            } catch (Exception ex) {
+//                Log.e(TAG, "refreshFilter_Ex: " + ex.getMessage());
+//            }
+//            tvFilterRemind.setText(String.valueOf(lvXin));
+//            filterProgress.initTime(proDate, stopDate);
+//            filterProgress.update(Calendar.getInstance().getTime());
+//        }
     }
 
     @Override
@@ -245,7 +264,7 @@ public class AirVerFilterActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    @OnClick({R.id.tv_pmQuestion, R.id.tv_vocQuestion,R.id.tv_buy_filter_btn,R.id.tv_chatbtn})
+    @OnClick({R.id.tv_pmQuestion, R.id.tv_vocQuestion, R.id.tv_buy_filter_btn, R.id.tv_chatbtn})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_pmQuestion:

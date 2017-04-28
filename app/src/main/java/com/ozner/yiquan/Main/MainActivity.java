@@ -60,6 +60,7 @@ import com.ozner.yiquan.LoginWelcom.View.LoginActivity;
 import com.ozner.yiquan.MyCenter.MyCenterFragment;
 import com.ozner.yiquan.MyCenter.MyFriend.FriendInfoManager;
 import com.ozner.yiquan.MyCenter.MyFriend.bean.VerifyMessageItem;
+import com.ozner.yiquan.MyCenter.OznerUpdateManager;
 import com.ozner.yiquan.R;
 import com.ozner.yiquan.Utils.LCLogUtils;
 import com.ozner.yiquan.Utils.MobileInfoUtil;
@@ -133,6 +134,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         hideBottomNav();
         //检查位置权限
         checkPosPer();
+        new OznerUpdateManager(this, false).checkUpdate();
     }
 
 

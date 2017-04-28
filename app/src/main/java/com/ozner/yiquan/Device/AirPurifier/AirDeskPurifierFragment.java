@@ -258,7 +258,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
 
     @Override
     public void setDevice(OznerDevice device) {
-        oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mDeskAirPurifier.Address());
+        oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, device.Address());
 //        refreshMainOutDoorInfo();
         getOutDoorInfo();
         deviceNewName = "";
