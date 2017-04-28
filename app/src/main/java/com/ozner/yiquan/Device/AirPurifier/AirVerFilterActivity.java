@@ -27,6 +27,7 @@ import com.ozner.yiquan.DBHelper.UserInfo;
 import com.ozner.yiquan.OznerApplication;
 import com.ozner.yiquan.R;
 import com.ozner.yiquan.UIView.FilterProgressView;
+import com.ozner.yiquan.Utils.LCLogUtils;
 import com.ozner.yiquan.Utils.WeChatUrlUtil;
 
 import butterknife.ButterKnife;
@@ -207,7 +208,7 @@ public class AirVerFilterActivity extends BaseActivity {
                 lvXinTemp = 1 - (float) workTime / maxTime;
             lvXinTemp = Math.min(1, lvXinTemp);
             lvXinTemp = Math.max(0, lvXinTemp);
-
+            LCLogUtils.E(TAG,"滤芯状态："+lvXinTemp);
             lvXinRemaind = (int) (lvXinTemp * 100);
         }
 

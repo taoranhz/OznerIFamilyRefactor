@@ -15,7 +15,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -119,7 +118,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         initBroadCastFilter();
         mUserid = UserDataPreference.GetUserData(this, UserDataPreference.UserId, null);
         if (mUserid != null && !mUserid.isEmpty()) {
-            Log.e(TAG, "onCreate: mUserid:" + mUserid + ",usertoken:" + OznerPreference.getUserToken(this));
+            LCLogUtils.E(TAG, "onCreate: mUserid:" + mUserid + ",usertoken:" + OznerPreference.getUserToken(this));
             userInfo = DBManager.getInstance(this).getUserInfo(mUserid);
             userInfoManager = new UserInfoManager(this);
             userInfoManager.loadUserInfo(null);
@@ -161,7 +160,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 //            }
             llayBottom.setVisibility(View.GONE);
         } catch (Exception ex) {
-            Log.e(TAG, "hideBottomNav_Ex: " + ex.getMessage());
+            LCLogUtils.E(TAG, "hideBottomNav_Ex: " + ex.getMessage());
         }
     }
 
@@ -177,7 +176,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 //            }
             llayBottom.setVisibility(View.VISIBLE);
         } catch (Exception ex) {
-            Log.e(TAG, "showBottomNav_Ex: " + ex.getMessage());
+            LCLogUtils.E(TAG, "showBottomNav_Ex: " + ex.getMessage());
         }
     }
 
@@ -393,7 +392,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         if (!isAuto || curBottomIndex == 0) {
             closeLeftMenu();
             UserDataPreference.SetUserData(this, UserDataPreference.SelMac, mac);//保存选中的设备mac
-            Log.e(TAG, "onDeviceItemClick: " + mac);
+            LCLogUtils.E(TAG, "onDeviceItemClick: " + mac);
             bnBootomNavBar.selectTab(0, true);
         }
     }
@@ -434,7 +433,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         FragmentTransaction trans = this.getSupportFragmentManager().beginTransaction();
         OznerDevice device = ((LeftMenuFragment) (getSupportFragmentManager().findFragmentById(R.id.fg_left_menu))).getSelectedDevice();
         if (device != null) {
-            Log.e(TAG, "showDevice: " + device.Address() + " , deviceType:" + device.Type());
+            LCLogUtils.E(TAG, "showDevice: " + device.Address() + " , deviceType:" + device.Type());
             if (devFragmentMap.containsKey(device.Address())) {
                 DeviceFragment df = devFragmentMap.get(device.Address());
                 df.setDevice(device);
@@ -454,7 +453,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 //                trans.replace(R.id.fg_content, newDef);
             }
         } else {
-            Log.e(TAG, "showDevice: NoDeviceTag");
+            LCLogUtils.E(TAG, "showDevice: NoDeviceTag");
             trans.replace(R.id.fg_content, devFragmentMap.get(NoDeviceTag));
         }
         trans.commitAllowingStateLoss();
@@ -464,7 +463,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     public void onTabSelected(int position) {
         curBottomIndex = position;
         System.gc();
-        Log.e(TAG, "onTabSelected() called with: " + "position = [" + position + "]");
+        LCLogUtils.E(TAG, "onTabSelected() called with: " + "position = [" + position + "]");
         FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
         if (2 != position) {
             hideKeyboard();
@@ -508,7 +507,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
     @Override
     public void onTabUnselected(int position) {
-        Log.d(TAG, "onTabUnselected() called with: " + "position = [" + position + "]");
+        LCLogUtils.D(TAG, "onTabUnselected() called with: " + "position = [" + position + "]");
     }
 
     @Override
@@ -546,7 +545,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                     }, 100);
                     break;
                 case OznerBroadcastAction.OBA_SWITCH_CHAT://切换到咨询
-                    Log.e(TAG, "onReceive: 切换到咨询");
+                    LCLogUtils.E(TAG, "onReceive: 切换到咨询");
                     //这里不用延时的话没有效果
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -566,15 +565,15 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.e(TAG, "onError: " + e.getMessage());
+                            LCLogUtils.E(TAG, "onError: " + e.getMessage());
                         }
 
                         @Override
                         public void onNext(JsonObject jsonObject) {
-                            Log.e(TAG, "onNext: " + jsonObject.toString());
+                            LCLogUtils.E(TAG, "onNext: " + jsonObject.toString());
                             int state = jsonObject.get("state").getAsInt();
                             if (state > 0) {
-                                Log.e(TAG, "onNext: success");
+                                LCLogUtils.E(TAG, "onNext: success");
                                 OznerPreference.SetValue(MainActivity.this, OznerPreference.ISBDBind, String.valueOf(true));
                             } else {
                                 if (jsonObject.get("state").getAsInt() == -10006
