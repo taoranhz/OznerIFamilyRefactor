@@ -184,9 +184,9 @@ public class AirVerFilterActivity extends BaseActivity {
      */
     private void refeshClean() {
         if (mAirPurifier != null) {
-            int clean = mAirPurifier.sensor().TotalClean() / 1000;
-            Log.e(TAG, "refeshClean: " + clean);
-            if (clean > 0 && clean < 65535) {
+            if (mAirPurifier.sensor().TotalClean() > 0 && mAirPurifier.sensor().TotalClean() != 65535) {
+                int clean = mAirPurifier.sensor().TotalClean() / 1000;
+                Log.e(TAG, "refeshClean: " + clean);
                 tvCleanValue.setText(String.valueOf(clean));
             } else {
                 tvCleanValue.setText("0");

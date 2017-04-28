@@ -173,9 +173,11 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
                 break;
             case R.drawable.device_icon_water:
                 startActivity(new Intent(this, MatchWaterPuriferActivity.class));
+                this.finish();
                 break;
             case R.drawable.device_icon_air_ver:
                 startActivity(new Intent(this, MatchVerAirActivity.class));
+                this.finish();
                 break;
             case R.drawable.device_icon_air_desk:
                 if (!blueAdapter.isEnabled()) {
