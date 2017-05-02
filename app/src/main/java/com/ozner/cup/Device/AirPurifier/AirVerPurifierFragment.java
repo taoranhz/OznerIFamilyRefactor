@@ -36,6 +36,7 @@ import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.HttpHelper.NetState;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
 import com.ozner.device.OznerDevice;
@@ -367,7 +368,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
             ((TextView) airDialog.findViewById(R.id.tv_airOutside_humidity)).setText(netWeather.getHum());
 //            String from = netWeather.getWeatherform() + "(" + netWeather.getUpdateLocTime()+")";
 //            ((TextView) airDialog.findViewById(R.id.tv_outside_data)).setText(netWeather.getWeatherform());
-            ((TextView) airDialog.findViewById(R.id.tv_outside_data)).setText(String.format("%s  %s",netWeather.getWeatherform(),netWeather.getUpdateLocTime()));
+            ((TextView) airDialog.findViewById(R.id.tv_outside_data)).setText(String.format("%s  %s", netWeather.getWeatherform(), netWeather.getUpdateLocTime()));
         }
         airDialog.show();
     }
@@ -763,27 +764,43 @@ public class AirVerPurifierFragment extends DeviceFragment {
     private void showFilterStatus() {
         try {
             if (mVerAirPurifier != null) {
-                Date proDate = mVerAirPurifier.sensor().FilterStatus().lastTime;
-                Date stopDate = mVerAirPurifier.sensor().FilterStatus().stopTime;
-                long proMill = proDate.getTime();
-                long stopMill = stopDate.getTime();
-                long currentMill = Calendar.getInstance().getTimeInMillis();
-                long totalTime = (stopMill - proMill) / (24 * 3600 * 1000);
-                long useTime = (currentMill - proMill) / (24 * 3600 * 1000);
+                LCLogUtils.E(TAG, "空净类型：" + mVerAirPurifier.Type());
                 int lvXin = 0;
-                if (totalTime != 0) {
-                    try {
-                        Log.e(TAG, "showFilterStatus_remain: " + (totalTime - useTime) + " , totalTime:" + totalTime);
-                        lvXin = Math.round((totalTime - useTime) * 100 / totalTime);
-                        if (lvXin < 0 || lvXin > 100) {
-                            lvXin = 0;
-                        }
-                    } catch (Exception ex) {
-                        Log.e(TAG, "showFilterStatus_Ex: " + ex.getMessage());
-                    }
+
+                if (mVerAirPurifier.Type().equals("580c2783")) {//君融空净单独处理
+                    int workTime = mVerAirPurifier.sensor().FilterStatus().workTime;
+                    int maxTime = mVerAirPurifier.sensor().FilterStatus().maxWorkTime;
+                    Log.e(TAG, "refreshFilter: workTime:" + workTime + " ,maxTime:" + maxTime);
+
+                    float lvXinTemp = 0;
+                    if (maxTime > 0)
+                        lvXinTemp = 1 - (float) workTime / maxTime;
+                    lvXinTemp = Math.min(1, lvXinTemp);
+                    lvXinTemp = Math.max(0, lvXinTemp);
+                    lvXin = (int) (lvXinTemp * 100);
                 } else {
-                    lvXin = 0;
+                    Date proDate = mVerAirPurifier.sensor().FilterStatus().lastTime;
+                    Date stopDate = mVerAirPurifier.sensor().FilterStatus().stopTime;
+                    long proMill = proDate.getTime();
+                    long stopMill = stopDate.getTime();
+                    long currentMill = Calendar.getInstance().getTimeInMillis();
+                    long totalTime = (stopMill - proMill) / (24 * 3600 * 1000);
+                    long useTime = (currentMill - proMill) / (24 * 3600 * 1000);
+                    if (totalTime != 0) {
+                        try {
+                            Log.e(TAG, "showFilterStatus_remain: " + (totalTime - useTime) + " , totalTime:" + totalTime);
+                            lvXin = Math.round((totalTime - useTime) * 100 / totalTime);
+                            if (lvXin < 0 || lvXin > 100) {
+                                lvXin = 0;
+                            }
+                        } catch (Exception ex) {
+                            Log.e(TAG, "showFilterStatus_Ex: " + ex.getMessage());
+                        }
+                    } else {
+                        lvXin = 0;
+                    }
                 }
+
                 tvFilterValue.setText(String.format("%d%%", lvXin));
             }
         } catch (Exception ex) {

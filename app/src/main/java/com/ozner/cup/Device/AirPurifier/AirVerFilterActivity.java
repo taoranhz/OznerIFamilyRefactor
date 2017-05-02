@@ -26,6 +26,7 @@ import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.FilterProgressView;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.WeChatUrlUtil;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDeviceManager;
@@ -199,25 +200,41 @@ public class AirVerFilterActivity extends BaseActivity {
      */
     private void refreshFilter() {
         if (mAirPurifier != null) {
-            Date proDate = mAirPurifier.sensor().FilterStatus().lastTime;
-            Date stopDate = mAirPurifier.sensor().FilterStatus().stopTime;
-            long proMill = proDate.getTime();
-            long stopMill = stopDate.getTime();
-            long currentMill = Calendar.getInstance().getTimeInMillis();
-            long totalTime = (stopMill - proMill) / (24 * 3600 * 1000);
-            long useTime = (currentMill - proMill) / (24 * 3600 * 1000);
             int lvXin = 0;
-            try {
-                lvXin = Math.round((totalTime - useTime) * 100 / totalTime);
-                if (lvXin < 0 || lvXin > 100) {
-                    lvXin = 0;
+            if (mAirPurifier.Type().equals("580c2783")) {//君融的空净产品单独处理
+                filterProgress.setShowTime(false);
+                int workTime = mAirPurifier.sensor().FilterStatus().workTime;
+                int maxTime = mAirPurifier.sensor().FilterStatus().maxWorkTime;
+                Log.e(TAG, "refreshFilter: workTime:" + workTime + " ,maxTime:" + maxTime);
+                float lvXinTemp = 0;
+                if (maxTime > 0)
+                    lvXinTemp = 1 - (float) workTime / maxTime;
+                lvXinTemp = Math.min(1, lvXinTemp);
+                lvXinTemp = Math.max(0, lvXinTemp);
+                LCLogUtils.E(TAG,"滤芯状态："+lvXinTemp);
+                lvXin = (int) (lvXinTemp * 100);
+                filterProgress.update((100 - lvXin) * filterProgress.getWarranty() / 100);
+            } else {
+                filterProgress.setShowTime(true);
+                Date proDate = mAirPurifier.sensor().FilterStatus().lastTime;
+                Date stopDate = mAirPurifier.sensor().FilterStatus().stopTime;
+                long proMill = proDate.getTime();
+                long stopMill = stopDate.getTime();
+                long currentMill = Calendar.getInstance().getTimeInMillis();
+                long totalTime = (stopMill - proMill) / (24 * 3600 * 1000);
+                long useTime = (currentMill - proMill) / (24 * 3600 * 1000);
+                try {
+                    lvXin = Math.round((totalTime - useTime) * 100 / totalTime);
+                    if (lvXin < 0 || lvXin > 100) {
+                        lvXin = 0;
+                    }
+                } catch (Exception ex) {
+                    Log.e(TAG, "refreshFilter_Ex: " + ex.getMessage());
                 }
-            } catch (Exception ex) {
-                Log.e(TAG, "refreshFilter_Ex: " + ex.getMessage());
+                filterProgress.initTime(proDate, stopDate);
+                filterProgress.update(Calendar.getInstance().getTime());
             }
             tvFilterRemind.setText(String.valueOf(lvXin));
-            filterProgress.initTime(proDate, stopDate);
-            filterProgress.update(Calendar.getInstance().getTime());
         }
     }
 
