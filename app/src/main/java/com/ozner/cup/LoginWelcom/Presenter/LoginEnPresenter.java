@@ -76,7 +76,7 @@ public class LoginEnPresenter {
                     @Override
                     public void onError(Throwable e) {
                         LCLogUtils.E(TAG, "login_onError: " + e.getMessage());
-                        if (e.getMessage().isEmpty()) {
+                        if (e.getMessage() == null || e.getMessage().isEmpty()) {
                             loginView.showErrMsg(R.string.Code_Login_Error);
                         } else {
                             loginView.showErrMsg(e.getMessage());

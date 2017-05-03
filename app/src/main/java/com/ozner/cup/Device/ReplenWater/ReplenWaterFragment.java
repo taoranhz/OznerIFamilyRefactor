@@ -439,7 +439,8 @@ public class ReplenWaterFragment extends DeviceFragment {
      * @return
      */
     private int generateClickPos(float x, float y) {
-        if ((int) oznerSetting.getAppData(Contacts.DEV_REPLEN_GENDER) == 0) {
+//        if ((int) oznerSetting.getAppData(Contacts.DEV_REPLEN_GENDER) == 0) {
+        if (gender == 0) {
             //女士
             for (int i = 0; i < womenClickArea.size(); i++) {
                 if (womenClickArea.get(i).contains(x, y)) {
