@@ -151,7 +151,7 @@ public class LoginPresenter {
                                 @Override
                                 public void onError(Throwable e) {
                                     Log.e(TAG, "login_onError: " + e.getMessage());
-                                    if (e.getMessage().isEmpty()) {
+                                    if (e.getMessage() == null || e.getMessage().isEmpty()) {
                                         loginView.showErrMsg(R.string.Code_Login_Error);
                                     } else {
                                         loginView.showErrMsg(e.getMessage());

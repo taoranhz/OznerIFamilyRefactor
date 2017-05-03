@@ -151,7 +151,7 @@ public class ReplenWaterFragment extends DeviceFragment {
                 gender = (int) oznerSetting.getAppData(Contacts.DEV_REPLEN_GENDER);
             } catch (Exception ex) {
                 gender = 0;
-                oznerSetting.setAppData(Contacts.DEV_REPLEN_GENDER,0);
+                oznerSetting.setAppData(Contacts.DEV_REPLEN_GENDER, 0);
             }
         }
         if (replenWater != null) {
@@ -440,7 +440,8 @@ public class ReplenWaterFragment extends DeviceFragment {
      * @return
      */
     private int generateClickPos(float x, float y) {
-        if ((int) oznerSetting.getAppData(Contacts.DEV_REPLEN_GENDER) == 0) {
+//        if ((int) oznerSetting.getAppData(Contacts.DEV_REPLEN_GENDER) == 0) {
+        if (gender == 0) {
             //女士
             for (int i = 0; i < womenClickArea.size(); i++) {
                 if (womenClickArea.get(i).contains(x, y)) {
@@ -1212,7 +1213,11 @@ public class ReplenWaterFragment extends DeviceFragment {
             if (requestCode == SetReqCode) {
                 oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, replenWater.Address());
                 if (oznerSetting != null) {
-                    gender = (int) oznerSetting.getAppData(Contacts.DEV_REPLEN_GENDER);
+                    try {
+                        gender = (int) oznerSetting.getAppData(Contacts.DEV_REPLEN_GENDER);
+                    } catch (Exception ex) {
+                        gender = 0;
+                    }
                 }
                 resetView();
             }
