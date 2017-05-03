@@ -249,25 +249,17 @@ public class AirVerPurifierFragment extends DeviceFragment {
         }
     }
 
-    @Override
-    public void onStart() {
-        Log.e(TAG, "onStart: ");
-        registerMonitor();
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        Log.e(TAG, "onStop: ");
-        releaseMonitor();
-        super.onStop();
-    }
-
 
     private boolean isThisAdd() {
         return AirVerPurifierFragment.this.isAdded() && !AirVerPurifierFragment.this.isRemoving() && !AirVerPurifierFragment.this.isDetached();
     }
 
+
+    @Override
+    public void onPause() {
+        releaseMonitor();
+        super.onPause();
+    }
 
     @Override
     public void onResume() {
@@ -281,6 +273,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
         } catch (Exception ex) {
             Log.e(TAG, "onResume_Ex:" + ex.getMessage());
         }
+        registerMonitor();
         refreshUIData();
         refreshMainOutDoorInfo();
         super.onResume();

@@ -6,9 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
+import com.ozner.yiquan.BuildConfig;
 import com.ozner.yiquan.HttpHelper.ApiException;
 import com.ozner.yiquan.HttpHelper.HttpMethods;
 import com.ozner.yiquan.HttpHelper.OznerHttpResult;
@@ -97,6 +100,7 @@ public class OznerUpdateManager {
                     @Override
                     public void onNext(JsonObject jsonObject) {
                         isChecking = false;
+                        LCLogUtils.E(TAG, "version:" + jsonObject.toString());
                         try {
                             if (jsonObject != null) {
                                 if (jsonObject.get("state").getAsInt() > 0) {
@@ -225,6 +229,7 @@ public class OznerUpdateManager {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.connect();
                 int length = conn.getContentLength();
+                LCLogUtils.E(TAG, "apk_size:" + length);
                 InputStream is = conn.getInputStream();
 
                 File file = new File(folderPath);
@@ -259,6 +264,7 @@ public class OznerUpdateManager {
                 fos.close();
                 is.close();
             } catch (Exception ex) {
+                LCLogUtils.E(TAG, "downloadRunnable_Ex:" + ex.getMessage());
                 ex.printStackTrace();
             }
         }
@@ -289,14 +295,23 @@ public class OznerUpdateManager {
      * @param
      */
     private void installApk() {
-        File apkfile = new File(folderPath + "/" + installPackagename);
+        File apkfile = new File(folderPath, installPackagename);
         if (!apkfile.exists()) {
             return;
         }
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        Log.e("tag", "installApk: Slience:" + Uri.parse("file://" + apkfile.toString()));
-        i.setDataAndType(Uri.parse("file://" + apkfile.toString()), "application/vnd.android.package-archive");
-        mContext.get().startActivity(i);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Uri contentUri = FileProvider.getUriForFile(mContext.get(), BuildConfig.APPLICATION_ID + ".fileprovider", apkfile);
+            intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+            LCLogUtils.E(TAG, "contentUri:" + contentUri);
+        } else {
+            intent.setDataAndType(Uri.parse("file://" + apkfile.getAbsolutePath()), "application/vnd.android.package-archive");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            LCLogUtils.E(TAG, "installApk: Slience:" + Uri.parse("file://" + apkfile.toString()));
+        }
+
+        mContext.get().startActivity(intent);
 
     }
 

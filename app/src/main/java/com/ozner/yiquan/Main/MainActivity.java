@@ -27,6 +27,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
+import com.github.kayvannj.permission_utils.Func;
 import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.google.gson.JsonObject;
 import com.ozner.AirPurifier.AirPurifierManager;
@@ -131,11 +132,31 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         checkUserVerifyMsg();
         //隐藏底部菜单
         hideBottomNav();
-        //检查位置权限
-        checkPosPer();
-        new OznerUpdateManager(this, false).checkUpdate();
+//        //检查位置权限
+//        checkPosPer();
+        //检查更新
+        checkUpdate();
+//        new OznerUpdateManager(this, false).checkUpdate();
     }
 
+
+    /**
+     * 检查更新
+     */
+    private void checkUpdate() {
+        perReqResult = PermissionUtil.with(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .onAllGranted(new Func() {
+                    @Override
+                    protected void call() {
+                        new OznerUpdateManager(MainActivity.this, false).checkUpdate();
+                    }
+                }).onAnyDenied(new Func() {
+                    @Override
+                    protected void call() {
+                        showToastCenter(R.string.user_deny_write_storge);
+                    }
+                }).ask(1);
+    }
 
     /**
      * 初始化toolbar切换按钮
@@ -198,12 +219,12 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     }
 
 
-    /**
-     * 检查位置权限
-     */
-    private void checkPosPer() {
-        perReqResult = PermissionUtil.with(this).request(Manifest.permission.ACCESS_COARSE_LOCATION).ask(2);
-    }
+//    /**
+//     * 检查位置权限
+//     */
+//    private void checkPosPer() {
+//        perReqResult = PermissionUtil.with(this).request(Manifest.permission.ACCESS_COARSE_LOCATION).ask(2);
+//    }
 
 
     @Override

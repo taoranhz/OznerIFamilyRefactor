@@ -200,17 +200,6 @@ public class TapFragment extends DeviceFragment {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
-    public void onStart() {
-        registerMonitor();
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        releaseMonitor();
-        super.onStop();
-    }
 
     @Nullable
     @Override
@@ -241,6 +230,12 @@ public class TapFragment extends DeviceFragment {
     }
 
     @Override
+    public void onPause() {
+        releaseMonitor();
+        super.onPause();
+    }
+
+    @Override
     public void onResume() {
         try {
             setBarColor(R.color.cup_detail_bg);
@@ -251,6 +246,7 @@ public class TapFragment extends DeviceFragment {
         }
         if (TapFragment.this.isAdded())
             title.setText(getString(R.string.water_probe));
+        registerMonitor();
         refreshUIData();
         super.onResume();
     }

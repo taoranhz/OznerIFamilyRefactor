@@ -220,18 +220,6 @@ public class WaterPurifierFragment extends DeviceFragment {
         }
     }
 
-    @Override
-    public void onStart() {
-        registerMonitor();
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        releaseMonitor();
-        super.onStop();
-    }
-
     @OnClick({R.id.rlay_filter, R.id.iv_setting, R.id.llay_tds_detail, R.id.rlay_powerswitch, R.id.rlay_hotswitch, R.id.rlay_coolswitch})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -546,6 +534,11 @@ public class WaterPurifierFragment extends DeviceFragment {
         }
     }
 
+    @Override
+    public void onPause() {
+        releaseMonitor();
+        super.onPause();
+    }
 
     @Override
     public void onResume() {
@@ -560,6 +553,7 @@ public class WaterPurifierFragment extends DeviceFragment {
         } catch (Exception ex) {
 
         }
+        registerMonitor();
         refreshUIData();
         super.onResume();
     }

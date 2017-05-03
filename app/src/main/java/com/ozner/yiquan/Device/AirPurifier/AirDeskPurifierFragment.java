@@ -595,15 +595,9 @@ public class AirDeskPurifierFragment extends DeviceFragment {
     }
 
     @Override
-    public void onStart() {
-        registerMonitor();
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
+    public void onPause() {
         releaseMonitor();
-        super.onStop();
+        super.onPause();
     }
 
     @Override
@@ -618,6 +612,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         } catch (Exception ex) {
             Log.e(TAG, "onResume_Ex:" + ex.getMessage());
         }
+        registerMonitor();
         refreshUIData();
         refreshMainOutDoorInfo();
         if (mDeskAirPurifier != null)

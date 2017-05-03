@@ -243,6 +243,12 @@ public class ReplenWaterFragment extends DeviceFragment {
     }
 
     @Override
+    public void onPause() {
+        releaseMonitor();
+        super.onPause();
+    }
+
+    @Override
     public void onResume() {
         try {
             setBarColor(R.color.replen_blue_bg);
@@ -252,6 +258,7 @@ public class ReplenWaterFragment extends DeviceFragment {
         } catch (Exception ex) {
 
         }
+        registerMonitor();
         super.onResume();
     }
 
@@ -1157,18 +1164,6 @@ public class ReplenWaterFragment extends DeviceFragment {
         }
     }
 
-    @Override
-    public void onStart() {
-        registerMonitor();
-        super.onStart();
-    }
-
-
-    @Override
-    public void onStop() {
-        releaseMonitor();
-        super.onStop();
-    }
 
     @Override
     public void onDestroyView() {
