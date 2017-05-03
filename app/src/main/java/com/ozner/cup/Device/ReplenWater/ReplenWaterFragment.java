@@ -251,7 +251,14 @@ public class ReplenWaterFragment extends DeviceFragment {
         } catch (Exception ex) {
 
         }
+        registerMonitor();
         super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        releaseMonitor();
+        super.onPause();
     }
 
     @Override
@@ -1154,19 +1161,6 @@ public class ReplenWaterFragment extends DeviceFragment {
                         }
                     }));
         }
-    }
-
-    @Override
-    public void onStart() {
-        registerMonitor();
-        super.onStart();
-    }
-
-
-    @Override
-    public void onStop() {
-        releaseMonitor();
-        super.onStop();
     }
 
     @Override

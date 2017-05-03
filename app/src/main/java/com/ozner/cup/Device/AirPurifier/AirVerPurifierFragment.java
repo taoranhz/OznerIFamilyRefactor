@@ -247,25 +247,28 @@ public class AirVerPurifierFragment extends DeviceFragment {
      * 注销广播接收器
      */
     private void releaseMonitor() {
-        if (isThisAdd() && airMonitor != null) {
-            getContext().unregisterReceiver(airMonitor);
-        }
+//        if (isThisAdd() && airMonitor != null) {
+        getContext().unregisterReceiver(airMonitor);
+//        }
     }
 
     @Override
     public void onStart() {
-        Log.e(TAG, "onStart: ");
-        registerMonitor();
+//        registerMonitor();
         super.onStart();
     }
 
     @Override
     public void onStop() {
-        Log.e(TAG, "onStop: ");
-        releaseMonitor();
+//        releaseMonitor();
         super.onStop();
     }
 
+    @Override
+    public void onPause() {
+        releaseMonitor();
+        super.onPause();
+    }
 
     private boolean isThisAdd() {
         return AirVerPurifierFragment.this.isAdded() && !AirVerPurifierFragment.this.isRemoving() && !AirVerPurifierFragment.this.isDetached();
@@ -284,6 +287,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
         } catch (Exception ex) {
             Log.e(TAG, "onResume_Ex:" + ex.getMessage());
         }
+        registerMonitor();
         refreshUIData();
         refreshMainOutDoorInfo();
         super.onResume();
@@ -302,7 +306,8 @@ public class AirVerPurifierFragment extends DeviceFragment {
                         if (isThisAdd()) {
                             refreshMainOutDoorInfo();
                         }
-                        Log.e(TAG, "getWeatherOutSide_onResult: " + weather.toString());
+                        if (weather != null)
+                            Log.e(TAG, "getWeatherOutSide_onResult: " + weather.toString());
                     }
                 });
             } else {
