@@ -12,7 +12,6 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -36,6 +35,7 @@ import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.CProessbarView;
+import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
 import com.ozner.device.OznerDevice;
@@ -52,6 +52,7 @@ import static com.ozner.device.BaseDeviceIO.ConnectStatus.Connected;
 public class AirDeskPurifierFragment extends DeviceFragment {
     private static final String TAG = "AirDeskPurifier";
     private static final int CHANGE_SPEED = 0X01;
+    private final int HAND_SPEED = 0X02;
     private static final int FILTER_MAX_WORK_TIME = 60000;
     @InjectView(R.id.tv_pmState)
     TextView tvPmState;
@@ -103,106 +104,109 @@ public class AirDeskPurifierFragment extends DeviceFragment {
     private AirPurifier_Bluetooth mDeskAirPurifier;
     private AirPurifierMonitor airMonitor;
     private String deviceNewName = "";
-    private int oldSpeed = 0;
     private NetWeather netWeather;
     AirPurifierPresenter airPresenter;
     private String mUserid;
     private OznerDeviceSettings oznerSetting;
+    private boolean hasSetPRM = true;
 
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if (CHANGE_SPEED == msg.what) {
-                int present = msg.arg1;
-                if (isThisAdd() && mDeskAirPurifier != null
-                        && mDeskAirPurifier.connectStatus() == Connected) {
+            switch (msg.what) {
+                case CHANGE_SPEED:
+                    final int present = msg.arg1;
+                    if (isThisAdd() && mDeskAirPurifier != null
+                            && mDeskAirPurifier.connectStatus() == Connected) {
+                        hasSetPRM = false;
+                        if (present > 1) {
+                            if (!mDeskAirPurifier.status().Power()) {
+                                mDeskAirPurifier.status().setPower(true, new OperateCallback<Void>() {
+                                    @Override
+                                    public void onSuccess(Void var1) {
+                                        LCLogUtils.E(TAG, "onSuccess_power_true: ");
+                                        mDeskAirPurifier.status().setRPM((byte) present, new OperateCallback<Void>() {
+                                            @Override
+                                            public void onSuccess(Void var1) {
+                                                LCLogUtils.E(TAG, "onSuccess_RPM: ");
+                                                hasSetPRM = true;
+                                            }
 
-                    if (present > 1) {
-                        if (!mDeskAirPurifier.status().Power()) {
-                            mDeskAirPurifier.status().setPower(true, new OperateCallback<Void>() {
+                                            @Override
+                                            public void onFailure(Throwable var1) {
+                                                LCLogUtils.E(TAG, "onFailure_RPM: ");
+                                                showCenterToast(R.string.send_status_fail);
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onFailure(Throwable var1) {
+                                        LCLogUtils.E(TAG, "onFailure_power_true: ");
+                                    }
+                                });
+                            } else {
+                                mDeskAirPurifier.status().setRPM((byte) present, new OperateCallback<Void>() {
+                                    @Override
+                                    public void onSuccess(Void var1) {
+                                        LCLogUtils.E(TAG, "onSuccess_RPM: ");
+                                        hasSetPRM = true;
+                                    }
+
+                                    @Override
+                                    public void onFailure(Throwable var1) {
+                                        LCLogUtils.E(TAG, "onFailure_RPM: ");
+                                        hasSetPRM = true;
+                                        showCenterToast(R.string.send_status_fail);
+                                    }
+                                });
+                            }
+
+                        } else {
+                            mDeskAirPurifier.status().setPower(false, new OperateCallback<Void>() {
                                 @Override
                                 public void onSuccess(Void var1) {
-                                    Log.e(TAG, "onSuccess_power_true: ");
-                                    mHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            refreshUIData();
-                                        }
-                                    });
+                                    LCLogUtils.E(TAG, "onSuccess_power_false: ");
+                                    cproessbarView.updateValue(0);
                                 }
 
                                 @Override
                                 public void onFailure(Throwable var1) {
-                                    Log.e(TAG, "onFailure_power_true: ");
-                                    mHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            refreshUIData();
-                                        }
-                                    });
+                                    LCLogUtils.E(TAG, "onFailure_power_false: ");
                                 }
                             });
                         }
 
-                        mDeskAirPurifier.status().setRPM((byte) present, new OperateCallback<Void>() {
-                            @Override
-                            public void onSuccess(Void var1) {
-                                Log.e(TAG, "onSuccess_RPM: ");
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        refreshUIData();
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onFailure(Throwable var1) {
-                                Log.e(TAG, "onFailure_RPM: ");
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        refreshUIData();
-                                    }
-                                });
-                                showCenterToast(R.string.send_status_fail);
-                            }
-                        });
-
                     } else {
-                        mDeskAirPurifier.status().setPower(false, new OperateCallback<Void>() {
-                            @Override
-                            public void onSuccess(Void var1) {
-                                Log.e(TAG, "onSuccess_power_false: ");
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        refreshUIData();
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onFailure(Throwable var1) {
-                                Log.e(TAG, "onFailure_power_false: ");
-
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        refreshUIData();
-                                    }
-                                });
-                                showCenterToast(R.string.send_status_fail);
-                            }
-                        });
+                        showCenterToast(R.string.device_disConnect);
                     }
-
-                } else {
-                    showCenterToast(R.string.device_disConnect);
-                }
+                    break;
+                case HAND_SPEED:
+                    hasSetPRM = true;
+                    break;
             }
         }
     };
+
+    /**
+     * 设置开关值
+     *
+     * @param present
+     */
+    private void setUISwitch(int present) {
+        if (mDeskAirPurifier != null) {
+            if (mDeskAirPurifier.status().Power()) {
+//                LCLogUtils.E(TAG, "oldSpeed:" + oldSpeed + " ,currentSpeed:" + present + " ,hasSetPRM:" + hasSetPRM);
+                if (hasSetPRM) {
+                    cproessbarView.updateValue(present);
+                }
+            } else {
+                if (hasSetPRM)
+                    cproessbarView.updateValue(0);
+            }
+        }
+    }
+    
 
     /**
      * 实例化Fragment
@@ -233,7 +237,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
             oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mDeskAirPurifier.Address());
         } catch (Exception ex) {
             ex.printStackTrace();
-            Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
+            LCLogUtils.E(TAG, "onCreate_Ex: " + ex.getMessage());
         }
         super.onCreate(savedInstanceState);
     }
@@ -316,14 +320,14 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                         if (isThisAdd()) {
                             refreshMainOutDoorInfo();
                         }
-                        Log.e(TAG, "getWeatherOutSide_onResult: " + weather.toString());
+//                        LCLogUtils.E(TAG, "getWeatherOutSide_onResult: " + weather.toString());
                     }
                 });
             } else {
                 refreshMainOutDoorInfo();
             }
         } catch (Exception ex) {
-            Log.e(TAG, "setDevice_Ex: " + ex.getMessage());
+            LCLogUtils.E(TAG, "setDevice_Ex: " + ex.getMessage());
         }
     }
 
@@ -351,7 +355,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                 }
             }
         } catch (Exception ex) {
-            Log.e(TAG, "refreshMainOutDoorInfo_Ex: " + ex.getMessage());
+            LCLogUtils.E(TAG, "refreshMainOutDoorInfo_Ex: " + ex.getMessage());
         }
     }
 
@@ -382,7 +386,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
             ((TextView) airDialog.findViewById(R.id.tv_outside_temp)).setText(netWeather.getTmp());
             ((TextView) airDialog.findViewById(R.id.tv_airOutside_humidity)).setText(netWeather.getHum());
 //            ((TextView) airDialog.findViewById(R.id.tv_outside_data)).setText(netWeather.getWeatherform());
-            ((TextView) airDialog.findViewById(R.id.tv_outside_data)).setText(String.format("%s  %s",netWeather.getWeatherform(),netWeather.getUpdateLocTime()));
+            ((TextView) airDialog.findViewById(R.id.tv_outside_data)).setText(String.format("%s  %s", netWeather.getWeatherform(), netWeather.getUpdateLocTime()));
         }
         airDialog.show();
     }
@@ -399,7 +403,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            Log.e(TAG, "refreshUIData_Ex: " + ex.getMessage());
+            LCLogUtils.E(TAG, "refreshUIData_Ex: " + ex.getMessage());
         }
     }
 
@@ -458,20 +462,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
     }
 
 
-    /**
-     * 设置开关值
-     *
-     * @param present
-     */
-    private void setUISwitch(int present) {
-        oldSpeed = present;
-        if (mDeskAirPurifier != null && mDeskAirPurifier.status().Power()) {
-            cproessbarView.updateValue(oldSpeed);
-        } else {
-            cproessbarView.updateValue(0);
-        }
-    }
-
+   
     /**
      * 设置PM2.5
      *
@@ -521,7 +512,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         tvPmState.setText(R.string.state_null);
         tvPmValue.setText(R.string.device_close);
         tvPmValue.setAlpha(0.6f);
-        cproessbarView.updateValue(0);
+//        cproessbarView.updateValue(0);
     }
 
     /**
@@ -587,7 +578,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
                 tvFilterValue.setText(String.format("%d%%", ret));
             }
         } catch (Exception ex) {
-            Log.e(TAG, "showFilterStatus_Ex: " + ex.getMessage());
+            LCLogUtils.E(TAG, "showFilterStatus_Ex: " + ex.getMessage());
         }
     }
 
@@ -600,6 +591,8 @@ public class AirDeskPurifierFragment extends DeviceFragment {
 
     @Override
     public void onResume() {
+        LCLogUtils.E(TAG, "onResume");
+
         try {
             if (oznerSetting != null) {
                 title.setText(oznerSetting.getName());
@@ -608,13 +601,17 @@ public class AirDeskPurifierFragment extends DeviceFragment {
             }
             initBgColor();
         } catch (Exception ex) {
-            Log.e(TAG, "onResume_Ex:" + ex.getMessage());
+            LCLogUtils.E(TAG, "onResume_Ex:" + ex.getMessage());
         }
         registerMonitor();
         refreshUIData();
         refreshMainOutDoorInfo();
         if (mDeskAirPurifier != null)
             showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
+
+        hasSetPRM = true;
+        if (mDeskAirPurifier != null && mDeskAirPurifier.status().Power())
+        setUISwitch(mDeskAirPurifier.status().RPM());
         super.onResume();
     }
 
@@ -688,13 +685,12 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         public void onValueChange(final int present) {
             try {
                 mHandler.removeMessages(CHANGE_SPEED);
-
                 Message message = mHandler.obtainMessage();
                 message.what = CHANGE_SPEED;
                 message.arg1 = present;
-                mHandler.sendMessageDelayed(message, 500);
+                mHandler.sendMessageDelayed(message, 1000);
             } catch (Exception ex) {
-                Log.e(TAG, "ValueChange_Ex: " + ex.getMessage());
+                LCLogUtils.E(TAG, "ValueChange_Ex: " + ex.getMessage());
             }
         }
     }
