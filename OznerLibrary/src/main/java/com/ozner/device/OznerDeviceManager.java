@@ -2,6 +2,7 @@ package com.ozner.device;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.ozner.XObject;
 import com.ozner.util.Helper;
@@ -81,6 +82,7 @@ public class OznerDeviceManager extends XObject {
     }
 
     private void importOldDB() {
+        Log.e("Left", "importOldDB: ");
         HashSet<String> ownerList = new HashSet<>();
 
         try {
@@ -135,7 +137,7 @@ public class OznerDeviceManager extends XObject {
             sqLiteDB.execSQLNonQuery("DROP TABLE CupSetting", new String[]{});
             sqLiteDB.execSQLNonQuery("DROP TABLE OznerDevices", new String[]{});
         } catch (Exception ignored) {
-
+            Log.e("Left", "importOldDB_Ex: "+ignored.getMessage());
         }
     }
 
@@ -158,6 +160,7 @@ public class OznerDeviceManager extends XObject {
         this.owner = owner;
         this.token = token;
         synchronized (this) {
+            Log.e("Left", "setOwner: 清除设备");
             devices.clear();
         }
 
@@ -183,6 +186,7 @@ public class OznerDeviceManager extends XObject {
     private void LoadDevices() {
         String sql = String.format("select Address,Type,JSON from %s", getOwnerTableName());
         List<String[]> list = sqLiteDB.ExecSQL(sql, new String[]{});
+        Log.e("Left", "LoadDevices_listSize: "+list.size());
         synchronized (devices) {
             for (String[] v : list) {
                 String Address = v[0];

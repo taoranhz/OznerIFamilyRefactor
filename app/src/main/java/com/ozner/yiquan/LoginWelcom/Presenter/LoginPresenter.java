@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.ozner.device.OznerDeviceManager;
 import com.ozner.yiquan.Command.OznerPreference;
 import com.ozner.yiquan.Command.UserDataPreference;
 import com.ozner.yiquan.DBHelper.DBManager;
@@ -172,6 +173,7 @@ public class LoginPresenter {
                                                 userInfo.setUserId(jsonObject.get("userid").getAsString());
                                             }
                                             userInfo.setMobile(loginView.getUserPhone());
+                                            OznerDeviceManager.Instance().setOwner(jsonObject.get("userid").getAsString(),jsonObject.get("usertoken").getAsString());
                                             DBManager.getInstance(loginContext.get()).updateUserInfo(userInfo);
                                         } catch (Exception ex) {
 

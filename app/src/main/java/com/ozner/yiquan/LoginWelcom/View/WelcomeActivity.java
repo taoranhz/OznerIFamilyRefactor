@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
+import com.ozner.device.OznerDeviceManager;
 import com.ozner.yiquan.Base.BaseActivity;
 import com.ozner.yiquan.Command.OznerPreference;
+import com.ozner.yiquan.Command.UserDataPreference;
 import com.ozner.yiquan.DBHelper.UserInfo;
 import com.ozner.yiquan.Main.MainActivity;
 import com.ozner.yiquan.Main.UserInfoManager;
@@ -60,6 +62,8 @@ public class WelcomeActivity extends BaseActivity {
         userInfoManager.loadUserInfo(new UserInfoManager.LoadUserInfoListener() {
             @Override
             public void onSuccess(UserInfo userInfo) {
+                OznerDeviceManager.Instance().setOwner(UserDataPreference.GetUserData(WelcomeActivity.this, UserDataPreference.UserId, ""),
+                        OznerPreference.getUserToken(WelcomeActivity.this));
                 startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
                 WelcomeActivity.this.finish();
             }

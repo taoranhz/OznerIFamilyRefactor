@@ -234,10 +234,12 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
     private void saveDeviceToDB(String userid, OznerDevice device) {
         try {
             OznerDeviceSettings oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(userid, device.Address());
-            if (oznerSetting != null) {
-                DBManager.getInstance(getContext()).deleteDeviceSettings(userid, device.Address());
+//            if (oznerSetting != null) {
+//                DBManager.getInstance(getContext()).deleteDeviceSettings(userid, device.Address());
+//            }
+            if (oznerSetting == null) {
+                oznerSetting = new OznerDeviceSettings();
             }
-            oznerSetting = new OznerDeviceSettings();
             oznerSetting.setCreateTime(String.valueOf(System.currentTimeMillis()));
             oznerSetting.setUserId(userid);
             oznerSetting.setMac(device.Address());
@@ -259,16 +261,22 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
         if (OznerDeviceManager.Instance() == null) {
             return;
         }
-        if (OznerDeviceManager.Instance().getDevices() == null) {
+
+        OznerDevice[] deviceArray = OznerDeviceManager.Instance().getDevices();
+        int oldCount = deviceArray.length;
+
+        if (deviceArray == null) {
             return;
+        } else {
+            Log.e(TAG, "device_size: " + oldCount);
         }
 
         mLeftAdapter.clear();
         List<OznerDeviceSettings> oznerSettings = DBManager.getInstance(getContext()).getDeviceSettingList(mUserid);
         leftDeviceList.clear();
         int settingCount = oznerSettings.size();
-        int oldCount = OznerDeviceManager.Instance().getDevices().length;
-        LCLogUtils.E(TAG, "旧数据数量：" + oldCount+",新数据数量："+settingCount);
+//        LCLogUtils.E(TAG, "旧数据数量：" + oldCount+",新数据数量："+settingCount);
+        Log.e(TAG, "旧数据数量：" + oldCount + ",新数据数量：" + settingCount);
         if (settingCount > 0) {
             for (int i = 0; i < settingCount; i++) {
                 LeftMenuDeviceItem item = new LeftMenuDeviceItem();

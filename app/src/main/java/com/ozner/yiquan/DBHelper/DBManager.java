@@ -20,7 +20,8 @@ public class DBManager {
     private static final String TAG = "DBManager";
     private static final String dbName = "ozner_cup_db";
     private static DBManager mInstance;
-    private DaoMaster.DevOpenHelper openHelper;
+//    private DaoMaster.DevOpenHelper openHelper;
+    private MySQLiteOpenHelper openHelper;
     private Context mContext;
 
     public interface DBRxListener {
@@ -31,7 +32,9 @@ public class DBManager {
 
     public DBManager(Context context) {
         this.mContext = context;
-        openHelper = new DaoMaster.DevOpenHelper(context, dbName, null);
+
+//        openHelper = new DaoMaster.DevOpenHelper(context, dbName, null);
+        openHelper = new MySQLiteOpenHelper(context,dbName,null);
     }
 
     /**
@@ -57,7 +60,8 @@ public class DBManager {
      */
     private SQLiteDatabase getReadableDatabase() {
         if (openHelper == null) {
-            openHelper = new DaoMaster.DevOpenHelper(mContext, dbName, null);
+//            openHelper = new DaoMaster.DevOpenHelper(mContext, dbName, null);
+            openHelper = new MySQLiteOpenHelper(mContext,dbName,null);
         }
         return openHelper.getReadableDatabase();
     }
@@ -67,10 +71,10 @@ public class DBManager {
      */
     private SQLiteDatabase getWritableDatabase() {
         if (openHelper == null) {
-            openHelper = new DaoMaster.DevOpenHelper(mContext, dbName, null);
+//            openHelper = new DaoMaster.DevOpenHelper(mContext, dbName, null);
+            openHelper = new MySQLiteOpenHelper(mContext,dbName,null);
         }
-        SQLiteDatabase db = openHelper.getWritableDatabase();
-        return db;
+        return openHelper.getWritableDatabase();
     }
 
     /**
