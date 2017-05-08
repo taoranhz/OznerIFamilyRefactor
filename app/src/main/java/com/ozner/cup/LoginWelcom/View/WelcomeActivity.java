@@ -13,6 +13,7 @@ import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.Main.UserInfoManager;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
+import com.ozner.device.OznerDeviceManager;
 
 import butterknife.ButterKnife;
 
@@ -80,6 +81,8 @@ public class WelcomeActivity extends BaseActivity {
         userInfoManager.loadUserInfo(new UserInfoManager.LoadUserInfoListener() {
             @Override
             public void onSuccess(UserInfo userInfo) {
+                OznerDeviceManager.Instance().setOwner(OznerPreference.GetValue(WelcomeActivity.this, OznerPreference.UserId, ""),
+                        OznerPreference.getUserToken(WelcomeActivity.this));
                 startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
                 WelcomeActivity.this.finish();
             }

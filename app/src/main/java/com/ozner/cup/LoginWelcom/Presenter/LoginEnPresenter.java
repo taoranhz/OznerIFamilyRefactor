@@ -101,6 +101,7 @@ public class LoginEnPresenter {
                                     userInfo.setUserId(jsonObject.get("userid").getAsString());
                                 }
                                 userInfo.setEmail(loginView.getEmail());
+                                OznerDeviceManager.Instance().setOwner(jsonObject.get("userid").getAsString(),jsonObject.get("usertoken").getAsString());
                                 DBManager.getInstance(mContext.get()).updateUserInfo(userInfo);
                             } catch (Exception ex) {
                                 LCLogUtils.E(TAG, "login_En_Ex:" + ex.getMessage());

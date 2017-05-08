@@ -20,6 +20,7 @@ import com.ozner.cup.LoginWelcom.View.ILoginView;
 import com.ozner.cup.R;
 import com.ozner.cup.Utils.LCLogUtils;
 import com.ozner.cup.Utils.MobileInfoUtil;
+import com.ozner.device.OznerDeviceManager;
 
 import java.lang.ref.WeakReference;
 
@@ -173,6 +174,7 @@ public class LoginPresenter {
                                                 userInfo.setUserId(jsonObject.get("userid").getAsString());
                                             }
                                             userInfo.setMobile(loginView.getUserPhone());
+                                            OznerDeviceManager.Instance().setOwner(jsonObject.get("userid").getAsString(),jsonObject.get("usertoken").getAsString());
                                             DBManager.getInstance(loginContext.get()).updateUserInfo(userInfo);
                                         } catch (Exception ex) {
 
