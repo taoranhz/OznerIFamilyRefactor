@@ -441,6 +441,8 @@
     <string name="change_your_health">改善您的饮水健康</string>
     <string name="water_know">健康水知道</string>
     <string name="buy_water_purifier">购买净水器</string>
+    <string name="warm_temp">加热水温</string>
+    <string name="keep_warm">保温中</string>
 
 <!--anion releasing-->
     <string name="anion_release">负离子释放中</string>

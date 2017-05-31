@@ -1,5 +1,6 @@
 package com.ozner.cup.Device.WaterPurifier;
 
+
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,8 +10,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.Fragment;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,13 +28,11 @@ import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.CupRecord;
 import com.ozner.cup.DBHelper.DBManager;
-import com.ozner.cup.DBHelper.OznerDeviceSettings;
 import com.ozner.cup.DBHelper.UserInfo;
 import com.ozner.cup.DBHelper.WaterPurifierAttr;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Device.FilterStatusActivity;
 import com.ozner.cup.Device.TDSSensorManager;
-import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
 import com.ozner.cup.UIView.PurifierDetailProgress;
 import com.ozner.cup.Utils.WeChatUrlUtil;
@@ -50,12 +48,13 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-
-public class WaterPurifierFragment extends DeviceFragment {
-    private static final String TAG = "WaterPurifier";
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class WPNormalFragment extends DeviceFragment {
+    private static final String TAG = "WPNormalFragment";
     private static final int TextSize = 40;
     private static final int NumSize = 50;
-
     @InjectView(R.id.iv_deviceConnectIcon)
     ImageView ivDeviceConnectIcon;
     @InjectView(R.id.tv_deviceConnectTips)
@@ -68,18 +67,10 @@ public class WaterPurifierFragment extends DeviceFragment {
     TextView tvFilterValue;
     @InjectView(R.id.tv_filter_tips)
     TextView tvFilterTips;
-    @InjectView(R.id.rlay_filter)
-    RelativeLayout rlayFilter;
-    @InjectView(R.id.iv_setting)
-    ImageView ivSetting;
     @InjectView(R.id.tv_preValue)
     TextView tvPreValue;
     @InjectView(R.id.tv_afterValue)
     TextView tvAfterValue;
-    @InjectView(R.id.lay_tdsValue)
-    LinearLayout layTdsValue;
-    @InjectView(R.id.tv_tdsTips)
-    TextView tvTdsTips;
     @InjectView(R.id.waterProgress)
     PurifierDetailProgress waterProgress;
     @InjectView(R.id.iv_tdsStateIcon)
@@ -100,99 +91,50 @@ public class WaterPurifierFragment extends DeviceFragment {
     ImageView ivHotswitch;
     @InjectView(R.id.rlay_hotswitch)
     RelativeLayout rlayHotswitch;
-    @InjectView(R.id.rl_hot)
-    RelativeLayout rlHot;
     @InjectView(R.id.tv_coolswitch)
     TextView tvCoolswitch;
     @InjectView(R.id.iv_coolswitch)
     ImageView ivCoolswitch;
     @InjectView(R.id.rlay_coolswitch)
     RelativeLayout rlayCoolswitch;
-    @InjectView(R.id.rl_cool)
-    RelativeLayout rlCool;
 
     boolean isPowerOn = false;
     boolean isCoolOn = false;
     boolean isHotOn = false;
-    @InjectView(R.id.llay_tdsState)
-    LinearLayout llayTdsState;
-    @InjectView(R.id.tv_spec)
-    TextView tvSpec;
-    @InjectView(R.id.llay_tds_detail)
-    LinearLayout llayTdsDetail;
-    @InjectView(R.id.title)
-    TextView title;
-    @InjectView(R.id.toolbar)
-    Toolbar toolbar;
-    private WaterPurifier mWaterPurifer;
-    WaterPurifierMonitor waterMonitor;
-    private int oldPreValue, oldThenValue;
-    WaterNetInfoManager waterNetInfoManager;
+//    private String mUserid;
+//    private OznerDeviceSettings oznerSetting;
+    private WaterPurifier mWaterPurifier;
     WaterPurifierAttr purifierAttr;
+    private TDSSensorManager tdsSensorManager;
+    WaterNetInfoManager waterNetInfoManager;
+    private int oldPreValue, oldThenValue;
     private boolean hasHot = false;
     private boolean hasCool = false;
-    private String dsn = "";
-    private TDSSensorManager tdsSensorManager;
-    private String mUserid;
-    private OznerDeviceSettings oznerSetting;
+    Handler mHandler = new Handler();
+    WaterPurifierMonitor waterMonitor;
 
-    /**
-     * 实例化Fragment
-     *
-     * @param mac
-     *
-     * @return
-     */
-    public static DeviceFragment newInstance(String mac) {
-        WaterPurifierFragment fragment = new WaterPurifierFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(DeviceAddress, mac);
-        fragment.setArguments(bundle);
+    public static WPNormalFragment newInstance(String mac) {
+        Bundle args = new Bundle();
+        args.putString(DeviceFragment.DeviceAddress, mac);
+        WPNormalFragment fragment = new WPNormalFragment();
+        fragment.setArguments(args);
         return fragment;
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_water_purifier, container, false);
-        ButterKnife.inject(this, view);
-        toolbar.setTitle("");
-        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
-        return view;
-    }
-
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        ((MainActivity) getActivity()).initActionBarToggle(toolbar);
-
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    /**
-     * 设置toolbar背景色
-     *
-     * @param resId
-     */
-    protected void setToolbarColor(int resId) {
-        if (isAdded())
-            toolbar.setBackgroundColor(ContextCompat.getColor(getContext(), resId));
-    }
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.e(TAG, "onCreate: ");
-        mUserid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
         tdsSensorManager = new TDSSensorManager(getContext());
+//        mUserid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
         initAnimation();
         try {
             Bundle bundle = getArguments();
-            mWaterPurifer = (WaterPurifier) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
-
-            initWaterAttrInfo(mWaterPurifer.Address());
+            String mac = bundle.getString(DeviceFragment.DeviceAddress);
             oldPreValue = oldThenValue = 0;
-            oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mWaterPurifer.Address());
+            mWaterPurifier = (WaterPurifier) OznerDeviceManager.Instance().getDevice(mac);
+//            oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mac);
+//            initWaterAttrInfo(mac);
+
+            initWaterAttrInfo(mac);
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -201,143 +143,36 @@ public class WaterPurifierFragment extends DeviceFragment {
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_wpnormal, container, false);
+        ButterKnife.inject(this, view);
+        return view;
+//        return inflater.inflate(R.layout.fragment_wpnormal, container, false);
+    }
+
+    @Override
     public void setDevice(OznerDevice device) {
         Log.e(TAG, "setDevice: ");
-        oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, device.Address());
-        oldPreValue = oldThenValue = 0;
-        initWaterAttrInfo(device.Address());
-
-        if (mWaterPurifer != null) {
-            if (mWaterPurifer.Address() != device.Address()) {
-                mWaterPurifer = null;
-                mWaterPurifer = (WaterPurifier) device;
-                refreshUIData();
-            }
-        } else {
-            mWaterPurifer = (WaterPurifier) device;
-            refreshUIData();
-        }
     }
-
-
-    @OnClick({R.id.rlay_filter, R.id.iv_setting, R.id.llay_tds_detail, R.id.rlay_powerswitch, R.id.rlay_hotswitch, R.id.rlay_coolswitch})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.rlay_filter:
-                if (mWaterPurifer != null) {
-                    Intent filterIntent = new Intent(getContext(), FilterStatusActivity.class);
-                    filterIntent.putExtra(Contacts.PARMS_MAC, mWaterPurifer.Address());
-                    filterIntent.putExtra(FilterStatusActivity.PARMS_DEVICE_TYPE, FilterStatusActivity.TYPE_WATER_FILTER);
-                    startActivity(filterIntent);
-                } else {
-                    showCenterToast(R.string.Not_found_device);
-                }
-                break;
-            case R.id.iv_setting:
-                if (mWaterPurifer != null) {
-                    Intent setupIntent = new Intent(getContext(), SetupWaterActivity.class);
-                    setupIntent.putExtra(Contacts.PARMS_MAC, mWaterPurifer.Address());
-                    if (purifierAttr != null) {
-                        setupIntent.putExtra(Contacts.PARMS_URL, purifierAttr.getSmlinkurl());
-                    }
-                    startActivity(setupIntent);
-                } else {
-                    showCenterToast(R.string.Not_found_device);
-                }
-                break;
-            case R.id.llay_tds_detail:
-                if (mWaterPurifer != null) {
-                    Intent tdsIntent = new Intent(getContext(), WaterTDSActivity.class);
-                    tdsIntent.putExtra(Contacts.PARMS_MAC, mWaterPurifer.Address());
-                    startActivity(tdsIntent);
-                } else {
-                    showCenterToast(R.string.Not_found_device);
-                }
-                break;
-            case R.id.rlay_powerswitch:
-                if (mWaterPurifer != null
-                        && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
-                        && !mWaterPurifer.isOffline()) {
-                    isPowerOn = !mWaterPurifer.status().Power();
-                    switchPower(isPowerOn);
-                    mWaterPurifer.status().setPower(isPowerOn, new SwitchCallback());
-                } else {
-                    showCenterToast(R.string.device_disConnect);
-                }
-                break;
-            case R.id.rlay_hotswitch:
-                if (hasHot) {
-                    if (mWaterPurifer != null
-                            && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
-                            && !mWaterPurifer.isOffline()) {
-                        if (isPowerOn) {
-                            isHotOn = !mWaterPurifer.status().Hot();
-                            switchHot(isHotOn);
-                            mWaterPurifer.status().setHot(isHotOn, new SwitchCallback());
-                        } else {
-                            showCenterToast(R.string.please_open_power);
-                        }
-                    } else {
-                        showCenterToast(R.string.device_disConnect);
-                    }
-                } else {
-                    showCenterToast(R.string.not_support);
-                }
-                break;
-            case R.id.rlay_coolswitch:
-                if (hasCool) {
-                    if (mWaterPurifer != null
-                            && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
-                            && !mWaterPurifer.isOffline()) {
-                        if (isPowerOn) {
-                            isCoolOn = !mWaterPurifer.status().Cool();
-                            switchCool(isCoolOn);
-                            mWaterPurifer.status().setCool(isCoolOn, new SwitchCallback());
-                        } else {
-                            showCenterToast(R.string.please_open_power);
-                        }
-                    } else {
-                        showCenterToast(R.string.device_disConnect);
-                    }
-                } else {
-                    showCenterToast(R.string.not_support);
-                }
-                break;
-        }
-    }
-
-
-    /**
-     * 是否已添加到View
-     *
-     * @return
-     */
-    private boolean isWaterPuriferAdd() {
-        return !WaterPurifierFragment.this.isRemoving() && !WaterPurifierFragment.this.isDetached() && WaterPurifierFragment.this.isAdded();
-    }
-
-    /**
-     * 注册广播接收器
-     */
-    private void registerMonitor() {
-        waterMonitor = new WaterPurifierMonitor();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(WaterPurifier.ACTION_WATER_PURIFIER_STATUS_CHANGE);
-        filter.addAction(OznerDeviceManager.ACTION_OZNER_MANAGER_DEVICE_CHANGE);
-        filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTING);
-        filter.addAction(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED);
-        filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTED);
-        getContext().registerReceiver(waterMonitor, filter);
-    }
-
-    /**
-     * 注销广播接收器
-     */
-    private void releaseMonitor() {
-        if (WaterPurifierFragment.this.isAdded() && !WaterPurifierFragment.this.isRemoving() && !WaterPurifierFragment.this.isDetached() && waterMonitor != null) {
-            getContext().unregisterReceiver(waterMonitor);
-        }
-    }
+    
+//    public void setDevice(OznerDevice device){
+//        Log.e(TAG, "setDevice: ");
+//        oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, device.Address());
+//        oldPreValue = oldThenValue = 0;
+//        initWaterAttrInfo(device.Address());
+//        if (mWaterPurifier != null) {
+//            if (mWaterPurifier.Address() != device.Address()) {
+//                mWaterPurifier = null;
+//                mWaterPurifier = (WaterPurifier) device;
+//                refreshUIData();
+//            }
+//        } else {
+//            mWaterPurifier = (WaterPurifier) device;
+//            refreshUIData();
+//        }
+//    }
 
     /**
      * 初始化净水器属性信息
@@ -353,17 +188,19 @@ public class WaterPurifierFragment extends DeviceFragment {
 
             //获取设备属性
             if (purifierAttr != null && purifierAttr.getDeviceType() != null && !purifierAttr.getDeviceType().isEmpty()) {
-                Log.e(TAG, "initWaterAttrInfo: " + purifierAttr.getDeviceType() + " ,hasHot:" + purifierAttr.getHasHot() + " ,hasCool:" + purifierAttr.getHasCool());
+                Log.e(TAG, "initWaterAttrInfo: " + purifierAttr.getDeviceType() 
+                        + " ,hasHot:" + purifierAttr.getHasHot() 
+                        + " ,hasCool:" + purifierAttr.getHasCool());
                 refreshWaterSwitcher(purifierAttr);
             }
-            waterNetInfoManager.getMatchineType(mac, new WaterNetInfoManager.IWaterAttr() {
-                @Override
-                public void onResult(WaterPurifierAttr attr) {
-                    if (attr != null) {
-                        refreshWaterSwitcher(attr);
-                    }
-                }
-            });
+//            waterNetInfoManager.getMatchineType(mac, new WaterNetInfoManager.IWaterAttr() {
+//                @Override
+//                public void onResult(WaterPurifierAttr attr) {
+//                    if (attr != null) {
+//                        refreshWaterSwitcher(attr);
+//                    }
+//                }
+//            });
 
             //获取滤芯信息
             if (purifierAttr != null && DateUtils.isToday(purifierAttr.getFilterNowtime())) {
@@ -384,13 +221,221 @@ public class WaterPurifierFragment extends DeviceFragment {
         }
     }
 
+
+
+    @OnClick({R.id.rlay_filter, R.id.iv_setting, R.id.llay_tds_detail, R.id.rlay_powerswitch, R.id.rlay_hotswitch, R.id.rlay_coolswitch})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.rlay_filter:
+                if (mWaterPurifier != null) {
+                    Intent filterIntent = new Intent(getContext(), FilterStatusActivity.class);
+                    filterIntent.putExtra(Contacts.PARMS_MAC, mWaterPurifier.Address());
+                    filterIntent.putExtra(FilterStatusActivity.PARMS_DEVICE_TYPE, FilterStatusActivity.TYPE_WATER_FILTER);
+                    startActivity(filterIntent);
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
+                break;
+            case R.id.iv_setting:
+                if (mWaterPurifier != null) {
+                    Intent setupIntent = new Intent(getContext(), SetupWaterActivity.class);
+                    setupIntent.putExtra(Contacts.PARMS_MAC, mWaterPurifier.Address());
+                    if (purifierAttr != null) {
+                        setupIntent.putExtra(Contacts.PARMS_URL, purifierAttr.getSmlinkurl());
+                    }
+                    startActivity(setupIntent);
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
+                break;
+            case R.id.llay_tds_detail:
+                if (mWaterPurifier != null) {
+                    Intent tdsIntent = new Intent(getContext(), WaterTDSActivity.class);
+                    tdsIntent.putExtra(Contacts.PARMS_MAC, mWaterPurifier.Address());
+                    startActivity(tdsIntent);
+                } else {
+                    showCenterToast(R.string.Not_found_device);
+                }
+                break;
+            case R.id.rlay_powerswitch:
+                if (mWaterPurifier != null
+                        && mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
+                        && !mWaterPurifier.isOffline()) {
+                    isPowerOn = !mWaterPurifier.status().Power();
+                    switchPower(isPowerOn);
+                    mWaterPurifier.status().setPower(isPowerOn, new SwitchCallback());
+                } else {
+                    showCenterToast(R.string.device_disConnect);
+                }
+                break;
+            case R.id.rlay_hotswitch:
+                if (hasHot) {
+                    if (mWaterPurifier != null
+                            && mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
+                            && !mWaterPurifier.isOffline()) {
+                        if (isPowerOn) {
+                            isHotOn = !mWaterPurifier.status().Hot();
+                            switchHot(isHotOn);
+                            mWaterPurifier.status().setHot(isHotOn, new SwitchCallback());
+                        } else {
+                            showCenterToast(R.string.please_open_power);
+                        }
+                    } else {
+                        showCenterToast(R.string.device_disConnect);
+                    }
+                } else {
+                    showCenterToast(R.string.not_support);
+                }
+                break;
+            case R.id.rlay_coolswitch:
+                if (hasCool) {
+                    if (mWaterPurifier != null
+                            && mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
+                            && !mWaterPurifier.isOffline()) {
+                        if (isPowerOn) {
+                            isCoolOn = !mWaterPurifier.status().Cool();
+                            switchCool(isCoolOn);
+                            mWaterPurifier.status().setCool(isCoolOn, new SwitchCallback());
+                        } else {
+                            showCenterToast(R.string.please_open_power);
+                        }
+                    } else {
+                        showCenterToast(R.string.device_disConnect);
+                    }
+                } else {
+                    showCenterToast(R.string.not_support);
+                }
+                break;
+        }
+    }
+
+
+    protected void refreshUIData() {
+        if (isWaterPuriferAdd()) {
+            if (mWaterPurifier != null && mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+                Log.e(TAG, "refreshUIData: ");
+                refreshConnectState();
+                refreshSensorData();
+                refreshSwitchState();
+            } else {
+                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+                tvPreValue.setText(R.string.state_null);
+                tvAfterValue.setText(R.string.state_null);
+                tvPreValue.setTextSize(TextSize);
+                tvAfterValue.setTextSize(TextSize);
+                ivTdsStateIcon.setVisibility(View.GONE);
+                tvTdsStateText.setText(R.string.state_null);
+                waterProgress.update(0, 0);
+            }
+        }
+    }
+    /**
+     * 刷新开关状态
+     */
+    private void refreshSwitchState() {
+        if (mWaterPurifier != null) {
+            isPowerOn = mWaterPurifier.status().Power();
+            isHotOn = mWaterPurifier.status().Hot();
+            isCoolOn = mWaterPurifier.status().Cool();
+        } else {
+            isPowerOn = false;
+            isHotOn = false;
+            isCoolOn = false;
+        }
+        switchHot(isHotOn);
+        switchCool(isCoolOn);
+        switchPower(isPowerOn);
+
+    }
+
+    @Override
+    public void onResume() {
+        registerMonitor();
+        refreshUIData();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        releaseMonitor();
+        super.onPause();
+    }
+
+
+    /**
+     * 注册广播接收器
+     */
+    private void registerMonitor() {
+        waterMonitor = new WaterPurifierMonitor();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WaterPurifier.ACTION_WATER_PURIFIER_STATUS_CHANGE);
+        filter.addAction(OznerDeviceManager.ACTION_OZNER_MANAGER_DEVICE_CHANGE);
+        filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTING);
+        filter.addAction(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED);
+        filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTED);
+        getContext().registerReceiver(waterMonitor, filter);
+    }
+
+    /**
+     * 注销广播接收器
+     */
+    private void releaseMonitor() {
+        if (WPNormalFragment.this.isAdded() && !WPNormalFragment.this.isRemoving() && !WPNormalFragment.this.isDetached() && waterMonitor != null) {
+            getContext().unregisterReceiver(waterMonitor);
+        }
+    }
+    /**
+     * 刷新传感器数据
+     */
+    private void refreshSensorData() {
+        if (mWaterPurifier != null) {
+//            if (oznerSetting != null) {
+////                title.setText(oznerSetting.getName());
+//            } else {
+////                title.setText(mWaterPurifier.getName());
+//            }
+            showTdsState();
+        }
+    }
+
+    /**
+     * 刷新连接状态
+     */
+    private void refreshConnectState() {
+        if (mWaterPurifier != null) {
+            Log.e(TAG, "refreshConnectState: " + mWaterPurifier.toString());
+            if (ivDeviceConnectIcon.getAnimation() == null) {
+                ivDeviceConnectIcon.setAnimation(rotateAnimation);
+            }
+            if (mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
+                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                tvDeviceConnectTips.setText(R.string.device_connecting);
+                ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
+                ivDeviceConnectIcon.getAnimation().start();
+            } else if (mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+                if (ivDeviceConnectIcon.getAnimation() != null) {
+                    ivDeviceConnectIcon.getAnimation().cancel();
+                }
+            } else if (mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
+                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                tvDeviceConnectTips.setText(R.string.device_unconnected);
+                if (ivDeviceConnectIcon.getAnimation() != null) {
+                    ivDeviceConnectIcon.getAnimation().cancel();
+                }
+                ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
+            }
+        }
+    }
+
+
     /**
      * 刷新净水器开关可用状态
      *
      * @param attr
      */
     private void refreshWaterSwitcher(WaterPurifierAttr attr) {
-        purifierAttr = attr;
+//        purifierAttr = attr;
         hasCool = attr.getHasCool();
         hasHot = attr.getHasHot();
     }
@@ -421,6 +466,15 @@ public class WaterPurifierFragment extends DeviceFragment {
         }
     }
 
+    /**
+     * 是否已添加到View
+     *
+     * @return
+     */
+    private boolean isWaterPuriferAdd() {
+        return !WPNormalFragment.this.isRemoving() && !WPNormalFragment.this.isDetached() && WPNormalFragment.this.isAdded();
+    }
+    
     /**
      * 显示滤芯百分比
      *
@@ -504,131 +558,21 @@ public class WaterPurifierFragment extends DeviceFragment {
         }
     }
 
-    @Override
-    public void onPause() {
-        releaseMonitor();
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        try {
-            setBarColor(R.color.cup_detail_bg);
-            setToolbarColor(R.color.cup_detail_bg);
-            if (oznerSetting != null) {
-                title.setText(oznerSetting.getName());
-            } else {
-                title.setText(R.string.water_purifier);
-            }
-        } catch (Exception ex) {
-
-        }
-        registerMonitor();
-        refreshUIData();
-        super.onResume();
-    }
-
-    @Override
-    protected void refreshUIData() {
-        if (isWaterPuriferAdd()) {
-            if (mWaterPurifer != null && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
-                Log.e(TAG, "refreshUIData: ");
-                refreshConnectState();
-                refreshSensorData();
-                refreshSwitchState();
-            } else {
-                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
-                tvPreValue.setText(R.string.state_null);
-                tvAfterValue.setText(R.string.state_null);
-                tvPreValue.setTextSize(TextSize);
-                tvAfterValue.setTextSize(TextSize);
-                ivTdsStateIcon.setVisibility(View.GONE);
-                tvTdsStateText.setText(R.string.state_null);
-                waterProgress.update(0, 0);
-            }
-        }
-    }
-
-
-    /**
-     * 刷新连接状态
-     */
-    private void refreshConnectState() {
-        if (mWaterPurifer != null) {
-            Log.e(TAG, "refreshConnectState: " + mWaterPurifer.toString());
-            if (ivDeviceConnectIcon.getAnimation() == null) {
-                ivDeviceConnectIcon.setAnimation(rotateAnimation);
-            }
-            if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
-                llayDeviceConnectTip.setVisibility(View.VISIBLE);
-                tvDeviceConnectTips.setText(R.string.device_connecting);
-                ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
-                ivDeviceConnectIcon.getAnimation().start();
-            } else if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
-                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
-                if (ivDeviceConnectIcon.getAnimation() != null) {
-                    ivDeviceConnectIcon.getAnimation().cancel();
-                }
-            } else if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
-                llayDeviceConnectTip.setVisibility(View.VISIBLE);
-                tvDeviceConnectTips.setText(R.string.device_unconnected);
-                if (ivDeviceConnectIcon.getAnimation() != null) {
-                    ivDeviceConnectIcon.getAnimation().cancel();
-                }
-                ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
-            }
-        }
-    }
-
-    /**
-     * 刷新开关状态
-     */
-    private void refreshSwitchState() {
-        if (mWaterPurifer != null) {
-            isPowerOn = mWaterPurifer.status().Power();
-            isHotOn = mWaterPurifer.status().Hot();
-            isCoolOn = mWaterPurifer.status().Cool();
-        } else {
-            isPowerOn = false;
-            isHotOn = false;
-            isCoolOn = false;
-        }
-        switchHot(isHotOn);
-        switchCool(isCoolOn);
-        switchPower(isPowerOn);
-
-    }
-
-    /**
-     * 刷新传感器数据
-     */
-    private void refreshSensorData() {
-        if (mWaterPurifer != null) {
-            if (oznerSetting != null) {
-                title.setText(oznerSetting.getName());
-            } else {
-                title.setText(mWaterPurifer.getName());
-            }
-            showTdsState();
-        }
-    }
-
-
     /**
      * 处理TDS显示相关
      */
     private void showTdsState() {
         int tdsPre, tdsThen;
         //获取净化前后的TDS值
-        if (mWaterPurifer.sensor().TDS1() > 0 && mWaterPurifer.sensor().TDS2() > 0
-                && mWaterPurifer.sensor().TDS1() != 65535 && mWaterPurifer.sensor().TDS2() != 65535) {
+        if (mWaterPurifier.sensor().TDS1() > 0 && mWaterPurifier.sensor().TDS2() > 0
+                && mWaterPurifier.sensor().TDS1() != 65535 && mWaterPurifier.sensor().TDS2() != 65535) {
             //TDS值比较大的作为净化前的值
-            if (mWaterPurifer.sensor().TDS1() > mWaterPurifer.sensor().TDS2()) {
-                tdsPre = mWaterPurifer.sensor().TDS1();
-                tdsThen = mWaterPurifer.sensor().TDS2();
+            if (mWaterPurifier.sensor().TDS1() > mWaterPurifier.sensor().TDS2()) {
+                tdsPre = mWaterPurifier.sensor().TDS1();
+                tdsThen = mWaterPurifier.sensor().TDS2();
             } else {
-                tdsPre = mWaterPurifer.sensor().TDS2();
-                tdsThen = mWaterPurifer.sensor().TDS1();
+                tdsPre = mWaterPurifier.sensor().TDS2();
+                tdsThen = mWaterPurifier.sensor().TDS1();
             }
         } else {
             //有任何一个不大于0或者有任何一个为65535，就全部置为0
@@ -669,6 +613,7 @@ public class WaterPurifierFragment extends DeviceFragment {
         }
     }
 
+
     /**
      * 根据净化后的tds显示状态
      */
@@ -701,26 +646,6 @@ public class WaterPurifierFragment extends DeviceFragment {
     }
 
     /**
-     * 上传TDS
-     *
-     * @param tds
-     * @param beforeTds
-     */
-    private void updateTdsSensor(String tds, String beforeTds) {
-        if (mWaterPurifer != null) {
-            try {
-//                if (mWaterPurifer.IO() instanceof AylaIO) {
-//                    dsn = ((AylaIO) mWaterPurifer.IO()).DSN();
-//                }
-            } catch (Exception ex) {
-
-            }
-            tdsSensorManager.updateTds(mWaterPurifer.Address(), mWaterPurifer.Type(), tds, beforeTds, dsn, null);
-        }
-    }
-
-
-    /**
      * 切换电源开关
      *
      * @param isOn
@@ -739,6 +664,25 @@ public class WaterPurifierFragment extends DeviceFragment {
         isPowerOn = isOn;
     }
 
+    /**
+     * 上传TDS
+     *
+     * @param tds
+     * @param beforeTds
+     */
+    private void updateTdsSensor(String tds, String beforeTds) {
+        if (mWaterPurifier != null) {
+//            try {
+////                if (mWaterPurifier.IO() instanceof AylaIO) {
+////                    dsn = ((AylaIO) mWaterPurifier.IO()).DSN();
+////                }
+//            } catch (Exception ex) {
+//
+//            }
+            tdsSensorManager.updateTds(mWaterPurifier.Address(), mWaterPurifier.Type(), tds, beforeTds, "", null);
+        }
+    }
+    
     /**
      * 切换制冷开关
      *
@@ -762,7 +706,7 @@ public class WaterPurifierFragment extends DeviceFragment {
         tvHotswitch.setSelected(isOn);
         isHotOn = isOn;
     }
-
+    
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -774,8 +718,6 @@ public class WaterPurifierFragment extends DeviceFragment {
         System.gc();
         super.onDetach();
     }
-
-    Handler mHandler = new Handler();
 
     /**
      * 开关操作回调

@@ -54,7 +54,7 @@ import com.ozner.cup.Device.NoDeviceFragment;
 import com.ozner.cup.Device.ROWaterPurifier.ROWaterPurifierFragment;
 import com.ozner.cup.Device.ReplenWater.ReplenWaterFragment;
 import com.ozner.cup.Device.Tap.TapFragment;
-import com.ozner.cup.Device.WaterPurifier.WaterPurifierFragment;
+import com.ozner.cup.Device.WaterPurifier.WPContainerFragment;
 import com.ozner.cup.EShop.EShopFragment;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.LoginWelcom.View.LoginActivity;
@@ -416,7 +416,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 if("Ozner RO".equals(device.getDevcieType())){
                     return ROWaterPurifierFragment.newInstance(device.getMac());
                 }else {
-                    return WaterPurifierFragment.newInstance(device.getMac());
+//                    return WaterPurifierFragment.newInstance(device.getMac());
+                    return WPContainerFragment.newInstance(device.getMac());
                 }
             } else if (AirPurifierManager.IsWifiAirPurifier(device.getDevcieType())) {
                 return AirVerPurifierFragment.newInstance(device.getMac());
