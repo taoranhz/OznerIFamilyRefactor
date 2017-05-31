@@ -35,6 +35,7 @@
     <string name="device_address_err">Device address wrong</string>
     <string name="Filter_Scan">Scan</string>
     <string name="scan_text">Put QR code into the box to scan</string>
+    <string name="not_connect_Wifi">Not connected wi-fi</string>
 
     <!--登录-->
     <string name="login_phone_hint">Phone number</string>
@@ -440,6 +441,9 @@
     <string name="change_your_health">Improve your way of drinking water</string>
     <string name="water_know">Knowledge</string>
     <string name="buy_water_purifier">Purchase</string>
+    <string name="warm_temp">Heating water temperature</string>
+    <string name="keep_warm">Keep Warm</string>
+
 
     <string name="anion_release">Anion reseasing</string>
     <string name="air_indoor_detail">Detail of indoor air quality</string>
@@ -633,4 +637,6 @@
     <string name="Whether_to_empty_all_chats">Clear all messages?</string>
 
     <string name="save_device">Save Settings？</string>
+
+
 </resources>

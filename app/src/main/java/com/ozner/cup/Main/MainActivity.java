@@ -28,6 +28,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
+import com.github.kayvannj.permission_utils.Func;
 import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.google.gson.JsonObject;
 import com.ozner.AirPurifier.AirPurifierManager;
@@ -53,7 +54,7 @@ import com.ozner.cup.Device.NoDeviceFragment;
 import com.ozner.cup.Device.ROWaterPurifier.ROWaterPurifierFragment;
 import com.ozner.cup.Device.ReplenWater.ReplenWaterFragment;
 import com.ozner.cup.Device.Tap.TapFragment;
-import com.ozner.cup.Device.WaterPurifier.WaterPurifierFragment;
+import com.ozner.cup.Device.WaterPurifier.WPContainerFragment;
 import com.ozner.cup.EShop.EShopFragment;
 import com.ozner.cup.HttpHelper.HttpMethods;
 import com.ozner.cup.LoginWelcom.View.LoginActivity;
@@ -130,30 +131,51 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
             startActivity(new Intent(this, LoginActivity.class));
             this.finish();
         }
-        new OznerUpdateManager(this, false).checkUpdate();
+//        new OznerUpdateManager(this, false).checkUpdate();
         //启动百度云推送
         PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, getString(R.string.Baidu_Push_ApiKey));
         checkUserVerifyMsg();
         //隐藏底部菜单
 //        hideBottomNav();
         OznerDeviceManager.Instance().setOwner(mUserid, OznerPreference.getUserToken(this));
-        //检查位置权限
-        checkPosPer();
+//        //检查位置权限
+//        checkPosPer();
 
         LCLogUtils.E(TAG, "邮箱登录方式:" + UserDataPreference.isLoginEmail(this));
         if (UserDataPreference.isLoginEmail(this)) {
             initLoginEmail();
         }
 
+        checkUpdate();
+
         LCLogUtils.I("ozner", "oldDeviceSize:" + OznerDeviceManager.Instance().getDevices().length);
     }
 
+//    /**
+//     * 检查位置权限
+//     */
+//    private void checkPosPer() {
+//        perReqResult = PermissionUtil.with(this).request(Manifest.permission.ACCESS_COARSE_LOCATION).ask(2);
+//    }
+
     /**
-     * 检查位置权限
+     * 检查更新
      */
-    private void checkPosPer() {
-        perReqResult = PermissionUtil.with(this).request(Manifest.permission.ACCESS_COARSE_LOCATION).ask(2);
+    private void checkUpdate() {
+        perReqResult = PermissionUtil.with(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .onAllGranted(new Func() {
+                    @Override
+                    protected void call() {
+                        new OznerUpdateManager(MainActivity.this, false).checkUpdate();
+                    }
+                }).onAnyDenied(new Func() {
+                    @Override
+                    protected void call() {
+                        showToastCenter(R.string.user_deny_write_storge);
+                    }
+                }).ask(1);
     }
+
 
     private void initLoginEmail() {
         //隐藏底部菜单
@@ -394,7 +416,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 if("Ozner RO".equals(device.getDevcieType())){
                     return ROWaterPurifierFragment.newInstance(device.getMac());
                 }else {
-                    return WaterPurifierFragment.newInstance(device.getMac());
+//                    return WaterPurifierFragment.newInstance(device.getMac());
+                    return WPContainerFragment.newInstance(device.getMac());
                 }
             } else if (AirPurifierManager.IsWifiAirPurifier(device.getDevcieType())) {
                 return AirVerPurifierFragment.newInstance(device.getMac());

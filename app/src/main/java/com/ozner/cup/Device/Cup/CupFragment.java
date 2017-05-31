@@ -203,15 +203,9 @@ public class CupFragment extends DeviceFragment {
 
 
     @Override
-    public void onStart() {
-        registerMonitor();
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
+    public void onPause() {
         releaseMonitor();
-        super.onStop();
+        super.onPause();
     }
 
     @Override
@@ -223,6 +217,7 @@ public class CupFragment extends DeviceFragment {
             Log.e(TAG, "onResume_Ex: " + ex.getMessage());
         }
         title.setText(getString(R.string.smart_glass));
+        registerMonitor();
         initRecordCal();
         refreshUIData();
         super.onResume();
@@ -514,7 +509,6 @@ public class CupFragment extends DeviceFragment {
     private void showPowerState() {
         if (mCup != null) {
             int batteryValue = Math.round(mCup.Sensor().getPower() * 100);
-            Log.e(TAG, "showPowerState: batteryValue:" + batteryValue);
             //设置电池电量图标
             if (batteryValue == 100) {
                 ivBatteryIcon.setImageResource(R.drawable.battery100);
@@ -555,9 +549,9 @@ public class CupFragment extends DeviceFragment {
      * 注销广播监听
      */
     private void releaseMonitor() {
-        if (isThisAdd()) {
+//        if (isThisAdd()) {
             getContext().unregisterReceiver(mMonitor);
-        }
+//        }
     }
 
     @Override

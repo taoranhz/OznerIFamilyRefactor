@@ -67,4 +67,9 @@
     <color name="viewfinder_mask">#60000000</color>
     <color name="possible_result_points">#c0ffff00</color>
     <color name="cupDetail_line_gray">#ffe3e3e3</color>
+
+    <color name="warm_temp_text">#ffb4b4b4</color>
+
+
+    <color name="wp_temp_warm">#ffb159ed</color>
 </resources>

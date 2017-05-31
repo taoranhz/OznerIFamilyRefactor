@@ -293,6 +293,19 @@
         </activity>
         <activity android:name=".LoginWelcom.View.SignUpActivity">
         </activity>
+
+
+
+        <!--apk下载自动安装调取文件的provider-->
+        <provider
+            android:authorities="${applicationId}.fileprovider"
+            android:name="android.support.v4.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_path" />
+        </provider>
     </application>
 
 </manifest>

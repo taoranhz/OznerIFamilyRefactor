@@ -4,238 +4,213 @@
               android:layout_height="match_parent"
               android:orientation="vertical"
               tools:context="com.ozner.cup.Device.WaterPurifier.WaterPurifierFragment">
+
     <include layout="@layout/toolbar"/>
 
-    <RelativeLayout
+    <!--TDS部分-->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.5"
         android:background="@drawable/tds_detail_bg">
 
-        <RelativeLayout
-            android:id="@+id/rlay_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="10dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
+        <include layout="@layout/water_purifier_normal_top"/>
 
-
-            <RelativeLayout
-                android:id="@+id/rlay_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:id="@+id/iv_filter_icon"
-                    android:layout_width="16dp"
-                    android:layout_height="33dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="5dp"
-                    android:src="@drawable/filter_state0"/>
-
-                <TextView
-                    android:id="@+id/tv_filter_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/iv_filter_icon"
-                    android:text="@string/state_null"
-                    android:textColor="@color/white"
-                    android:textSize="13dp"/>
-
-                <TextView
-                    android:id="@+id/tv_filter_tips"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_filter_value"
-                    android:layout_marginTop="3dp"
-                    android:layout_toRightOf="@+id/iv_filter_icon"
-                    android:text="@string/filter_need_change"
-                    android:textColor="@color/white"
-                    android:textSize="13dp"/>
-            </RelativeLayout>
-
-            <ImageView
-                android:id="@+id/iv_setting"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/setting"/>
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/llay_tds_detail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/rlay_bottom"
-            android:orientation="vertical">
-
-            <include
-                layout="@layout/water_tds_detail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                />
-        </LinearLayout>
-
-
-    </RelativeLayout>
-
-    <!--开关部分-->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/white">
-
-        <LinearLayout
-            android:id="@+id/laly_buttons"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="30dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/tv_powerswitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/power"
-                    android:textColor="@drawable/purifier_text_color_selector"/>
-
-                <RelativeLayout
-                    android:id="@+id/rlay_powerswitch"
-                    android:layout_width="68.5dp"
-                    android:layout_height="68.5dp"
-                    android:layout_below="@id/tv_powerswitch"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/purifier_switch_selector"
-                    android:clickable="true">
-
-                    <ImageView
-                        android:id="@+id/iv_powerswitch"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_centerInParent="true"
-                        android:background="@drawable/purifier_power_selector"/>
-                </RelativeLayout>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/rl_hot"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/tv_hotswitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/warm"
-                    android:textColor="@drawable/purifier_text_color_selector"/>
-
-                <RelativeLayout
-                    android:id="@+id/rlay_hotswitch"
-                    android:layout_width="68.5dp"
-                    android:layout_height="68.5dp"
-                    android:layout_below="@+id/tv_hotswitch"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/purifier_switch_selector"
-                    android:clickable="true">
-
-                    <ImageView
-                        android:id="@+id/iv_hotswitch"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_centerInParent="true"
-                        android:background="@drawable/purifier_hot_selector"/>
-                </RelativeLayout>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/rl_cool"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/tv_coolswitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/refrigeration"
-                    android:textColor="@drawable/purifier_text_color_selector"/>
-
-                <RelativeLayout
-                    android:id="@+id/rlay_coolswitch"
-                    android:layout_width="68.5dp"
-                    android:layout_height="68.5dp"
-                    android:layout_below="@id/tv_coolswitch"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/purifier_switch_selector"
-                    android:clickable="true">
-
-                    <ImageView
-                        android:id="@+id/iv_coolswitch"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_centerInParent="true"
-                        android:background="@drawable/purifier_cool_selector"/>
-                </RelativeLayout>
-            </RelativeLayout>
-
-
-        </LinearLayout>
-        <!--<LinearLayout-->
+        <!--<RelativeLayout-->
+        <!--android:id="@+id/rlay_bottom"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@+id/laly_buttons"-->
-        <!--android:gravity="center"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_marginTop="10dp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_marginBottom="10dp"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:paddingLeft="20dp"-->
+        <!--android:paddingRight="20dp">-->
 
-        <!-->-->
-        <!--<TextView-->
+
+        <!--<RelativeLayout-->
+        <!--android:id="@+id/rlay_filter"-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->
-        <!--android:textColor="@color/unchecked"-->
-        <!--android:text="@string/purifier_type"-->
-        <!--android:textSize="13sp"-->
-        <!--/>-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:gravity="center_vertical">-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/iv_filter_icon"-->
+        <!--android:layout_width="16dp"-->
+        <!--android:layout_height="33dp"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_marginRight="5dp"-->
+        <!--android:src="@drawable/filter_state0"/>-->
+
         <!--<TextView-->
-        <!--android:id="@+id/tv_purifier_type"-->
+        <!--android:id="@+id/tv_filter_value"-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->
-        <!--android:textColor="@color/unchecked"-->
-        <!--android:text="@string/text_null"-->
+        <!--android:layout_toRightOf="@+id/iv_filter_icon"-->
+        <!--android:text="@string/state_null"-->
+        <!--android:textColor="@color/white"-->
+        <!--android:textSize="13dp"/>-->
 
+        <!--<TextView-->
+        <!--android:id="@+id/tv_filter_tips"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/tv_filter_value"-->
+        <!--android:layout_marginTop="3dp"-->
+        <!--android:layout_toRightOf="@+id/iv_filter_icon"-->
+        <!--android:text="@string/filter_need_change"-->
+        <!--android:textColor="@color/white"-->
+        <!--android:textSize="13dp"/>-->
+        <!--</RelativeLayout>-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/iv_setting"-->
+        <!--android:layout_width="20dp"-->
+        <!--android:layout_height="20dp"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:src="@drawable/setting"/>-->
+        <!--</RelativeLayout>-->
+
+        <!--<LinearLayout-->
+        <!--android:id="@+id/llay_tds_detail"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_above="@+id/rlay_bottom"-->
+        <!--android:orientation="vertical">-->
+
+        <!--<include-->
+        <!--layout="@layout/water_tds_detail"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
         <!--/>-->
-
         <!--</LinearLayout>-->
 
 
-    </RelativeLayout>
+    </LinearLayout>
+
+    <!--开关部分-->
+    <LinearLayout
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@color/white">
+
+        <include layout="@layout/water_purifier_switcher_three"/>
+
+        <!--<LinearLayout-->
+        <!--android:id="@+id/laly_buttons"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:gravity="center"-->
+        <!--android:orientation="horizontal">-->
+        <!---->
+        <!--<RelativeLayout-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_weight="1">-->
+
+        <!--<TextView-->
+        <!--android:id="@+id/tv_powerswitch"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginBottom="10dp"-->
+        <!--android:text="@string/power"-->
+        <!--android:textColor="@drawable/purifier_text_color_selector"/>-->
+
+        <!--<RelativeLayout-->
+        <!--android:id="@+id/rlay_powerswitch"-->
+        <!--android:layout_width="68.5dp"-->
+        <!--android:layout_height="68.5dp"-->
+        <!--android:layout_below="@id/tv_powerswitch"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:background="@drawable/purifier_switch_selector"-->
+        <!--android:clickable="true">-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/iv_powerswitch"-->
+        <!--android:layout_width="20dp"-->
+        <!--android:layout_height="20dp"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:background="@drawable/purifier_power_selector"/>-->
+        <!--</RelativeLayout>-->
+        <!--</RelativeLayout>-->
+
+        <!--<RelativeLayout-->
+        <!--android:id="@+id/rl_hot"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_weight="1">-->
+
+        <!--<TextView-->
+        <!--android:id="@+id/tv_hotswitch"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginBottom="10dp"-->
+        <!--android:text="@string/warm"-->
+        <!--android:textColor="@drawable/purifier_text_color_selector"/>-->
+
+        <!--<RelativeLayout-->
+        <!--android:id="@+id/rlay_hotswitch"-->
+        <!--android:layout_width="68.5dp"-->
+        <!--android:layout_height="68.5dp"-->
+        <!--android:layout_below="@+id/tv_hotswitch"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:background="@drawable/purifier_switch_selector"-->
+        <!--android:clickable="true">-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/iv_hotswitch"-->
+        <!--android:layout_width="20dp"-->
+        <!--android:layout_height="20dp"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:background="@drawable/purifier_hot_selector"/>-->
+        <!--</RelativeLayout>-->
+
+        <!--</RelativeLayout>-->
+
+        <!--<RelativeLayout-->
+        <!--android:id="@+id/rl_cool"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:layout_weight="1">-->
+
+        <!--<TextView-->
+        <!--android:id="@+id/tv_coolswitch"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginBottom="10dp"-->
+        <!--android:text="@string/refrigeration"-->
+        <!--android:textColor="@drawable/purifier_text_color_selector"/>-->
+
+        <!--<RelativeLayout-->
+        <!--android:id="@+id/rlay_coolswitch"-->
+        <!--android:layout_width="68.5dp"-->
+        <!--android:layout_height="68.5dp"-->
+        <!--android:layout_below="@id/tv_coolswitch"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:background="@drawable/purifier_switch_selector"-->
+        <!--android:clickable="true">-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/iv_coolswitch"-->
+        <!--android:layout_width="20dp"-->
+        <!--android:layout_height="20dp"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:background="@drawable/purifier_cool_selector"/>-->
+        <!--</RelativeLayout>-->
+        <!--</RelativeLayout>-->
+        <!--</LinearLayout>-->
+    </LinearLayout>
 </LinearLayout>

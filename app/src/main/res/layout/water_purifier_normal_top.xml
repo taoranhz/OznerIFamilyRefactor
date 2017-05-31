@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:id="@+id/rlay_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+
+            <RelativeLayout
+                android:id="@+id/rlay_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/iv_filter_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="33dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/filter_state0"/>
+
+                <TextView
+                    android:id="@+id/tv_filter_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_filter_icon"
+                    android:text="@string/state_null"
+                    android:textColor="@color/white"
+                    android:textSize="13dp"/>
+
+                <TextView
+                    android:id="@+id/tv_filter_tips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_filter_value"
+                    android:layout_marginTop="3dp"
+                    android:layout_toRightOf="@+id/iv_filter_icon"
+                    android:text="@string/filter_need_change"
+                    android:textColor="@color/white"
+                    android:textSize="13dp"/>
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/iv_setting"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/setting"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/llay_tds_detail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/rlay_bottom"
+            android:orientation="vertical">
+
+            <include
+                layout="@layout/water_tds_detail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+        </LinearLayout>
+    </RelativeLayout>
+
+</merge>

@@ -1,0 +1,109 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="com.ozner.cup.Device.WaterPurifier.WPLGFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.6"
+            android:background="@drawable/tds_detail_bg"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <com.ozner.cup.UIView.LgdrfDialView
+                    android:layout_centerInParent="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:id="@+id/llay_deviceConnectTip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:visibility="invisible">
+
+                    <ImageView
+                        android:id="@+id/iv_deviceConnectIcon"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/data_loading"/>
+
+                    <TextView
+                        android:id="@+id/tv_deviceConnectTips"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="5dp"
+                        android:text="adsfafds"/>
+                </LinearLayout>
+
+
+                <TextView
+                    android:textColor="@color/wp_temp_warm"
+                    android:id="@+id/tv_tempValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="50"
+                    android:textSize="60dp"/>
+
+                <TextView
+                    android:id="@+id/tv_tempUtil"
+                    android:textColor="@color/wp_temp_warm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/tv_tempValue"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toRightOf="@+id/tv_tempValue"
+                    android:text="℃"
+                    android:textSize="20dp"/>
+
+                <TextView
+                    android:textColor="@color/showmethod_start_color"
+                    android:textSize="25dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/tv_tempValue"
+                    android:id="@+id/tv_tempDec"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/keep_warm"/>
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/iv_setting"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="right|bottom"
+                android:layout_marginBottom="15dp"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/setting"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <include layout="@layout/water_purifier_switcher_three"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</FrameLayout>

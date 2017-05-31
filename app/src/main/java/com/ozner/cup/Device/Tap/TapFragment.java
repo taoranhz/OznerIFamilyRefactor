@@ -203,18 +203,6 @@ public class TapFragment extends DeviceFragment {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
-    public void onStart() {
-        registerMonitor();
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        releaseMonitor();
-        super.onStop();
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -262,12 +250,18 @@ public class TapFragment extends DeviceFragment {
         } catch (Exception ex) {
 
         }
+        registerMonitor();
         if (TapFragment.this.isAdded())
             title.setText(getString(R.string.water_probe));
         refreshUIData();
         super.onResume();
     }
 
+    @Override
+    public void onPause() {
+        releaseMonitor();
+        super.onPause();
+    }
 
     /**
      * 刷新水探头滤芯信息

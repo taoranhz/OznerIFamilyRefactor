@@ -76,7 +76,7 @@ public class LoginEnPresenter {
                     @Override
                     public void onError(Throwable e) {
                         LCLogUtils.E(TAG, "login_onError: " + e.getMessage());
-                        if (e.getMessage().isEmpty()) {
+                        if (e.getMessage() == null || e.getMessage().isEmpty()) {
                             loginView.showErrMsg(R.string.Code_Login_Error);
                         } else {
                             loginView.showErrMsg(e.getMessage());
@@ -101,6 +101,7 @@ public class LoginEnPresenter {
                                     userInfo.setUserId(jsonObject.get("userid").getAsString());
                                 }
                                 userInfo.setEmail(loginView.getEmail());
+                                OznerDeviceManager.Instance().setOwner(jsonObject.get("userid").getAsString(),jsonObject.get("usertoken").getAsString());
                                 DBManager.getInstance(mContext.get()).updateUserInfo(userInfo);
                             } catch (Exception ex) {
                                 LCLogUtils.E(TAG, "login_En_Ex:" + ex.getMessage());

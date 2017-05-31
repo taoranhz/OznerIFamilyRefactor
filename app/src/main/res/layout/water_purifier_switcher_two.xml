@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_powerswitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:text="@string/power"
+                android:textColor="@drawable/purifier_text_color_selector"/>
+
+            <RelativeLayout
+                android:id="@+id/rlay_powerswitch"
+                android:layout_width="68.5dp"
+                android:layout_height="68.5dp"
+                android:layout_below="@id/tv_powerswitch"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/purifier_switch_selector"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/iv_powerswitch"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/purifier_power_selector"/>
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_hot"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_hotswitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:text="@string/warm"
+                android:textColor="@drawable/purifier_text_color_selector"/>
+
+            <RelativeLayout
+                android:id="@+id/rlay_hotswitch"
+                android:layout_width="68.5dp"
+                android:layout_height="68.5dp"
+                android:layout_below="@+id/tv_hotswitch"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/purifier_switch_selector"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/iv_hotswitch"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/purifier_hot_selector"/>
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
