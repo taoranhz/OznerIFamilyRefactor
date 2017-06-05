@@ -190,18 +190,16 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
     /**
      * 激活设备
      *
-     * @param month          可使用时间，单位：月
      * @param Ozone_Interval 臭氧工作间隔时间，单位：小时
      * @param Ozone_WorkTime 臭氧工作时间,单位：分钟
      * @param resetFilter    滤芯复位，false：无操作，true：复位
      * @param cb             回调
      *
-     * @return boolean 方法是否调用成功
      */
     @Override
-    public void setActivate(int month, int Ozone_Interval, int Ozone_WorkTime, boolean resetFilter, OperateCallback<Void> cb) {
+    public void setActivate(ImpTime impTime, int Ozone_Interval, int Ozone_WorkTime, boolean resetFilter, OperateCallback<Void> cb) {
         if (waterPurifierIMP != null) {
-            waterPurifierIMP.setActivate(month, Ozone_Interval, Ozone_WorkTime, resetFilter, cb);
+            waterPurifierIMP.setActivate(impTime, Ozone_Interval, Ozone_WorkTime, resetFilter, cb);
         } else {
             cb.onFailure(new UnsupportedOperationException());
         }
@@ -225,6 +223,15 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
         sb.append(waterInfo.toString()+"\n");
         sb.append(filterInfo.toString()+"\n");
         return sb.toString();
+    }
+
+    public static class ImpTime {
+        public int year;
+        public int month;
+        public int day;
+        public int hour;
+        public int min;
+        public int second;
     }
 
     class WaterPurifierIMP  implements
@@ -253,7 +260,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
             }
         }
 
-        public boolean setActivate(int month, int Ozone_Interval, int Ozone_WorkTime, boolean resetFilter, OperateCallback<Void> cb) {
+        public boolean setActivate(ImpTime impTime, int Ozone_Interval, int Ozone_WorkTime, boolean resetFilter, OperateCallback<Void> cb) {
             if (IO() != null) {
                 byte[] bytes = new byte[19];
                 bytes[0] = opCode_set_setting;
@@ -277,16 +284,30 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
                 else
                     bytes[9] = 0;
 
+
                 //到期日
                 Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.MONTH, month);
+
+                Date orgTime = settingInfo.ExpireTime;
+
+                //判断充水起始日
+                if (orgTime.getTime() > cal.getTimeInMillis()) {
+                    cal.setTime(orgTime);
+                }
+
+                cal.add(Calendar.YEAR, impTime.year);
+                cal.add(Calendar.MONTH, impTime.month);
+                cal.add(Calendar.DAY_OF_MONTH, impTime.day);
+                cal.add(Calendar.HOUR_OF_DAY, impTime.hour);
+                cal.add(Calendar.MINUTE, impTime.min);
+                cal.add(Calendar.SECOND, impTime.second);
 
                 bytes[10] = (byte) (cal.get(Calendar.YEAR) - 2000);
                 bytes[11] = (byte) (cal.get(Calendar.MONTH) + 1);
                 bytes[12] = (byte) (cal.get(Calendar.DAY_OF_MONTH));
                 bytes[13] = (byte) (cal.get(Calendar.HOUR_OF_DAY));
                 bytes[14] = (byte) (cal.get(Calendar.MINUTE));
-                bytes[15] = (byte) (cal.get(Calendar.MILLISECOND));
+                bytes[15] = (byte) (cal.get(Calendar.SECOND));
 
                 //激活：0x1688,0x8816表示激活，其他未激活；0x1688：滤芯，0x8816：滤芯+计时
                 bytes[16] = (byte) 0x16;

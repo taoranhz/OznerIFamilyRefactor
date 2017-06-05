@@ -219,18 +219,16 @@ public abstract class WaterPurifier extends OznerDevice {
     /**
      * 激活设备
      *
-     * @param month          可使用时间，单位：月
+     * @param impTime        充值时间，和到期日的间隔时间
      * @param Ozone_Interval 臭氧工作间隔时间，单位：小时
      * @param Ozone_WorkTime 臭氧工作时间,单位：分钟
      * @param resetFilter    滤芯复位，false：无操作，true：复位
      * @param cb             回调
      *
-     * @return boolean 方法是否调用成功
      */
-    public void setActivate(int month, int Ozone_Interval, int Ozone_WorkTime, boolean resetFilter,OperateCallback<Void> cb){
+    public void setActivate(WaterPurifier_RO_BLE.ImpTime impTime, int Ozone_Interval, int Ozone_WorkTime, boolean resetFilter, OperateCallback<Void> cb){
         cb.onFailure(new UnsupportedOperationException());
     }
-
 
     protected boolean getSterilization()
     {

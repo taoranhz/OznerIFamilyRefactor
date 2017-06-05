@@ -122,6 +122,7 @@
     <string name="smart_glass">Ozner Cup</string>
     <string name="water_probe">Water Tester</string>
     <string name="water_purifier">Water purifier</string>
+    <string name="water_purifier_ro">Water purifier</string>
     <string name="water_tdspen">TDS pen</string>
     <string name="air_purifier">Air purifier</string>
     <string name="air_purifier_ver">Air purifier\n(Vertical)</string>

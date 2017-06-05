@@ -55,7 +55,7 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
             R.string.air_purifier_desk,
             R.string.water_replen_meter,
 
-            R.string.water_purifier,//智能Ro机，改为净水器
+            R.string.water_purifier_ro,//智能Ro机，改为水芯片净水器
     };
     private int[] connectTypes = new int[]{
             R.string.bluetooth_connection,
