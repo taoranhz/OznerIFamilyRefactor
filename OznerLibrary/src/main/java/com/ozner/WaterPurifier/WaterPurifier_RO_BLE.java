@@ -12,6 +12,7 @@ import com.ozner.util.dbg;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -55,20 +56,35 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
          * 臭氧工作间隔
          */
         public int Ozone_Interval;
+
+        //到期日
+        public Date ExpireTime;
+        //滤芯激活状态
+        public boolean isFilterActivate;
+        //计时激活状态
+        public boolean isTimerActivate;
         public void fromBytes(byte[] bytes)
         {
             this.rtc = new Date(bytes[0] + 2000 - 1900, bytes[1] - 1, bytes[2], bytes[3],
                     bytes[4], bytes[5]);
             this.Ozone_Interval=bytes[6];
             this.Ozone_WorkTime=bytes[7];
-
+            try {
+                this.ExpireTime = new Date(bytes[8] + 2000 - 1900, bytes[9] - 1, bytes[10], bytes[11], bytes[12], bytes[13]);
+                this.isFilterActivate = bytes[14] == (byte) 0x16 || bytes[14] == (byte) 0x88 ? true : false;
+                this.isTimerActivate = bytes[15] == (byte) 0x88 ? true : false;
+            } catch (Exception ex) {
+//                Log.e(TAG, "fromBytes_ex: " + ex.getMessage());
+                this.ExpireTime = new Date(100, 1, 1, 0, 0, 0);
+            }
         }
         @Override
         public String toString() {
             if (rtc==null) return "";
-            return String.format("设备时间:%s\n臭氧工作时间:%d 间隔:%d",
+            return String.format("设备时间:%s\n臭氧工作时间:%d 间隔:%d\n 到期日:%s \n滤芯激活:%s 计时激活:%s",
                     new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(rtc),
-                    Ozone_WorkTime,Ozone_Interval);
+                    Ozone_WorkTime, Ozone_Interval, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(ExpireTime)
+                    , String.valueOf(isFilterActivate), String.valueOf(isTimerActivate));
         }
     }
 
@@ -171,6 +187,24 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
 
     }
 
+    /**
+     * 激活设备
+     *
+     * @param Ozone_Interval 臭氧工作间隔时间，单位：小时
+     * @param Ozone_WorkTime 臭氧工作时间,单位：分钟
+     * @param resetFilter    滤芯复位，false：无操作，true：复位
+     * @param cb             回调
+     *
+     */
+    @Override
+    public void setActivate(ImpTime impTime, int Ozone_Interval, int Ozone_WorkTime, boolean resetFilter, OperateCallback<Void> cb) {
+        if (waterPurifierIMP != null) {
+            waterPurifierIMP.setActivate(impTime, Ozone_Interval, Ozone_WorkTime, resetFilter, cb);
+        } else {
+            cb.onFailure(new UnsupportedOperationException());
+        }
+    }
+
     @Override
     protected int getTDS1() {
         return waterInfo.TDS1;
@@ -189,6 +223,15 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
         sb.append(waterInfo.toString()+"\n");
         sb.append(filterInfo.toString()+"\n");
         return sb.toString();
+    }
+
+    public static class ImpTime {
+        public int year;
+        public int month;
+        public int day;
+        public int hour;
+        public int min;
+        public int second;
     }
 
     class WaterPurifierIMP  implements
@@ -216,6 +259,68 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
                 dbg.i("请求设置信息");
             }
         }
+
+        public boolean setActivate(ImpTime impTime, int Ozone_Interval, int Ozone_WorkTime, boolean resetFilter, OperateCallback<Void> cb) {
+            if (IO() != null) {
+                byte[] bytes = new byte[19];
+                bytes[0] = opCode_set_setting;
+                //同步时间
+                Time time = new Time();
+                time.setToNow();
+                bytes[1] = (byte) (time.year - 2000);
+                bytes[2] = (byte) (time.month + 1);
+                bytes[3] = (byte) time.monthDay;
+                bytes[4] = (byte) time.hour;
+                bytes[5] = (byte) time.minute;
+                bytes[6] = (byte) time.second;
+
+                //臭氧工作间隔时间和工作时间
+                bytes[7] = (byte) Ozone_Interval;
+                bytes[8] = (byte) Ozone_WorkTime;
+
+                //滤芯复位
+                if (resetFilter)
+                    bytes[9] = 1;
+                else
+                    bytes[9] = 0;
+
+
+                //到期日
+                Calendar cal = Calendar.getInstance();
+
+                Date orgTime = settingInfo.ExpireTime;
+
+                //判断充水起始日
+                if (orgTime.getTime() > cal.getTimeInMillis()) {
+                    cal.setTime(orgTime);
+                }
+
+                cal.add(Calendar.YEAR, impTime.year);
+                cal.add(Calendar.MONTH, impTime.month);
+                cal.add(Calendar.DAY_OF_MONTH, impTime.day);
+                cal.add(Calendar.HOUR_OF_DAY, impTime.hour);
+                cal.add(Calendar.MINUTE, impTime.min);
+                cal.add(Calendar.SECOND, impTime.second);
+
+                bytes[10] = (byte) (cal.get(Calendar.YEAR) - 2000);
+                bytes[11] = (byte) (cal.get(Calendar.MONTH) + 1);
+                bytes[12] = (byte) (cal.get(Calendar.DAY_OF_MONTH));
+                bytes[13] = (byte) (cal.get(Calendar.HOUR_OF_DAY));
+                bytes[14] = (byte) (cal.get(Calendar.MINUTE));
+                bytes[15] = (byte) (cal.get(Calendar.SECOND));
+
+                //激活：0x1688,0x8816表示激活，其他未激活；0x1688：滤芯，0x8816：滤芯+计时
+                bytes[16] = (byte) 0x16;
+                bytes[17] = (byte) 0x88;
+
+                bytes[18] = calcSum(bytes, 18);
+//                Log.e(TAG, "setActivate: 发送激活信息");
+                return IO().send(bytes, cb);
+
+            } else
+                return false;
+        }
+
         public boolean updateSetting(int Ozone_Interval,int Ozone_WorkTime,boolean resetFilter,OperateCallback<Void> cb)
         {
             if (IO()!=null) {

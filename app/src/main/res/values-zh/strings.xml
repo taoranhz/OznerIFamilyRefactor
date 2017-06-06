@@ -122,6 +122,7 @@
     <string name="smart_glass">智能杯</string>
     <string name="water_probe">水探头</string>
     <string name="water_purifier">净水器</string>
+    <string name="water_purifier_ro">水芯片净水器</string>
     <string name="water_tdspen">水质检测笔</string>
     <string name="air_purifier">空气净化器</string>
     <string name="air_purifier_ver">空气净化器\n(立式)</string>
