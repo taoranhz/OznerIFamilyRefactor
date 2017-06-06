@@ -6,41 +6,19 @@ package com.ozner.cup.Device.ROWaterPurifier.view;
  */
 
 public class RechargeDatas {
+
+
+    //private String orderId,productName,orderDtlId,productId,limitTimes,buyQuantity,actualQuantity,orginOrderCode;
     private String orderId;
     private String productName;
     private String orderDtlId;
     private String productId;
+    private int limitTimes;//水卡月数
     private int isRecord;//1,已使用 0 没有使用
-    private int useCount;//已使用的卡数
-    private int noUseCount;//未使用的卡数
+    private int actualQuantity;//已使用的卡数
+    private int buyQuantity;//未使用的卡数
+    private int orginOrderCode;//水机关联字段
     private String type;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public int getNoUseCount() {
-        return noUseCount;
-    }
-
-    public void setNoUseCount(int noUseCount) {
-        this.noUseCount = noUseCount;
-    }
-
-    public int getUseCount() {
-
-        return useCount;
-    }
-
-    public void setUseCount(int useCount) {
-        this.useCount = useCount;
-    }
-    //    private List<Integer>
-
 
     public String getOrderId() {
         return orderId;
@@ -74,6 +52,14 @@ public class RechargeDatas {
         this.productId = productId;
     }
 
+    public int getLimitTimes() {
+        return limitTimes;
+    }
+
+    public void setLimitTimes(int limitTimes) {
+        this.limitTimes = limitTimes;
+    }
+
     public int getIsRecord() {
         return isRecord;
     }
@@ -82,5 +68,35 @@ public class RechargeDatas {
         this.isRecord = isRecord;
     }
 
+    public int getActualQuantity() {
+        return actualQuantity;
+    }
 
+    public void setActualQuantity(int actualQuantity) {
+        this.actualQuantity = actualQuantity;
+    }
+
+    public int getBuyQuantity() {
+        return buyQuantity;
+    }
+
+    public void setBuyQuantity(int buyQuantity) {
+        this.buyQuantity = buyQuantity;
+    }
+
+    public int getOrginOrderCode() {
+        return orginOrderCode;
+    }
+
+    public void setOrginOrderCode(int orginOrderCode) {
+        this.orginOrderCode = orginOrderCode;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

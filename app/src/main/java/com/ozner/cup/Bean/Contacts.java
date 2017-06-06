@@ -161,6 +161,9 @@ public class Contacts {
     //关于TDS笔
     public static String aboutTdsPen = "file:///android_asset/hz_tdspen.html";
 
+    //ro水机获取充值水卡连接
+    public static String roCards="http://192.168.173.9:8025/PlatformTestWebApi/api/order/GetUserOnlineRechargeWaterOrderList";
+
     // 免责条款
 
 //    public static String URL_BASE_EXCEPTIONS = "http://cup.ozner.net/app/cn/";

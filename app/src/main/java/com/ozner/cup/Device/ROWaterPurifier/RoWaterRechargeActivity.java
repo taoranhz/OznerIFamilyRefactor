@@ -15,9 +15,20 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
 import com.ozner.cup.Base.BaseActivity;
+import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Device.ROWaterPurifier.view.RechargeDatas;
 import com.ozner.cup.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,8 +54,10 @@ public class RoWaterRechargeActivity extends BaseActivity implements View.OnClic
     private List<HashMap<String, Object>> list;
     private HashMap<String, Object> hashMap,hashMapGet;
     private ImageView[] btnArr;
-    private String[] btnCards;
     private RechargeDatas rechargeDatas;
+    private HttpUtils httpUtils;
+    private List<RechargeDatas> lisDatas;
+    private int actualQuantity,buyQuantity;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,31 +74,172 @@ public class RoWaterRechargeActivity extends BaseActivity implements View.OnClic
         rechargeDatas=new RechargeDatas();
         MyAdapter adapter = new MyAdapter(this);
         lv_cards.setAdapter(adapter);
-
+        lisDatas=new ArrayList<RechargeDatas>();
     }
 
     private void setData() {
-        for (int i = 0; i < 4; i++) {
-            hashMap = new HashMap<String, Object>();
-            hashMap.put("type","Ayear");
-            hashMap.put("isUse","no");
-            hashMap.put("image", R.drawable.a_yearly_card);
-            list.add(hashMap);
+        //网络获取水卡数据
+        httpUtils=new HttpUtils();
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("uid","872743");
+        httpUtils.send(HttpRequest.HttpMethod.GET, Contacts.roCards, params, new RequestCallBack<String>() {
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Log.e("trlogin", responseInfo.result);
+                //{"status":1,"msg":null,"data":null}
+                try {
+                    JSONObject jsonobject = new JSONObject(responseInfo.result);
+                    String result = jsonobject.getString("Result");
+                    JSONArray jsonArray = jsonobject.getJSONArray("Data");
+                    for(int i=0;i<jsonArray.length();i++){
+                        JSONObject json=jsonArray.getJSONObject(i);
+                        rechargeDatas.setOrderId(json.getInt("OrderId")+"");
+                        rechargeDatas.setProductName(json.getString("ProductName"));
+                        rechargeDatas.setOrderDtlId(json.getInt("OrderDtlId")+"");
+                        rechargeDatas.setProductId(json.getInt("ProductId")+"");
+                        rechargeDatas.setLimitTimes(json.getInt("LimitTimes"));
+                        rechargeDatas.setActualQuantity(json.getInt("ActualQuantity"));
+                        rechargeDatas.setBuyQuantity(json.getInt("BuyQuantity"));
+                        rechargeDatas.setOrginOrderCode(json.getInt("OrginOrderCode"));
+                        lisDatas.add(rechargeDatas);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(HttpException e, String s) {
+//                Log.e("tr", s);
+            }
+        });
+
+
+        for(int i=0;i<lisDatas.size();i++){
+            int limitTimes=lisDatas.get(i).getLimitTimes();
+            switch (limitTimes){
+                case 1:
+                    buyQuantity=lisDatas.get(i).getBuyQuantity();
+                        for(int j=0;j<buyQuantity;j++){
+                            hashMap = new HashMap<String, Object>();
+                            hashMap.put("type","Tyear");
+                            hashMap.put("isUse","no");
+                            hashMap.put("image", R.drawable.trial_card);
+                            list.add(hashMap);
+                        }
+
+                    actualQuantity=lisDatas.get(i).getActualQuantity();
+                    if(actualQuantity==0){
+                    }else {
+                        for (int j = 0; j < buyQuantity; j++) {
+                            hashMap = new HashMap<String, Object>();
+                            hashMap.put("type", "Tyear");
+                            hashMap.put("isUse", "yes");
+                            hashMap.put("image", R.drawable.trial_card);
+                            list.add(hashMap);
+                        }
+                    }
+                    break;
+                case 3:
+                    buyQuantity=lisDatas.get(i).getBuyQuantity();
+                    for(int j=0;j<buyQuantity;j++){
+                        hashMap = new HashMap<String, Object>();
+                        hashMap.put("type","Hyear");
+                        hashMap.put("isUse","no");
+                        hashMap.put("image", R.drawable.trial_card);
+                        list.add(hashMap);
+                    }
+
+                    actualQuantity=lisDatas.get(i).getActualQuantity();
+                    if(actualQuantity==0){
+                    }else {
+                        for (int j = 0; j < buyQuantity; j++) {
+                            hashMap = new HashMap<String, Object>();
+                            hashMap.put("type", "Hyear");
+                            hashMap.put("isUse", "yes");
+                            hashMap.put("image", R.drawable.trial_card);
+                            list.add(hashMap);
+                        }
+                    }
+                    break;
+                case 6:
+                    buyQuantity=lisDatas.get(i).getBuyQuantity();
+                    for(int j=0;j<buyQuantity;j++){
+                        hashMap = new HashMap<String, Object>();
+                        hashMap.put("type","Hyear");
+                        hashMap.put("isUse","no");
+                        hashMap.put("image", R.drawable.trial_card);
+                        list.add(hashMap);
+                    }
+
+                    actualQuantity=lisDatas.get(i).getActualQuantity();
+                    if(actualQuantity==0){
+                    }else {
+                        for (int j = 0; j < buyQuantity; j++) {
+                            hashMap = new HashMap<String, Object>();
+                            hashMap.put("type", "Hyear");
+                            hashMap.put("isUse", "yes");
+                            hashMap.put("image", R.drawable.trial_card);
+                            list.add(hashMap);
+                        }
+                    }
+                    break;
+                case 12:
+                    buyQuantity=lisDatas.get(i).getBuyQuantity();
+                    for(int j=0;j<buyQuantity;j++){
+                        hashMap = new HashMap<String, Object>();
+                        hashMap.put("type","Ayear");
+                        hashMap.put("isUse","no");
+                        hashMap.put("image", R.drawable.trial_card);
+                        list.add(hashMap);
+                    }
+
+                    actualQuantity=lisDatas.get(i).getActualQuantity();
+                    if(actualQuantity==0){
+                    }else {
+                        for (int j = 0; j < buyQuantity; j++) {
+                            hashMap = new HashMap<String, Object>();
+                            hashMap.put("type", "Ayear");
+                            hashMap.put("isUse", "yes");
+                            hashMap.put("image", R.drawable.trial_card);
+                            list.add(hashMap);
+                        }
+                    }
+                    break;
+            }
         }
 
-        for(int i=0;i<3;i++){
-            hashMap = new HashMap<String, Object>();
-            hashMap.put("type","Hyear");
-            hashMap.put("isUse","no");
-            hashMap.put("image", R.drawable.half_year_card);
-            list.add(hashMap);
-        }
 
-        hashMap = new HashMap<String, Object>();
-        hashMap.put("type","Tyear");
-        hashMap.put("isUse","yes");
-        hashMap.put("image", R.drawable.trial_card);
-        list.add(hashMap);
+
+
+
+
+
+
+
+
+
+//        for (int i = 0; i < 4; i++) {
+//            hashMap = new HashMap<String, Object>();
+//            hashMap.put("type","Ayear");
+//            hashMap.put("isUse","no");
+//            hashMap.put("image", R.drawable.a_yearly_card);
+//            list.add(hashMap);
+//        }
+
+//        for(int i=0;i<3;i++){
+//            hashMap = new HashMap<String, Object>();
+//            hashMap.put("type","Hyear");
+//            hashMap.put("isUse","no");
+//            hashMap.put("image", R.drawable.half_year_card);
+//            list.add(hashMap);
+//        }
+
+//        hashMap = new HashMap<String, Object>();
+//        hashMap.put("type","Tyear");
+//        hashMap.put("isUse","yes");
+//        hashMap.put("image", R.drawable.trial_card);
+//        list.add(hashMap);
 
     }
 
@@ -104,14 +258,10 @@ public class RoWaterRechargeActivity extends BaseActivity implements View.OnClic
 
         private void setData() {
             btnArr = new ImageView[list.size()];
-            btnCards=new String[list.size()];
             for (int i = 0; i < list.size(); i++) {
                 btnArr[i] = new ImageView(myContent);
                 btnArr[i].setTag(i);
             }
-
-
-
         }
 
         @Override
