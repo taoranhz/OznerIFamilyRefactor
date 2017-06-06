@@ -230,6 +230,10 @@ public abstract class WaterPurifier extends OznerDevice {
         cb.onFailure(new UnsupportedOperationException());
     }
 
+    public void addMonth(int month,OperateCallback<Void> cb){
+        cb.onFailure(new UnsupportedOperationException());
+    }
+
     protected boolean getSterilization()
     {
         return false;
