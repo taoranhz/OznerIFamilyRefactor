@@ -87,7 +87,8 @@ public class Contacts {
     //水探头滤芯信息更新时间
     public final static String TAP_FILTER_UPDATE_TIMEMILLS = "tap_update_timemills";
 
-
+    //ro水机滤芯地址
+    public final static String roFilterUrl="http://www.oznerwater.com/lktnew/wapnew/Mall/goodsDetail.aspx?gid=249";
     //网络请求基础url
     public final static String HttpBaseUrl = "http://app.ozner.net:888/";
 //    public final static String HttpBaseUrl = "http://app.joyro.com.cn:8282/";

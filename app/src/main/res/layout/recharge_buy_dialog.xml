@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/laly_recharge_dialog"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textColor="@color/black_deep"
+        android:textSize="15sp"
+        android:text="@string/tips"
+        android:layout_gravity="center"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/tv_tips"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:textColor="@color/black_deep"
+        android:textSize="15sp"
+        android:text="@string/tips_content1"
+        android:layout_gravity="center"
+        android:gravity="center"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        >
+
+
+
+        <TextView
+            android:id="@+id/tv_cancle"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:text="@string/cancle"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/deal_vf_btn_bg"
+            android:layout_marginRight="20dp"
+            />
+
+        <TextView
+            android:id="@+id/tv_ensure"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:text="@string/ensure"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/deal_vf_btn_bg"
+            />
+
+
+
+
+
+</LinearLayout>
+</LinearLayout>

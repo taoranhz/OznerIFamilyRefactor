@@ -143,7 +143,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
         tvMatchType.setText(getString(R.string.matching_bluetooth));
 //        tvMatchNotice.setText(getString(R.string.match_notice_tap));
         tvMatchNotice.setText(R.string.reverse_ro);
-        ivMatchIcon.setImageResource(R.drawable.activity_match_purifier);
+        ivMatchIcon.setImageResource(R.drawable.ropurifier_match);
         ivMatchLoading.setImageResource(R.drawable.match_loading);
         ivMatchLoading.setVisibility(View.VISIBLE);
         ivMatchIcon.setVisibility(View.VISIBLE);
@@ -178,7 +178,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
      * 初始化RecyleView
      */
     private void initFoundDeviceView() {
-        mDevAdpater = new FoundDevcieAdapter(this, R.drawable.match_water_selected, R.drawable.match_water_unselect);
+        mDevAdpater = new FoundDevcieAdapter(this, R.drawable.rowater_purifier_selected, R.drawable.rowater_purifier_small);
         mDevAdpater.setOnItemClickListener(new FoundDevcieAdapter.ClientClickListener() {
             @Override
             public void onItemClick(int position, BaseDeviceIO deviceIO) {
@@ -457,7 +457,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
         llayFoundDevice.setVisibility(View.VISIBLE);
         tvMatchNotice.setVisibility(View.INVISIBLE);
         tvMatchType.setVisibility(View.INVISIBLE);
-        ivMatchLoading.setImageResource(R.drawable.match_water_selected);
+        ivMatchLoading.setImageResource(R.drawable.rowater_purifier_selected);
         llayFoundDevice.setVisibility(View.VISIBLE);
         tvSuccesHolder.setVisibility(View.VISIBLE);
     }

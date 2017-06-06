@@ -202,7 +202,7 @@ public class ROFilterStatusActivity extends BaseActivity implements AdapterView.
         //复位键的显示
         if((Integer.parseInt(fit_a) ==0) || (Integer.parseInt(fit_b)==0)||(Integer.parseInt(fit_c)==0)){
 //            tv_ro_filterRest.setVisibility(View.VISIBLE);
-            tv_ro_filterRest.setVisibility(View.INVISIBLE);
+            tv_ro_filterRest.setVisibility(View.VISIBLE);
         }else{
             tv_ro_filterRest.setVisibility(View.INVISIBLE);
         }
@@ -356,7 +356,7 @@ public class ROFilterStatusActivity extends BaseActivity implements AdapterView.
                 break;
             case R.id.tds_health_buy_layout:
                 if (userInfo != null && userInfo.getMobile() != null && !userInfo.getMobile().isEmpty()) {
-                        waterUrl=WeChatUrlUtil.getMallUrl(userInfo.getMobile(),OznerPreference.getUserToken(this), "zh", "zh");
+                        waterUrl=WeChatUrlUtil.formatRoShopUrl(userInfo.getMobile(),OznerPreference.getUserToken(ROFilterStatusActivity.this), "zh", "zh");
                         startWebActivity(waterUrl);
 
                 } else {
@@ -370,9 +370,8 @@ public class ROFilterStatusActivity extends BaseActivity implements AdapterView.
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (userInfo != null && userInfo.getMobile() != null && !userInfo.getMobile().isEmpty()) {
-                                    waterUrl=WeChatUrlUtil.getMallUrl(userInfo.getMobile(),OznerPreference.getUserToken(ROFilterStatusActivity.this), "zh", "zh");
+                                    waterUrl=WeChatUrlUtil.formatRoShopUrl(userInfo.getMobile(),OznerPreference.getUserToken(ROFilterStatusActivity.this), "zh", "zh");
                                     startWebActivity(waterUrl);
-
                                 } else {
                                     showToastCenter(R.string.userinfo_miss);
                                 }
@@ -392,7 +391,7 @@ public class ROFilterStatusActivity extends BaseActivity implements AdapterView.
                                     public void onSuccess(Void var1) {
                                         Log.e("trfilter", "复位成功" );
 //                                        Toast.makeText(ROFilterStatusActivity.this,getString(R.string.rofilter_success),Toast.LENGTH_SHORT).show();
-                                        tv_ro_filterRest.setVisibility(View.INVISIBLE);
+                                          tv_ro_filterRest.setVisibility(View.VISIBLE);
 //                                        tv_rolxa.setText(roWaterPurifier.filterInfo.Filter_A_Percentage+"%");
 //                                        tv_rolxb.setText(roWaterPurifier.filterInfo.Filter_B_Percentage+"%");
 //                                        tv_rolxc.setText(roWaterPurifier.filterInfo.Filter_C_Percentage+"%");

@@ -489,7 +489,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
             } else if (WaterPurifierManager.IsWaterPurifier(deviceType)) {
                 if("Ozner RO".equals(deviceType)){
                     typeResId = R.mipmap.connect_bluetooth_on;
-                    setItemSelected(holder, isSelected, R.mipmap.icon_water_purifier_on, R.mipmap.icon_water_purifier_off);
+                    setItemSelected(holder, isSelected, R.drawable.ro_water, R.drawable.ropurifier_match_left);
                 }else {
                     // TODO: 2016/11/4 水机
                     typeResId = R.mipmap.connect_wifi_on;

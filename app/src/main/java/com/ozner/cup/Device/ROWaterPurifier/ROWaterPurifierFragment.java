@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ozner.WaterPurifier.WaterPurifier_RO_BLE;
@@ -48,6 +49,8 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 import static com.ozner.cup.R.id.llay_tds_detail;
+import static com.ozner.cup.R.id.rlay_coolswitch;
+import static com.ozner.cup.R.id.rlay_hotswitch;
 
 
 public class ROWaterPurifierFragment extends DeviceFragment {
@@ -100,7 +103,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
     TextView tvHotswitch;
     @InjectView(R.id.iv_hotswitch)
     ImageView ivHotswitch;
-    @InjectView(R.id.rlay_hotswitch)
+    @InjectView(rlay_hotswitch)
     RelativeLayout rlayHotswitch;
     @InjectView(R.id.rl_hot)
     RelativeLayout rlHot;
@@ -108,7 +111,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
     TextView tvCoolswitch;
     @InjectView(R.id.iv_coolswitch)
     ImageView ivCoolswitch;
-    @InjectView(R.id.rlay_coolswitch)
+    @InjectView(rlay_coolswitch)
     RelativeLayout rlayCoolswitch;
     @InjectView(R.id.rl_cool)
     RelativeLayout rlCool;
@@ -146,6 +149,8 @@ public class ROWaterPurifierFragment extends DeviceFragment {
     private String status="";
     private boolean isOffLine;
 
+    @InjectView(R.id.tv_ozner_days)
+    TextView tv_ozner_days;
 
     /**
      * 实例化Fragment
@@ -170,7 +175,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
         View view = inflater.inflate(R.layout.fragment_rowater_purifier, container, false);
         ButterKnife.inject(this, view);
         llayTdsDetail.setEnabled(false);
-        laly_buttons.setVisibility(View.INVISIBLE);
+//        laly_buttons.setVisibility(View.INVISIBLE);
         toolbar.setTitle("");
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         return view;
@@ -180,7 +185,6 @@ public class ROWaterPurifierFragment extends DeviceFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         ((MainActivity) getActivity()).initActionBarToggle(toolbar);
-
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -233,7 +237,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
     }
 
 
-    @OnClick({R.id.rlay_filter, R.id.iv_setting, llay_tds_detail, R.id.rlay_powerswitch, R.id.rlay_hotswitch, R.id.rlay_coolswitch})
+    @OnClick({R.id.rlay_filter, R.id.iv_setting, llay_tds_detail,R.id.rlay_powerswitch,rlay_hotswitch,rlay_coolswitch})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rlay_filter:
@@ -268,53 +272,56 @@ public class ROWaterPurifierFragment extends DeviceFragment {
                 }
                 break;
             case R.id.rlay_powerswitch:
-                if (mWaterPurifer != null
-                        && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
-                        && !mWaterPurifer.isOffline()) {
-                    isPowerOn = !mWaterPurifer.status().Power();
-                    switchPower(isPowerOn);
-                    mWaterPurifer.status().setPower(isPowerOn, new SwitchCallback());
-                } else {
-                    showCenterToast(R.string.device_disConnect);
-                }
+//                if (mWaterPurifer != null
+//                        && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
+//                        && !mWaterPurifer.isOffline()) {
+//                    isPowerOn = !mWaterPurifer.status().Power();
+//                    switchPower(isPowerOn);
+//                    mWaterPurifer.status().setPower(isPowerOn, new SwitchCallback());
+//                } else {
+//                    showCenterToast(R.string.device_disConnect);
+//                }
+                Toast.makeText(getContext(), getString(R.string.no_available), Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.rlay_hotswitch:
-                if (hasHot) {
-                    if (mWaterPurifer != null
-                            && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
-                            && !mWaterPurifer.isOffline()) {
-                        if (isPowerOn) {
-                            isHotOn = !mWaterPurifer.status().Hot();
-                            switchHot(isHotOn);
-                            mWaterPurifer.status().setHot(isHotOn, new SwitchCallback());
-                        } else {
-                            showCenterToast(R.string.please_open_power);
-                        }
-                    } else {
-                        showCenterToast(R.string.device_disConnect);
-                    }
-                } else {
-                    showCenterToast(R.string.not_support);
-                }
+            case rlay_hotswitch:
+//                if (hasHot) {
+//                    if (mWaterPurifer != null
+//                            && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
+//                            && !mWaterPurifer.isOffline()) {
+//                        if (isPowerOn) {
+//                            isHotOn = !mWaterPurifer.status().Hot();
+//                            switchHot(isHotOn);
+//                            mWaterPurifer.status().setHot(isHotOn, new SwitchCallback());
+//                        } else {
+//                            showCenterToast(R.string.please_open_power);
+//                        }
+//                    } else {
+//                        showCenterToast(R.string.device_disConnect);
+//                    }
+//                } else {
+//                    showCenterToast(R.string.not_support);
+//                }
+                Toast.makeText(getContext(), getString(R.string.no_available), Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.rlay_coolswitch:
-                if (hasCool) {
-                    if (mWaterPurifer != null
-                            && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
-                            && !mWaterPurifer.isOffline()) {
-                        if (isPowerOn) {
-                            isCoolOn = !mWaterPurifer.status().Cool();
-                            switchCool(isCoolOn);
-                            mWaterPurifer.status().setCool(isCoolOn, new SwitchCallback());
-                        } else {
-                            showCenterToast(R.string.please_open_power);
-                        }
-                    } else {
-                        showCenterToast(R.string.device_disConnect);
-                    }
-                } else {
-                    showCenterToast(R.string.not_support);
-                }
+            case rlay_coolswitch:
+//                if (hasCool) {
+//                    if (mWaterPurifer != null
+//                            && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
+//                            && !mWaterPurifer.isOffline()) {
+//                        if (isPowerOn) {
+//                            isCoolOn = !mWaterPurifer.status().Cool();
+//                            switchCool(isCoolOn);
+//                            mWaterPurifer.status().setCool(isCoolOn, new SwitchCallback());
+//                        } else {
+//                            showCenterToast(R.string.please_open_power);
+//                        }
+//                    } else {
+//                        showCenterToast(R.string.device_disConnect);
+//                    }
+//                } else {
+//                    showCenterToast(R.string.not_support);
+//                }
+                Toast.makeText(getContext(), getString(R.string.no_available), Toast.LENGTH_SHORT).show();
                 break;
         }
     }

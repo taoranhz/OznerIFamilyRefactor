@@ -102,6 +102,33 @@
             android:src="@drawable/right_gray"/>
     </RelativeLayout>
 
+    <!--ro水机充值页面-->
+
+    <RelativeLayout
+        android:id="@+id/rlay_ro_recharge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@color/white"
+        android:visibility="gone"
+        android:padding="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="@string/ro_recharge"
+            android:textColor="@color/light_black"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/right_gray"/>
+    </RelativeLayout>
+
+
     <TextView
         android:id="@+id/tv_delete_device"
         android:layout_width="230dp"

@@ -628,8 +628,8 @@
     <string name="sd_card_does_not_exist">"SD card does not exist, can't take pictures"</string>
     <string name="Whether_to_empty_all_chats">Clear all messages?</string>
 
-    <string name="water_ropurifier">智能RO水机</string>
-    <string name="reverse_ro">请将RO水机的开关打开</string>
+    <string name="water_ropurifier">水芯片净水器</string>
+    <string name="reverse_ro">请将水芯片净水器的开关打开</string>
     <string name="rest_ro_fit">复位</string>
     <string name="rofit">滤芯状态</string>
     <string name="ro_fit">清洗前置滤芯</string>
@@ -638,5 +638,15 @@
     <string name="rofilter_need_change">为了您和家人的健康，请及时更换滤芯</string>
     <string name="warmly_notice">温馨提醒：及时更换滤芯才能保证饮用水的安全</string>
 
-
+    <string name="ro_recharge">水机充值</string>
+    <string name="ro_renew">续费</string>
+    <string name="my_recharge_coupon">我的充值券</string>
+    <string name="ro_buy">购买</string>
+    <string name="recharge">充值</string>
+    <string name="recharge_days">浩泽安全净水</string>
+    <string name="tips">提示</string>
+    <string name="tips_content1">确定向</string>
+    <string name="tips_content2">(设备编号)水机充值</string>
+    <string name="tips_content3">水卡？此操作不可撤销哦~</string>
+    <string name="no_available">暂无此功能!</string>
 </resources>

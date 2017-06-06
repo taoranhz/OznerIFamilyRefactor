@@ -637,6 +637,17 @@
     <string name="Whether_to_empty_all_chats">Clear all messages?</string>
 
     <string name="save_device">Save Settings？</string>
+    <string name="ro_recharge">Water machine recharge</string>
+    <string name="ro_renew">Renew</string>
+    <string name="my_recharge_coupon">My recharge coupon</string>
+    <string name="ro_buy">Buy</string>
+    <string name="recharge">Recharge</string>
 
+    <string name="recharge_days">Ozner Safe water</string>
+    <string name="tips">Prompt</string>
+    <string name="tips_content1">Determine to</string>
+    <string name="tips_content2">(equipment number)water machine recharge </string>
+    <string name="tips_content3">water card? This operation is irrevocable Oh ~!</string>
+    <string name="no_available">This function is not available!</string>
 
 </resources>

@@ -45,6 +45,7 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
     BluetoothManager bluetoothManager;
     BluetoothAdapter blueAdapter;
     private int[] deviceNames = new int[]{
+            R.string.water_ropurifier,//智能Ro机，改为净水器
             R.string.smart_glass,
             R.string.water_probe,
             R.string.water_tdspen,
@@ -53,37 +54,38 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
             R.string.air_purifier_ver,
 
             R.string.air_purifier_desk,
-            R.string.water_replen_meter,
+            R.string.water_replen_meter
 
-            R.string.water_purifier,//智能Ro机，改为净水器
+
     };
     private int[] connectTypes = new int[]{
             R.string.bluetooth_connection,
             R.string.bluetooth_connection,
             R.string.bluetooth_connection,
+            R.string.bluetooth_connection,
             R.string.wifi_connection,
             R.string.wifi_connection,
             R.string.bluetooth_connection,
-            R.string.bluetooth_connection,
-            R.string.bluetooth_connection,
+            R.string.bluetooth_connection
+
     };
     private int[] devIconRes = new int[]{
+            R.drawable.ro_waterpurifier,
             R.drawable.device_icon_cup,
             R.drawable.device_icon_tap,
             R.drawable.device_icon_tdspen,
             R.drawable.device_icon_water,
             R.drawable.device_icon_air_ver,
             R.drawable.device_icon_air_desk,
-            R.drawable.device_icon_replen,
-            R.drawable.device_icon_rowater,
+            R.drawable.device_icon_replen
     };
     private int[] conIconRes = new int[]{
             R.mipmap.connect_bluetooth_on,
             R.mipmap.connect_bluetooth_on,
             R.mipmap.connect_bluetooth_on,
-            R.mipmap.connect_wifi_on,
-            R.mipmap.connect_wifi_on,
             R.mipmap.connect_bluetooth_on,
+            R.mipmap.connect_wifi_on,
+            R.mipmap.connect_wifi_on,
             R.mipmap.connect_bluetooth_on,
             R.mipmap.connect_bluetooth_on
     };
@@ -211,7 +213,7 @@ public class AddDeviceActivity extends BaseActivity implements AdapterView.OnIte
                     this.finish();
                 }
                     break;
-            case R.drawable.device_icon_rowater:
+            case R.drawable.ro_waterpurifier:
                 if (!blueAdapter.isEnabled()) {
                     blueAdapter.enable();
                 }

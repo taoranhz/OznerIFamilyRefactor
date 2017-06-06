@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <ImageView
+        android:id="@+id/iv_cards"
+        android:layout_width="285dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_centerVertical="true"
+        />
+
+    <ImageView
+        android:id="@+id/iv_have_use"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/have_been_used"
+        android:layout_alignTop="@+id/iv_cards"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/iv_cards"
+        />
+
+
+    <ImageView
+        android:id="@+id/card_choose"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:button="@null"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginLeft="40dp"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/rectangle"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+
+        />
+
+
+</RelativeLayout>

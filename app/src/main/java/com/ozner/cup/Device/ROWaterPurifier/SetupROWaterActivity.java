@@ -46,6 +46,8 @@ public class SetupROWaterActivity extends BaseActivity {
     TextView tvDeleteDevice;
     @InjectView(R.id.tv_mac)
     TextView tvMac;
+    @InjectView(R.id.rlay_ro_recharge)
+    RelativeLayout rlay_ro_recharge;//水机充值页面
 
     private String deviceNewName = null, deviceNewPos = null;
     private WaterPurifier mWaterPurifier;
@@ -59,6 +61,7 @@ public class SetupROWaterActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup_water);
         ButterKnife.inject(this);
+        rlay_ro_recharge.setVisibility(View.VISIBLE);
         initToolBar();
         mUserid = OznerPreference.GetValue(this, OznerPreference.UserId, "");
         try {
@@ -111,7 +114,7 @@ public class SetupROWaterActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.rlay_device_name, R.id.rlay_about_purifier, R.id.tv_delete_device})
+    @OnClick({R.id.rlay_device_name, R.id.rlay_about_purifier, R.id.tv_delete_device,R.id.rlay_ro_recharge})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rlay_device_name:
@@ -147,6 +150,10 @@ public class SetupROWaterActivity extends BaseActivity {
                         dialog.cancel();
                     }
                 }).show();
+                break;
+            case R.id.rlay_ro_recharge:
+                Intent intent=new Intent(SetupROWaterActivity.this,RoWaterRechargeActivity.class);
+                startActivity(intent);
                 break;
         }
     }

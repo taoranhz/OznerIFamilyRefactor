@@ -75,6 +75,20 @@
             android:layout_above="@+id/rlay_bottom"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/tv_ozner_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/recharge_days"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:textSize="14sp"
+                android:textColor="@color/err_red"
+                />
+
+
+
             <include
                 layout="@layout/water_tds_detail"
                 android:layout_width="match_parent"
@@ -99,7 +113,7 @@
             android:layout_centerInParent="true"
             android:layout_marginTop="30dp"
             android:gravity="center"
-            android:visibility="invisible"
+            android:visibility="visible"
             android:orientation="horizontal">
 
 
