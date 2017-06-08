@@ -15,6 +15,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -70,18 +71,35 @@ import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 import com.ozner.tap.TapManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import cn.jpush.android.api.JPushInterface;
+import cn.udesk.UdeskConst;
+import cn.udesk.UdeskSDKManager;
+import cn.udesk.config.UdeskBaseInfo;
+import cn.udesk.config.UdeskConfig;
+import cn.udesk.presenter.ChatActivityPresenter;
 import rx.Subscriber;
+import udesk.core.UdeskCallBack;
+
+import static cn.udesk.config.UdeskBaseInfo.sdkToken;
 
 public class MainActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener, ILeftMenu {
     private static final String TAG = "MainActivity";
     private static final String NoDeviceTag = "nodevicetag";
+    private String UDESK_DOMAIN = "ozner.udesk.cn";
+    private String AppId = "f633b561471be762";
+    private String UDESK_SECRETKEY = "4ddf84becfd2320bca9f183136574c0f";
     //    @InjectView(R.id.title)
 //    TextView customTitle;
 //    @InjectView(R.id.toolbar)
@@ -147,8 +165,38 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         }
 
         checkUpdate();
-
+        initChat();
         LCLogUtils.I("ozner", "oldDeviceSize:" + OznerDeviceManager.Instance().getDevices().length);
+    }
+
+    private void initChat() {
+        UdeskSDKManager.getInstance().initApiKey(this, UDESK_DOMAIN, UDESK_SECRETKEY, AppId);
+        Map<String, String> info = new HashMap<String, String>();
+//        if (TextUtils.isEmpty(OznerPreference.getUserToken(this))) {
+//            sdkToken = UUID.randomUUID().toString();
+//        }
+        info.put(UdeskConst.UdeskUserInfo.USER_SDK_TOKEN, OznerPreference.getUserToken(this));
+        info.put(UdeskConst.UdeskUserInfo.NICK_NAME, userInfo.getNickname());
+
+        if (!TextUtils.isEmpty(userInfo.getMobile()))
+            info.put(UdeskConst.UdeskUserInfo.CELLPHONE, userInfo.getMobile());
+        if (!TextUtils.isEmpty(userInfo.getEmail()))
+            info.put(UdeskConst.UdeskUserInfo.EMAIL, userInfo.getEmail());
+        UdeskSDKManager.getInstance().setUserInfo(
+                getApplicationContext(), OznerPreference.getUserToken(this), info);
+//        UdeskSDKManager.getInstance().setUpdateUserinfo(info);
+//        UdeskSDKManager.getInstance().setSdkPushStatus(true);
+
+        UdeskSDKManager.getInstance().setCustomerUrl(userInfo.getHeadimg());
+
+//        try {
+//            ChatActivityPresenter.class.newInstance().onCreateCustomer();
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
+
     }
 
 //    /**
@@ -234,7 +282,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         mainMonitor = new MainReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(OznerBroadcastAction.OBA_SWITCH_ESHOP);
-        filter.addAction(OznerBroadcastAction.OBA_SWITCH_CHAT);
+//        filter.addAction(OznerBroadcastAction.OBA_SWITCH_CHAT);
         filter.addAction(OznerBroadcastAction.OBA_BDBind);
         filter.addAction(OznerBroadcastAction.OBA_Login_Notify);
         filter.addAction(OznerBroadcastAction.OBA_NewFriendVF);
@@ -242,7 +290,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         filter.addAction(OznerBroadcastAction.OBA_NewCenterMsg);
         this.registerReceiver(mainMonitor, filter);
     }
-
 
     @Override
     protected void onDestroy() {
@@ -335,6 +382,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         } catch (Exception ex) {
 
         }
+        if (bnBootomNavBar.getCurrentSelectedPosition() == 2) {
+            bnBootomNavBar.selectTab(0);
+        }
         super.onResume();
     }
 
@@ -401,7 +451,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
      * 根据设备，获取相应的Fragment
      *
      * @param device
-     *
      * @return
      */
     private DeviceFragment getDeviceFragment(OznerDeviceSettings device) {
@@ -413,9 +462,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
             } else if (device.getDevcieType().equals(RankType.TdsPenType)) {
                 return TapFragment.newInstance(device.getMac());
             } else if (WaterPurifierManager.IsWaterPurifier(device.getDevcieType())) {
-                if("Ozner RO".equals(device.getDevcieType())){
+                if ("Ozner RO".equals(device.getDevcieType())) {
                     return ROWaterPurifierFragment.newInstance(device.getMac());
-                }else {
+                } else {
 //                    return WaterPurifierFragment.newInstance(device.getMac());
                     return WPContainerFragment.newInstance(device.getMac());
                 }
@@ -497,10 +546,22 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
                 break;
             case 2:
-                if (chatFragment == null) {
-                    chatFragment = EaseChatFragment.newInstance(null);
-                }
-                transaction.replace(R.id.fg_content, chatFragment).commitAllowingStateLoss();
+//                if (chatFragment == null) {
+//                    chatFragment = EaseChatFragment.newInstance(null);
+//                }
+//                transaction.replace(R.id.fg_content, chatFragment).commitAllowingStateLoss();
+                //设置在客服那边显示用户名
+                UdeskSDKManager.getInstance().toLanuchChatAcitvity(this);
+//                Map uInfo = new HashMap();
+//                if (!TextUtils.isEmpty(userInfo.getNickname())) {
+//                    uInfo.put(UdeskConst.UdeskUserInfo.NICK_NAME, userInfo.getNickname());
+//                }
+//                if (!TextUtils.isEmpty(userInfo.getMobile()))
+//                    uInfo.put(UdeskConst.UdeskUserInfo.CELLPHONE, userInfo.getMobile());
+//                if (!TextUtils.isEmpty(userInfo.getEmail()))
+//                    uInfo.put(UdeskConst.UdeskUserInfo.EMAIL, userInfo.getEmail());
+//                UdeskSDKManager.getInstance().setUpdateUserinfo(uInfo);
+
                 break;
             case 3:
                 if (myCenterFragment == null) {
@@ -558,16 +619,16 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                         }
                     }, 100);
                     break;
-                case OznerBroadcastAction.OBA_SWITCH_CHAT://切换到咨询
-                    Log.e(TAG, "onReceive: 切换到咨询");
-                    //这里不用延时的话没有效果
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            bnBootomNavBar.selectTab(2);
-                        }
-                    }, 100);
-                    break;
+//                case OznerBroadcastAction.OBA_SWITCH_CHAT://切换到咨询
+//                    Log.e(TAG, "onReceive: 切换到咨询");
+//                    //这里不用延时的话没有效果
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            bnBootomNavBar.selectTab(2);
+//                        }
+//                    }, 100);
+//                    break;
                 case OznerBroadcastAction.OBA_BDBind:
                     String usertoken = OznerPreference.getUserToken(MainActivity.this);
                     String deviceid = OznerPreference.GetValue(MainActivity.this, OznerPreference.BDDeivceID, "");

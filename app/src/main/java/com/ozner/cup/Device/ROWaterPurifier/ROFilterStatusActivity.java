@@ -52,6 +52,7 @@ import java.util.TimerTask;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import cn.udesk.UdeskSDKManager;
 
 import static com.ozner.cup.R.id.uiz_moreProject;
 
@@ -351,8 +352,9 @@ public class ROFilterStatusActivity extends BaseActivity implements AdapterView.
             case R.id.tds_health_know_layout:
 //                // TODO: 2016/12/2
 //                showToastCenter("咨询");
-                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
-                this.finish();
+                UdeskSDKManager.getInstance().toLanuchChatAcitvity(this);
+//                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+//                this.finish();
                 break;
             case R.id.tds_health_buy_layout:
                 if (userInfo != null && userInfo.getMobile() != null && !userInfo.getMobile().isEmpty()) {

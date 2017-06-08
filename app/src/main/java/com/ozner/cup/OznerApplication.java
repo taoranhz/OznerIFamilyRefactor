@@ -1,6 +1,8 @@
 package com.ozner.cup;
 
+import android.content.Context;
 import android.content.Intent;
+import android.support.multidex.MultiDex;
 
 import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Command.OznerPreference;
@@ -26,5 +28,11 @@ public class OznerApplication extends OznerBaseApplication {
         String usertoken = OznerPreference.getUserToken(getBaseContext());
         getService().getDeviceManager().setOwner(userid, usertoken);
         this.sendBroadcast(new Intent(OznerBroadcastAction.OBA_Service_Init));
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }

@@ -9,6 +9,8 @@ import android.os.IBinder;
 
 import com.ozner.application.OznerBLEService;
 
+import cn.jpush.android.api.JPushInterface;
+
 /**
  * Created by ozner_67 on 2016/11/1.
  * 邮箱：xinde.zhang@cftcn.com
@@ -49,6 +51,9 @@ public abstract class OznerBaseApplication extends Application {
 
         Intent intent = new Intent(this, OznerBLEService.class);
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(this);
     }
 
 

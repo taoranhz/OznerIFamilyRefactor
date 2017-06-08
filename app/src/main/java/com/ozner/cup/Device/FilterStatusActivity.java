@@ -52,6 +52,7 @@ import java.util.HashMap;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import cn.udesk.UdeskSDKManager;
 
 import static com.ozner.cup.Device.Tap.TapFragment.INIT_WARRANTY;
 import static com.ozner.cup.R.id.uiz_moreProject;
@@ -440,8 +441,9 @@ public class FilterStatusActivity extends BaseActivity implements AdapterView.On
             case R.id.tv_chat_btn:
 //                // TODO: 2016/12/2
 //                showToastCenter("咨询");
-                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
-                this.finish();
+                UdeskSDKManager.getInstance().toLanuchChatAcitvity(this);
+//                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+//                this.finish();
                 break;
             case R.id.tv_buy_water_purifier:
                 if (userInfo != null && userInfo.getMobile() != null && !userInfo.getMobile().isEmpty()) {

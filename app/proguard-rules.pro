@@ -21,3 +21,29 @@
 #-keepattributes Signature
 #-keepattributes Exceptions
 
+#//udesk
+-keep class udesk.** {*;}
+-keep class cn.udesk.**{*; }
+#//七牛
+-keep class okhttp3.** {*;}
+-keep class okio.** {*;}
+-keep class com.qiniu.**{*;}
+-keep class com.qiniu.**{public <init>();}
+-ignorewarnings
+#//smack
+-keep class org.jxmpp.** {*;}
+-keep class de.measite.** {*;}
+-keep class org.jivesoftware.** {*;}
+-keep class org.xmlpull.** {*;}
+-dontwarn org.xbill.**
+-keep class org.xbill.** {*;}
+#//Android M 权限
+-keep class rx.** {*;}
+-keep class com.tbruyelle.rxpermissions.** {*;}
+
+ #//其它
+-keep class com.tencent.bugly.** {*; }
+-keep class de.hdodenhof.circleimageview.** {*;}
+
+
+
