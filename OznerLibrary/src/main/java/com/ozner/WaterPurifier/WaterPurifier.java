@@ -1,21 +1,11 @@
 package com.ozner.WaterPurifier;
 
 import android.content.Context;
-import android.content.Intent;
 
-import com.ozner.XObject;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OperateCallback;
-import com.ozner.device.OperateCallbackProxy;
 import com.ozner.device.OznerDevice;
 import com.ozner.oznerlibrary.R;
-import com.ozner.util.ByteUtil;
-import com.ozner.util.Helper;
-import com.ozner.wifi.mxchip.MXChipIO;
-import com.ozner.wifi.mxchip.Pair.CRC8;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by xzyxd on 2015/11/2.
@@ -226,6 +216,23 @@ public abstract class WaterPurifier extends OznerDevice {
         cb.onFailure(new UnsupportedOperationException());
     }
 
+    /**
+     * 激活设备
+     *
+     * @param impTime        充值时间，和到期日的间隔时间
+     * @param Ozone_Interval 臭氧工作间隔时间，单位：小时
+     * @param Ozone_WorkTime 臭氧工作时间,单位：分钟
+     * @param resetFilter    滤芯复位，false：无操作，true：复位
+     * @param cb             回调
+     *
+     */
+    public void setActivate(WaterPurifier_RO_BLE.ImpTime impTime, int Ozone_Interval, int Ozone_WorkTime, boolean resetFilter, OperateCallback<Void> cb){
+        cb.onFailure(new UnsupportedOperationException());
+    }
+
+    public void addMonth(int month,OperateCallback<Void> cb){
+        cb.onFailure(new UnsupportedOperationException());
+    }
 
     protected boolean getSterilization()
     {
