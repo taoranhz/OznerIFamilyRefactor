@@ -9,55 +9,57 @@ public class RechargeDatas {
 
 
     //private String orderId,productName,orderDtlId,productId,limitTimes,buyQuantity,actualQuantity,orginOrderCode;
-    private String orderId;
-    private String productName;
-    private String orderDtlId;
-    private String productId;
-    private int limitTimes;//水卡月数
+    private String OrderId;
+    private String ProductName;
+    private String OrderDtlId;
+    private String ProductId;
+    private int LimitTimes;//水卡月数
     private int isRecord;//1,已使用 0 没有使用
-    private int actualQuantity;//已使用的卡数
-    private int buyQuantity;//未使用的卡数
-    private int orginOrderCode;//水机关联字段
+    private int ActualQuantity;//已使用的卡数
+    private int BuyQuantity;//未使用的卡数
+    private String OrginOrderCode;//水机关联字段
     private String type;
+    private String UCode;
+    private String mac;
 
     public String getOrderId() {
-        return orderId;
+        return OrderId;
     }
 
     public void setOrderId(String orderId) {
-        this.orderId = orderId;
+        OrderId = orderId;
     }
 
     public String getProductName() {
-        return productName;
+        return ProductName;
     }
 
     public void setProductName(String productName) {
-        this.productName = productName;
+        ProductName = productName;
     }
 
     public String getOrderDtlId() {
-        return orderDtlId;
+        return OrderDtlId;
     }
 
     public void setOrderDtlId(String orderDtlId) {
-        this.orderDtlId = orderDtlId;
+        OrderDtlId = orderDtlId;
     }
 
     public String getProductId() {
-        return productId;
+        return ProductId;
     }
 
     public void setProductId(String productId) {
-        this.productId = productId;
+        ProductId = productId;
     }
 
     public int getLimitTimes() {
-        return limitTimes;
+        return LimitTimes;
     }
 
     public void setLimitTimes(int limitTimes) {
-        this.limitTimes = limitTimes;
+        LimitTimes = limitTimes;
     }
 
     public int getIsRecord() {
@@ -69,27 +71,27 @@ public class RechargeDatas {
     }
 
     public int getActualQuantity() {
-        return actualQuantity;
+        return ActualQuantity;
     }
 
     public void setActualQuantity(int actualQuantity) {
-        this.actualQuantity = actualQuantity;
+        ActualQuantity = actualQuantity;
     }
 
     public int getBuyQuantity() {
-        return buyQuantity;
+        return BuyQuantity;
     }
 
     public void setBuyQuantity(int buyQuantity) {
-        this.buyQuantity = buyQuantity;
+        BuyQuantity = buyQuantity;
     }
 
-    public int getOrginOrderCode() {
-        return orginOrderCode;
+    public String getOrginOrderCode() {
+        return OrginOrderCode;
     }
 
-    public void setOrginOrderCode(int orginOrderCode) {
-        this.orginOrderCode = orginOrderCode;
+    public void setOrginOrderCode(String orginOrderCode) {
+        OrginOrderCode = orginOrderCode;
     }
 
     public String getType() {
@@ -98,5 +100,21 @@ public class RechargeDatas {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getuCode() {
+        return UCode;
+    }
+
+    public void setuCode(String uCode) {
+        this.UCode = uCode;
+    }
+
+    public String getMac() {
+        return mac;
+    }
+
+    public void setMac(String mac) {
+        this.mac = mac;
     }
 }

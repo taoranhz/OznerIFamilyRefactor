@@ -44,6 +44,9 @@ import com.ozner.device.OperateCallback;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -587,6 +590,31 @@ public class ROWaterPurifierFragment extends DeviceFragment {
      */
     private void showTdsState() {
         int tdsPre, tdsThen;
+        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+        Date time=mWaterPurifer.settingInfo.ExpireTime;
+
+        if(time!=null){
+            Calendar calst = Calendar.getInstance();;
+            Calendar caled = Calendar.getInstance();
+            calst.setTime(curDate);
+            caled.setTime(time);
+            //设置时间为0时
+            calst.set(java.util.Calendar.HOUR_OF_DAY, 0);
+            calst.set(java.util.Calendar.MINUTE, 0);
+            calst.set(java.util.Calendar.SECOND, 0);
+            caled.set(java.util.Calendar.HOUR_OF_DAY, 0);
+            caled.set(java.util.Calendar.MINUTE, 0);
+            caled.set(java.util.Calendar.SECOND, 0);
+            //得到两个日期相差的天数
+            int days = ((int) (caled.getTime().getTime() / 1000) - (int) (calst
+                    .getTime().getTime() / 1000)) / 3600 / 24;
+            Log.e("trtime",days+"========="+curDate+"@@@@@@@@@@@"+time);
+            if(days<0){
+                tv_ozner_days.setText(getString(R.string.recharge_days)+0+"天");
+            }else {
+            tv_ozner_days.setText(getString(R.string.recharge_days)+days+"天");
+            }
+        }
         //获取净化前后的TDS值
         if (mWaterPurifer.waterInfo.TDS1> 0 && mWaterPurifer.waterInfo.TDS2> 0
                 && mWaterPurifer.waterInfo.TDS1 != 65535 && mWaterPurifer.waterInfo.TDS2 != 65535) {

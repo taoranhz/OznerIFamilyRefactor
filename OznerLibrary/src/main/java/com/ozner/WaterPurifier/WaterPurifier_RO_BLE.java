@@ -2,6 +2,7 @@ package com.ozner.WaterPurifier;
 
 import android.content.Context;
 import android.text.format.Time;
+import android.util.Log;
 
 import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.bluetooth.BluetoothScanResponse;
@@ -35,7 +36,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
     private static final byte param_request_water_info = 2;
     private static final byte param_request_filter_info = 3;
     private static final byte param_request_filter_history_info = 4;
-    private SettingInfo settingInfo = new SettingInfo();
+    public SettingInfo settingInfo = new SettingInfo();
     public WaterInfo waterInfo = new WaterInfo();
     public FilterInfo filterInfo = new FilterInfo();
 
@@ -54,7 +55,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
         public int Ozone_Interval;
 
         //到期日
-        public Date ExpireTime;
+        public Date ExpireTime = new Date(70, 1, 1, 0, 0, 0);
         //滤芯激活状态
         public boolean isFilterActivate;
         //计时激活状态
@@ -263,6 +264,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
 
         public boolean addMonty(int month, OperateCallback<Void> cb) {
             if (IO() != null) {
+                Log.e("tr","month:"+month);
                 byte[] bytes = new byte[19];
                 bytes[0] = opCode_set_setting;
                 //同步时间
@@ -290,8 +292,13 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
                 Calendar cal = Calendar.getInstance();
 
                 Date orgTime = settingInfo.ExpireTime;
-
-                if(settingInfo.ExpireTime.getYear() < 2000){
+                Log.e("tr","orgTime:"+orgTime.toLocaleString());
+                Log.e("tr","orgYear:"+settingInfo.ExpireTime.getYear());
+                //settingInfo.ExpireTime.getYear方法是获取1900到如今的间隔年数
+                if(settingInfo.ExpireTime.getYear() < 100){
+                    if(cb!=null){
+                        cb.onFailure(null);
+                    }
                     return false;
                 }
 
@@ -306,6 +313,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
 //                cal.add(Calendar.HOUR_OF_DAY, impTime.hour);
 //                cal.add(Calendar.MINUTE, impTime.min);
 //                cal.add(Calendar.SECOND, impTime.second);
+                Log.e("tr","newTime:"+cal.getTime().toLocaleString());
 
                 bytes[10] = (byte) (cal.get(Calendar.YEAR) - 2000);
                 bytes[11] = (byte) (cal.get(Calendar.MONTH) + 1);
@@ -320,10 +328,18 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
 
                 bytes[18] = calcSum(bytes, 18);
 //                Log.e(TAG, "setActivate: 发送激活信息");
-                return IO().send(bytes, cb);
+                boolean success = IO().send(bytes,cb);
+                if(success){
+                    requestSettingInfo();
+                }
+                return success;
 
-            } else
+            } else{
+                if (cb!=null){
+                    cb.onFailure(null);
+                }
                 return false;
+            }
         }
 
         public boolean setActivate(ImpTime impTime, int Ozone_Interval, int Ozone_WorkTime, boolean resetFilter, OperateCallback<Void> cb) {

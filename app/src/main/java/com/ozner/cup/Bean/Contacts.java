@@ -94,8 +94,8 @@ public class Contacts {
 //    public final static String HttpBaseUrl = "http://app.joyro.com.cn:8282/";
 
     //公众号基础url
-    public static String weChatBaseUrl = "http://www.oznerwater.com/lktnew/wap/app/Oauth2.aspx?";
-
+    public static String weChatBaseUrl = "http://test.oznerwater.com/lktnew/wap/app/Oauth2.aspx?";
+//    public static String weChatBaseUrl = "http://www.oznerwater.com/lktnew/wap/app/Oauth2.aspx?";
     //我的小金库
     public static String myMoneyUrl = "http://www.oznerwater.com/lktnew/wapnew/Member/MyCoffers.aspx";
     //我的订单
@@ -163,7 +163,8 @@ public class Contacts {
 
     //ro水机获取充值水卡连接
     public static String roCards="http://192.168.173.9:8025/PlatformTestWebApi/api/order/GetUserOnlineRechargeWaterOrderList";
-
+    public static String roCardsPost="http://192.168.173.9:8025/PlatformTestWebApi/api/order/OnlineRechargeWaterOrderConfirm";
+    public static String buyCards="http://test.oznerwater.com/lktnew//wapnew/Hot_product/Hot_list.aspx?typeid=7&flag=1";
     // 免责条款
 
 //    public static String URL_BASE_EXCEPTIONS = "http://cup.ozner.net/app/cn/";

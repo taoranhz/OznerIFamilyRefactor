@@ -62,6 +62,13 @@ public class WeChatUrlUtil {
         return result;
     }
 
+    //RO水卡商城
+    public static String formatRoCardsUrl(String mobile, String usertoken, String language, String area) {
+        String result = getformatUrl(Contacts.buyCards);
+        result = String.format(result, mobile, usertoken, language, area);
+        return result;
+    }
+
     //水探头滤芯商城
     public static String formatTapShopUrl(String mobile, String usertoken, String language, String area) {
         String result = getformatUrl(Contacts.tapshopUrl);

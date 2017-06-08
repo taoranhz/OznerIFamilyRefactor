@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ozner.WaterPurifier.WaterPurifier;
+import com.ozner.WaterPurifier.WaterPurifier_RO_BLE;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
@@ -50,7 +50,7 @@ public class SetupROWaterActivity extends BaseActivity {
     RelativeLayout rlay_ro_recharge;//水机充值页面
 
     private String deviceNewName = null, deviceNewPos = null;
-    private WaterPurifier mWaterPurifier;
+    private WaterPurifier_RO_BLE mWaterPurifier;
     private String mac = "";
     private String url = "";
     private String mUserid;
@@ -68,7 +68,7 @@ public class SetupROWaterActivity extends BaseActivity {
             mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
 //            url = getIntent().getStringExtra(Contacts.PARMS_URL);
             Log.e(TAG, "onCreate: mac:" + mac);
-            mWaterPurifier = (WaterPurifier) OznerDeviceManager.Instance().getDevice(mac);
+            mWaterPurifier = (WaterPurifier_RO_BLE) OznerDeviceManager.Instance().getDevice(mac);
             oznerSetting = DBManager.getInstance(this).getDeviceSettings(mUserid,mac);
             initViewData();
         } catch (Exception ex) {
@@ -153,6 +153,7 @@ public class SetupROWaterActivity extends BaseActivity {
                 break;
             case R.id.rlay_ro_recharge:
                 Intent intent=new Intent(SetupROWaterActivity.this,RoWaterRechargeActivity.class);
+                intent.putExtra("MAC",mac);
                 startActivity(intent);
                 break;
         }

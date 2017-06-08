@@ -24,7 +24,7 @@
         android:id="@+id/tv_recharge_btn"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/btn_press_blue_selector"
+        android:background="@drawable/btn_press_org_selector"
         android:layout_gravity="center"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
@@ -35,5 +35,21 @@
         android:text="@string/recharge"
         android:layout_alignParentBottom="true"
         />
+
+    <!--<TextView-->
+        <!--android:id="@+id/tv_btn"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:background="@drawable/btn_press_org_selector"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_marginLeft="30dp"-->
+        <!--android:layout_marginRight="30dp"-->
+        <!--android:layout_marginBottom="20dp"-->
+        <!--android:layout_marginTop="200dp"-->
+        <!--android:gravity="center"-->
+        <!--android:textColor="@color/white"-->
+        <!--android:textSize="20sp"-->
+        <!--android:text="减少"-->
+        <!--/>-->
 
 </RelativeLayout>
