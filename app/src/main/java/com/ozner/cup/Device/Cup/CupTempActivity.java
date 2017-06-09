@@ -38,6 +38,7 @@ import java.util.Calendar;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import cn.udesk.UdeskSDKManager;
 
 /**
  * Created by ozner_67 on 2016/11/30.
@@ -592,8 +593,9 @@ public class CupTempActivity extends BaseActivity implements RadioGroup.OnChecke
                 this.finish();
                 break;
             case R.id.tv_chat_btn:
-                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
-                this.finish();
+                UdeskSDKManager.getInstance().toLanuchChatAcitvity(this);
+//                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+//                this.finish();
                 break;
         }
     }

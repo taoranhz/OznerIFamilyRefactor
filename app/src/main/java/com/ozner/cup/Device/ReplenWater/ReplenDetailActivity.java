@@ -45,6 +45,7 @@ import java.util.Calendar;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import cn.udesk.UdeskSDKManager;
 
 public class ReplenDetailActivity extends BaseActivity {
     private static final String TAG = "ReplenDetail";
@@ -206,8 +207,9 @@ public class ReplenDetailActivity extends BaseActivity {
                 startActivity(new Intent(this, ReplenWaterIntroduceActivity.class));
                 break;
             case R.id.tv_chat_btn:
-                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
-                this.finish();
+                UdeskSDKManager.getInstance().toLanuchChatAcitvity(this);
+//                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+//                this.finish();
 //                takePhone();
                 break;
             case R.id.tv_btn_buy:

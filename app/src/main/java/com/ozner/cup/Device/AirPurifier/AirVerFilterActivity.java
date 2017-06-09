@@ -37,6 +37,7 @@ import java.util.Date;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import cn.udesk.UdeskSDKManager;
 
 public class AirVerFilterActivity extends BaseActivity {
     private static final String TAG = "AirVerFilterActivity";
@@ -287,8 +288,9 @@ public class AirVerFilterActivity extends BaseActivity {
                 }
                 break;
             case R.id.tv_chatbtn:
-                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
-                this.finish();
+                UdeskSDKManager.getInstance().toLanuchChatAcitvity(this);
+//                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+//                this.finish();
                 break;
         }
     }

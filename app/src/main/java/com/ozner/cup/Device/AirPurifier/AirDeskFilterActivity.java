@@ -38,6 +38,7 @@ import com.ozner.device.OznerDeviceManager;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import cn.udesk.UdeskSDKManager;
 
 import static com.ozner.cup.R.id.ll_en_no;
 
@@ -145,8 +146,9 @@ public class AirDeskFilterActivity extends BaseActivity {
                 startActivity(pmIntent);
                 break;
             case R.id.tv_chat_btn:
-                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
-                this.finish();
+                UdeskSDKManager.getInstance().toLanuchChatAcitvity(this);
+//                sendBroadcast(new Intent(OznerBroadcastAction.OBA_SWITCH_CHAT));
+//                this.finish();
                 break;
             case R.id.tv_buy_purifier:
                 if (userInfo != null && userInfo.getMobile() != null && !userInfo.getMobile().isEmpty()) {

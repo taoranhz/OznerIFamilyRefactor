@@ -91,5 +91,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile files('libs/xUtils-2.6.14.jar')
     compile 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
-    compile files('libs/xUtils-2.6.14.jar')
+    compile 'com.android.support:multidex:1.0.0'
+    compile project(':UdeskSDKUI')
 }
