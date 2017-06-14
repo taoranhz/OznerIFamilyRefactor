@@ -12,12 +12,21 @@ android {
         applicationId "com.ozner.cup"
         minSdkVersion 18
         targetSdkVersion 24
-        versionCode 319
-        versionName "3.1.9"
+        versionCode 320
+        versionName "3.2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         //打包不成功时添加
         multiDexEnabled true
+
+//        lintOptions {
+//            checkReleaseBuilds false
+//            // Or, if you prefer, you can continue to check for errors in release builds,
+//            // but continue the build even when errors are found:
+//            abortOnError false
+//        }
     }
+
+
     buildTypes {
         release {
             minifyEnabled false
@@ -58,7 +67,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile project(path: ':OznerLibrary')
+    compile project(':OznerLibrary')
     compile project(':xzy_ui_lib')
     //图片加载工具
     //数据库管理工具
@@ -67,7 +76,7 @@ dependencies {
     //权限管理工具
     //    compile 'org.jsoup:jsoup:1.10.1'
     //好友排名用到的动画库
-    compile 'com.tencent.bugly:crashreport:latest.release'
+//    compile 'com.tencent.bugly:crashreport:latest.release'
     compile files('libs/core-3.1.0.jar')
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'

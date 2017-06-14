@@ -650,6 +650,6 @@
     <string name="tips_content2">(设备编号)水机充值</string>
     <string name="tips_content3">水卡？此操作不可撤销哦~</string>
     <string name="no_available">暂无此功能!</string>
-
+    <string name="no_onlie">网络连接失败!请打开网络!</string>
 
 </resources>

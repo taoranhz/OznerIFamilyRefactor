@@ -239,6 +239,20 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
         public int second;
     }
 
+    /**
+     * 请求设置信息
+     */
+    public boolean requestSettingInfo() {
+        if (waterPurifierIMP != null) {
+            waterPurifierIMP.requestSettingInfo();
+            return true;
+        }
+        return false;
+    }
+
+
+
+
     class WaterPurifierIMP implements
             BluetoothIO.OnInitCallback,
             BluetoothIO.OnTransmissionsCallback,

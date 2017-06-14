@@ -1,1 +1,1 @@
-include ':app', ':xzy_ui_lib', ':OznerLibrary'
+include ':app', ':xzy_ui_lib', ':OznerLibrary','UdeskSDKUI'

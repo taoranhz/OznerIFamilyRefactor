@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -84,6 +86,7 @@ public class RoWaterRechargeActivity extends BaseActivity implements View.OnClic
     private String userid;
     private UserInfo mUserInfo;
     private List<List<RechargeDatas>> listCard;
+    private NetworkInfo networkInfo;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,14 +111,69 @@ public class RoWaterRechargeActivity extends BaseActivity implements View.OnClic
         lisDatas = new ArrayList<RechargeDatas>();
         httpUtils = new HttpUtils();
         httpUtils.configHttpCacheSize(0);
-        setData();//刚进来的时候
-        adapter = new RechargeAdapter(this);
-        lv_cards.setAdapter(adapter);
+        //获取网络连接管理者
+        Context context=(Context)this;
+        ConnectivityManager connectionManager = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        //获取网络的状态信息，有下面三种方式
+        if(connectionManager!=null){
+            networkInfo = connectionManager.getActiveNetworkInfo();
+            if(networkInfo!=null){
+                if(networkInfo.isConnected()){
+                    setData();//刚进来的时候
+                    adapter = new RechargeAdapter(this);
+                    lv_cards.setAdapter(adapter);
+                }else{
+                    new AlertDialog.Builder(RoWaterRechargeActivity.this).setTitle(R.string.tips).setMessage(R.string.no_onlie)
+                            .setPositiveButton(R.string.ensure, new AlertDialog.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+//                                                            RoWaterRechargeActivity.this.finish();
+                                            dialog.cancel();
+                                            dialog.dismiss();
+                                        }
+                                    }
+                            ).setNegativeButton(getString(R.string.cancle), new AlertDialog.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            dialog.dismiss();
+                        }
+                    }).show();
+                }
+            }
+            else {
+                Log.e("trNet","networkInfo-----------null");
+                new AlertDialog.Builder(RoWaterRechargeActivity.this).setTitle(R.string.tips).setMessage(R.string.no_onlie)
+                        .setPositiveButton(R.string.ensure, new AlertDialog.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+//                                                            RoWaterRechargeActivity.this.finish();
+                                        dialog.cancel();
+                                        dialog.dismiss();
+                                    }
+                                }
+                        ).setNegativeButton(getString(R.string.cancle), new AlertDialog.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        dialog.dismiss();
+                    }
+                }).show();
+            }
+        }else {
+            Log.e("trNet","connectionManager-----------null");
+        }
+
+
+
+
 
 
     }
 
     private void setData() {
+
         //网络获取水卡数据
         if (!lisDatas.isEmpty()) {
             lisDatas.clear();
@@ -126,6 +184,7 @@ public class RoWaterRechargeActivity extends BaseActivity implements View.OnClic
         progressDialog.show();
         RequestParams params = new RequestParams();
         params.addQueryStringParameter("mobile", mUserInfo.getMobile());
+//        params.addQueryStringParameter("mobile", "13764839962");
         httpUtils.send(HttpRequest.HttpMethod.GET, Contacts.roCards, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -196,7 +255,10 @@ public class RoWaterRechargeActivity extends BaseActivity implements View.OnClic
 
             @Override
             public void onFailure(HttpException e, String s) {
+                progressDialog.cancel();
+                progressDialog.dismiss();
                 lisDatas.clear();
+                Toast.makeText(RoWaterRechargeActivity.this,"数据加载失败!请检查网络！",Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -338,13 +400,35 @@ public class RoWaterRechargeActivity extends BaseActivity implements View.OnClic
                 //TODO 弹出选择框
                 if (mUserInfo != null && mUserInfo.getMobile() != null && !mUserInfo.getMobile().isEmpty()) {
                     String waterUrl = WeChatUrlUtil.formatRoCardsUrl(mUserInfo.getMobile(), OznerPreference.getUserToken(RoWaterRechargeActivity.this), "zh", "zh");
+                    Log.e("url",waterUrl);
                     startWebActivity(waterUrl);
+
                 } else {
                     showToastCenter(R.string.userinfo_miss);
                 }
                 break;
             case R.id.tv_recharge_btn:
-                getCards();
+                if(networkInfo.isConnected()){
+                    getCards();
+                }else{
+                    new AlertDialog.Builder(RoWaterRechargeActivity.this).setTitle(R.string.tips).setMessage(R.string.no_onlie)
+                            .setPositiveButton(R.string.ensure, new AlertDialog.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+//                                                            RoWaterRechargeActivity.this.finish();
+                                            dialog.cancel();
+                                            dialog.dismiss();
+                                        }
+                                    }
+                            ).setNegativeButton(getString(R.string.cancle), new AlertDialog.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            dialog.dismiss();
+                        }
+                    }).show();
+                }
+
                 break;
         }
     }
@@ -373,107 +457,215 @@ public class RoWaterRechargeActivity extends BaseActivity implements View.OnClic
                         @Override
                         public void onClick(final DialogInterface dialog, int which) {
                             //TODO 写入设备数据
-                            if (mWaterPurifier != null) {
-                                Log.e("trType", "水卡写入数据1=====" + rechargeDatas.getLimitTimes());
-                                //第一次去写入设备
-                                final Calendar calTime = Calendar.getInstance();
-                                calTime.setTime(mWaterPurifier.settingInfo.ExpireTime);
-                                calTime.add(Calendar.MONTH, rechargeDatas.getLimitTimes());
-                                final ProgressDialog progressDialog = new ProgressDialog(RoWaterRechargeActivity.this);
-                                progressDialog.setTitle("数据上传中。。。");
-                                progressDialog.show();
-                                mWaterPurifier.addMonth(rechargeDatas.getLimitTimes(), new OperateCallback<Void>() {
-                                    @Override
-                                    public void onSuccess(Void var1) {
-                                        Log.e("trType", "水卡写入数据成功");
-                                        RequestParams params = new RequestParams();
-                                        params.addBodyParameter("OrderId", rechargeDatas.getOrderId());
-                                        params.addBodyParameter("OrderDtlId", rechargeDatas.getOrderDtlId());
-                                        params.addBodyParameter("ProductId", rechargeDatas.getProductId());
-                                        params.addBodyParameter("UCode", rechargeDatas.getuCode());
-                                        params.addBodyParameter("Mac", rechargeDatas.getMac());
-                                        params.addBodyParameter("OrginOrderCode", rechargeDatas.getOrginOrderCode());
-                                        httpUtils.send(HttpRequest.HttpMethod.POST, Contacts.roCardsPost, params, new RequestCallBack<String>() {
-                                            @Override
-                                            public void onSuccess(ResponseInfo<String> responseInfo) {
-                                                Log.e("trType", "上传数据返回值==" + responseInfo.result);
-                                                try {
-                                                    JSONObject jsonobject = new JSONObject(responseInfo.result);
-                                                    final String result = jsonobject.getString("Result");
-                                                    final String msg = jsonobject.getString("Message");
-                                                    if (result.equals("1")) {
-                                                        //水卡信息上传服务器成功刷新数据
-                                                        progressDialog.cancel();
-                                                        progressDialog.dismiss();
-                                                        Toast.makeText(RoWaterRechargeActivity.this, "水卡写入数据成功", Toast.LENGTH_SHORT).show();
-                                                        refreshView();
-                                                    } else {
-                                                        //数据上传没成功
-                                                        //刷新listview界面
-                                                        refreshView();
-                                                        progressDialog.cancel();
-                                                        progressDialog.dismiss();
-                                                        Log.e("trType", "水卡上传数据失败" + rechargeDatas.getLimitTimes() + " , " + mWaterPurifier.settingInfo.ExpireTime.toLocaleString());
-                                                        new Handler().postDelayed(new Runnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                Log.e("tr", "开始失败回复");
-                                                                int count = 4;
-                                                                while (count > 0 && ((calTime.get(Calendar.YEAR) - 1900) != mWaterPurifier.settingInfo.ExpireTime.getYear())
-                                                                        || (calTime.get(Calendar.MONTH) + 0 != mWaterPurifier.settingInfo.ExpireTime.getMonth())) {
-                                                                    //数据不同
-                                                                    count--;
-                                                                    mWaterPurifier.addMonth(0, null);
-                                                                    try {
-                                                                        Thread.sleep(100);
-                                                                    } catch (InterruptedException e) {
-                                                                        e.printStackTrace();
+                            //判断是否有网络
+                                if(networkInfo.isConnected()){
+                                    if (mWaterPurifier != null&& mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+                                        Log.e("trType", "水卡写入数据1=====" + rechargeDatas.getLimitTimes());
+                                        //第一次去写入设备
+                                        final Calendar calTime = Calendar.getInstance();
+                                        calTime.setTime(mWaterPurifier.settingInfo.ExpireTime);
+                                        calTime.add(Calendar.MONTH, rechargeDatas.getLimitTimes());
+                                        final ProgressDialog progressDialog = new ProgressDialog(RoWaterRechargeActivity.this);
+                                        progressDialog.setTitle("数据上传中。。。");
+                                        progressDialog.show();
+
+                                    mWaterPurifier.addMonth(rechargeDatas.getLimitTimes(), new OperateCallback<Void>() {
+                                        @Override
+                                        public void onSuccess(Void var1) {
+                                            Log.e("trType", "水卡写入数据成功");
+                                            RequestParams params = new RequestParams();
+                                            params.addBodyParameter("OrderId", rechargeDatas.getOrderId());
+                                            params.addBodyParameter("OrderDtlId", rechargeDatas.getOrderDtlId());
+                                            params.addBodyParameter("ProductId", rechargeDatas.getProductId());
+                                            params.addBodyParameter("UCode", rechargeDatas.getuCode());
+                                            params.addBodyParameter("Mac", rechargeDatas.getMac());
+                                            params.addBodyParameter("OrginOrderCode", rechargeDatas.getOrginOrderCode());
+                                            httpUtils.send(HttpRequest.HttpMethod.POST, Contacts.roCardsPost, params, new RequestCallBack<String>() {
+                                                @Override
+                                                public void onSuccess(ResponseInfo<String> responseInfo) {
+                                                    Log.e("trType", "上传数据返回值==" + responseInfo.result);
+                                                    try {
+                                                        JSONObject jsonobject = new JSONObject(responseInfo.result);
+                                                        final String result = jsonobject.getString("Result");
+                                                        final String msg = jsonobject.getString("Message");
+                                                        if (result.equals("1")) {
+                                                            //水卡信息上传服务器成功刷新数据
+                                                            progressDialog.cancel();
+                                                            progressDialog.dismiss();
+                                                            tv_recharge_btn.setEnabled(false);
+                                                            Toast.makeText(RoWaterRechargeActivity.this, "水卡写入数据成功", Toast.LENGTH_SHORT).show();
+                                                            refreshView();
+                                                        } else {
+//                                                        tv_recharge_btn.setEnabled(true);
+                                                            //数据上传没成功
+                                                            //刷新listview界面
+                                                            refreshView();
+                                                            progressDialog.cancel();
+                                                            progressDialog.dismiss();
+//                                                        Toast.makeText(RoWaterRechargeActivity.this, "数据上传失败", Toast.LENGTH_SHORT).show();
+                                                            Log.e("trType", "水卡上传数据失败" + rechargeDatas.getLimitTimes() + " , " + mWaterPurifier.settingInfo.ExpireTime.toLocaleString());
+                                                            new Handler().postDelayed(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    Log.e("tr", "开始失败回复");
+                                                                    int count = 10;
+                                                                    while (count > 0 && ((calTime.get(Calendar.YEAR) - 1900) != mWaterPurifier.settingInfo.ExpireTime.getYear())
+                                                                            || (calTime.get(Calendar.MONTH) + 0 != mWaterPurifier.settingInfo.ExpireTime.getMonth())) {
+                                                                        //数据不同
+                                                                        count--;
+                                                                        mWaterPurifier.requestSettingInfo();
+                                                                        try {
+                                                                            Thread.sleep(500);
+                                                                        } catch (InterruptedException e) {
+                                                                            e.printStackTrace();
+                                                                        }
                                                                     }
+                                                                    mWaterPurifier.addMonth(((-1) * rechargeDatas.getLimitTimes()), new OperateCallback<Void>() {
+                                                                        @Override
+                                                                        public void onSuccess(Void var1) {
+                                                                            Log.e("trType", "水卡写入数据成功2");
+                                                                            progressDialog.cancel();
+                                                                            progressDialog.dismiss();
+
+                                                                            int count = 10;
+                                                                            while (count > 0 && ((calTime.get(Calendar.YEAR) - 1900) == mWaterPurifier.settingInfo.ExpireTime.getYear())
+                                                                                    && (calTime.get(Calendar.MONTH) + 0 == mWaterPurifier.settingInfo.ExpireTime.getMonth())) {
+                                                                                //数据不同
+                                                                                count--;
+                                                                                mWaterPurifier.requestSettingInfo();
+                                                                                try {
+                                                                                    Thread.sleep(500);
+                                                                                } catch (InterruptedException e) {
+                                                                                    e.printStackTrace();
+                                                                                }
+                                                                            }
+//                                                                        refreshView();
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onFailure(Throwable var1) {
+                                                                            progressDialog.cancel();
+                                                                            progressDialog.dismiss();
+
+
+//                                                                        refreshView();
+                                                                        }
+                                                                    });
+                                                                    HttpDatas.getStatus(RoWaterRechargeActivity.this, result, msg);
                                                                 }
-                                                                mWaterPurifier.addMonth(((-1) * rechargeDatas.getLimitTimes()), new OperateCallback<Void>() {
-                                                                    @Override
-                                                                    public void onSuccess(Void var1) {
-                                                                        Log.e("trType", "水卡写入数据成功2");
-                                                                        progressDialog.cancel();
-                                                                        progressDialog.dismiss();
-//                                                                        refreshView();
-                                                                    }
-
-                                                                    @Override
-                                                                    public void onFailure(Throwable var1) {
-                                                                        progressDialog.cancel();
-                                                                        progressDialog.dismiss();
-//                                                                        refreshView();
-                                                                    }
-                                                                });
-                                                                HttpDatas.getStatus(RoWaterRechargeActivity.this, result, msg);
-                                                            }
-                                                        }, 500);
+                                                            }, 500);
+                                                        }
+                                                    } catch (Exception e) {
+                                                        e.getStackTrace();
                                                     }
-                                                } catch (Exception e) {
-                                                    e.getStackTrace();
                                                 }
-                                            }
-                                            @Override
-                                            public void onFailure(HttpException error, String msg) {
-                                                progressDialog.cancel();
-                                                progressDialog.dismiss();
-                                                refreshView();
-                                                Toast.makeText(RoWaterRechargeActivity.this, "数据上传失败", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                    }
+                                                @Override
+                                                public void onFailure(HttpException error, String msg) {
+                                                    progressDialog.cancel();
+                                                    progressDialog.dismiss();
+                                                    new Handler().postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            Log.e("tr", "开始失败回复");
+                                                            int count = 10;
+                                                            while (count > 0 && ((calTime.get(Calendar.YEAR) - 1900) != mWaterPurifier.settingInfo.ExpireTime.getYear())
+                                                                    || (calTime.get(Calendar.MONTH) + 0 != mWaterPurifier.settingInfo.ExpireTime.getMonth())) {
+                                                                //数据不同
+                                                                count--;
+                                                                mWaterPurifier.requestSettingInfo();
+                                                                try {
+                                                                    Thread.sleep(500);
+                                                                } catch (InterruptedException e) {
+                                                                    e.printStackTrace();
+                                                                }
+                                                            }
+                                                            mWaterPurifier.addMonth(((-1) * rechargeDatas.getLimitTimes()), new OperateCallback<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void var1) {
+                                                                    Log.e("trType", "水卡写入数据成功2");
+                                                                    progressDialog.cancel();
+                                                                    progressDialog.dismiss();
 
-                                    @Override
-                                    public void onFailure(Throwable var1) {
-                                        progressDialog.cancel();
-                                        progressDialog.dismiss();
+                                                                    int count = 10;
+                                                                    while (count > 0 && ((calTime.get(Calendar.YEAR) - 1900) == mWaterPurifier.settingInfo.ExpireTime.getYear())
+                                                                            && (calTime.get(Calendar.MONTH) + 0 == mWaterPurifier.settingInfo.ExpireTime.getMonth())) {
+                                                                        //数据不同
+                                                                        count--;
+                                                                        mWaterPurifier.requestSettingInfo();
+                                                                        try {
+                                                                            Thread.sleep(500);
+                                                                        } catch (InterruptedException e) {
+                                                                            e.printStackTrace();
+                                                                        }
+                                                                    }
+//                                                                        refreshView();
+                                                                }
+
+                                                                @Override
+                                                                public void onFailure(Throwable var1) {
+                                                                    progressDialog.cancel();
+                                                                    progressDialog.dismiss();
+
+
+//                                                                        refreshView();
+                                                                }
+                                                            });
+                                                        }
+                                                    }, 500);
+                                                    refreshView();
+                                                    Toast.makeText(RoWaterRechargeActivity.this, "数据上传失败", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onFailure(Throwable var1) {
+                                            progressDialog.cancel();
+                                            progressDialog.dismiss();
+                                            refreshView();
+                                            Log.e("trType", "水卡写入数据失败");
+//                                        tv_recharge_btn.setEnabled(true);
+                                            Toast.makeText(RoWaterRechargeActivity.this, "水卡写入水机失败", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }else{
                                         refreshView();
-                                        Log.e("trType", "水卡写入数据失败");
-                                        Toast.makeText(RoWaterRechargeActivity.this, "水卡写入水机失败", Toast.LENGTH_SHORT).show();
+
+                                        new AlertDialog.Builder(RoWaterRechargeActivity.this).setTitle(R.string.tips).setMessage(R.string.device_disConnect)
+                                                .setPositiveButton(R.string.ensure, new AlertDialog.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.cancel();
+                                                                dialog.dismiss();
+                                                            }
+                                                        }
+                                                ).setNegativeButton(getString(R.string.cancle), new AlertDialog.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                                dialog.dismiss();
+                                            }
+                                        }).show();
                                     }
-                                });
-                            }
+                                }else{
+                                    new AlertDialog.Builder(RoWaterRechargeActivity.this).setTitle(R.string.tips).setMessage(R.string.no_onlie)
+                                            .setPositiveButton(R.string.ensure, new AlertDialog.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+//                                                            RoWaterRechargeActivity.this.finish();
+                                                            dialog.cancel();
+                                                            dialog.dismiss();
+                                                        }
+                                                    }
+                                            ).setNegativeButton(getString(R.string.cancle), new AlertDialog.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                            dialog.dismiss();
+                                        }
+                                    }).show();
+
+                                }
                         }
                     })
                     .setNegativeButton(getString(R.string.cancle), new AlertDialog.OnClickListener() {
