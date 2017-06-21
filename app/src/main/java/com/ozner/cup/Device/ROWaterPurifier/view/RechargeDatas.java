@@ -21,6 +21,15 @@ public class RechargeDatas {
     private String type;
     private String UCode;
     private String mac;
+    private int Days;//水卡可使用天数
+
+    public int getDays() {
+        return Days;
+    }
+
+    public void setDays(int days) {
+        Days = days;
+    }
 
     public String getOrderId() {
         return OrderId;

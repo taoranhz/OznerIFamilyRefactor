@@ -241,6 +241,9 @@ public class WPContainerFragment extends DeviceFragment {
 //                loadA8View();
                 loadLGView();
                 break;
+            default:
+                loadOrgView();
+                break;
         }
     }
 

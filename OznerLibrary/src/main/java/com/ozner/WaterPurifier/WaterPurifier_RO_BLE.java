@@ -15,6 +15,13 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by zhiyongxu on 16/9/12.
@@ -68,12 +75,13 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
             this.Ozone_WorkTime = bytes[7];
             try {
                 this.ExpireTime = new Date(bytes[8] + 2000 - 1900, bytes[9] - 1, bytes[10], bytes[11], bytes[12], bytes[13]);
+                Log.e("trtime",this.ExpireTime+"");
                 this.isFilterActivate = bytes[14] == (byte) 0x16 || bytes[14] == (byte) 0x88 ? true : false;
                 this.isTimerActivate = bytes[15] == (byte) 0x88 ? true : false;
             } catch (Exception ex) {
 //                Log.e(TAG, "fromBytes_ex: " + ex.getMessage());
                 //设置1970
-                this.ExpireTime = new Date(70, 1, 1, 0, 0, 0);
+                this.ExpireTime = new Date(70, 0, 1, 0, 0, 0);
             }
         }
 
@@ -201,14 +209,45 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
         }
     }
 
-    @Override
-    public void addMonth(int month, OperateCallback<Void> cb) {
+    private ScheduledExecutorService mScheduledPool = Executors.newScheduledThreadPool(2);
+
+
+    public void addMonth(int month, ISettingCallback cb) {
         if (waterPurifierIMP != null) {
-            waterPurifierIMP.addMonty(month, cb);
+            waterPurifierIMP.addMonth(month, cb);
         } else {
-            cb.onFailure(new UnsupportedOperationException());
+            cb.onResult(false);
         }
     }
+
+
+
+
+    /**
+     * 设置设置信息回调
+     */
+    public interface ISettingCallback {
+        void onResult(boolean success);
+    }
+
+
+
+
+
+
+
+
+//    @Override
+//    public void addMonth(int month, OperateCallback<Void> cb) {
+//        if (waterPurifierIMP != null) {
+//            waterPurifierIMP.addMonty(month, cb);
+//        } else {
+//            cb.onFailure(new UnsupportedOperationException());
+//        }
+//    }
+
+
+
 
     @Override
     protected int getTDS1() {
@@ -276,9 +315,8 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
             }
         }
 
-        public boolean addMonty(int month, OperateCallback<Void> cb) {
+        public void addMonth(int month, ISettingCallback callback) {
             if (IO() != null) {
-                Log.e("tr","month:"+month);
                 byte[] bytes = new byte[19];
                 bytes[0] = opCode_set_setting;
                 //同步时间
@@ -294,40 +332,21 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
                 //臭氧工作间隔时间和工作时间
                 bytes[7] = (byte) settingInfo.Ozone_Interval;
                 bytes[8] = (byte) settingInfo.Ozone_WorkTime;
-
-//                //滤芯复位
-//                if (settingInfo.isFilterActivate)
-//                    bytes[9] = 1;
-//                else
                 bytes[9] = 0;
-
-
                 //到期日
-                Calendar cal = Calendar.getInstance();
-
+                final Calendar cal = Calendar.getInstance();
                 Date orgTime = settingInfo.ExpireTime;
-                Log.e("tr","orgTime:"+orgTime.toLocaleString());
-                Log.e("tr","orgYear:"+settingInfo.ExpireTime.getYear());
-                //settingInfo.ExpireTime.getYear方法是获取1900到如今的间隔年数
-                if(settingInfo.ExpireTime.getYear() < 100){
-                    if(cb!=null){
-                        cb.onFailure(null);
+                if (settingInfo.ExpireTime.getYear() < 100) {
+                    if (callback != null) {
+                        callback.onResult(false);
                     }
-                    return false;
                 }
 
                 //判断充水起始日
                 if (orgTime.getTime() > cal.getTimeInMillis()) {
                     cal.setTime(orgTime);
                 }
-
-//                cal.add(Calendar.YEAR, impTime.year);
-                cal.add(Calendar.MONTH, month);
-//                cal.add(Calendar.DAY_OF_MONTH, impTime.day);
-//                cal.add(Calendar.HOUR_OF_DAY, impTime.hour);
-//                cal.add(Calendar.MINUTE, impTime.min);
-//                cal.add(Calendar.SECOND, impTime.second);
-                Log.e("tr","newTime:"+cal.getTime().toLocaleString());
+                cal.add(Calendar.DAY_OF_MONTH, month);
 
                 bytes[10] = (byte) (cal.get(Calendar.YEAR) - 2000);
                 bytes[11] = (byte) (cal.get(Calendar.MONTH) + 1);
@@ -341,20 +360,137 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
                 bytes[17] = (byte) 0x88;
 
                 bytes[18] = calcSum(bytes, 18);
-//                Log.e(TAG, "setActivate: 发送激活信息");
-                boolean success = IO().send(bytes,cb);
-                if(success){
-                    requestSettingInfo();
-                }
-                return success;
 
-            } else{
-                if (cb!=null){
-                    cb.onFailure(null);
+                IO().send(bytes, null);
+
+                requestSettingInfo();
+                try {
+                    int count = 5;//循环5次
+
+                    ScheduledFuture<Boolean> result;
+                    do {
+                        count--;
+                        final Date tempTim = settingInfo.ExpireTime;
+                        result = mScheduledPool.schedule(new Callable<Boolean>() {
+                            @Override
+                            public Boolean call() throws Exception {
+                                //检查是否和预期的时间一致，一致证明成功，不一致证明失败
+                                if ((cal.get(Calendar.YEAR) - 1900) != tempTim.getYear() ||
+                                        cal.get(Calendar.MONTH) + 0 != tempTim.getMonth() ||
+                                        cal.get(Calendar.DAY_OF_MONTH) + 0 != tempTim.getDate()) {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            }
+                        }, 2, TimeUnit.SECONDS);
+                        if (result != null && !result.get()) {
+                            requestSettingInfo();
+                        }
+                    }
+                    while (count > 0 && result != null && !result.get());
+                    if (result != null) {
+                        if (callback != null) {
+                            callback.onResult(result.get());
+                        }
+                    } else {
+                        if (callback != null) {
+                            callback.onResult(false);
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    Log.e(TAG, "addMonth_Ex: " + ex.getMessage());
+                    if (callback != null) {
+                        callback.onResult(false);
+                    }
                 }
-                return false;
+            } else {
+                if (callback != null) {
+                    callback.onResult(false);
+                }
             }
         }
+//        public boolean addMonty(int month, OperateCallback<Void> cb) {
+//            if (IO() != null) {
+//                Log.e("tr","month:"+month);
+//                byte[] bytes = new byte[19];
+//                bytes[0] = opCode_set_setting;
+//                //同步时间
+//                Time time = new Time();
+//                time.setToNow();
+//                bytes[1] = (byte) (time.year - 2000);
+//                bytes[2] = (byte) (time.month + 1);
+//                bytes[3] = (byte) time.monthDay;
+//                bytes[4] = (byte) time.hour;
+//                bytes[5] = (byte) time.minute;
+//                bytes[6] = (byte) time.second;
+//
+//                //臭氧工作间隔时间和工作时间
+//                bytes[7] = (byte) settingInfo.Ozone_Interval;
+//                bytes[8] = (byte) settingInfo.Ozone_WorkTime;
+//
+////                //滤芯复位
+////                if (settingInfo.isFilterActivate)
+////                    bytes[9] = 1;
+////                else
+//                bytes[9] = 0;
+//
+//
+//                //到期日
+//                Calendar cal = Calendar.getInstance();
+//
+//                Date orgTime = settingInfo.ExpireTime;
+//                Log.e("tr","orgTime:"+orgTime.toLocaleString());
+//                Log.e("tr","orgYear:"+settingInfo.ExpireTime.getYear());
+//                //settingInfo.ExpireTime.getYear方法是获取1900到如今的间隔年数
+//                if(settingInfo.ExpireTime.getYear() < 100){
+//                    if(cb!=null){
+//                        cb.onFailure(null);
+//                    }
+//                    return false;
+//                }
+//
+//                //判断充水起始日
+//                if (orgTime.getTime() > cal.getTimeInMillis()) {
+//                    cal.setTime(orgTime);
+//                }
+//
+////                cal.add(Calendar.YEAR, impTime.year);
+////                cal.add(Calendar.MONTH, month);
+//                  cal.add(Calendar.DAY_OF_MONTH,month);
+////                cal.add(Calendar.DAY_OF_MONTH, impTime.day);
+////                cal.add(Calendar.HOUR_OF_DAY, impTime.hour);
+////                cal.add(Calendar.MINUTE, impTime.min);
+////                cal.add(Calendar.SECOND, impTime.second);
+//                Log.e("tr","newTime:"+cal.getTime().toLocaleString());
+//
+//                bytes[10] = (byte) (cal.get(Calendar.YEAR) - 2000);
+//                bytes[11] = (byte) (cal.get(Calendar.MONTH) + 1);
+//                bytes[12] = (byte) (cal.get(Calendar.DAY_OF_MONTH));
+//                bytes[13] = (byte) (cal.get(Calendar.HOUR_OF_DAY));
+//                bytes[14] = (byte) (cal.get(Calendar.MINUTE));
+//                bytes[15] = (byte) (cal.get(Calendar.SECOND));
+//
+//                //激活：0x1688,0x8816表示激活，其他未激活；0x1688：滤芯，0x8816：滤芯+计时
+//                bytes[16] = (byte) 0x16;
+//                bytes[17] = (byte) 0x88;
+//
+//                bytes[18] = calcSum(bytes, 18);
+////                Log.e(TAG, "setActivate: 发送激活信息");
+//                boolean success = IO().send(bytes,cb);
+//                if(success){
+//                    requestSettingInfo();
+//                }
+//                return success;
+//
+//            } else{
+//                if (cb!=null){
+//                    cb.onFailure(null);
+//                }
+//                return false;
+//            }
+//        }
 
         public boolean setActivate(ImpTime impTime, int Ozone_Interval, int Ozone_WorkTime, boolean resetFilter, OperateCallback<Void> cb) {
             if (IO() != null) {
@@ -629,4 +765,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
         }
         return false;
     }
+
+
+
 }

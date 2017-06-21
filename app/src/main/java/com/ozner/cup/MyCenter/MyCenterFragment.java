@@ -92,6 +92,7 @@ public class MyCenterFragment extends BaseFragment {
         userInfoManager = new UserInfoManager(getContext());
         userid = OznerPreference.GetValue(getContext(), OznerPreference.UserId, "");
         mUserInfo = DBManager.getInstance(getContext()).getUserInfo(userid);
+        Log.e(TAG, "onSuccess: " + mUserInfo.toString());
         userInfoManager.loadUserNickImage(mUserInfo, new UserInfoManager.LoadUserInfoListener() {
             @Override
             public void onSuccess(UserInfo userInfo) {
@@ -145,6 +146,8 @@ public class MyCenterFragment extends BaseFragment {
         if (isAdded()) {
             if (userinfo.getNickname() != null && !mUserInfo.getNickname().isEmpty()) {
                 tvName.setText(mUserInfo.getNickname());
+            }else{
+                tvName.setText(mUserInfo.getMobile());
             }
             if (userinfo.getGradeName() != null && !mUserInfo.getGradeName().isEmpty()) {
                 String gradeName = mUserInfo.getGradeName();
