@@ -250,7 +250,7 @@ public class WPContainerFragment extends DeviceFragment {
     /**
      * 加载LG类型设备
      */
-    private void loadLGView(){
+    private void loadLGView() {
         Log.e(TAG, "loadLGView: ");
         waterFragment = WPLGFragment.newInstance(mac);
         FragmentTransaction transcation = getChildFragmentManager().beginTransaction();
