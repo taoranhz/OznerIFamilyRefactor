@@ -641,8 +641,8 @@
     
     <string name="comml_clean_total">总制水量</string>
     <string name="comml_temp_below">中低温55度</string>
-    <string name="comml_temp_middle">中高温80度</string>
-    <string name="comml_temp_high">高温95度</string>
+    <string name="comml_temp_middle">中高温85度</string>
+    <string name="comml_temp_high">高温99度</string>
     <string name="custom">自定义</string>
 
     <string name="ro_recharge">水机充值</string>

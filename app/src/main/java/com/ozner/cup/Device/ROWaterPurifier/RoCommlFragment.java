@@ -130,14 +130,6 @@ public class RoCommlFragment extends DeviceFragment {
     private TDSSensorManager tdsSensorManager;
     private String mUserid;
     private OznerDeviceSettings oznerSetting;
-
-//    //  ro水机滤芯状态
-//    private int filter_A_Time;
-//    private int filter_B_Time;
-//    private int filter_C_Time;
-//    private int filter_median1, filter_median2;
-
-
     Handler mHandler = new Handler();
 
     private void saveCustomerValue(int value) {
@@ -297,10 +289,10 @@ public class RoCommlFragment extends DeviceFragment {
             case 55://中低温
                 selectBelow();
                 break;
-            case 80://中高温
+            case 85://中高温
                 selectMiddle();
                 break;
-            case 95://高温
+            case 99://高温
                 selectHigh();
                 break;
             default://自定义
@@ -378,11 +370,11 @@ public class RoCommlFragment extends DeviceFragment {
                 break;
             case R.id.tv_middleTemp:
                 selectMiddle();
-                setHeatTemperature(80);
+                setHeatTemperature(85);
                 break;
             case R.id.tv_highTemp:
                 selectHigh();
-                setHeatTemperature(95);
+                setHeatTemperature(99);
                 break;
             case R.id.tv_customer:
                 selectCustomer();
@@ -436,20 +428,6 @@ public class RoCommlFragment extends DeviceFragment {
      * 刷新滤芯状态
      */
     private void refreshFilterInfo() {
-        Log.e(TAG, "refreshFilterInfo: A:" + mWaterPurifer.filterInfo.Filter_A_Percentage
-                + "\nB:" + mWaterPurifer.filterInfo.Filter_B_Percentage
-                + "\nC:" + mWaterPurifer.filterInfo.Filter_C_Percentage);
-        Log.e(TAG, "refreshFilterInfo: A:" + mWaterPurifer.filterInfo.Filter_A_Time
-                + "\nB:" + mWaterPurifer.filterInfo.Filter_B_Time
-                + "\nC:" + mWaterPurifer.filterInfo.Filter_C_Time);
-//        filter_A_Time = Math.round(((float) mWaterPurifer.filterInfo.Filter_A_Percentage / 10)) * 10;
-//        filter_B_Time = Math.round(((float) mWaterPurifer.filterInfo.Filter_B_Percentage / 10)) * 10;
-//        filter_C_Time = Math.round(((float) mWaterPurifer.filterInfo.Filter_C_Percentage / 10)) * 10;
-//        filter_median1 = Math.min(filter_A_Time, filter_B_Time);
-//        filter_median2 = Math.min(filter_median1, filter_C_Time);
-//
-//        Log.e("trfilterTime", "A------" + filter_A_Time + "\nB------" + filter_B_Time + "\nC------" + filter_C_Time + "\nMIN------" + filter_median2);
-//        setFilterState(filter_median2);
 
         int filter = Math.min(mWaterPurifer.filterInfo.Filter_A_Percentage, mWaterPurifer.filterInfo.Filter_B_Percentage);
         filter = Math.min(mWaterPurifer.filterInfo.Filter_C_Percentage, filter);

@@ -640,8 +640,8 @@
 
     <string name="comml_clean_total">Filter capacity</string>
     <string name="comml_temp_below">55℃</string>
-    <string name="comml_temp_middle">80℃</string>
-    <string name="comml_temp_high">95℃</string>
+    <string name="comml_temp_middle">85℃</string>
+    <string name="comml_temp_high">99℃</string>
     <string name="custom">Custom</string>
 
     <string name="save_device">Save Settings？</string>

@@ -243,7 +243,7 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="20dp"
-                android:max="60"
+                android:max="59"
                 android:maxHeight="5dp"
                 android:progressDrawable="@drawable/seek"
                 android:splitTrack="false"
