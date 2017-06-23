@@ -10,6 +10,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.DeviceNotReadyException;
@@ -204,6 +205,7 @@ public class BluetoothIO extends BaseDeviceIO {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             try {
+                Log.e("lingchen", "onConnectionStateChange: "+newState);
                 connectionState = newState;
                 lastStatus = status;
                 if (newState == BluetoothGatt.STATE_CONNECTED) {

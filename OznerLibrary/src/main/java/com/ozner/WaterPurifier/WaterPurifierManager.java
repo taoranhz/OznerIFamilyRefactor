@@ -48,6 +48,9 @@ public class WaterPurifierManager extends BaseDeviceManager {
         {
             return true;
         }
+        if (Model.trim().equals("RO Comml")) {
+            return true;
+        }
 
         return false;
 
@@ -76,8 +79,10 @@ public class WaterPurifierManager extends BaseDeviceManager {
         {
             WaterPurifier waterPurifier = new WaterPurifier_RO_BLE(context(), address, type, settings);
             return waterPurifier;
-        }else
-            return null;
+        }else if (type.trim().equals("RO Comml")) {
+            WaterPurifier waterPurifier = new WaterPurifier_RO_BLE(context(), address, type, settings);
+            return waterPurifier;
+        }else return null;
     }
 
     @Override
@@ -85,7 +90,7 @@ public class WaterPurifierManager extends BaseDeviceManager {
 
         if (io instanceof BluetoothIO)
         {
-            if (io.getType().equals("Ozner RO")) {
+            if (io.getType().equals("Ozner RO")||io.getType().equals("RO Comml")) {
                 //检查是否在配对模式
                 return WaterPurifier_RO_BLE.isBindMode((BluetoothIO) io);
             }

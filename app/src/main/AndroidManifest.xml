@@ -34,7 +34,7 @@
 
     <permission
         android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.com.ozner.cup"
-        android:protectionLevel="normal">
+        android:protectionLevel="signature">
     </permission>
 
     <!-- 以上是百度云推送权限 -->

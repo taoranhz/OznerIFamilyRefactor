@@ -638,6 +638,12 @@
     <string name="rofilter_fail">复位失败</string>
     <string name="rofilter_need_change">为了您和家人的健康，请及时更换滤芯</string>
     <string name="warmly_notice">温馨提醒：及时更换滤芯才能保证饮用水的安全</string>
+    
+    <string name="comml_clean_total">总制水量</string>
+    <string name="comml_temp_below">中低温55度</string>
+    <string name="comml_temp_middle">中高温80度</string>
+    <string name="comml_temp_high">高温95度</string>
+    <string name="custom">自定义</string>
 
     <string name="ro_recharge">水机充值</string>
     <string name="ro_renew">续费</string>

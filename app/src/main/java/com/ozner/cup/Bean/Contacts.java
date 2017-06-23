@@ -94,8 +94,8 @@ public class Contacts {
 //    public final static String HttpBaseUrl = "http://app.joyro.com.cn:8282/";
 
     //公众号基础url
-    public static String weChatBaseUrl = "http://test.oznerwater.com/lktnew/wap/app/Oauth2.aspx?";
-//    public static String weChatBaseUrl = "http://www.oznerwater.com/lktnew/wap/app/Oauth2.aspx?";
+//    public static String weChatBaseUrl = "http://test.oznerwater.com/lktnew/wap/app/Oauth2.aspx?";
+    public static String weChatBaseUrl = "http://www.oznerwater.com/lktnew/wap/app/Oauth2.aspx?";
     //我的小金库
     public static String myMoneyUrl = "http://www.oznerwater.com/lktnew/wapnew/Member/MyCoffers.aspx";
     //我的订单

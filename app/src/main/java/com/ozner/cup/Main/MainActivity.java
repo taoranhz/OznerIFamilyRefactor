@@ -53,6 +53,7 @@ import com.ozner.cup.Device.Cup.CupFragment;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Device.NoDeviceFragment;
 import com.ozner.cup.Device.ROWaterPurifier.ROWaterPurifierFragment;
+import com.ozner.cup.Device.ROWaterPurifier.RoCommlFragment;
 import com.ozner.cup.Device.ReplenWater.ReplenWaterFragment;
 import com.ozner.cup.Device.Tap.TapFragment;
 import com.ozner.cup.Device.WaterPurifier.WPContainerFragment;
@@ -71,28 +72,17 @@ import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 import com.ozner.tap.TapManager;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import cn.jpush.android.api.JPushInterface;
 import cn.udesk.UdeskConst;
 import cn.udesk.UdeskSDKManager;
-import cn.udesk.config.UdeskBaseInfo;
-import cn.udesk.config.UdeskConfig;
-import cn.udesk.presenter.ChatActivityPresenter;
 import rx.Subscriber;
-import udesk.core.UdeskCallBack;
-
-import static cn.udesk.config.UdeskBaseInfo.sdkToken;
 
 public class MainActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener, ILeftMenu {
     private static final String TAG = "MainActivity";
@@ -451,6 +441,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
      * 根据设备，获取相应的Fragment
      *
      * @param device
+     *
      * @return
      */
     private DeviceFragment getDeviceFragment(OznerDeviceSettings device) {
@@ -462,7 +453,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
             } else if (device.getDevcieType().equals(RankType.TdsPenType)) {
                 return TapFragment.newInstance(device.getMac());
             } else if (WaterPurifierManager.IsWaterPurifier(device.getDevcieType())) {
-                if ("Ozner RO".equals(device.getDevcieType())) {
+                if ("RO Comml".equals(device.getDevcieType())) {
+                    return RoCommlFragment.newInstance(device.getMac());
+                } else if ("Ozner RO".equals(device.getDevcieType())) {
                     return ROWaterPurifierFragment.newInstance(device.getMac());
                 } else {
 //                    return WaterPurifierFragment.newInstance(device.getMac());
@@ -546,12 +539,12 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
                 break;
             case 2:
-//                if (chatFragment == null) {
-//                    chatFragment = EaseChatFragment.newInstance(null);
-//                }
-//                transaction.replace(R.id.fg_content, chatFragment).commitAllowingStateLoss();
+                if (chatFragment == null) {
+                    chatFragment = EaseChatFragment.newInstance(null);
+                }
+                transaction.replace(R.id.fg_content, chatFragment).commitAllowingStateLoss();
                 //设置在客服那边显示用户名
-                UdeskSDKManager.getInstance().toLanuchChatAcitvity(this);
+//                UdeskSDKManager.getInstance().toLanuchChatAcitvity(this);
 //                Map uInfo = new HashMap();
 //                if (!TextUtils.isEmpty(userInfo.getNickname())) {
 //                    uInfo.put(UdeskConst.UdeskUserInfo.NICK_NAME, userInfo.getNickname());

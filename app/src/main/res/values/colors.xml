@@ -72,4 +72,13 @@
 
 
     <color name="wp_temp_warm">#ffb159ed</color>
+
+    <color name="temp_start">#ff0196ff</color>
+    <color name="temp_middle">#ffb159ed</color>
+    <color name="temp_end">#ffef3e6e</color>
+
+    <color name="comml_text">#ff999999</color>
+    <color name="comml_clean_value">#fffe89f4</color>
+    <color name="comml_text_background">#ff48c2fa</color>
+
 </resources>

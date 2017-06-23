@@ -94,6 +94,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
     Monitor monitor;
     private String mUserid;
     private PermissionUtil.PermissionRequestObject perReqResult;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +106,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
         initFoundDeviceView();
         beginMatch();
     }
+
     /**
      * 检查位置权限，并开始配对
      */
@@ -153,8 +155,6 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
         startRotate();
         registerBlueReceiver();
     }
-
-
 
 
     /**
@@ -208,6 +208,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
                 break;
         }
     }
+
     /**
      * 保存设备
      *
@@ -236,7 +237,6 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
             this.finish();
         }
     }
-
 
 
     private void saveDeviceToDB(String userid, OznerDevice device) {
@@ -278,6 +278,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
         llayInputInfo.setVisibility(View.VISIBLE);
         ivMatchLoading.setImageResource(R.drawable.match_device_successed);
     }
+
     /**
      * 注册蓝牙监听
      */
@@ -289,7 +290,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
             filter.addAction(BluetoothScan.ACTION_SCANNER_FOUND);
             loadFoundDevices();
             this.registerReceiver(monitor, filter);
-        }else{
+        } else {
 //            Toast.makeText(MatchROWaterPuriferActivity.this,"ro水机配对monitor不为空",Toast.LENGTH_LONG).show();
         }
     }
@@ -303,6 +304,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
             monitor = null;
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -312,12 +314,14 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
         }
         return true;
     }
+
     @Override
     protected void onDestroy() {
         unRegisterBlueReceiver();
         System.gc();
         super.onDestroy();
     }
+
     /**
      * 开始旋转
      */
@@ -332,6 +336,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
         animation.setFillAfter(false);
         ivMatchLoading.startAnimation(animation);
     }
+
     /**
      * 结束旋转
      */
@@ -346,6 +351,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
             }
         }
     }
+
     /**
      * 开始计时器
      */
@@ -370,6 +376,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
             timerCount = null;
         }
     }
+
     /**
      * 广播监听
      */
@@ -379,6 +386,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
             loadFoundDevices();
         }
     }
+
     /**
      * 获取RecyleView的宽度
      * 用来计算每一个item应有的宽度
@@ -391,6 +399,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
         int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
         return screenWidth - imageWidth - margin;
     }
+
     /**
      * 加载搜索到的设备
      */
@@ -408,7 +417,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
                 if (deviceIOs != null) {
                     for (BaseDeviceIO device : deviceIOs) {
                         //添加ro水机
-                        if ("Ozner RO".equals(device.getType())) {
+                        if ("Ozner RO".equals(device.getType()) || "RO Comml".equals(device.getType())) {
                             if (device instanceof BluetoothIO) {
                                 BluetoothIO bluetoothIO = (BluetoothIO) device;
                                 if (WaterPurifier_RO_BLE.isBindMode(bluetoothIO)) {
@@ -445,6 +454,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
             showNoFoundDevice();
         }
     }
+
     /**
      * 显示搜索到设备
      */

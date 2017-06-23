@@ -637,6 +637,13 @@
     <string name="sd_card_does_not_exist">"SD card does not exist, can't take pictures"</string>
     <string name="Whether_to_empty_all_chats">Clear all messages?</string>
 
+
+    <string name="comml_clean_total">Filter capacity</string>
+    <string name="comml_temp_below">55℃</string>
+    <string name="comml_temp_middle">80℃</string>
+    <string name="comml_temp_high">95℃</string>
+    <string name="custom">Custom</string>
+
     <string name="save_device">Save Settings？</string>
     <string name="ro_recharge">Water machine recharge</string>
     <string name="ro_renew">Renew</string>
@@ -651,4 +658,7 @@
     <string name="tips_content3">water card? This operation is irrevocable Oh ~!</string>
     <string name="no_available">This function is not available!</string>
     <string name="no_onlie">Network connection failed! Please open the network!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

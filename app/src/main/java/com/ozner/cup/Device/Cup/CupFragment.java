@@ -253,7 +253,7 @@ public class CupFragment extends DeviceFragment {
             } else {
                 title.setText(mCup.getName());
             }
-            refreshConnectState();
+//            refreshConnectState();
             refreshWaterGoal();
             showWaterTarget();
             if (mCup.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
@@ -264,34 +264,34 @@ public class CupFragment extends DeviceFragment {
         }
     }
 
-    /**
-     * 刷新连接状态
-     */
-    private void refreshConnectState() {
-        if (mCup != null) {
-            if (ivDeviceConnectIcon.getAnimation() == null) {
-                ivDeviceConnectIcon.setAnimation(rotateAnimation);
-            }
-            if (mCup.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
-                llayDeviceConnectTip.setVisibility(View.VISIBLE);
-                tvDeviceConnectTips.setText(R.string.device_connecting);
-                ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
-                ivDeviceConnectIcon.getAnimation().start();
-            } else if (mCup.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
-                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
-                if (ivDeviceConnectIcon.getAnimation() != null) {
-                    ivDeviceConnectIcon.getAnimation().cancel();
-                }
-            } else if (mCup.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
-                llayDeviceConnectTip.setVisibility(View.VISIBLE);
-                tvDeviceConnectTips.setText(R.string.device_unconnected);
-                if (ivDeviceConnectIcon.getAnimation() != null) {
-                    ivDeviceConnectIcon.getAnimation().cancel();
-                }
-                ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
-            }
-        }
-    }
+//    /**
+//     * 刷新连接状态
+//     */
+//    private void refreshConnectState() {
+//        if (mCup != null) {
+//            if (ivDeviceConnectIcon.getAnimation() == null) {
+//                ivDeviceConnectIcon.setAnimation(rotateAnimation);
+//            }
+//            if (mCup.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
+//                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+//                tvDeviceConnectTips.setText(R.string.device_connecting);
+//                ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
+//                ivDeviceConnectIcon.getAnimation().start();
+//            } else if (mCup.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+//                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+//                if (ivDeviceConnectIcon.getAnimation() != null) {
+//                    ivDeviceConnectIcon.getAnimation().cancel();
+//                }
+//            } else if (mCup.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
+//                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+//                tvDeviceConnectTips.setText(R.string.device_unconnected);
+//                if (ivDeviceConnectIcon.getAnimation() != null) {
+//                    ivDeviceConnectIcon.getAnimation().cancel();
+//                }
+//                ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
+//            }
+//        }
+//    }
 
     /**
      * 刷新传感器数据
@@ -550,7 +550,7 @@ public class CupFragment extends DeviceFragment {
      */
     private void releaseMonitor() {
 //        if (isThisAdd()) {
-            getContext().unregisterReceiver(mMonitor);
+        getContext().unregisterReceiver(mMonitor);
 //        }
     }
 
@@ -609,12 +609,51 @@ public class CupFragment extends DeviceFragment {
         }
     }
 
+    /**
+     * 刷新连接状态
+     */
+    private void refreshConnectState(String action) {
+        Log.e(TAG, "refreshConnectState: " + action);
+        try {
+            if (mCup != null && isAdded()) {
+                if (ivDeviceConnectIcon.getAnimation() == null) {
+                    ivDeviceConnectIcon.setAnimation(rotateAnimation);
+                }
+                switch (action) {
+                    case BaseDeviceIO.ACTION_DEVICE_CONNECTING:
+                        llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                        tvDeviceConnectTips.setText(R.string.device_connecting);
+                        ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
+                        ivDeviceConnectIcon.getAnimation().start();
+                        break;
+                    case BaseDeviceIO.ACTION_DEVICE_CONNECTED:
+                        llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+                        if (ivDeviceConnectIcon.getAnimation() != null) {
+                            ivDeviceConnectIcon.getAnimation().cancel();
+                        }
+                        break;
+                    case BaseDeviceIO.ACTION_DEVICE_DISCONNECTED:
+                        llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                        tvDeviceConnectTips.setText(R.string.device_unconnected);
+                        if (ivDeviceConnectIcon.getAnimation() != null) {
+                            ivDeviceConnectIcon.getAnimation().cancel();
+                        }
+                        ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
+                        break;
+                }
+            }
+        } catch (Exception ex) {
+
+        }
+    }
+
 
     class CupMonitor extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
 //            Log.e(TAG, "onReceive: " + mCup.toString());
+            refreshConnectState(intent.getAction());
             refreshUIData();
         }
     }

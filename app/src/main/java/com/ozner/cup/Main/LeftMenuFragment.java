@@ -333,7 +333,7 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
                     || intent.getAction().equals(OznerDeviceManager.ACTION_OZNER_MANAGER_OWNER_CHANGE)
                     || intent.getAction().equals(OznerDeviceManager.ACTION_OZNER_MANAGER_DEVICE_REMOVE)) {
                 initDataList();
-            } else if (intent.getAction().endsWith(OznerBroadcastAction.OBA_CenterDeviceSelect)) {
+            } else if (intent.getAction().equals(OznerBroadcastAction.OBA_CenterDeviceSelect)) {
                 String selMac = intent.getStringExtra(Contacts.PARMS_MAC);
                 int selPos = mLeftAdapter.getSelectItemPos(selMac);
                 if (selPos >= 0) {
@@ -341,6 +341,8 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
                 } else {
                     Toast.makeText(context, R.string.device_unexsit, Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                mLeftAdapter.notifyDataSetChanged();
             }
         }
     }
@@ -483,14 +485,14 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
                 } else {
                     setItemSelected(holder, isSelected, R.mipmap.icon_tap_on, R.mipmap.icon_tap_off);
                 }
-            }else if(deviceType.equals(RankType.TdsPenType)){
+            } else if (deviceType.equals(RankType.TdsPenType)) {
                 typeResId = R.mipmap.connect_bluetooth_on;
                 setItemSelected(holder, isSelected, R.mipmap.icon_tdspen_on, R.mipmap.icon_tdspen_off);
             } else if (WaterPurifierManager.IsWaterPurifier(deviceType)) {
-                if("Ozner RO".equals(deviceType)){
+                if ("Ozner RO".equals(deviceType)) {
                     typeResId = R.mipmap.connect_bluetooth_on;
                     setItemSelected(holder, isSelected, R.drawable.ro_water, R.drawable.ropurifier_match_left);
-                }else {
+                } else {
                     // TODO: 2016/11/4 水机
                     typeResId = R.mipmap.connect_wifi_on;
                     setItemSelected(holder, isSelected, R.mipmap.icon_water_purifier_on, R.mipmap.icon_water_purifier_off);

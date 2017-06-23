@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
+import com.ozner.bluetooth.BluetoothIO;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Bean.RankType;
 import com.ozner.cup.Command.OznerPreference;
@@ -395,31 +396,9 @@ public class TapFragment extends DeviceFragment {
         if (TapFragment.this.isAdded() && !TapFragment.this.isRemoving() && !TapFragment.this.isDetached() && mTap != null) {
             // TODO: 2016/11/7 加载数据，并填充页面
             Log.e(TAG, "refreshUIData: ");
-            refreshConnectState();
+//            refreshConnectState();
             refreshSensorData();
-        }
-    }
-
-    /**
-     * 刷新连接状态
-     */
-    private void refreshConnectState() {
-        if (mTap != null) {
-            Log.e(TAG, "refreshConnectState: " + mTap.toString());
-            if (ivDeviceConnectIcon.getAnimation() == null) {
-                ivDeviceConnectIcon.setAnimation(rotateAnimation);
-            }
-            if (mTap.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
-                llayDeviceConnectTip.setVisibility(View.VISIBLE);
-                tvDeviceConnectTips.setText(R.string.device_connecting);
-                ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
-                ivDeviceConnectIcon.getAnimation().start();
-            } else if (mTap.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
-                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
-                if (ivDeviceConnectIcon.getAnimation() != null) {
-                    ivDeviceConnectIcon.getAnimation().cancel();
-                }
-            } else if (mTap.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
+            if(mTap.connectStatus().equals(BluetoothIO.ACTION_DEVICE_DISCONNECTED)){
                 llayDeviceConnectTip.setVisibility(View.VISIBLE);
                 tvDeviceConnectTips.setText(R.string.device_unconnected);
                 if (ivDeviceConnectIcon.getAnimation() != null) {
@@ -429,6 +408,36 @@ public class TapFragment extends DeviceFragment {
             }
         }
     }
+
+//    /**
+//     * 刷新连接状态
+//     */
+//    private void refreshConnectState() {
+//        if (mTap != null) {
+//            Log.e(TAG, "refreshConnectState: " + mTap.toString());
+//            if (ivDeviceConnectIcon.getAnimation() == null) {
+//                ivDeviceConnectIcon.setAnimation(rotateAnimation);
+//            }
+//            if (mTap.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
+//                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+//                tvDeviceConnectTips.setText(R.string.device_connecting);
+//                ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
+//                ivDeviceConnectIcon.getAnimation().start();
+//            } else if (mTap.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+//                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+//                if (ivDeviceConnectIcon.getAnimation() != null) {
+//                    ivDeviceConnectIcon.getAnimation().cancel();
+//                }
+//            } else if (mTap.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
+//                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+//                tvDeviceConnectTips.setText(R.string.device_unconnected);
+//                if (ivDeviceConnectIcon.getAnimation() != null) {
+//                    ivDeviceConnectIcon.getAnimation().cancel();
+//                }
+//                ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
+//            }
+//        }
+//    }
 
     /**
      * 刷新传感器数据
@@ -650,10 +659,49 @@ public class TapFragment extends DeviceFragment {
         }
     }
 
+    /**
+     * 刷新连接状态
+     */
+    private void refreshConnectState(String action) {
+        Log.e(TAG, "refreshConnectState: " + action);
+        try {
+            if (mTap != null && isAdded()) {
+                if (ivDeviceConnectIcon.getAnimation() == null) {
+                    ivDeviceConnectIcon.setAnimation(rotateAnimation);
+                }
+                switch (action) {
+                    case BaseDeviceIO.ACTION_DEVICE_CONNECTING:
+                        llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                        tvDeviceConnectTips.setText(R.string.device_connecting);
+                        ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
+                        ivDeviceConnectIcon.getAnimation().start();
+                        break;
+                    case BaseDeviceIO.ACTION_DEVICE_CONNECTED:
+                        llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+                        if (ivDeviceConnectIcon.getAnimation() != null) {
+                            ivDeviceConnectIcon.getAnimation().cancel();
+                        }
+                        break;
+                    case BaseDeviceIO.ACTION_DEVICE_DISCONNECTED:
+                        llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                        tvDeviceConnectTips.setText(R.string.device_unconnected);
+                        if (ivDeviceConnectIcon.getAnimation() != null) {
+                            ivDeviceConnectIcon.getAnimation().cancel();
+                        }
+                        ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
+                        break;
+                }
+            }
+        } catch (Exception ex) {
+
+        }
+    }
+
     class TapMonitor extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            refreshConnectState(intent.getAction());
             refreshUIData();
         }
     }

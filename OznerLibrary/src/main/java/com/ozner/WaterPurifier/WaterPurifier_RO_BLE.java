@@ -38,6 +38,9 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
     private static final byte opCode_respone_filterHis1 = (byte) 0x11;
     private static final byte opCode_respone_filterHis2 = (byte) 0x12;
 
+    private static final byte opCode_set_setting_extra = (byte) 0x41;
+    private static final byte opCode_response_setting_extra = (byte) 0x25;
+
 
     private static final byte param_request_settinginfo = 1;
     private static final byte param_request_water_info = 2;
@@ -46,6 +49,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
     public SettingInfo settingInfo = new SettingInfo();
     public WaterInfo waterInfo = new WaterInfo();
     public FilterInfo filterInfo = new FilterInfo();
+    private WaterSettingExtra settingExtra = new WaterSettingExtra();
 
     public class SettingInfo {
         /**
@@ -179,17 +183,55 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
         }
     }
 
+    public WaterSettingExtra settingExtra() {
+        return settingExtra;
+    }
+
+
     int requestCount = 0;
 
     @Override
     protected void updateStatus(OperateCallback<Void> cb) {
+        switch (requestCount) {
+            case 0:
+                waterPurifierIMP.requestFilterInfo();
+                requestCount++;
+                break;
+            case 1:
+                waterPurifierIMP.requestWaterInfo();
+                requestCount++;
+                break;
+            case 2:
+                waterPurifierIMP.requestSettingExtra();
+                requestCount = 0;
+                break;
+        }
 
-        if ((requestCount % 2) == 0) {
-            waterPurifierIMP.requestFilterInfo();
-        } else
-            waterPurifierIMP.requestWaterInfo();
-        requestCount++;
+    }
 
+    /**
+     * 设置加热温度
+     * 调用此方法时自动加热功能会打开
+     *
+     * @param temperature 40—99
+     * @param cb
+     */
+    public void setHeatTemperature(int temperature, OperateCallback<Void> cb) {
+        if (IO() == null) {
+            if (cb != null) {
+                cb.onFailure(null);
+            }
+            return;
+        }
+        if (temperature > 99) {
+            temperature = 99;
+        }
+        if (temperature < 40) {
+            temperature = 40;
+        }
+//        settingExtra.isAutoHeating = true;
+        settingExtra.heatTemperature = temperature;
+        waterPurifierIMP.setSettingExtra(cb);
     }
 
     /**
@@ -220,34 +262,12 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
         }
     }
 
-
-
-
     /**
      * 设置设置信息回调
      */
     public interface ISettingCallback {
         void onResult(boolean success);
     }
-
-
-
-
-
-
-
-
-//    @Override
-//    public void addMonth(int month, OperateCallback<Void> cb) {
-//        if (waterPurifierIMP != null) {
-//            waterPurifierIMP.addMonty(month, cb);
-//        } else {
-//            cb.onFailure(new UnsupportedOperationException());
-//        }
-//    }
-
-
-
 
     @Override
     protected int getTDS1() {
@@ -312,6 +332,46 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
                 bytes[2] = calcSum(bytes, 2);
                 IO().send(bytes);
                 dbg.i("请求设置信息");
+            }
+        }
+
+        /**
+         * 设置设置二信息
+         * @param cb
+         */
+        public void setSettingExtra(OperateCallback<Void> cb) {
+            if (connectStatus() != BaseDeviceIO.ConnectStatus.Connected) {
+                if (cb != null) {
+                    cb.onFailure(null);
+                }
+                return;
+            }
+            if (!settingExtra.isLoaded()) {
+                if (cb != null) {
+                    cb.onFailure(null);
+                }
+                return;
+            }
+            byte[] data = new byte[10];
+            data[0] = opCode_set_setting_extra;
+            data[1] = (byte) settingExtra.heatTemperature;
+            data[2] = settingExtra.isAutoPower ? (byte) 0 : (byte) 1;
+            data[3] = (byte) settingExtra.openPowerPoint;
+            data[4] = (byte) settingExtra.closePowerPoint;
+            data[5] = settingExtra.isAutoHeating ? (byte) 0 : (byte) 1;
+            data[6] = (byte) settingExtra.openHeatPoint;
+            data[7] = (byte) settingExtra.closeHeatPoint;
+            data[8] = settingExtra.isOpenCool ? (byte) 0 : (byte) 1;
+            data[9] = calcSum(data, 9);
+
+            boolean success = IO().send(data);
+            if (cb != null) {
+                if (success) {
+
+                    cb.onSuccess(null);
+                } else {
+                    cb.onFailure(null);
+                }
             }
         }
 
@@ -411,86 +471,6 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
                 }
             }
         }
-//        public boolean addMonty(int month, OperateCallback<Void> cb) {
-//            if (IO() != null) {
-//                Log.e("tr","month:"+month);
-//                byte[] bytes = new byte[19];
-//                bytes[0] = opCode_set_setting;
-//                //同步时间
-//                Time time = new Time();
-//                time.setToNow();
-//                bytes[1] = (byte) (time.year - 2000);
-//                bytes[2] = (byte) (time.month + 1);
-//                bytes[3] = (byte) time.monthDay;
-//                bytes[4] = (byte) time.hour;
-//                bytes[5] = (byte) time.minute;
-//                bytes[6] = (byte) time.second;
-//
-//                //臭氧工作间隔时间和工作时间
-//                bytes[7] = (byte) settingInfo.Ozone_Interval;
-//                bytes[8] = (byte) settingInfo.Ozone_WorkTime;
-//
-////                //滤芯复位
-////                if (settingInfo.isFilterActivate)
-////                    bytes[9] = 1;
-////                else
-//                bytes[9] = 0;
-//
-//
-//                //到期日
-//                Calendar cal = Calendar.getInstance();
-//
-//                Date orgTime = settingInfo.ExpireTime;
-//                Log.e("tr","orgTime:"+orgTime.toLocaleString());
-//                Log.e("tr","orgYear:"+settingInfo.ExpireTime.getYear());
-//                //settingInfo.ExpireTime.getYear方法是获取1900到如今的间隔年数
-//                if(settingInfo.ExpireTime.getYear() < 100){
-//                    if(cb!=null){
-//                        cb.onFailure(null);
-//                    }
-//                    return false;
-//                }
-//
-//                //判断充水起始日
-//                if (orgTime.getTime() > cal.getTimeInMillis()) {
-//                    cal.setTime(orgTime);
-//                }
-//
-////                cal.add(Calendar.YEAR, impTime.year);
-////                cal.add(Calendar.MONTH, month);
-//                  cal.add(Calendar.DAY_OF_MONTH,month);
-////                cal.add(Calendar.DAY_OF_MONTH, impTime.day);
-////                cal.add(Calendar.HOUR_OF_DAY, impTime.hour);
-////                cal.add(Calendar.MINUTE, impTime.min);
-////                cal.add(Calendar.SECOND, impTime.second);
-//                Log.e("tr","newTime:"+cal.getTime().toLocaleString());
-//
-//                bytes[10] = (byte) (cal.get(Calendar.YEAR) - 2000);
-//                bytes[11] = (byte) (cal.get(Calendar.MONTH) + 1);
-//                bytes[12] = (byte) (cal.get(Calendar.DAY_OF_MONTH));
-//                bytes[13] = (byte) (cal.get(Calendar.HOUR_OF_DAY));
-//                bytes[14] = (byte) (cal.get(Calendar.MINUTE));
-//                bytes[15] = (byte) (cal.get(Calendar.SECOND));
-//
-//                //激活：0x1688,0x8816表示激活，其他未激活；0x1688：滤芯，0x8816：滤芯+计时
-//                bytes[16] = (byte) 0x16;
-//                bytes[17] = (byte) 0x88;
-//
-//                bytes[18] = calcSum(bytes, 18);
-////                Log.e(TAG, "setActivate: 发送激活信息");
-//                boolean success = IO().send(bytes,cb);
-//                if(success){
-//                    requestSettingInfo();
-//                }
-//                return success;
-//
-//            } else{
-//                if (cb!=null){
-//                    cb.onFailure(null);
-//                }
-//                return false;
-//            }
-//        }
 
         public boolean setActivate(ImpTime impTime, int Ozone_Interval, int Ozone_WorkTime, boolean resetFilter, OperateCallback<Void> cb) {
             if (IO() != null) {
@@ -617,6 +597,17 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
         }
 
 
+        private void requestSettingExtra() {
+            if (IO() != null) {
+                byte[] datas = new byte[3];
+                datas[0] = opCode_request_info;
+                datas[1] = 5;
+                datas[2] = calcSum(datas, 2);
+                IO().send(datas);
+                dbg.i("请求设置二信息");
+            }
+        }
+
         private void reset() {
             if (IO() != null) {
                 byte[] bytes = new byte[2];
@@ -658,6 +649,10 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
                 case opCode_respone_setting:
                     settingInfo.fromBytes(data);
                     break;
+                case opCode_response_setting_extra:
+//                    Log.e(TAG, "onIORecv: 设置二信息：" + Convert.ByteArrayToHexString(data));
+                    settingExtra.fromBytes(data);
+                    break;
                 case opCode_respone_water:
                     waterInfo.fromBytes(data);
                     break;
@@ -674,6 +669,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
 
         @Override
         public void onConnected(BaseDeviceIO io) {
+            settingExtra.reset();
             BluetoothIO bluetoothIO = (BluetoothIO) io;
             if (((BluetoothIO) io).getScanResponse() != null) {
                 info.ControlBoard = "";
@@ -684,23 +680,26 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
 
         @Override
         public void onDisconnected(BaseDeviceIO io) {
-
+            settingExtra.reset();
         }
 
         @Override
         public void onReady(BaseDeviceIO io) {
+            settingExtra.reset();
             requestSettingInfo();
-
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            requestSettingExtra();
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             requestFilterHisInfo();
-
         }
-
-
     }
 
     /**
@@ -725,7 +724,7 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
     }
 
     public static BluetoothScanResponse parseScanResp(String name, byte[] Service_Data) {
-        if (name.equals("Ozner RO")) {
+        if (name.equals("Ozner RO") || name.equals("RO Comml")) {
             BluetoothScanResponse rep = new BluetoothScanResponse();
             if (Service_Data != null) {
                 if (Service_Data.length < 25) return null;
@@ -734,7 +733,12 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
                         Service_Data[5], Service_Data[6],
                         Service_Data[7], Service_Data[8]);
 
-                rep.Model = "Ozner RO";
+//                rep.Model = "Ozner RO";
+                if (name.equals("RO Comml")) {
+                    rep.Model = "RO Comml";
+                } else if (name.equals("Ozner RO")) {
+                    rep.Model = "Ozner RO";
+                }
                 rep.MainbroadPlatform = new String(Service_Data, 9, 3);
                 rep.MainbroadFirmware = new Date(Service_Data[12] + 2000 - 1900, Service_Data[13] - 1,
                         Service_Data[14], Service_Data[15],
@@ -760,6 +764,11 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
     public static boolean isBindMode(BluetoothIO io) {
         //return true;
         byte[] data = io.getScanResponseData();
+        if (io.getType().equals("RO Comml")) {
+            if ((io.getScanResponseType() == BLE_RO_ScanResponseType) && (data != null)) {
+                return data[0] == 0;
+            }
+        }
         if ((io.getScanResponseType() == BLE_RO_ScanResponseType) && (data != null)) {
             return data[0] != 0;
         }

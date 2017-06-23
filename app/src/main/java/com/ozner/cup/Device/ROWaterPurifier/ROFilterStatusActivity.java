@@ -25,7 +25,6 @@ import com.ozner.WaterPurifier.WaterPurifier_RO_BLE;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
-import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.UserInfo;
@@ -146,7 +145,7 @@ public class ROFilterStatusActivity extends BaseActivity implements AdapterView.
                 device = OznerDeviceManager.Instance().getDevice(mac);
                 deviceType = device.Type();
                 roWaterPurifier=(WaterPurifier_RO_BLE) device;
-                if ("Ozner RO".equals(deviceType)) {
+                if ("Ozner RO".equals(deviceType)||"RO Comml".equals(deviceType)) {
                     //RO水机滤芯状态
                     fit_a=getIntent().getStringExtra("Fit_a");
                     fit_b=getIntent().getStringExtra("Fit_b");

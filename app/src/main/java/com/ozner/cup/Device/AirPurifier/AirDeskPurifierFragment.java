@@ -12,6 +12,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -397,7 +398,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         try {
             if (isThisAdd() && mDeskAirPurifier != null) {
                 showDeviceName();
-                refreshConnectState();
+//                refreshConnectState();
                 refreshSensorData();
                 setUISwitch(mDeskAirPurifier.status().RPM());
             }
@@ -407,37 +408,37 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         }
     }
 
-    /**
-     * 刷新设备连接状态
-     */
-    private void refreshConnectState() {
-        if (mDeskAirPurifier != null) {
-            if (ivDeviceConnectIcon.getAnimation() == null) {
-                ivDeviceConnectIcon.setAnimation(rotateAnimation);
-            }
-
-            if (mDeskAirPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
-                llayDeviceConnectTip.setVisibility(View.VISIBLE);
-                tvDeviceConnectTips.setText(R.string.device_connecting);
-                ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
-                if (ivDeviceConnectIcon.getAnimation() != null && !ivDeviceConnectIcon.getAnimation().hasStarted()) {
-                    ivDeviceConnectIcon.getAnimation().start();
-                }
-            } else if (mDeskAirPurifier.connectStatus() == Connected) {
-                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
-                if (ivDeviceConnectIcon.getAnimation() != null) {
-                    ivDeviceConnectIcon.getAnimation().cancel();
-                }
-            } else if (mDeskAirPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
-                llayDeviceConnectTip.setVisibility(View.VISIBLE);
-                tvDeviceConnectTips.setText(R.string.device_unconnected);
-                if (ivDeviceConnectIcon.getAnimation() != null) {
-                    ivDeviceConnectIcon.getAnimation().cancel();
-                }
-                ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
-            }
-        }
-    }
+//    /**
+//     * 刷新设备连接状态
+//     */
+//    private void refreshConnectState() {
+//        if (mDeskAirPurifier != null) {
+//            if (ivDeviceConnectIcon.getAnimation() == null) {
+//                ivDeviceConnectIcon.setAnimation(rotateAnimation);
+//            }
+//
+//            if (mDeskAirPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
+//                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+//                tvDeviceConnectTips.setText(R.string.device_connecting);
+//                ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
+//                if (ivDeviceConnectIcon.getAnimation() != null && !ivDeviceConnectIcon.getAnimation().hasStarted()) {
+//                    ivDeviceConnectIcon.getAnimation().start();
+//                }
+//            } else if (mDeskAirPurifier.connectStatus() == Connected) {
+//                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+//                if (ivDeviceConnectIcon.getAnimation() != null) {
+//                    ivDeviceConnectIcon.getAnimation().cancel();
+//                }
+//            } else if (mDeskAirPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
+//                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+//                tvDeviceConnectTips.setText(R.string.device_unconnected);
+//                if (ivDeviceConnectIcon.getAnimation() != null) {
+//                    ivDeviceConnectIcon.getAnimation().cancel();
+//                }
+//                ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
+//            }
+//        }
+//    }
 
     /**
      * 设置设备名字
@@ -695,6 +696,44 @@ public class AirDeskPurifierFragment extends DeviceFragment {
         }
     }
 
+    /**
+     * 刷新连接状态
+     */
+    private void refreshConnectState(String action) {
+        Log.e(TAG, "refreshConnectState: " + action);
+        try {
+            if (mDeskAirPurifier != null && isAdded()) {
+                if (ivDeviceConnectIcon.getAnimation() == null) {
+                    ivDeviceConnectIcon.setAnimation(rotateAnimation);
+                }
+                switch (action) {
+                    case BaseDeviceIO.ACTION_DEVICE_CONNECTING:
+                        llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                        tvDeviceConnectTips.setText(R.string.device_connecting);
+                        ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
+                        ivDeviceConnectIcon.getAnimation().start();
+                        break;
+                    case BaseDeviceIO.ACTION_DEVICE_CONNECTED:
+                        llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+                        if (ivDeviceConnectIcon.getAnimation() != null) {
+                            ivDeviceConnectIcon.getAnimation().cancel();
+                        }
+                        break;
+                    case BaseDeviceIO.ACTION_DEVICE_DISCONNECTED:
+                        llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                        tvDeviceConnectTips.setText(R.string.device_unconnected);
+                        if (ivDeviceConnectIcon.getAnimation() != null) {
+                            ivDeviceConnectIcon.getAnimation().cancel();
+                        }
+                        ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
+                        break;
+                }
+            }
+        } catch (Exception ex) {
+
+        }
+    }
+
     class AirPurifierMonitor extends BroadcastReceiver {
 
         @Override
@@ -703,6 +742,7 @@ public class AirDeskPurifierFragment extends DeviceFragment {
 //                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_CONNECTING)
 //                    || intent.getAction().equals(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED)) {
 //            }
+            refreshConnectState(intent.getAction());
             showFilterStatus(mDeskAirPurifier.sensor().FilterStatus().workTime);
             refreshUIData();
         }

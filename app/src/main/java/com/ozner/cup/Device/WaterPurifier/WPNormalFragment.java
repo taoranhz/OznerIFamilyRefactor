@@ -582,6 +582,7 @@ public class WPNormalFragment extends DeviceFragment {
         Log.e(TAG, "showTdsState: oldPre:" + oldPreValue + " , oldThen:" + oldThenValue);
         //只有当数据和上次不一样时才更新刷新
         if (oldPreValue != tdsPre || oldThenValue != tdsThen) {
+            Log.e(TAG, "showTdsState: 不相等");
 
             oldPreValue = tdsPre;
             oldThenValue = tdsThen;

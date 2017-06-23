@@ -349,6 +349,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
         filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTING);
         filter.addAction(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED);
         filter.addAction(OznerDeviceManager.ACTION_OZNER_MANAGER_DEVICE_CHANGE);
+        filter.addAction(OznerDevice.ACTION_DEVICE_UPDATE);
         getContext().registerReceiver(mMonitor, filter);
     }
 
@@ -503,11 +504,11 @@ public class ROWaterPurifierFragment extends DeviceFragment {
         if (isWaterPuriferAdd()) {
             if (mWaterPurifer != null && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
                 Log.e(TAG, "refreshUIData: ");
-                refreshConnectState();
+//                refreshConnectState();
                 refreshSensorData();
                 refreshFilterInfo();
             } else {
-                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+//                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
                 tvPreValue.setText(R.string.state_null);
                 tvAfterValue.setText(R.string.state_null);
                 tvPreValue.setTextSize(TextSize);
@@ -538,35 +539,35 @@ public class ROWaterPurifierFragment extends DeviceFragment {
     }
 
 
-    /**
-     * 刷新连接状态
-     */
-    private void refreshConnectState() {
-        if (mWaterPurifer != null) {
-            Log.e(TAG, "refreshConnectState: " + mWaterPurifer.toString());
-            if (ivDeviceConnectIcon.getAnimation() == null) {
-                ivDeviceConnectIcon.setAnimation(rotateAnimation);
-            }
-            if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
-                llayDeviceConnectTip.setVisibility(View.VISIBLE);
-                tvDeviceConnectTips.setText(R.string.device_connecting);
-                ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
-                ivDeviceConnectIcon.getAnimation().start();
-            } else if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
-                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
-                if (ivDeviceConnectIcon.getAnimation() != null) {
-                    ivDeviceConnectIcon.getAnimation().cancel();
-                }
-            } else if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
-                llayDeviceConnectTip.setVisibility(View.VISIBLE);
-                tvDeviceConnectTips.setText(R.string.device_unconnected);
-                if (ivDeviceConnectIcon.getAnimation() != null) {
-                    ivDeviceConnectIcon.getAnimation().cancel();
-                }
-                ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
-            }
-        }
-    }
+//    /**
+//     * 刷新连接状态
+//     */
+//    private void refreshConnectState() {
+//        if (mWaterPurifer != null) {
+//            Log.e(TAG, "refreshConnectState: " + mWaterPurifer.toString());
+//            if (ivDeviceConnectIcon.getAnimation() == null) {
+//                ivDeviceConnectIcon.setAnimation(rotateAnimation);
+//            }
+//            if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
+//                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+//                tvDeviceConnectTips.setText(R.string.device_connecting);
+//                ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
+//                ivDeviceConnectIcon.getAnimation().start();
+//            } else if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+//                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+//                if (ivDeviceConnectIcon.getAnimation() != null) {
+//                    ivDeviceConnectIcon.getAnimation().cancel();
+//                }
+//            } else if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
+//                llayDeviceConnectTip.setVisibility(View.VISIBLE);
+//                tvDeviceConnectTips.setText(R.string.device_unconnected);
+//                if (ivDeviceConnectIcon.getAnimation() != null) {
+//                    ivDeviceConnectIcon.getAnimation().cancel();
+//                }
+//                ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
+//            }
+//        }
+//    }
 
 
 
@@ -592,7 +593,6 @@ public class ROWaterPurifierFragment extends DeviceFragment {
         int tdsPre, tdsThen;
         Date curDate = new Date(System.currentTimeMillis());//获取当前时间
         Date time=mWaterPurifer.settingInfo.ExpireTime;
-
         if(time!=null){
             Calendar calst = Calendar.getInstance();;
             Calendar caled = Calendar.getInstance();
@@ -797,12 +797,47 @@ public class ROWaterPurifierFragment extends DeviceFragment {
         }
     }
 
+    /**
+     * 刷新连接状态
+     */
+    private void refreshConnectState(String action) {
+        Log.e(TAG, "refreshConnectState: " + action);
+        if (mWaterPurifer != null&&isWaterPuriferAdd()) {
+            if (ivDeviceConnectIcon.getAnimation() == null) {
+                ivDeviceConnectIcon.setAnimation(rotateAnimation);
+            }
+            switch (action){
+                case BaseDeviceIO.ACTION_DEVICE_CONNECTING:
+                    llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                    tvDeviceConnectTips.setText(R.string.device_connecting);
+                    ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
+                    ivDeviceConnectIcon.getAnimation().start();
+                    break;
+                case BaseDeviceIO.ACTION_DEVICE_CONNECTED:
+                    llayDeviceConnectTip.setVisibility(View.INVISIBLE);
+                    if (ivDeviceConnectIcon.getAnimation() != null) {
+                        ivDeviceConnectIcon.getAnimation().cancel();
+                    }
+                    break;
+                case BaseDeviceIO.ACTION_DEVICE_DISCONNECTED:
+                    llayDeviceConnectTip.setVisibility(View.VISIBLE);
+                    tvDeviceConnectTips.setText(R.string.device_unconnected);
+                    if (ivDeviceConnectIcon.getAnimation() != null) {
+                        ivDeviceConnectIcon.getAnimation().cancel();
+                    }
+                    ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
+                    break;
+            }
+        }
+    }
+
     class ROMonitor extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "onReceive: " + mWaterPurifer.toString());
 //            Toast.makeText(getActivity(),"onReceive: " + mWaterPurifer.toString(),Toast.LENGTH_LONG).show();
+            refreshConnectState(intent.getAction());
             refreshUIData();
         }
     }
