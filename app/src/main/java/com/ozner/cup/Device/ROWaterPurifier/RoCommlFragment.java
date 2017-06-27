@@ -268,7 +268,7 @@ public class RoCommlFragment extends DeviceFragment {
             tvCleanValue.setText(String.format("%.2f", filterVolume / 1000.0f));
             tvUnit.setText("L");
         } else {
-            tvCleanValue.setText(String.format("%.2", filterVolume / 1000000.0f));
+            tvCleanValue.setText(String.format("%.2f", filterVolume / 1000000.0f));
             tvUnit.setText("m³");
         }
 
@@ -428,41 +428,16 @@ public class RoCommlFragment extends DeviceFragment {
      * 刷新滤芯状态
      */
     private void refreshFilterInfo() {
-
+//        Log.e(TAG, "refreshFilterInfo: A:" + mWaterPurifer.filterInfo.Filter_A_Percentage
+//                + "\nB:" + mWaterPurifer.filterInfo.Filter_B_Percentage
+//                + "\nC:" + mWaterPurifer.filterInfo.Filter_C_Percentage);
+//        Log.e(TAG, "refreshFilterInfo: A:" + mWaterPurifer.filterInfo.Filter_A_Time
+//                + "\nB:" + mWaterPurifer.filterInfo.Filter_B_Time
+//                + "\nC:" + mWaterPurifer.filterInfo.Filter_C_Time);
         int filter = Math.min(mWaterPurifer.filterInfo.Filter_A_Percentage, mWaterPurifer.filterInfo.Filter_B_Percentage);
         filter = Math.min(mWaterPurifer.filterInfo.Filter_C_Percentage, filter);
         setFilterState(filter);
     }
-
-//    /**
-//     * 刷新连接状态
-//     */
-//    private void refreshConnectState() {
-//        if (mWaterPurifer != null) {
-//            Log.e(TAG, "refreshConnectState: " + mWaterPurifer.connectStatus());
-//            if (ivDeviceConnectIcon.getAnimation() == null) {
-//                ivDeviceConnectIcon.setAnimation(rotateAnimation);
-//            }
-//            if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
-//                llayDeviceConnectTip.setVisibility(View.VISIBLE);
-//                tvDeviceConnectTips.setText(R.string.device_connecting);
-//                ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
-//                ivDeviceConnectIcon.getAnimation().start();
-//            } else if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
-//                llayDeviceConnectTip.setVisibility(View.INVISIBLE);
-//                if (ivDeviceConnectIcon.getAnimation() != null) {
-//                    ivDeviceConnectIcon.getAnimation().cancel();
-//                }
-//            } else if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
-//                llayDeviceConnectTip.setVisibility(View.VISIBLE);
-//                tvDeviceConnectTips.setText(R.string.device_unconnected);
-//                if (ivDeviceConnectIcon.getAnimation() != null) {
-//                    ivDeviceConnectIcon.getAnimation().cancel();
-//                }
-//                ivDeviceConnectIcon.setImageResource(R.drawable.data_load_fail);
-//            }
-//        }
-//    }
 
     private void showDisConnect() {
         llayDeviceConnectTip.setVisibility(View.VISIBLE);
@@ -538,7 +513,8 @@ public class RoCommlFragment extends DeviceFragment {
             oldPreValue = tdsPre;
             oldThenValue = tdsThen;
             //净化前后的值都不为0，并且都不为65535
-            if (tdsPre != 0 && !mWaterPurifer.isOffline()) {
+
+            if (tdsPre != 0) {
                 tvPreValue.setText(String.valueOf(tdsPre));
                 tvAfterValue.setText(String.valueOf(tdsThen));
                 tvPreValue.setTextSize(NumSize);
