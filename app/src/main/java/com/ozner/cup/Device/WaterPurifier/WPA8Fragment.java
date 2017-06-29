@@ -25,11 +25,11 @@ import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ozner.WaterPurifier.WaterPurifier;
+import com.ozner.WaterPurifier.WaterPurifier_Mx;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.OznerPreference;
@@ -56,8 +56,15 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
+/**
+ * LGFragment和A8Fragment功能写反了，就这样吧，不改了
+ */
 public class WPA8Fragment extends DeviceFragment {
     private static final String TAG = "WPA8Fragment";
+
+    public static final String A8_DRF = "67ea604c-549b-11e7-9baf-00163e120d98";//温度，TDS，两个个开关
+    public static final String LG_DRF = "b5d03ee4-549b-11e7-9baf-00163e120d98";//温度，TDS，三个开关
+
     private static final int TextSize = 40;
     private static final int NumSize = 50;
 
@@ -87,9 +94,9 @@ public class WPA8Fragment extends DeviceFragment {
     LinearLayout llayTdsTips;
     @InjectView(R.id.tv_temp)
     TextView tvTemp;
-
-    @InjectView(R.id.sb_test)
-    SeekBar sbTest;
+//
+//    @InjectView(R.id.sb_test)
+//    SeekBar sbTest;
 
 
     TextView tvPowerswitch;
@@ -102,28 +109,19 @@ public class WPA8Fragment extends DeviceFragment {
     ImageView ivCoolswitch;
     RelativeLayout rlayCoolswitch;
 
-    private WaterPurifier mWaterPurifier;
+    private WaterPurifier_Mx mWaterPurifier;
     WaterPurifierAttr purifierAttr;
     private TDSSensorManager tdsSensorManager;
     WaterNetInfoManager waterNetInfoManager;
     Handler mHandler = new Handler();
     WaterPurifierMonitor waterMonitor;
     String address;
-    private String deviceType = A8Type.TYPE_A8DRF;
+    private String deviceType = A8_DRF;
     private int oldPreValue, oldThenValue;
     boolean isPowerOn = false;
     boolean isCoolOn = false;
     boolean isHotOn = false;
 
-
-    /**
-     * A8类型之子类型
-     */
-    public class A8Type {
-        public static final String TYPE_A8DRF = "A8_DRF";
-        public static final String TYPE_A8CSF = "A8_CSF";
-        public static final String TYPE_A8FSF = "A8_FSF";
-    }
 
     public static WPA8Fragment newInstance(String mac) {
         Bundle args = new Bundle();
@@ -141,7 +139,7 @@ public class WPA8Fragment extends DeviceFragment {
             Bundle bundle = getArguments();
             address = bundle.getString(DeviceFragment.DeviceAddress);
             oldPreValue = oldThenValue = 0;
-            mWaterPurifier = (WaterPurifier) OznerDeviceManager.Instance().getDevice(address);
+            mWaterPurifier = (WaterPurifier_Mx) OznerDeviceManager.Instance().getDevice(address);
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.e(TAG, "onCreate_Ex: " + ex.getMessage());
@@ -161,40 +159,36 @@ public class WPA8Fragment extends DeviceFragment {
 
     @Override
     public void setDevice(OznerDevice device) {
-
+        oldPreValue = oldThenValue = 0;
+        initSwitcherView(device.Type());
+        initWaterAttrInfo(device.Address());
+        if (mWaterPurifier != null) {
+            if (mWaterPurifier.Address() != device.Address()) {
+                mWaterPurifier = null;
+                mWaterPurifier = (WaterPurifier_Mx) device;
+                refreshUIData();
+            }
+        } else {
+            mWaterPurifier = (WaterPurifier_Mx) device;
+            refreshUIData();
+        }
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        initSwitcherView(mWaterPurifier.Type());
         initWaterAttrInfo(address);
-
-        sbTest.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                showTemp(progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-//        showTemp(60);
         super.onActivityCreated(savedInstanceState);
     }
 
 
     /**
      * 显示温度
+     *
      * @param temp
      */
-    private void showTemp(int temp){
-        int color =  WPTempColorUtil.getColor(temp);
+    private void showTemp(int temp) {
+        int color = WPTempColorUtil.getColor(temp);
 
 
         StringBuffer sb = new StringBuffer(String.valueOf(temp));
@@ -204,14 +198,14 @@ public class WPA8Fragment extends DeviceFragment {
         Parcel parcel = Parcel.obtain();
         parcel.writeString("℃");
 
-        ssb.setSpan(new TextAppearanceSpan("serif", Typeface.NORMAL, DensityUtil.dp2px(getContext(),15),null,null),ssb.toString().indexOf("℃"),ssb.length(),Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-        ssb.setSpan(new SuperscriptSpan(parcel),ssb.toString().indexOf("℃"),ssb.length(),Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        ssb.setSpan(new TextAppearanceSpan("serif", Typeface.NORMAL, DensityUtil.dp2px(getContext(), 15), null, null), ssb.toString().indexOf("℃"), ssb.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        ssb.setSpan(new SuperscriptSpan(parcel), ssb.toString().indexOf("℃"), ssb.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 //
         parcel.recycle();
 
 //        unit.setSpan(new TextAppearanceSpan("serif", Typeface.NORMAL, DensityUtil.dp2px(getContext(),25),null,null),0,unit.length(),Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 //        ssb.append(unit);
-        ssb.setSpan(new ForegroundColorSpan(color),0,ssb.length(),Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        ssb.setSpan(new ForegroundColorSpan(color), 0, ssb.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
 
         tvTemp.setText(ssb);
@@ -230,13 +224,13 @@ public class WPA8Fragment extends DeviceFragment {
                 waterNetInfoManager = new WaterNetInfoManager(getContext());
             }
 //
-            //获取设备属性
-            if (purifierAttr != null) {
-                Log.e(TAG, "initWaterAttrInfo: " + purifierAttr.getDeviceType()
-                        + " ,hasHot:" + purifierAttr.getHasHot()
-                        + " ,hasCool:" + purifierAttr.getHasCool());
-                initSwitcherView(purifierAttr.getDeviceType());
-            }
+//            //获取设备属性
+//            if (purifierAttr != null) {
+//                Log.e(TAG, "initWaterAttrInfo: " + purifierAttr.getDeviceType()
+//                        + " ,hasHot:" + purifierAttr.getHasHot()
+//                        + " ,hasCool:" + purifierAttr.getHasCool());
+//                initSwitcherView(purifierAttr.getDeviceType());
+//            }
 
             //获取滤芯信息
             if (purifierAttr != null && DateUtils.isToday(purifierAttr.getFilterNowtime())) {
@@ -262,9 +256,8 @@ public class WPA8Fragment extends DeviceFragment {
      * 初始化开关布局,并添加点击事件
      */
     private void initSwitcherView(String type) {
-//        deviceType = type;
-        switch (deviceType) {
-            case A8Type.TYPE_A8DRF:
+        switch (type) {
+            case A8_DRF:
                 ViewStub vstubtwo = (ViewStub) getView().findViewById(R.id.vs_switcher_two);
                 vstubtwo.inflate();
                 tvHotswitch = (TextView) getView().findViewById(R.id.tv_hotswitch);
@@ -278,8 +271,7 @@ public class WPA8Fragment extends DeviceFragment {
                 });
                 break;
 
-            case A8Type.TYPE_A8FSF:
-            case A8Type.TYPE_A8CSF:
+            case LG_DRF:
                 ViewStub vstubthree = (ViewStub) getView().findViewById(R.id.vs_switcher_three);
                 vstubthree.inflate();
                 tvCoolswitch = (TextView) getView().findViewById(R.id.tv_coolswitch);
@@ -460,6 +452,7 @@ public class WPA8Fragment extends DeviceFragment {
                 refreshConnectState();
                 refreshSensorData();
                 refreshSwitchState();
+                refreshTemp();
             } else {
                 llayDeviceConnectTip.setVisibility(View.INVISIBLE);
                 tvPreValue.setText(R.string.state_null);
@@ -474,10 +467,21 @@ public class WPA8Fragment extends DeviceFragment {
     }
 
     /**
+     * 刷新水温
+     */
+    private void refreshTemp() {
+        if (mWaterPurifier.sensor().Temperature() != 65535) {
+            showTemp(mWaterPurifier.sensor().Temperature());
+        } else {
+            showTemp(0);
+        }
+    }
+
+    /**
      * 刷新开关状态
      */
     private void refreshSwitchState() {
-        if(rlayPowerswitch == null){
+        if (rlayPowerswitch == null) {
             return;
         }
         if (mWaterPurifier != null) {
@@ -489,7 +493,7 @@ public class WPA8Fragment extends DeviceFragment {
             isHotOn = false;
             isCoolOn = false;
         }
-        if (!deviceType.equals(A8Type.TYPE_A8DRF)) {
+        if (!deviceType.equals(A8_DRF)) {
             switchCool(isCoolOn);
         }
         switchHot(isHotOn);
@@ -640,7 +644,7 @@ public class WPA8Fragment extends DeviceFragment {
      * @param isOn
      */
     public void switchPower(boolean isOn) {
-        if (!deviceType.equals(A8Type.TYPE_A8DRF)) {
+        if (!deviceType.equals(A8_DRF)) {
             if (!isOn && isCoolOn) {
                 switchCool(isOn);
             }

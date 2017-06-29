@@ -39,6 +39,7 @@ import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
 import com.ozner.wifi.WifiPair;
+import com.ozner.wifi.mxchip.Fog2.FogPairType;
 
 import java.util.Date;
 
@@ -228,7 +229,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
                 }
                 //开始配网
                 try {
-                    wifiPair.pair(tvSelectedWifi.getText().toString(), etPassword.getText().toString());
+                    wifiPair.pair(tvSelectedWifi.getText().toString(), etPassword.getText().toString(), FogPairType.FOG_WATER);
                     showMatchDevice();
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -251,7 +252,7 @@ public class MatchWaterPuriferActivity extends BaseActivity {
             try {
                 Log.e(TAG, "saveDevice:sleDeviceIo_info: " + selDeviceIo.getType() + " , " + selDeviceIo.name);
                 OznerDevice device = OznerDeviceManager.Instance().getDevice(selDeviceIo);
-                if (device != null && WaterPurifierManager.IsWaterPurifier(device.Type())) {
+                if (device != null && WaterPurifierManager.isWifiWaterPurifier(device.Type())) {
                     Log.e(TAG, "saveDevice: " + device.Type());
                     OznerDeviceManager.Instance().save(device);
                     UserDataPreference.SetUserData(this, UserDataPreference.SelMac, device.Address());//保存选中的设备mac

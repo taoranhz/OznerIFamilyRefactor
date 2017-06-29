@@ -1,6 +1,5 @@
 package com.ozner.cup.Device.WaterPurifier;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.OznerDeviceSettings;
-import com.ozner.cup.DBHelper.WaterPurifierAttr;
 import com.ozner.cup.Device.DeviceFragment;
 import com.ozner.cup.Main.MainActivity;
 import com.ozner.cup.R;
@@ -36,6 +34,7 @@ import butterknife.InjectView;
  */
 public class WPContainerFragment extends DeviceFragment {
     private static final String TAG = "WPContainerFragment";
+
     @InjectView(R.id.title)
     TextView title;
     @InjectView(R.id.toolbar)
@@ -44,11 +43,11 @@ public class WPContainerFragment extends DeviceFragment {
     //    private WaterPurifier mWaterPurifer;
     private String mUserid;
     private OznerDeviceSettings oznerSetting;
-    private WaterPurifierAttr purifierAttr;
-    private WaterNetInfoManager waterNetInfoManager;
+//    private WaterPurifierAttr purifierAttr;
+//    private WaterNetInfoManager waterNetInfoManager;
     private String mac;
     private DeviceFragment waterFragment;
-    private ProgressDialog progressDialog;
+//    private ProgressDialog progressDialog;
 
 
     /**
@@ -102,8 +101,8 @@ public class WPContainerFragment extends DeviceFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         Log.e(TAG, "onActivityCreated: ");
         ((MainActivity) getActivity()).initActionBarToggle(toolbar);
-        initWaterAttrInfo(oznerSetting.getMac());
-
+//        initWaterAttrInfo(oznerSetting.getMac());
+        loadEspecialView(oznerSetting.getDevcieType());
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -131,37 +130,37 @@ public class WPContainerFragment extends DeviceFragment {
     }
 
 
-    /**
-     * 初始化净水器属性信息
-     *
-     * @param mac
-     */
-    private void initWaterAttrInfo(String mac) {
-        Log.e(TAG, "initWaterAttrInfo: ");
-        try {
-            purifierAttr = DBManager.getInstance(getContext()).getWaterAttr(mac);
-            if (null == waterNetInfoManager) {
-                waterNetInfoManager = new WaterNetInfoManager(getContext());
-            }
-            //获取设备属性
-            if (purifierAttr != null && purifierAttr.getDeviceType() != null && !purifierAttr.getDeviceType().isEmpty()) {
-                Log.e(TAG, "initWaterAttrInfo: " + purifierAttr.getDeviceType() + " ,hasHot:" + purifierAttr.getHasHot() + " ,hasCool:" + purifierAttr.getHasCool());
-                loadDetailView(purifierAttr);
-                // TODO: 2017/5/25 根据机型加载相应页面
-            } else {
-                startLoadingView();
-                waterNetInfoManager.getMatchineType(mac, new WaterNetInfoManager.IWaterAttr() {
-                    @Override
-                    public void onResult(WaterPurifierAttr attr) {
-                        loadDetailView(attr);
-                    }
-                });
-            }
-        } catch (Exception ex) {
-            Log.e(TAG, "initWaterAttrInfo_Ex: " + ex.getMessage());
-            loadDetailView(null);
-        }
-    }
+//    /**
+//     * 初始化净水器属性信息
+//     *
+//     * @param mac
+//     */
+//    private void initWaterAttrInfo(String mac) {
+//        Log.e(TAG, "initWaterAttrInfo: ");
+//        try {
+//            purifierAttr = DBManager.getInstance(getContext()).getWaterAttr(mac);
+//            if (null == waterNetInfoManager) {
+//                waterNetInfoManager = new WaterNetInfoManager(getContext());
+//            }
+//            //获取设备属性
+//            if (purifierAttr != null && purifierAttr.getDeviceType() != null && !purifierAttr.getDeviceType().isEmpty()) {
+//                Log.e(TAG, "initWaterAttrInfo: " + purifierAttr.getDeviceType() + " ,hasHot:" + purifierAttr.getHasHot() + " ,hasCool:" + purifierAttr.getHasCool());
+//                loadDetailView(purifierAttr);
+//                // TODO: 2017/5/25 根据机型加载相应页面
+//            } else {
+//                startLoadingView();
+//                waterNetInfoManager.getMatchineType(mac, new WaterNetInfoManager.IWaterAttr() {
+//                    @Override
+//                    public void onResult(WaterPurifierAttr attr) {
+//                        loadDetailView(attr);
+//                    }
+//                });
+//            }
+//        } catch (Exception ex) {
+//            Log.e(TAG, "initWaterAttrInfo_Ex: " + ex.getMessage());
+//            loadDetailView(null);
+//        }
+//    }
 
 
     /**
@@ -179,27 +178,27 @@ public class WPContainerFragment extends DeviceFragment {
 
     }
 
-    /**
-     * 开始加载页面动画
-     */
-    private void startLoadingView() {
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("正在加载页面");
-        progressDialog.setCancelable(false);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
-//        Dialog dialog = new Dialog(getContext());
-//        dialog.setContentView();
-    }
-
-    /**
-     * 结束加载页面动画
-     */
-    private void stopLoadingView() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.cancel();
-        }
-    }
+//    /**
+//     * 开始加载页面动画
+//     */
+//    private void startLoadingView() {
+//        progressDialog = new ProgressDialog(getContext());
+//        progressDialog.setMessage("正在加载页面");
+//        progressDialog.setCancelable(false);
+//        progressDialog.setCanceledOnTouchOutside(false);
+//        progressDialog.show();
+////        Dialog dialog = new Dialog(getContext());
+////        dialog.setContentView();
+//    }
+//
+//    /**
+//     * 结束加载页面动画
+//     */
+//    private void stopLoadingView() {
+//        if (progressDialog != null && progressDialog.isShowing()) {
+//            progressDialog.cancel();
+//        }
+//    }
 
     @Override
     public void onAttach(Context context) {
@@ -207,26 +206,26 @@ public class WPContainerFragment extends DeviceFragment {
         super.onAttach(context);
     }
 
-    /**
-     * 根据设备类型加载相应界面
-     *
-     * @param attr
-     */
-    private void loadDetailView(WaterPurifierAttr attr) {
-        Log.e(TAG, "loadDetailView: ");
-        stopLoadingView();
-//        loadOrgView();
-        if (attr != null) {
-            if (attr.getDeviceType() != null && !attr.getDeviceType().isEmpty()) {
-                // TODO: 2017/5/25 根据设备类型加载相应的布局
-                loadEspecialView(attr.getDeviceType());
-            } else {
-                loadOrgView();
-            }
-        } else {
-            loadOrgView();
-        }
-    }
+//    /**
+//     * 根据设备类型加载相应界面
+//     *
+//     * @param attr
+//     */
+//    private void loadDetailView(WaterPurifierAttr attr) {
+//        Log.e(TAG, "loadDetailView: ");
+//        stopLoadingView();
+////        loadOrgView();
+//        if (attr != null) {
+//            if (attr.getDeviceType() != null && !attr.getDeviceType().isEmpty()) {
+//                // TODO: 2017/5/25 根据设备类型加载相应的布局
+//                loadEspecialView(attr.getDeviceType());
+//            } else {
+//                loadOrgView();
+//            }
+//        } else {
+//            loadOrgView();
+//        }
+//    }
 
     /**
      * 加载特殊类型设备界面
@@ -235,11 +234,13 @@ public class WPContainerFragment extends DeviceFragment {
      */
     private void loadEspecialView(String deviceType) {
         switch (deviceType) {
-            case "A2B3(SF)":
-                Log.e(TAG, "loadEspecialView: A2B3(SF)");
-//                loadOrgView();
-//                loadA8View();
+            case WPLGFragment.A8_CSF:
+            case WPLGFragment.A8_FSF:
                 loadLGView();
+                break;
+            case WPA8Fragment.A8_DRF:
+            case WPA8Fragment.LG_DRF:
+                loadA8View();
                 break;
             default:
                 loadOrgView();

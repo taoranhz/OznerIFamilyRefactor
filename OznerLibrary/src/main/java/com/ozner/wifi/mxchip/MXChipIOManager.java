@@ -1,20 +1,13 @@
 package com.ozner.wifi.mxchip;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
-import com.mxchip.jmdns.JmdnsAPI;
-import com.mxchip.jmdns.JmdnsListener;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.IOManager;
 import com.ozner.device.OznerDeviceManager;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,14 +25,14 @@ public class MXChipIOManager extends IOManager {
     HashMap<String,String> listenDeviceList=new HashMap<>();
 
     final MQTTProxyImp mqttProxyImp = new MQTTProxyImp();
-    MQTTProxy proxy;
+    MQTTProxyMxchip proxy;
 
-    MXChipScanImp mxChipScanImp;
+//    MXChipScanImp mxChipScanImp;
     public MXChipIOManager(Context context) {
         super(context);
-        proxy = new MQTTProxy(context);
+        proxy = new MQTTProxyMxchip(context);
         proxy.registerListener(mqttProxyImp);
-        mxChipScanImp=new MXChipScanImp(context);
+//        mxChipScanImp=new MXChipScanImp(context);
     }
 
 
@@ -57,69 +50,6 @@ public class MXChipIOManager extends IOManager {
             return null;
 
     }
-    public void startScan()
-    {
-        mxChipScanImp.startScan();
-    }
-    public void stopScan()
-    {
-        mxChipScanImp.stopScan();
-    }
-    class MXChipScanImp implements JmdnsListener
-    {
-        JmdnsAPI mdnsApi=null;
-
-        public MXChipScanImp(Context context)
-        {
-            mdnsApi=new JmdnsAPI(context);
-        }
-
-        public static final String Extra_Address = "Address";
-        public static final String Extra_Model = "getType";
-        public void startScan()
-        {
-            mdnsApi.startMdnsService("_easylink._tcp.local.", this);
-
-        }
-        public void stopScan()
-        {
-            mdnsApi.stopMdnsService();
-        }
-
-
-        @Override
-        public void onJmdnsFind(JSONArray jsonArray) {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                try {
-                    JSONObject object = jsonArray.getJSONObject(i);
-                    String name = object.getString("deviceName");
-                    int p = name.indexOf("#");
-                    if (p > 0) {
-                        name = name.substring(p + 1);
-                        String deviceMAC = object.getString("deviceMac");
-                        if (deviceMAC==null) return;
-                        if (deviceMAC.isEmpty()) return;
-
-                        MXChipIO io = OznerDeviceManager.Instance().ioManagerList().mxChipIOManager().
-                                createMXChipDevice(deviceMAC, "FOG_HAOZE_AIR");
-                        io.name=name;
-
-                        Intent intent = new Intent(ACTION_SCANNER_FOUND);
-                        intent.putExtra(Extra_Address, deviceMAC);
-                        intent.putExtra(Extra_Model, "FOG_HAOZE_AIR");
-                        context().sendBroadcast(intent);
-                        if (proxy.isConnected())
-                            doAvailable(io);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-    }
-
-
 
     final static int delayedAvailableMessage=0x1000;
 
@@ -167,7 +97,7 @@ public class MXChipIOManager extends IOManager {
 
     @Override
     public void Start(String user,String token) {
-        proxy.start();
+                proxy.start();
     }
 
     @Override
@@ -180,38 +110,38 @@ public class MXChipIOManager extends IOManager {
         super.doChangeRunningMode();
     }
 
-    class MQTTProxyImp implements MQTTProxy.MQTTListener {
+    class MQTTProxyImp implements IMQTTListener {
 
         @Override
-        public void onConnected(MQTTProxy proxy) {
+        public void onConnected(SMQTTProxy proxy) {
             ArrayList<String> list;
             synchronized (listenDeviceList) {
                 list = new ArrayList<>(listenDeviceList.keySet());
             }
 
             for (String address:list) {
-                MXChipIO io=new MXChipIO(context(),proxy,address,listenDeviceList.get(address));
+                MXChipIO io=new MXChipIO(context(),(MQTTProxyMxchip)proxy,address,listenDeviceList.get(address));
                 doAvailable(io);
             }
 
         }
 
         @Override
-        public void onDisconnected(MQTTProxy proxy) {
+        public void onDisconnected(SMQTTProxy proxy) {
             ArrayList<String> list;
             synchronized (listenDeviceList) {
                 list = new ArrayList<>(listenDeviceList.keySet());
             }
 
             for (String address:list) {
-                MXChipIO io=new MXChipIO(context(),proxy,address,listenDeviceList.get(address));
+                MXChipIO io=new MXChipIO(context(),(MQTTProxyMxchip)proxy,address,listenDeviceList.get(address));
                 if (io!=null)
                 doUnavailable(io);
             }
         }
 
         @Override
-        public void onPublish(MQTTProxy proxy, String topic, byte[] data) {
+        public void onPublish(SMQTTProxy proxy, String topic, byte[] data) {
 
         }
     }

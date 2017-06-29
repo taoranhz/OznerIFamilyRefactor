@@ -4,32 +4,37 @@ import android.content.Context;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Message;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
-import com.mxchip.jmdns.JmdnsAPI;
-import com.mxchip.jmdns.JmdnsListener;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.OznerDeviceManager;
 import com.ozner.util.Helper;
 import com.ozner.util.HttpUtil;
+import com.ozner.wifi.mxchip.Fog2.FogPairImp;
+import com.ozner.wifi.mxchip.Fog2.FogPairType;
 import com.ozner.wifi.mxchip.MXChipIO;
 import com.ozner.wifi.mxchip.Pair.ConfigurationDevice;
 import com.ozner.wifi.mxchip.Pair.EasyLinkSender;
 import com.ozner.wifi.mxchip.Pair.FTC;
 import com.ozner.wifi.mxchip.Pair.FTC_Listener;
+import com.ozner.wifi.mxchip.ThreadManager;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 
+import io.fogcloud.fog_mdns.helper.SearchDeviceCallBack;
+
 /**
  * Created by zhiyongxu on 16/5/12.
  */
 public class WifiPair {
+    private static final String TAG = "WifiPair";
 
     public interface WifiPairCallback {
         /**
@@ -94,22 +99,6 @@ public class WifiPair {
     public static class UnknownException extends Exception {
     }
 
-    /**
-     * 其它用户拥有这个设备
-     */
-    public static class AylaOtherUserException extends Exception {
-        AylaOtherUserException(String message) {
-            super(message);
-        }
-
-    }
-
-    public static class AylaException extends Exception {
-        public AylaException(String message) {
-            super(message);
-        }
-    }
-
     private WifiPairCallback callback = null;
     private String ssid = null;
     private String password = null;
@@ -120,6 +109,10 @@ public class WifiPair {
     private ThreadHandler runHandler = null;
     private int errorCount = 0;
     Object waitObject = new Object();
+    private PairHander pairHander;
+    private FogPairImp fogPairImp;
+    private boolean isAcitving = false;
+    private boolean isComplete = false;
 
     private void wait(int time) throws InterruptedException {
         synchronized (waitObject) {
@@ -136,8 +129,10 @@ public class WifiPair {
 
     public WifiPair(Context context, WifiPairCallback callback)
             throws NullSSIDException {
+        pairHander = new PairHander();
         this.context = context;
         this.callback = callback;
+        this.fogPairImp = new FogPairImp(context, pairHander);
     }
 
     private void doPairFailure(Exception ex) {
@@ -151,11 +146,8 @@ public class WifiPair {
         stop();
     }
 
-//    public static boolean isAylaSSID(String ssid) {
-//        return ssid.matches(AylaIOManager.gblAmlDeviceSsidRegex);
-//    }
 
-    class MXChipPairImp implements FTC_Listener, Runnable, JmdnsListener {
+    class MXChipPairImp implements FTC_Listener, Runnable {//, JmdnsListener {
         /**
          * 默认1分钟配网超时
          */
@@ -207,8 +199,7 @@ public class WifiPair {
         @Override
         public void run() {
             try {
-
-                JmdnsAPI mdnsApi = new JmdnsAPI(context);
+                Log.e(TAG, "mx_run: 开始");
                 device = null;
                 deviceMAC = null;
                 WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
@@ -218,7 +209,7 @@ public class WifiPair {
                     doPairFailure(new WifiStatusException());
                     return;
                 }
-                callback.onStartPariMxChip();
+                pairHander.sendEmptyMessage(PairHander.START_MX_PAIR);
 
                 FTC ftc = new FTC(context, this);
                 try {
@@ -268,32 +259,36 @@ public class WifiPair {
                             MXChipIO io = OznerDeviceManager.Instance().ioManagerList().mxChipIOManager().
                                     createMXChipDevice(mac, device.Type);
                             if (io != null) {
-                                doComplete(io);
-                            } else
-                                doPairFailure(new UnknownException());
+                                pairHander.sendMessage(PairHander.COMPLETE, io);
+                            } else {
+                                pairHander.sendMessage(PairHander.FAILURE, new Exception(""));
+                            }
                             return;
                         }
                     }
                 }
-                callback.onWaitConnectWifi();
+                pairHander.sendEmptyMessage(PairHander.WAIT_CONNECT_WIFI);
 
-                //Thread.sleep(2000);
-                mdnsApi.startMdnsService("_easylink._tcp.local.", this);
+                Log.e(TAG, "run: 启动MDNS服务");
+                fogPairImp.startSearchService(new SearchCallback());
                 WifiPair.this.wait(MDNSTimeout);
-                mdnsApi.stopMdnsService();
+                fogPairImp.getMicoDev().stopSearchDevices(null);
 
+                Log.e(TAG, "run: deviceMac:" + deviceMAC);
                 if (Helper.StringIsNullOrEmpty(deviceMAC)) {
                     doPairFailure(new TimeoutException());
                     return;
                 }
-                callback.onActivateDevice();
-
+                Log.e(TAG, "run: 正在激活");
+                pairHander.sendEmptyMessage(PairHander.ACTIVATE_DEVICE);
                 String deviceId = "";
                 errorCount = 0;
                 while (errorCount < 3) {
+                    Log.e(TAG, "run: 1.0重新激活次数：" + errorCount);
                     try {
                         deviceId = ActiveDevice();
                     } catch (FileNotFoundException fe) {
+                        Log.e(TAG, "run: 激活_ex:" + fe.getMessage());
                         Thread.sleep(1000);
                         errorCount++;
                         continue;
@@ -324,283 +319,57 @@ public class WifiPair {
                         createMXChipDevice(deviceMAC, device.Type);
                 io.name = device.name;
                 if (io != null) {
-                    doComplete(io);
-                } else
-                    doPairFailure(null);
+//                    doComplete(io);
+                    pairHander.sendMessage(PairHander.COMPLETE, io);
+                } else {
+                    pairHander.sendMessage(PairHander.FAILURE, new Exception(""));
+//                    doPairFailure(null);
+                }
             } catch (Exception e) {
-                doPairFailure(e);
+                pairHander.sendMessage(PairHander.FAILURE, e);
+//                doPairFailure(e);
             } finally {
-
+                Log.e(TAG, "mx_run: 结束");
             }
         }
 
-        @Override
-        public void onJmdnsFind(JSONArray jsonArray) {
-            if (device == null) return;
-            for (int i = 0; i < jsonArray.length(); i++) {
-                try {
-                    JSONObject object = jsonArray.getJSONObject(i);
-                    String name = object.getString("deviceName");
-                    int p = name.indexOf("#");
-                    if (p > 0) {
-                        name = name.substring(p + 1);
-                        if (device.name.indexOf(name) > 0) {
-                            deviceMAC = object.getString("deviceMac");
-                            device.localIP = object.getString("deviceIP");
+        class SearchCallback extends SearchDeviceCallBack {
+
+            @Override
+            public void onDevicesFind(int code, JSONArray deviceStatus) {
+                Log.e(TAG, "onDevicesFind: isComplete:" + isComplete);
+                Log.e(TAG, "SearchCallback_onDevicesFind: " + deviceStatus);
+                if (isComplete) return;
+                for (int i = 0; i < deviceStatus.length(); i++) {
+                    try {
+                        JSONObject object = deviceStatus.getJSONObject(i);
+                        if (object.getString("Port").equals("8080")) {
+                            deviceMAC = object.getString("MAC");
+                            device.localIP = object.getString("IP");
                             set();
                         }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        Log.e(TAG, "SearchCallback_onDevicesFind_Ex: " + ex.getMessage());
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-
+                super.onDevicesFind(code, deviceStatus);
             }
         }
     }
 
-//    class AylaPairImp implements Runnable {
-//        private void doRegister(final AylaDevice device) {
-//            //callback.onActivateDevice();
-//            device.registrationType = AylaNetworks.AML_REGISTRATION_TYPE_AP_MODE;
-//            dbg.d("start registerNewDevice");
-//            AylaLanMode.enable(null, null);
-//            device.registerNewDevice(new Handler() {
-//                @Override
-//                public void handleMessage(Message msg) {
-//                    dbg.d("recv registerNewDevice:%s", msg.toString());
-//                    if (msg.what == AylaNetworks.AML_ERROR_OK) {
-//                        String jsonResults = (String) msg.obj;
-//                        AylaDevice device = AylaSystemUtils.gson.fromJson(jsonResults, AylaDevice.class);
-//                        AylaIO io = OznerDeviceManager.Instance().ioManagerList().aylaIOManager().createAylaIO(device);
-//                        doComplete(io);
-//
-//                        aylaFinally();
-//
-//                    } else {
-//                        if (errorCount < 5) {
-//                            errorCount++;
-//                            dbg.d("register error", msg.toString());
-//                            doRegister(device);
-//                            aylaFinally();
-//
-//                        } else {
-//                            String error = "registerNewDevice:" + msg.toString();
-//                            doPairFailure(new AylaOtherUserException(error));
-//                            aylaFinally();
-//
-//                        }
-//                    }
-//                    super.handleMessage(msg);
-//                }
-//            });
-//        }
-//
-//        private void confirmNewDeviceToService() {
-//            //确认设备连接WIFI
-//            callback.onWaitConnectWifi();
-//            dbg.d("start confirmNewDeviceToServiceConnection");
-//            AylaSetup.confirmNewDeviceToServiceConnection(new Handler() {
-//                @Override
-//                public void handleMessage(Message msg) {
-//                    dbg.d("recv confirmNewDeviceToServiceConnection:%s", msg.toString());
-//                    if (msg.what == AylaNetworks.AML_ERROR_OK) {
-//                        String jsonResults = (String) msg.obj;
-//                        AylaDevice device = AylaSystemUtils.gson.fromJson(jsonResults, AylaDevice.class);
-//
-//                        String json = null;
-//                        try {
-//                            json = HttpUtil.get(String.format("http://%s/status.json", device.lanIp));
-//                            if (!Helper.StringIsNullOrEmpty(json)) {
-//                                com.alibaba.fastjson.JSONObject object = JSON.parseObject(json);
-//                                String mac = object.getString("mac").toUpperCase();
-//                                dbg.d("设备JSON:%s", json);
-//                                BaseDeviceIO io = OznerDeviceManager.Instance().ioManagerList().aylaIOManager().getAvailableDevice(mac);
-//                                if (io == null) {
-//                                    doRegister(device);
-//                                } else {
-//                                    device.mac = mac;
-//                                    device.model = object.getString("Model");
-//                                    doComplete(io);
-//                                    set();
-//                                }
-//                            }
-//                        } catch (IOException e) {
-//                            set();
-//                            e.printStackTrace();
-//                        }
-//                        errorCount = 0;
-//                        doRegister(device);
-//                    } else {
-//                        if (errorCount < 5) {
-//                            errorCount++;
-//                            confirmNewDeviceToService();
-//                        } else {
-//                            String error = "confirmNewDeviceToServiceConnection:" + msg.toString();
-//                            doPairFailure(new AylaException(error));
-//                            set();
-//                            aylaFinally();
-//                        }
-//
-//                    }
-//
-//                    super.handleMessage(msg);
-//                }
-//            });
-//        }
-//
-//        private void aylaFinally() {
-//            //AylaSetup.exit();
-//        }
-//
-//        private void connectNewDeviceToService() {
-//            Map<String, Object> callParams = new HashMap<String, Object>();
-//            callParams.put(AylaNetworks.AML_SETUP_LOCATION_LONGITUDE, 0.00d);
-//            callParams.put(AylaNetworks.AML_SETUP_LOCATION_LATITUDE, 0.00d);
-//            //AylaModule device = AylaSystemUtils.gson.fromJson(jsonResults, AylaModule.class);
-//
-//            AylaSetup.lanSsid = ssid;
-//            AylaSetup.lanPassword = password;
-//
-//            callback.onSendConfiguration();
-//            dbg.d("start connectNewDeviceToService");
-//            //配置AYLA 设备的WIFI信息
-//            AylaSetup.connectNewDeviceToService(new Handler() {
-//                @Override
-//                public void handleMessage(Message msg) {
-//                    dbg.d("recv connectNewDeviceToService:%s", msg.toString());
-//
-//                    if (msg.what == AylaNetworks.AML_ERROR_OK) {
-//                        confirmNewDeviceToService();
-//                    } else {
-//                        String error = "connectNewDeviceToService:" + msg.toString();
-//
-//                        doPairFailure(new AylaException(error));
-//                        set();
-//                        aylaFinally();
-//                    }
-//
-//                    super.handleMessage(msg);
-//                }
-//
-//            }, callParams);
-//
-//        }
-//
-//        boolean isConnectToNewDevice = false;
-//
-//        private void checkDeviceScanAPs() {
-//            AylaSetup.getNewDeviceScanForAPs(new Handler() {
-//                @Override
-//                public void handleMessage(Message msg) {
-//                    if (msg.what == AylaNetworks.AML_ERROR_OK) {
-//                        String json = msg.obj.toString();
-//                        if (!Helper.StringIsNullOrEmpty(json)) {
-//
-//                                com.alibaba.fastjson.JSONArray results = com.alibaba.fastjson.JSONArray.parseArray(json);
-//                                if (results.size() > 0) {
-//                                    for (int i=0;i<results.size();i++)
-//                                    {
-//                                        com.alibaba.fastjson.JSONObject ap=results.getJSONObject(i);
-//                                        if (ap.getString("ssid").equalsIgnoreCase(ssid))
-//                                        {
-//                                            connectNewDeviceToService();
-//                                            return;
-//                                        }
-//                                    }
-//                                }
-//
-//                        }
-//
-//                        dbg.d(json);
-//                        String error = "getNewDeviceScanForAPs:not found AP";
-//                        doPairFailure(new AylaException(error));
-//                        set();
-//                        aylaFinally();
-//                    } else
-//                    {
-//                        String error = "getNewDeviceScanForAPs:" + msg.toString();
-//                        doPairFailure(new AylaException(error));
-//                        set();
-//                        aylaFinally();
-//                    }
-//                }
-//            });
-//        }
-//
-//        //开始连接AYLA AP
-//        private void connectDevice(AylaHostScanResults result) {
-//            AylaLanMode.disable();
-//            isConnectToNewDevice = false;
-//
-//            AylaSetup.newDevice.hostScanResults = result;
-//            //连接设备
-//            dbg.d("start connectToNewDevice");
-//            AylaSetup.connectToNewDevice(new Handler() {
-//                @Override
-//                public void handleMessage(Message msg) {
-//                    dbg.e("----------------------------------------------------------------------");
-//                    dbg.d("recv connectToNewDevice:%s", msg.toString());
-//                    String jsonResults = (String) msg.obj;
-//                    if (msg.what == AylaNetworks.AML_ERROR_OK) {
-//                        if (!isConnectToNewDevice) {
-//                            isConnectToNewDevice = true;
-//                            checkDeviceScanAPs();
-//                        }
-//                    } else {
-//
-//                        String error = "connectToNewDevice:" + msg.toString();
-//
-//                        doPairFailure(new AylaException(error));
-//                        set();
-//                        aylaFinally();
-//                    }
-//                }
-//            });
-//        }
-//
-//
-//        @Override
-//        public void run() {
-//            if (AylaUser.getCurrent().getAccessToken() == null) {
-//                callback.onPairFailure(new AylaException("not login"));
-//                return;
-//            }
-//            callback.onStartPairAyla();
-//
-//            AylaSetup.returnHostScanForNewDevices(new Handler() {
-//                @Override
-//                public void handleMessage(Message msg) {
-//                    if (msg.what == AylaNetworks.AML_ERROR_OK) {
-//                        String jsonResults = (String) msg.obj;
-//                        AylaHostScanResults[] scanResults = AylaSystemUtils.gson.fromJson(jsonResults, AylaHostScanResults[].class);
-//                        if (scanResults.length > 0) {
-//                            connectDevice(scanResults[0]);
-//
-//                        } else {
-//                            aylaFinally();
-//                            runNext();
-//                        }
-//                    } else {
-//                        aylaFinally();
-//                        runNext();
-//                    }
-//
-//                }
-//            });
-//        }
-//
-//    }
 
-    public void pair(String ssid, String password) throws PairRunningException {
-        runPairCount = 1;
+    public void pair(String ssid, String password, FogPairType pairType) throws PairRunningException {
+        Log.e(TAG, "pair: ssid:" + ssid + ",password:" + password);
         errorCount = 0;
+        isComplete = false;
+        isAcitving = false;
         this.ssid = ssid;
         this.password = password;
-        if (runHandler != null) {
-            throw new PairRunningException();
-        }
         startRunTime = new Date();
-        runHandler = new ThreadHandler();
+
+        fogPairImp.init(ssid, password, pairType);
+
         runNext();
     }
 
@@ -608,23 +377,137 @@ public class WifiPair {
 
         Date now = new Date();
         if ((now.getTime() - startRunTime.getTime()) > 2 * 60 * 1000) {
+            if (fogPairImp.isPairing()) {
+                fogPairImp.stop();
+            }
             doPairFailure(new TimeoutException());
             return;
         }
-//        if ((runPairCount % 3) == 0) {
-//            runHandler.post(new MXChipPairImp());
-//        } else {
-//            runHandler.post(new AylaPairImp());
-//        }
-        runHandler.post(new MXChipPairImp());
-        runPairCount++;
+
+        Log.e(TAG, "runNext:isPairing: " + fogPairImp.isPairing());
+        Log.e(TAG, "runNext: isAcitiving:" + isAcitving);
+        Log.e(TAG, "runNext: isComplete:" + isComplete);
+        if (!isComplete) {
+            if (!isAcitving) {
+                Log.e(TAG, "runNext: 1.0配网");
+                ThreadManager.getInstance().execute(new MXChipPairImp());
+            }
+            if (!fogPairImp.isPairing()) {
+                Log.e(TAG, "runNext: 2.0配网");
+                fogPairImp.start();
+            }
+        }
 
     }
 
     public void stop() {
-        runHandler.close();
-        runHandler = null;
+
+        Log.e(TAG, "stop: 停止配网");
+        boolean stopSucc = fogPairImp.stop();
+        Log.e(TAG, "fogPairImp_stop: " + stopSucc);
+        ThreadManager.getInstance().shutdownNow();
     }
 
+    Object obj = new Object();
+
+    /**
+     * 处理配网进度回调
+     */
+    public class PairHander extends ThreadHandler {
+        public static final int START_AYLA_PAIR = 1;//开始ayla配网
+        public static final int START_MX_PAIR = 2;//开始庆科配网，包括1.0和2.0
+        public static final int SEND_CONFIG = 3;//发送配置信息
+        public static final int WAIT_CONNECT_WIFI = 4;//等待连接WIFI
+        public static final int ACTIVATE_DEVICE = 5;//激活设备
+        public static final int COMPLETE = 6;//配网成功
+        public static final int FAILURE = 7;//配网失败
+
+        /**
+         * 内部发送信息
+         *
+         * @param what
+         * @param obj
+         */
+        public void sendMessage(int what, Object obj) {
+            Message msg = this.obtainMessage();
+            msg.what = what;
+            msg.obj = obj;
+            msg.sendToTarget();
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case START_AYLA_PAIR:
+                    if (callback != null) {
+                        callback.onStartPairAyla();
+                    }
+                    break;
+                case START_MX_PAIR:
+                    Log.e(TAG, "handleMessage: 开始配网");
+                    if (callback != null) {
+                        callback.onStartPariMxChip();
+                    }
+                    break;
+                case SEND_CONFIG:
+                    Log.e(TAG, "handleMessage: 发送设置");
+                    if (callback != null) {
+                        callback.onSendConfiguration();
+                    }
+                    break;
+                case WAIT_CONNECT_WIFI:
+                    Log.e(TAG, "handleMessage: 等待连接");
+                    if (callback != null) {
+                        callback.onWaitConnectWifi();
+                    }
+                    break;
+                case ACTIVATE_DEVICE:
+                    Log.e(TAG, "handleMessage: 激活设备");
+                    synchronized (obj) {
+                        if (!isAcitving) {
+                            isAcitving = true;
+                            if (callback != null) {
+                                callback.onActivateDevice();
+                            }
+                        }
+                    }
+                    break;
+                case COMPLETE:
+                    synchronized (obj) {
+                        if (!isComplete) {
+                            isAcitving = false;
+                            isComplete = true;
+                            Log.e(TAG, "handleMessage: 配网成功");
+                            try {
+                                BaseDeviceIO io = (BaseDeviceIO) msg.obj;
+                                if (callback != null) {
+                                    callback.onPairComplete(io);
+                                }
+                            } catch (Exception ex) {
+                                if (callback != null) {
+                                    callback.onPairComplete(null);
+                                }
+                            }
+                        }
+                        stop();
+                    }
+                    break;
+                case FAILURE:
+                    synchronized (obj) {
+                        if (!isComplete) {
+                            isComplete = true;
+                            isAcitving = false;
+                            Log.e(TAG, "handleMessage: 配网失败");
+                            Exception ex = (Exception) msg.obj;
+                            if (callback != null) {
+                                callback.onPairFailure(ex);
+                            }
+                        }
+                        stop();
+                    }
+                    break;
+            }
+        }
+    }
 
 }

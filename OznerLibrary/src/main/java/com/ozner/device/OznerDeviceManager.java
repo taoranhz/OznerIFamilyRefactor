@@ -3,10 +3,13 @@ package com.ozner.device;
 import android.content.Context;
 import android.content.Intent;
 
+import com.ozner.AirPurifier.AirPurifierManager;
+import com.ozner.WaterPurifier.WaterPurifierManager;
 import com.ozner.XObject;
 import com.ozner.util.Helper;
 import com.ozner.util.SQLiteDB;
 import com.ozner.util.dbg;
+import com.ozner.wifi.mxchip.Fog2.FogIO;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -308,7 +311,15 @@ public class OznerDeviceManager extends XObject {
         }
         for (BaseDeviceManager mgr : mManagers) {
             if (mgr.isMyDevice(io.Type)) {
-                OznerDevice device = mgr.loadDevice(io.getAddress(), io.Type, "");
+                OznerDevice device = null;
+                if(WaterPurifierManager.isFogDevice(io.Type)|| AirPurifierManager.isFogDevice(io.Type)){
+                    DeviceSetting devSetting = new DeviceSetting();
+                    devSetting.deviceId(((FogIO) io).getDeviceId());
+                    device = mgr.loadDevice(io.getAddress(), io.Type, devSetting.toString());
+                }else {
+                    device = mgr.loadDevice(io.getAddress(),io.Type,"");
+                }
+                
                 if (device != null) {
                     try {
                         device.Bind(io);

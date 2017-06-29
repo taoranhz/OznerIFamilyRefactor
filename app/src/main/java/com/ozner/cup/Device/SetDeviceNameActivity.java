@@ -145,7 +145,7 @@ public class SetDeviceNameActivity extends BaseActivity {
                         posAdapter.addData(item);
                     }
                     loadSavePos(UserDataPreference.CupPosSaveTag);
-                } else if (WaterPurifierManager.IsWaterPurifier(mDevice.Type())) {
+                } else if (WaterPurifierManager.isWifiWaterPurifier(mDevice.Type())) {
                     tv_customTitle.setText(R.string.my_water_purifier);
                     //加载默认地点
                     posArray = getResources().getStringArray(R.array.pos_water_defalut_array);
@@ -153,7 +153,8 @@ public class SetDeviceNameActivity extends BaseActivity {
                         posAdapter.addData(item);
                     }
                     loadSavePos(UserDataPreference.WaterPosSaveTag);
-                } else if (AirPurifierManager.IsBluetoothAirPurifier(mDevice.Type()) || AirPurifierManager.IsWifiAirPurifier(mDevice.Type())) {
+//                } else if (AirPurifierManager.IsBluetoothAirPurifier(mDevice.Type()) || AirPurifierManager.IsWifiAirPurifier(mDevice.Type())) {
+                } else if (AirPurifierManager.isAirPurifer(mDevice.Type())) {
                     tv_customTitle.setText(R.string.my_air_purifier);
                     //加载默认地点
                     posArray = getResources().getStringArray(R.array.pos_air_defalut_array);

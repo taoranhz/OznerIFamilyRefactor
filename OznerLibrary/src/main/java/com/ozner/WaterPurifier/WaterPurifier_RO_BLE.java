@@ -280,6 +280,11 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
     }
 
     @Override
+    protected int getTemperature() {
+        return settingExtra.heatTemperature;
+    }
+
+    @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();

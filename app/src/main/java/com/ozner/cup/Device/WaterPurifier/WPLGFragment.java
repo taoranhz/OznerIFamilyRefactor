@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ozner.WaterPurifier.WaterPurifier;
+import com.ozner.WaterPurifier.WaterPurifier_Mx;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.DBHelper.DBManager;
 import com.ozner.cup.DBHelper.WaterPurifierAttr;
@@ -36,9 +36,13 @@ import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.
+ * LGFragment和A8Fragment功能写反了，就这样吧，不改了
  */
 public class WPLGFragment extends DeviceFragment {
     private static final String TAG = "WPLGFragment";
+    public static final String A8_FSF = "f4edba26-549a-11e7-9baf-00163e120d98";//温度，三个开关
+    public static final String A8_CSF = "2821b472-5263-11e7-9baf-00163e120d98";//温度，三个开关
+
     private static final int NumSize = 60;
     private static final int TextSize = 40;
 
@@ -74,14 +78,14 @@ public class WPLGFragment extends DeviceFragment {
     RelativeLayout rlayCoolswitch;
 
     private String address;
-    private WaterPurifier mWaterPurifer;
+    private WaterPurifier mWaterPurifier;
     boolean isPowerOn = false;
     boolean isCoolOn = false;
     boolean isHotOn = false;
     Handler mHandler = new Handler();
     WaterPurifierMonitor waterMonitor;
     WaterPurifierAttr purifierAttr;
-    CountDownTimer downTimer;
+//    CountDownTimer downTimer;
 
     public static WPLGFragment newInstance(String mac) {
         Bundle args = new Bundle();
@@ -97,7 +101,7 @@ public class WPLGFragment extends DeviceFragment {
         try {
             Bundle bundle = getArguments();
             address = bundle.getString(DeviceFragment.DeviceAddress);
-            mWaterPurifer = (WaterPurifier) OznerDeviceManager.Instance().getDevice(address);
+            mWaterPurifier = (WaterPurifier) OznerDeviceManager.Instance().getDevice(address);
             purifierAttr = DBManager.getInstance(getContext()).getWaterAttr(address);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -122,13 +126,23 @@ public class WPLGFragment extends DeviceFragment {
 
     @Override
     public void setDevice(OznerDevice device) {
-
+//        initWaterAttrInfo(device.Address());
+        if (mWaterPurifier != null) {
+            if (mWaterPurifier.Address() != device.Address()) {
+                mWaterPurifier = null;
+                mWaterPurifier = (WaterPurifier_Mx) device;
+                refreshUIData();
+            }
+        } else {
+            mWaterPurifier = (WaterPurifier_Mx) device;
+            refreshUIData();
+        }
     }
 
     @Override
     protected void refreshUIData() {
         if (isWaterPuriferAdd()) {
-            if (mWaterPurifer != null && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+            if (mWaterPurifier != null && mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
                 Log.e(TAG, "refreshUIData: ");
                 refreshConnectState();
                 refreshSensorData();
@@ -142,13 +156,16 @@ public class WPLGFragment extends DeviceFragment {
         }
     }
 
-    private boolean isStart = false;
-
     /**
      * 刷新传感器数据
      */
     private void refreshSensorData() {
 //        refreshTemp(0);
+        if (mWaterPurifier.sensor().Temperature() != 65535) {
+            refreshTemp(mWaterPurifier.sensor().Temperature());
+        } else {
+            refreshTemp(0);
+        }
 
     }
 
@@ -180,10 +197,10 @@ public class WPLGFragment extends DeviceFragment {
      * 刷新开关状态
      */
     private void refreshSwitchState() {
-        if (mWaterPurifer != null) {
-            isPowerOn = mWaterPurifer.status().Power();
-            isHotOn = mWaterPurifer.status().Hot();
-            isCoolOn = mWaterPurifer.status().Cool();
+        if (mWaterPurifier != null) {
+            isPowerOn = mWaterPurifier.status().Power();
+            isHotOn = mWaterPurifier.status().Hot();
+            isCoolOn = mWaterPurifier.status().Cool();
         } else {
             isPowerOn = false;
             isHotOn = false;
@@ -209,33 +226,33 @@ public class WPLGFragment extends DeviceFragment {
         super.onPause();
     }
 
-    //测试效果代码，最终删除
-    @Override
-    public void onStart() {
-        if (downTimer == null) {
-            downTimer = new CountDownTimer(100000, 200) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    if (isAdded())
-                        refreshTemp((int) (millisUntilFinished / 1000));
-                }
-
-                @Override
-                public void onFinish() {
-                    downTimer.start();
-                }
-            };
-            downTimer.start();
-        }
-        super.onStart();
-    }
+//    //测试效果代码，最终删除
+//    @Override
+//    public void onStart() {
+//        if (downTimer == null) {
+//            downTimer = new CountDownTimer(100000, 200) {
+//                @Override
+//                public void onTick(long millisUntilFinished) {
+//                    if (isAdded())
+//                        refreshTemp((int) (millisUntilFinished / 1000));
+//                }
+//
+//                @Override
+//                public void onFinish() {
+//                    downTimer.start();
+//                }
+//            };
+//            downTimer.start();
+//        }
+//        super.onStart();
+//    }
 
     @Override
     public void onStop() {
-        if (downTimer != null) {
-            downTimer.cancel();
-            downTimer = null;
-        }
+//        if (downTimer != null) {
+//            downTimer.cancel();
+//            downTimer = null;
+//        }
         super.onStop();
     }
 
@@ -243,22 +260,22 @@ public class WPLGFragment extends DeviceFragment {
      * 刷新连接状态
      */
     private void refreshConnectState() {
-        if (mWaterPurifer != null) {
-            Log.e(TAG, "refreshConnectState: " + mWaterPurifer.toString());
+        if (mWaterPurifier != null) {
+            Log.e(TAG, "refreshConnectState: " + mWaterPurifier.toString());
             if (ivDeviceConnectIcon.getAnimation() == null) {
                 ivDeviceConnectIcon.setAnimation(rotateAnimation);
             }
-            if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
+            if (mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connecting) {
                 llayDeviceConnectTip.setVisibility(View.VISIBLE);
                 tvDeviceConnectTips.setText(R.string.device_connecting);
                 ivDeviceConnectIcon.setImageResource(R.drawable.data_loading);
                 ivDeviceConnectIcon.getAnimation().start();
-            } else if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
+            } else if (mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
                 llayDeviceConnectTip.setVisibility(View.INVISIBLE);
                 if (ivDeviceConnectIcon.getAnimation() != null) {
                     ivDeviceConnectIcon.getAnimation().cancel();
                 }
-            } else if (mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
+            } else if (mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Disconnect) {
                 llayDeviceConnectTip.setVisibility(View.VISIBLE);
                 tvDeviceConnectTips.setText(R.string.device_unconnected);
                 if (ivDeviceConnectIcon.getAnimation() != null) {
@@ -274,9 +291,9 @@ public class WPLGFragment extends DeviceFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_setting:
-                if (mWaterPurifer != null) {
+                if (mWaterPurifier != null) {
                     Intent setupIntent = new Intent(getContext(), SetupWaterActivity.class);
-                    setupIntent.putExtra(Contacts.PARMS_MAC, mWaterPurifer.Address());
+                    setupIntent.putExtra(Contacts.PARMS_MAC, mWaterPurifier.Address());
                     if (purifierAttr != null) {
                         setupIntent.putExtra(Contacts.PARMS_URL, purifierAttr.getSmlinkurl());
                     }
@@ -286,24 +303,24 @@ public class WPLGFragment extends DeviceFragment {
                 }
                 break;
             case R.id.rlay_powerswitch:
-                if (mWaterPurifer != null
-                        && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
-                        && !mWaterPurifer.isOffline()) {
-                    isPowerOn = !mWaterPurifer.status().Power();
+                if (mWaterPurifier != null
+                        && mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
+                        && !mWaterPurifier.isOffline()) {
+                    isPowerOn = !mWaterPurifier.status().Power();
                     switchPower(isPowerOn);
-                    mWaterPurifer.status().setPower(isPowerOn, new SwitchCallback());
+                    mWaterPurifier.status().setPower(isPowerOn, new SwitchCallback());
                 } else {
                     showCenterToast(R.string.device_disConnect);
                 }
                 break;
             case R.id.rlay_hotswitch:
-                if (mWaterPurifer != null
-                        && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
-                        && !mWaterPurifer.isOffline()) {
+                if (mWaterPurifier != null
+                        && mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
+                        && !mWaterPurifier.isOffline()) {
                     if (isPowerOn) {
-                        isHotOn = !mWaterPurifer.status().Hot();
+                        isHotOn = !mWaterPurifier.status().Hot();
                         switchHot(isHotOn);
-                        mWaterPurifer.status().setHot(isHotOn, new SwitchCallback());
+                        mWaterPurifier.status().setHot(isHotOn, new SwitchCallback());
                     } else {
                         showCenterToast(R.string.please_open_power);
                     }
@@ -312,13 +329,13 @@ public class WPLGFragment extends DeviceFragment {
                 }
                 break;
             case R.id.rlay_coolswitch:
-                if (mWaterPurifer != null
-                        && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
-                        && !mWaterPurifer.isOffline()) {
+                if (mWaterPurifier != null
+                        && mWaterPurifier.connectStatus() == BaseDeviceIO.ConnectStatus.Connected
+                        && !mWaterPurifier.isOffline()) {
                     if (isPowerOn) {
-                        isCoolOn = !mWaterPurifer.status().Cool();
+                        isCoolOn = !mWaterPurifier.status().Cool();
                         switchCool(isCoolOn);
-                        mWaterPurifer.status().setCool(isCoolOn, new SwitchCallback());
+                        mWaterPurifier.status().setCool(isCoolOn, new SwitchCallback());
                     } else {
                         showCenterToast(R.string.please_open_power);
                     }

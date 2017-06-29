@@ -218,7 +218,7 @@ public class MatchROWaterPuriferActivity extends BaseActivity {
     private void saveDevice(BaseDeviceIO deviceIo) {
         try {
             OznerDevice device = OznerDeviceManager.Instance().getDevice(deviceIo);
-            if (device != null && WaterPurifierManager.IsWaterPurifier(device.Type())) {
+            if (device != null && WaterPurifierManager.isBluetoothDevice(device.Type())) {
                 OznerDeviceManager.Instance().save(device);
                 UserDataPreference.SetUserData(this, UserDataPreference.SelMac, device.Address());//保存选中的设备mac
                 if (etDeviceName.getText().length() > 0) {

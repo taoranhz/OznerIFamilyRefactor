@@ -23,6 +23,7 @@ public abstract class OznerDevice extends XObject {
     private BaseDeviceIO deviceIO;
     private DeviceSetting setting;
     private String Type;
+    private String deviceid;
 
     final static deviceTimerLoop glb_timerLoop = new deviceTimerLoop();
 
@@ -115,6 +116,7 @@ public abstract class OznerDevice extends XObject {
         this.address = Address;
         this.Type = Type;
         this.setting = initSetting(Setting);
+        this.deviceid = setting.deviceId();
         if (Helper.StringIsNullOrEmpty(setting.name())) {
             setting.name(getDefaultName());
         }
@@ -186,7 +188,9 @@ public abstract class OznerDevice extends XObject {
         return setting.name();
     }
 
-
+    public String deviceID(){
+        return deviceid;
+    }
     /**
      * 蓝牙控制对象
      *

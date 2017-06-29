@@ -101,7 +101,7 @@ public class WPNormalFragment extends DeviceFragment {
     boolean isPowerOn = false;
     boolean isCoolOn = false;
     boolean isHotOn = false;
-//    private String mUserid;
+    //    private String mUserid;
 //    private OznerDeviceSettings oznerSetting;
     private WaterPurifier mWaterPurifier;
     WaterPurifierAttr purifierAttr;
@@ -155,8 +155,20 @@ public class WPNormalFragment extends DeviceFragment {
     @Override
     public void setDevice(OznerDevice device) {
         Log.e(TAG, "setDevice: ");
+        oldPreValue = oldThenValue = 0;
+        initWaterAttrInfo(device.Address());
+        if (mWaterPurifier != null) {
+            if (mWaterPurifier.Address() != device.Address()) {
+                mWaterPurifier = null;
+                mWaterPurifier = (WaterPurifier) device;
+                refreshUIData();
+            }
+        } else {
+            mWaterPurifier = (WaterPurifier) device;
+            refreshUIData();
+        }
     }
-    
+
 //    public void setDevice(OznerDevice device){
 //        Log.e(TAG, "setDevice: ");
 //        oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, device.Address());
@@ -188,8 +200,8 @@ public class WPNormalFragment extends DeviceFragment {
 
             //获取设备属性
             if (purifierAttr != null && purifierAttr.getDeviceType() != null && !purifierAttr.getDeviceType().isEmpty()) {
-                Log.e(TAG, "initWaterAttrInfo: " + purifierAttr.getDeviceType() 
-                        + " ,hasHot:" + purifierAttr.getHasHot() 
+                Log.e(TAG, "initWaterAttrInfo: " + purifierAttr.getDeviceType()
+                        + " ,hasHot:" + purifierAttr.getHasHot()
                         + " ,hasCool:" + purifierAttr.getHasCool());
                 refreshWaterSwitcher(purifierAttr);
             }
@@ -220,7 +232,6 @@ public class WPNormalFragment extends DeviceFragment {
             Log.e(TAG, "initWaterAttrInfo_Ex: " + ex.getMessage());
         }
     }
-
 
 
     @OnClick({R.id.rlay_filter, R.id.iv_setting, R.id.llay_tds_detail, R.id.rlay_powerswitch, R.id.rlay_hotswitch, R.id.rlay_coolswitch})
@@ -329,6 +340,7 @@ public class WPNormalFragment extends DeviceFragment {
             }
         }
     }
+
     /**
      * 刷新开关状态
      */
@@ -384,6 +396,7 @@ public class WPNormalFragment extends DeviceFragment {
             getContext().unregisterReceiver(waterMonitor);
         }
     }
+
     /**
      * 刷新传感器数据
      */
@@ -474,7 +487,7 @@ public class WPNormalFragment extends DeviceFragment {
     private boolean isWaterPuriferAdd() {
         return !WPNormalFragment.this.isRemoving() && !WPNormalFragment.this.isDetached() && WPNormalFragment.this.isAdded();
     }
-    
+
     /**
      * 显示滤芯百分比
      *
@@ -683,7 +696,7 @@ public class WPNormalFragment extends DeviceFragment {
             tdsSensorManager.updateTds(mWaterPurifier.Address(), mWaterPurifier.Type(), tds, beforeTds, "", null);
         }
     }
-    
+
     /**
      * 切换制冷开关
      *
@@ -707,7 +720,7 @@ public class WPNormalFragment extends DeviceFragment {
         tvHotswitch.setSelected(isOn);
         isHotOn = isOn;
     }
-    
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

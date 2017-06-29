@@ -488,8 +488,8 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
             } else if (deviceType.equals(RankType.TdsPenType)) {
                 typeResId = R.mipmap.connect_bluetooth_on;
                 setItemSelected(holder, isSelected, R.mipmap.icon_tdspen_on, R.mipmap.icon_tdspen_off);
-            } else if (WaterPurifierManager.IsWaterPurifier(deviceType)) {
-                if ("Ozner RO".equals(deviceType)) {
+            } else if (WaterPurifierManager.isWaterPurifier(deviceType)) {
+                if (WaterPurifierManager.isBluetoothDevice(deviceType)) {
                     typeResId = R.mipmap.connect_bluetooth_on;
                     setItemSelected(holder, isSelected, R.drawable.ro_water, R.drawable.ropurifier_match_left);
                 } else {
@@ -497,11 +497,11 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
                     typeResId = R.mipmap.connect_wifi_on;
                     setItemSelected(holder, isSelected, R.mipmap.icon_water_purifier_on, R.mipmap.icon_water_purifier_off);
                 }
-            } else if (AirPurifierManager.IsBluetoothAirPurifier(deviceType)) {
+            } else if (AirPurifierManager.isBluetoothAirPurifier(deviceType)) {
                 // TODO: 2016/11/4 蓝牙空净
                 typeResId = R.mipmap.connect_bluetooth_on;
                 setItemSelected(holder, isSelected, R.mipmap.icon_air_purifier_desk_on, R.mipmap.icon_air_purifier_desk_off);
-            } else if (AirPurifierManager.IsWifiAirPurifier(deviceType)) {
+            } else if (AirPurifierManager.isWifiAirPurifier(deviceType)) {
                 // TODO: 2016/11/4 WiFi空净
                 typeResId = R.mipmap.connect_wifi_on;
                 setItemSelected(holder, isSelected, R.mipmap.icon_air_purifier_ver_on, R.mipmap.icon_air_purifier_ver_off);

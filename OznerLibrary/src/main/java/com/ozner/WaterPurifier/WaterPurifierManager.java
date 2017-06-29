@@ -7,14 +7,20 @@ import com.ozner.bluetooth.BluetoothScanResponse;
 import com.ozner.bluetooth.IBluetoothScanResponseParser;
 import com.ozner.device.BaseDeviceIO;
 import com.ozner.device.BaseDeviceManager;
+import com.ozner.device.DeviceSetting;
 import com.ozner.device.OznerDevice;
 import com.ozner.device.OznerDeviceManager;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by xzyxd on 2015/11/2.
  */
 public class WaterPurifierManager extends BaseDeviceManager {
-
+    private static Set<String> waterFogSet = new HashSet<>();
+    private static Set<String> waterMxchipSet = new HashSet<>();
+    private static Set<String> waterBluetoothSet = new HashSet<>();
 
     IBluetoothScanResponseParser bluetoothScanResponseParser = new IBluetoothScanResponseParser() {
         @Override
@@ -30,59 +36,90 @@ public class WaterPurifierManager extends BaseDeviceManager {
         OznerDeviceManager.Instance().ioManagerList().bluetoothIOMgr().registerScanResponseParser(bluetoothScanResponseParser);
     }
 
-    public static boolean IsWaterPurifier(String Model) {
-        if (Model == null) return false;
-        if (Model.trim().equals("MXCHIP_HAOZE_Water"))
-        {
-            return true;
-        }
-        if (Model.trim().equals("AY001MAB1"))
-        {
-            return true;
-        }
-        if (Model.trim().equals("Ozner RO"))
-        {
-            return true;
-        }
-        if (Model.trim().equals("16a21bd6"))
-        {
-            return true;
-        }
-        if (Model.trim().equals("RO Comml")) {
-            return true;
-        }
+    static {
+        //wifi 1.0 净水器
+        waterMxchipSet.add("MXCHIP_HAOZE_Water");
+//        waterMxchipSet.add("AY001MAB1");
+        waterMxchipSet.add("16a21bd6");
 
-        return false;
+
+        //wifi 2.0 净水器
+        waterFogSet.add("2821b472-5263-11e7-9baf-00163e120d98");
+        waterFogSet.add("f4edba26-549a-11e7-9baf-00163e120d98");
+        waterFogSet.add("67ea604c-549b-11e7-9baf-00163e120d98");
+        waterFogSet.add("b5d03ee4-549b-11e7-9baf-00163e120d98");
+
+
+        //蓝牙净水器
+        waterBluetoothSet.add("d50cd29a-549b-11e7-9baf-00163e120d98");
+        waterBluetoothSet.add("b78e2292-549a-11e7-9baf-00163e120d98");
+        waterBluetoothSet.add("4295741c-549b-11e7-9baf-00163e120d98");
+        waterBluetoothSet.add("934ed042-549b-11e7-9baf-00163e120d98");
+        waterBluetoothSet.add("RO Comml");
+        waterBluetoothSet.add("Ozner RO");
 
     }
 
+//    public static boolean IsWaterPurifier(String Model) {
+//        if (Model == null) return false;
+//        if (Model.trim().equals("MXCHIP_HAOZE_Water"))
+//        {
+//            return true;
+//        }
+//        if (Model.trim().equals("AY001MAB1"))
+//        {
+//            return true;
+//        }
+//        if (Model.trim().equals("Ozner RO"))
+//        {
+//            return true;
+//        }
+//        if (Model.trim().equals("16a21bd6"))
+//        {
+//            return true;
+//        }
+//        if (Model.trim().equals("RO Comml")) {
+//            return true;
+//        }
+//
+//        return false;
+//
+//    }
+
     @Override
     public boolean isMyDevice(String type) {
-        return IsWaterPurifier(type);
+        return isWaterPurifier(type);
     }
 
     @Override
     protected OznerDevice createDevice(String address, String type, String settings) {
-        if (type.trim().equals("MXCHIP_HAOZE_Water") || (type.trim().equals("16a21bd6")))
-        {
+        if (isMxchipDeivce(type)) {
             WaterPurifier waterPurifier = new WaterPurifier_MXChip(context(), address, type, settings);
             OznerDeviceManager.Instance().ioManagerList().mxChipIOManager()
-                        .createMXChipDevice(waterPurifier.Address(), waterPurifier.Type());
+                    .createMXChipDevice(waterPurifier.Address(), waterPurifier.Type());
             return waterPurifier;
-        }else
-//        if (type.trim().equals("AY001MAB1"))
-//        {
-//            WaterPurifier waterPurifier = new WaterPurifier_Ayla(context(), address, type, settings);
-//            return waterPurifier;
-//        }else
-        if (type.trim().equals("Ozner RO"))
-        {
+        }
+//        if (type.trim().equals("FOG_V2_EMW3162")) {
+        //庆科2.0设备，type为2.0中的productId
+        if (isFogDevice(type)) {
+            try {
+                WaterPurifier waterPurifier = new WaterPurifier_Fog(context(), address, type, settings);
+                DeviceSetting devSetting = new DeviceSetting();
+                devSetting.load(settings);
+                OznerDeviceManager.Instance().ioManagerList().fogIOManager().createFogDevice(address, type, devSetting.toString());
+                return waterPurifier;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return null;
+            }
+        }
+
+        if (isBluetoothDevice(type)) {
             WaterPurifier waterPurifier = new WaterPurifier_RO_BLE(context(), address, type, settings);
             return waterPurifier;
-        }else if (type.trim().equals("RO Comml")) {
-            WaterPurifier waterPurifier = new WaterPurifier_RO_BLE(context(), address, type, settings);
-            return waterPurifier;
-        }else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -90,7 +127,7 @@ public class WaterPurifierManager extends BaseDeviceManager {
 
         if (io instanceof BluetoothIO)
         {
-            if (io.getType().equals("Ozner RO")||io.getType().equals("RO Comml")) {
+            if (isBluetoothDevice(io.getType())) {
                 //检查是否在配对模式
                 return WaterPurifier_RO_BLE.isBindMode((BluetoothIO) io);
             }
@@ -98,70 +135,59 @@ public class WaterPurifierManager extends BaseDeviceManager {
         return super.checkIsBindMode(io);
     }
 
-    //    @Override
-//    public OznerDevice loadDevice(String address, String Type, String Settings) {
-//        if (IsWaterPurifier(Type)) {
-//            OznerDevice device = OznerDeviceManager.Instance().getDevice(address);
-//            if (device == null) {
-//                device = new WaterPurifier(context(), address, Type, Settings);
-//            }
-//            return device;
-//        }
-//        else
-//            return null;
-//    }
-//    @Override
-//    protected OznerDevice getDevice(BaseDeviceIO io) throws DeviceNotReadyException {
-//        if (io instanceof MXChipIO) {
-//            String address = io.getAddress();
-//            OznerDevice device = OznerDeviceManager.Instance().getDevice(address);
-//            if (device != null) {
-//                return device;
-//            } else {
-//                if (IsWaterPurifier(io.getType())) {
-//                    WaterPurifier c = new WaterPurifier(context(), address, io.getType(), "");
-//                    c.Bind(io);
-//                    return c;
-//                }
-//            }
-//        }
-//        return null;
-//    }
+    /**
+     * 是否是净水器
+     *
+     * @param productID
+     *
+     * @return
+     */
+    public static boolean isWaterPurifier(String productID) {
+        return isBluetoothDevice(productID) || isFogDevice(productID) || isMxchipDeivce(productID);
+    }
 
-//    public OznerDevice newWaterPurifier(Context context, String address) {
-//        OznerDevice device = OznerDeviceManager.Instance().getDevice(address);
-//        if (device != null) {
-//            return device;
-//        } else {
-//            WaterPurifier waterPurifier = new WaterPurifier(context(), address, "MXCHIP_HAOZE_Water", "");
-//            MXChipIO io = OznerDeviceManager.Instance().ioManagerList().mxChipIOManager()
-//                    .createNewIO(waterPurifier.Setting().name(), waterPurifier.Address(), waterPurifier.Type());
-//            try {
-//                waterPurifier.Bind(io);
-//            } catch (DeviceNotReadyException e) {
-//                e.printStackTrace();
-//            }
-//
-//            return waterPurifier;
-//        }
-//    }
-//
-//
-//    @Override
-//    protected OznerDevice loadDevice(String address, String Type, String Setting) {
-//        if (IsWaterPurifier(Type)) {
-//            WaterPurifier waterPurifier = new WaterPurifier(context(), address, Type, Setting);
-//            OznerDeviceManager.Instance().ioManagerList().mxChipIOManager()
-//                    .createNewIO(waterPurifier.Setting().name(), waterPurifier.Address(), waterPurifier.Type());
-//            return waterPurifier;
-//        } else
-//            return null;
-//    }
+    /**
+     * 是否是wifi净水器
+     *
+     * @param productID
+     *
+     * @return
+     */
+    public static boolean isWifiWaterPurifier(String productID) {
+        return isMxchipDeivce(productID) || isFogDevice(productID);
+    }
 
-//    @Override
-//    public boolean isMyDevice(BaseDeviceIO io) {
-//        if (io instanceof MXChipIO) {
-//            return IsWaterPurifier(io.getType());
-//        } else return false;
-//    }
+    /**
+     * 是否是蓝牙设备
+     *
+     * @param productID
+     *
+     * @return
+     */
+    public static boolean isBluetoothDevice(String productID) {
+        return waterBluetoothSet.contains(productID);
+    }
+
+    /**
+     * 2.0wifi设备
+     *
+     * @param productID
+     *
+     * @return
+     */
+    public static boolean isFogDevice(String productID) {
+        return waterFogSet.contains(productID);
+    }
+
+    /**
+     * 1.0wifi设备
+     *
+     * @param productID
+     *
+     * @return
+     */
+    public static boolean isMxchipDeivce(String productID) {
+        return waterMxchipSet.contains(productID);
+    }
+
 }

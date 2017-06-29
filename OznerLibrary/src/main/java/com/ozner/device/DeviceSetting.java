@@ -71,6 +71,14 @@ public class DeviceSetting {
         }
     }
 
+    public String deviceId() {
+        return get("deviceid", "").toString();
+    }
+
+    public void deviceId(String value) {
+        put("deviceid", value);
+    }
+
     /**
      * 返回设备名称
      *

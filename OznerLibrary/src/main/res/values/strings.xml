@@ -8,5 +8,5 @@
     <string name="air_bluetooth_purifier_name">Ozner air purifier</string>
     <string name="water_replenishment_meter">Water replenishing instrument</string>
     <string name="music_cap">Music cap</string>
-
+    <string name="kettle_name">Kettle</string>
 </resources>

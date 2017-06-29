@@ -15,11 +15,10 @@ import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.ozner.AirPurifier.AirPurifier_MXChip;
+import com.ozner.AirPurifier.AirPurifier_Mx;
 import com.ozner.cup.Base.BaseActivity;
 import com.ozner.cup.Base.WebActivity;
 import com.ozner.cup.Bean.Contacts;
-import com.ozner.cup.Bean.OznerBroadcastAction;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.Command.UserDataPreference;
 import com.ozner.cup.DBHelper.DBManager;
@@ -65,7 +64,7 @@ public class AirVerFilterActivity extends BaseActivity {
 
     private UserInfo userInfo;
     AirPurifierMonitor airMonitor;
-    private AirPurifier_MXChip mAirPurifier;
+    private AirPurifier_Mx mAirPurifier;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +92,7 @@ public class AirVerFilterActivity extends BaseActivity {
         try {
             String mac = getIntent().getStringExtra(Contacts.PARMS_MAC);
             Log.e(TAG, "onCreate: mac:" + mac);
-            mAirPurifier = (AirPurifier_MXChip) OznerDeviceManager.Instance().getDevice(mac);
+            mAirPurifier = (AirPurifier_Mx) OznerDeviceManager.Instance().getDevice(mac);
             refreshUIData();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -243,8 +242,8 @@ public class AirVerFilterActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         IntentFilter filter = new IntentFilter();
-        filter.addAction(AirPurifier_MXChip.ACTION_AIR_PURIFIER_SENSOR_CHANGED);
-        filter.addAction(AirPurifier_MXChip.ACTION_AIR_PURIFIER_STATUS_CHANGED);
+        filter.addAction(AirPurifier_Mx.ACTION_AIR_PURIFIER_SENSOR_CHANGED);
+        filter.addAction(AirPurifier_Mx.ACTION_AIR_PURIFIER_STATUS_CHANGED);
         filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTING);
         filter.addAction(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED);
         filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTED);

@@ -26,7 +26,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.ozner.AirPurifier.AirPurifier_MXChip;
+import com.ozner.AirPurifier.AirPurifier;
+import com.ozner.AirPurifier.AirPurifier_Mx;
 import com.ozner.cup.Bean.Contacts;
 import com.ozner.cup.Command.OznerPreference;
 import com.ozner.cup.DBHelper.DBManager;
@@ -121,7 +122,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
     TextView title;
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
-    private AirPurifier_MXChip mVerAirPurifier;
+    private AirPurifier_Mx mVerAirPurifier;
     AirPurifierMonitor airMonitor;
     private ProgressDialog progressDialog;
     private Handler mHandler = new Handler();
@@ -133,7 +134,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
     /**
      * 定义模式开关注解，限定设置模式方法的参数
      */
-    @IntDef({AirPurifier_MXChip.FAN_SPEED_AUTO, AirPurifier_MXChip.FAN_SPEED_POWER, AirPurifier_MXChip.FAN_SPEED_SILENT})
+    @IntDef({AirPurifier_Mx.FAN_SPEED_AUTO, AirPurifier_Mx.FAN_SPEED_POWER, AirPurifier_Mx.FAN_SPEED_SILENT})
     public @interface AIR_Mode {
 
     }
@@ -180,7 +181,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
         getOutDoorInfo();
         try {
             Bundle bundle = getArguments();
-            mVerAirPurifier = (AirPurifier_MXChip) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
+            mVerAirPurifier = (AirPurifier_Mx) OznerDeviceManager.Instance().getDevice(bundle.getString(DeviceAddress));
             oznerSetting = DBManager.getInstance(getContext()).getDeviceSettings(mUserid, mVerAirPurifier.Address());
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -215,11 +216,11 @@ public class AirVerPurifierFragment extends DeviceFragment {
         if (mVerAirPurifier != null) {
             if (mVerAirPurifier.Address() != device.Address()) {
                 mVerAirPurifier = null;
-                mVerAirPurifier = (AirPurifier_MXChip) device;
+                mVerAirPurifier = (AirPurifier_Mx) device;
                 refreshUIData();
             }
         } else {
-            mVerAirPurifier = (AirPurifier_MXChip) device;
+            mVerAirPurifier = (AirPurifier_Mx) device;
             refreshUIData();
         }
     }
@@ -238,8 +239,8 @@ public class AirVerPurifierFragment extends DeviceFragment {
         filter.addAction(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED);
         filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTED);
 
-        filter.addAction(AirPurifier_MXChip.ACTION_AIR_PURIFIER_SENSOR_CHANGED);
-        filter.addAction(AirPurifier_MXChip.ACTION_AIR_PURIFIER_STATUS_CHANGED);
+        filter.addAction(AirPurifier.ACTION_AIR_PURIFIER_SENSOR_CHANGED);
+        filter.addAction(AirPurifier.ACTION_AIR_PURIFIER_STATUS_CHANGED);
         getContext().registerReceiver(airMonitor, filter);
     }
 
@@ -386,13 +387,13 @@ public class AirVerPurifierFragment extends DeviceFragment {
         airDialog.setContentView(R.layout.air_mode_pop_layout);
         airDialog.setCanceledOnTouchOutside(true);
         switch (mode) {
-            case AirPurifier_MXChip.FAN_SPEED_AUTO:
+            case AirPurifier_Mx.FAN_SPEED_AUTO:
                 airDialog.findViewById(R.id.iv_AutoSwitch).setSelected(true);
                 break;
-            case AirPurifier_MXChip.FAN_SPEED_POWER:
+            case AirPurifier_Mx.FAN_SPEED_POWER:
                 airDialog.findViewById(R.id.iv_StrongSwitch).setSelected(true);
                 break;
-            case AirPurifier_MXChip.FAN_SPEED_SILENT:
+            case AirPurifier_Mx.FAN_SPEED_SILENT:
                 airDialog.findViewById(R.id.iv_SlientSwitch).setSelected(true);
                 break;
         }
@@ -403,7 +404,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
                 airDialog.findViewById(R.id.iv_AutoSwitch).setSelected(true);
                 airDialog.findViewById(R.id.iv_StrongSwitch).setSelected(false);
                 airDialog.findViewById(R.id.iv_SlientSwitch).setSelected(false);
-                setSpeedMode(AirPurifier_MXChip.FAN_SPEED_AUTO);
+                setSpeedMode(AirPurifier_Mx.FAN_SPEED_AUTO);
                 airDialog.cancel();
             }
         });
@@ -413,7 +414,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
                 airDialog.findViewById(R.id.iv_AutoSwitch).setSelected(false);
                 airDialog.findViewById(R.id.iv_StrongSwitch).setSelected(true);
                 airDialog.findViewById(R.id.iv_SlientSwitch).setSelected(false);
-                setSpeedMode(AirPurifier_MXChip.FAN_SPEED_POWER);
+                setSpeedMode(AirPurifier_Mx.FAN_SPEED_POWER);
 
                 Log.e(TAG, "onClick: Strong");
                 airDialog.cancel();
@@ -426,7 +427,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
                 airDialog.findViewById(R.id.iv_AutoSwitch).setSelected(false);
                 airDialog.findViewById(R.id.iv_StrongSwitch).setSelected(false);
                 airDialog.findViewById(R.id.iv_SlientSwitch).setSelected(true);
-                setSpeedMode(AirPurifier_MXChip.FAN_SPEED_SILENT);
+                setSpeedMode(AirPurifier_Mx.FAN_SPEED_SILENT);
                 airDialog.cancel();
             }
         });
@@ -674,7 +675,7 @@ public class AirVerPurifierFragment extends DeviceFragment {
         tvPowerSwitch.setSelected(isOn);
         ivPoserSwitch.setSelected(isOn);
         if (!isOn) {
-            switchMode(isOn, AirPurifier_MXChip.FAN_SPEED_AUTO);
+            switchMode(isOn, AirPurifier_Mx.FAN_SPEED_AUTO);
             switchLock(isOn);
         }
     }
@@ -691,13 +692,13 @@ public class AirVerPurifierFragment extends DeviceFragment {
         tvModeSwitch.setSelected(isOn);
         if (isOn) {
             switch (mode) {
-                case AirPurifier_MXChip.FAN_SPEED_AUTO:
+                case AirPurifier_Mx.FAN_SPEED_AUTO:
                     ivModeSwitch.setImageResource(R.drawable.air_auto_on);
                     break;
-                case AirPurifier_MXChip.FAN_SPEED_POWER:
+                case AirPurifier_Mx.FAN_SPEED_POWER:
                     ivModeSwitch.setImageResource(R.drawable.air_strong_on);
                     break;
-                case AirPurifier_MXChip.FAN_SPEED_SILENT:
+                case AirPurifier_Mx.FAN_SPEED_SILENT:
                     ivModeSwitch.setImageResource(R.drawable.air_slient_on);
                     break;
             }
@@ -841,14 +842,14 @@ public class AirVerPurifierFragment extends DeviceFragment {
         try {
             switchLock(mVerAirPurifier.airStatus().Lock());
             switch (mVerAirPurifier.airStatus().speed()) {
-                case AirPurifier_MXChip.FAN_SPEED_AUTO:
-                    switchMode(true, AirPurifier_MXChip.FAN_SPEED_AUTO);
+                case AirPurifier_Mx.FAN_SPEED_AUTO:
+                    switchMode(true, AirPurifier_Mx.FAN_SPEED_AUTO);
                     break;
-                case AirPurifier_MXChip.FAN_SPEED_POWER:
-                    switchMode(true, AirPurifier_MXChip.FAN_SPEED_POWER);
+                case AirPurifier_Mx.FAN_SPEED_POWER:
+                    switchMode(true, AirPurifier_Mx.FAN_SPEED_POWER);
                     break;
-                case AirPurifier_MXChip.FAN_SPEED_SILENT:
-                    switchMode(true, AirPurifier_MXChip.FAN_SPEED_SILENT);
+                case AirPurifier_Mx.FAN_SPEED_SILENT:
+                    switchMode(true, AirPurifier_Mx.FAN_SPEED_SILENT);
                     break;
             }
             switchPower(mVerAirPurifier.airStatus().Power());

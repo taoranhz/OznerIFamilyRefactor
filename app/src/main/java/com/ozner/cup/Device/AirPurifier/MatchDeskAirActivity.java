@@ -217,7 +217,7 @@ public class MatchDeskAirActivity extends BaseActivity {
             if (deviceIOs != null) {
                 for (BaseDeviceIO device : deviceIOs) {
                     //只添加 台式空净  并且在配对模式
-                    if (AirPurifierManager.IsBluetoothAirPurifier(device.getType())
+                    if (AirPurifierManager.isBluetoothAirPurifier(device.getType())
                             && OznerDeviceManager.Instance().checkisBindMode(device)) {
                         if (!mDevAdpater.hasDevice(device)) {
                             mDevAdpater.addItem(device);
@@ -254,7 +254,7 @@ public class MatchDeskAirActivity extends BaseActivity {
     private void saveDevice(BaseDeviceIO deviceIo) {
         try {
             OznerDevice device = OznerDeviceManager.Instance().getDevice(deviceIo);
-            if (device != null && AirPurifierManager.IsBluetoothAirPurifier(device.Type())) {
+            if (device != null && AirPurifierManager.isBluetoothAirPurifier(device.Type())) {
                 OznerDeviceManager.Instance().save(device);
                 UserDataPreference.SetUserData(this, UserDataPreference.SelMac, device.Address());//保存选中的设备mac
                 if (etDeviceName.getText().length() > 0) {

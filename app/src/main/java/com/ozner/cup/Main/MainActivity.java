@@ -452,7 +452,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 return TapFragment.newInstance(device.getMac());
             } else if (device.getDevcieType().equals(RankType.TdsPenType)) {
                 return TapFragment.newInstance(device.getMac());
-            } else if (WaterPurifierManager.IsWaterPurifier(device.getDevcieType())) {
+            } else if (WaterPurifierManager.isWaterPurifier(device.getDevcieType())) {
                 if ("RO Comml".equals(device.getDevcieType())) {
                     return RoCommlFragment.newInstance(device.getMac());
                 } else if ("Ozner RO".equals(device.getDevcieType())) {
@@ -461,9 +461,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 //                    return WaterPurifierFragment.newInstance(device.getMac());
                     return WPContainerFragment.newInstance(device.getMac());
                 }
-            } else if (AirPurifierManager.IsWifiAirPurifier(device.getDevcieType())) {
+            } else if (AirPurifierManager.isWifiAirPurifier(device.getDevcieType())) {
                 return AirVerPurifierFragment.newInstance(device.getMac());
-            } else if (AirPurifierManager.IsBluetoothAirPurifier(device.getDevcieType())) {
+            } else if (AirPurifierManager.isBluetoothAirPurifier(device.getDevcieType())) {
                 return AirDeskPurifierFragment.newInstance(device.getMac());
             } else if (WaterReplenishmentMeterMgr.IsWaterReplenishmentMeter(device.getDevcieType())) {
                 return ReplenWaterFragment.newInstance(device.getMac());
@@ -539,12 +539,12 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
                 break;
             case 2:
-                if (chatFragment == null) {
-                    chatFragment = EaseChatFragment.newInstance(null);
-                }
-                transaction.replace(R.id.fg_content, chatFragment).commitAllowingStateLoss();
+//                if (chatFragment == null) {
+//                    chatFragment = EaseChatFragment.newInstance(null);
+//                }
+//                transaction.replace(R.id.fg_content, chatFragment).commitAllowingStateLoss();
                 //设置在客服那边显示用户名
-//                UdeskSDKManager.getInstance().toLanuchChatAcitvity(this);
+                UdeskSDKManager.getInstance().toLanuchChatAcitvity(this);
 //                Map uInfo = new HashMap();
 //                if (!TextUtils.isEmpty(userInfo.getNickname())) {
 //                    uInfo.put(UdeskConst.UdeskUserInfo.NICK_NAME, userInfo.getNickname());

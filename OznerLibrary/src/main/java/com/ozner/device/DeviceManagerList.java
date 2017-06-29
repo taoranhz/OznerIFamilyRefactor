@@ -3,6 +3,7 @@ package com.ozner.device;
 import android.content.Context;
 
 import com.ozner.AirPurifier.AirPurifierManager;
+import com.ozner.Kettle.KettleMgr;
 import com.ozner.MusicCap.MusicCapMgr;
 import com.ozner.WaterPurifier.WaterPurifierManager;
 import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeterMgr;
@@ -21,6 +22,7 @@ public class DeviceManagerList extends ArrayList<BaseDeviceManager> {
     AirPurifierManager airPurifierManager;
     WaterReplenishmentMeterMgr waterReplenishmentMeterMgr;
     MusicCapMgr musicCapMgr;
+    KettleMgr kettleMgr;
     public DeviceManagerList(Context context) {
         cupManager = new CupManager(context);
         tapManager = new TapManager(context);
@@ -28,6 +30,7 @@ public class DeviceManagerList extends ArrayList<BaseDeviceManager> {
         airPurifierManager = new AirPurifierManager(context);
         waterReplenishmentMeterMgr = new WaterReplenishmentMeterMgr(context);
         musicCapMgr = new MusicCapMgr(context);
+        kettleMgr = new KettleMgr(context);
 
         add(cupManager);
         add(tapManager);
@@ -35,9 +38,10 @@ public class DeviceManagerList extends ArrayList<BaseDeviceManager> {
         add(airPurifierManager);
         add(waterReplenishmentMeterMgr);
         add(musicCapMgr);
-
+        add(kettleMgr);
     }
 
+    public KettleMgr kettleMgr(){return kettleMgr;}
     public TapManager tapManager() {
         return tapManager;
     }

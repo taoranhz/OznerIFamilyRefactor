@@ -34,6 +34,7 @@ public abstract class WaterPurifier extends OznerDevice {
         {
             return getTDS2();
         }
+        public int Temperature(){return getTemperature();}
         @Override
         public String toString() {
             return String.format("TDS1:%d TDS2:%d", TDS1(),TDS2());
@@ -185,6 +186,7 @@ public abstract class WaterPurifier extends OznerDevice {
 
     protected abstract int getTDS1();
     protected abstract int getTDS2();
+    protected abstract int getTemperature();
 
     protected boolean getPower()
     {

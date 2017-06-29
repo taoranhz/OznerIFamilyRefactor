@@ -18,11 +18,11 @@ import org.fusesource.mqtt.client.Callback;
 public class MXChipIO extends BaseDeviceIO {
     final MXChipIOImp mxChipIOImp = new MXChipIOImp();
     String address = "";
-    MQTTProxy proxy;
+    MQTTProxyMxchip proxy;
     String out = null;
     String in = null;
 
-    public MXChipIO(Context context, MQTTProxy proxy, String address,String Type) {
+    public MXChipIO(Context context, MQTTProxyMxchip proxy, String address, String Type) {
         super(context, Type);
         this.address = address;
         this.proxy = proxy;
@@ -69,7 +69,7 @@ public class MXChipIO extends BaseDeviceIO {
     /**
      * 设置一个循环发送runnable,来执行发送大数据包,比如挂件升级过程
      */
-    public boolean post(MXChipRunnable runnable) {
+    public boolean post(MXRunnable runnable) {
         return mxChipIOImp.postRunable(runnable);
     }
 
@@ -90,12 +90,7 @@ public class MXChipIO extends BaseDeviceIO {
         return address;
     }
 
-
-    public interface MXChipRunnable {
-        void run();
-    }
-
-    class MXChipIOImp implements MQTTProxy.MQTTListener, Runnable {
+    class MXChipIOImp implements IMQTTListener, Runnable {
         final static int MSG_SendData = 0x1000;
         final static int MSG_Runnable = 0x2000;
         final static int Timeout = 10000;
@@ -134,17 +129,17 @@ public class MXChipIO extends BaseDeviceIO {
         }
 
         @Override
-        public void onConnected(MQTTProxy proxy) {
+        public void onConnected(SMQTTProxy proxy) {
 
         }
 
         @Override
-        public void onDisconnected(MQTTProxy proxy) {
+        public void onDisconnected(SMQTTProxy proxy) {
             close();
         }
 
         @Override
-        public void onPublish(MQTTProxy proxy, String topic, byte[] data) {
+        public void onPublish(SMQTTProxy proxy, String topic, byte[] data) {
             if (topic.equals(out)) {
                 doRecv(data);
             }
@@ -153,7 +148,7 @@ public class MXChipIO extends BaseDeviceIO {
         /**
          * 设置一个循环发送runnable,来执行发送大数据包,比如挂件升级过程
          */
-        public boolean postRunable(MXChipRunnable runnable) {
+        public boolean postRunable(MXRunnable runnable) {
             if (handler == null) return false;
             Message message = new Message();
             message.what = MSG_Runnable;
@@ -284,7 +279,7 @@ public class MXChipIO extends BaseDeviceIO {
                         }
 
                     } else if (msg.what == MSG_Runnable) {
-                        MXChipRunnable runnable = (MXChipRunnable) msg.obj;
+                        MXRunnable runnable = (MXRunnable) msg.obj;
                         runnable.run();
                     }
 

@@ -179,43 +179,49 @@ public class MyDeviceActivity extends BaseActivity implements AdapterView.OnItem
 //                DBManager.getInstance(mContext).deleteDeviceSettings(mUserid, item.getMac());
 //                refreshDeviceData();
 //            } else {
-                if (CupManager.IsCup(item.getType())) {
-                    if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
-                        holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_cup_on);
-                    } else {
-                        holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_cup_gray);
-                    }
-                } else if (TapManager.IsTap(item.getType())) {
-                    if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
-                        holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_tap_on);
-                    } else {
-                        holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_tap_gray);
-                    }
-                } else if (WaterPurifierManager.IsWaterPurifier(item.getType())) {
-                    if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
-                        holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_water_purifier_on);
-                    } else {
-                        holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_purifier_gray);
-                    }
-                } else if (AirPurifierManager.IsBluetoothAirPurifier(item.getType())) {
-                    if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
-                        holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_air_purifier_desk_on);
-                    } else {
-                        holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_air_desk_gray);
-                    }
-                } else if (AirPurifierManager.IsWifiAirPurifier(item.getType())) {
-                    if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
-                        holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_air_purifier_ver_on);
-                    } else {
-                        holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_air_ver_gray);
-                    }
-                } else if (WaterReplenishmentMeterMgr.IsWaterReplenishmentMeter(item.getType())) {
-                    if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
-                        holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_replen_on);
-                    } else {
-                        holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_wrm_gray);
-                    }
+            if (CupManager.IsCup(item.getType())) {
+                if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_cup_on);
+                } else {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_cup_gray);
                 }
+            } else if (TapManager.IsTap(item.getType())) {
+                if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_tap_on);
+                } else {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_tap_gray);
+                }
+            } else if (WaterPurifierManager.isWifiWaterPurifier(item.getType())) {
+                if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_water_purifier_on);
+                } else {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_purifier_gray);
+                }
+            } else if (WaterPurifierManager.isBluetoothDevice(item.getType())) {
+                if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.drawable.ro_water);
+                } else {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_ro_purifier_gray);
+                }
+            } else if (AirPurifierManager.isBluetoothAirPurifier(item.getType())) {
+                if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_air_purifier_desk_on);
+                } else {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_air_desk_gray);
+                }
+            } else if (AirPurifierManager.isWifiAirPurifier(item.getType())) {
+                if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_air_purifier_ver_on);
+                } else {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_air_ver_gray);
+                }
+            } else if (WaterReplenishmentMeterMgr.IsWaterReplenishmentMeter(item.getType())) {
+                if (item.getDevice().connectStatus().equals(BaseDeviceIO.ConnectStatus.Connected)) {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.mipmap.icon_replen_on);
+                } else {
+                    holder.setImageResource(R.id.iv_deviceIcon, R.drawable.my_center_wrm_gray);
+                }
+            }
 //            }
         }
     }
