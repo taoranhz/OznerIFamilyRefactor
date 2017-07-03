@@ -162,10 +162,14 @@ public class Contacts {
     public static String aboutTdsPen = "file:///android_asset/hz_tdspen.html";
 
     //ro水机获取充值水卡连接
-    public static String roCards="http://tests.oznerwater.com:8888/api/order/GetUserOnlineRechargeWaterOrderList";
-    public static String roCardsPost="http://tests.oznerwater.com:8888/api/order/OnlineRechargeWaterOrderConfirm";
-//    public static String roCardsPost="http://10.203.1.130:8081/PlatformTestWebApi/api/order/OnlineRechargeWaterOrderConfirm";
-    public static String buyCards="http://test.oznerwater.com/lktnew//wapnew/Hot_product/Hot_list.aspx?typeid=7&flag=1";
+//    public static String roCards="http://tests.oznerwater.com:8888/api/order/GetUserOnlineRechargeWaterOrderList";
+//    public static String roCardsPost="http://tests.oznerwater.com:8888/api/order/OnlineRechargeWaterOrderConfirm";
+//    public static String buyCards="http://test.oznerwater.com/lktnew//wapnew/Hot_product/Hot_list.aspx?typeid=7&flag=1";
+
+    public static String roCards="http://www.oznerwater.com:8888/api/order/GetUserOnlineRechargeWaterOrderList";
+    public static String roCardsPost="http://www.oznerwater.com:8888/api/order/OnlineRechargeWaterOrderConfirm";
+    public static String buyCards="http://www.oznerwater.com/lktnew//wapnew/Hot_product/Hot_list.aspx?typeid=7&flag=1";
+
     // 免责条款
 
 //    public static String URL_BASE_EXCEPTIONS = "http://cup.ozner.net/app/cn/";
