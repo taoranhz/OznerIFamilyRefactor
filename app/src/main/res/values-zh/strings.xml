@@ -630,7 +630,7 @@
     <string name="Whether_to_empty_all_chats">Clear all messages?</string>
 
     <string name="water_ropurifier">水芯片净水器</string>
-    <string name="reverse_ro">请将水芯片净水器的开关打开</string>
+    <string name="reverse_ro">请长按水芯片净水器的配对键3秒!</string>
     <string name="rest_ro_fit">复位</string>
     <string name="rofit">滤芯状态</string>
     <string name="ro_fit">清洗前置滤芯</string>

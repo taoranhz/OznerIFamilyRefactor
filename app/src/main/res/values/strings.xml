@@ -625,7 +625,7 @@
     <string name="text_ack_msg">Read</string>
     <string name="text_delivered_msg">Delivered</string>
     <string name="water_ropurifier">Intelligent RO water machine</string>
-    <string name="reverse_ro">Please turn on the switch on the RO water machine</string>
+    <string name="reverse_ro">Please press the water chip water purifier pair button for 3 seconds</string>
     <string name="rest_ro_fit">Reset</string>
     <string name="rofit">Filter status</string>
     <string name="ro_fit">Cleaning filter element</string>
@@ -651,7 +651,7 @@
     <string name="ro_buy">Buy</string>
     <string name="recharge">Recharge</string>
 
-    <string name="recharge_days">Ozner Safe water</string>
+    <string name="recharge_days">Ozner Safe water%d days</string>
     <string name="tips">Prompt</string>
     <string name="tips_content1">Determine to</string>
     <string name="tips_content2">(equipment number)water machine recharge </string>

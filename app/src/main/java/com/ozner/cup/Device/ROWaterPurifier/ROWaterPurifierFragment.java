@@ -54,6 +54,7 @@ import butterknife.OnClick;
 import static com.ozner.cup.R.id.llay_tds_detail;
 import static com.ozner.cup.R.id.rlay_coolswitch;
 import static com.ozner.cup.R.id.rlay_hotswitch;
+import static com.ozner.device.BaseDeviceIO.ACTION_DEVICE_CONNECTED;
 
 
 public class ROWaterPurifierFragment extends DeviceFragment {
@@ -345,7 +346,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
     private void registerMonitor() {
         mMonitor = new ROMonitor();
         IntentFilter filter = new IntentFilter();
-        filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTED);
+        filter.addAction(ACTION_DEVICE_CONNECTED);
         filter.addAction(BaseDeviceIO.ACTION_DEVICE_CONNECTING);
         filter.addAction(BaseDeviceIO.ACTION_DEVICE_DISCONNECTED);
         filter.addAction(OznerDeviceManager.ACTION_OZNER_MANAGER_DEVICE_CHANGE);
@@ -425,6 +426,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
                         if (0 == tempPre) {
                             tvFilterTips.setText(R.string.filter_need_change);
                             ivFilterIcon.setImageResource(R.drawable.filter_state0);
+                            told();
                         } else if (tempPre > 0 && tempPre <= 10) {
                             tvFilterTips.setText(R.string.filter_need_change);
                             ivFilterIcon.setImageResource(R.drawable.filter_state1);
@@ -502,6 +504,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
     @Override
     protected void refreshUIData() {
         if (isWaterPuriferAdd()) {
+//            ACTION_DEVICE_CONNECTED
             if (mWaterPurifer != null && mWaterPurifer.connectStatus() == BaseDeviceIO.ConnectStatus.Connected) {
                 Log.e(TAG, "refreshUIData: ");
 //                refreshConnectState();
@@ -610,9 +613,9 @@ public class ROWaterPurifierFragment extends DeviceFragment {
                     .getTime().getTime() / 1000)) / 3600 / 24;
             Log.e("trtime",days+"========="+curDate+"@@@@@@@@@@@"+time);
             if(days<0){
-                tv_ozner_days.setText(getString(R.string.recharge_days)+0+"天");
+                tv_ozner_days.setText(getString(R.string.recharge_days)+0+getString(R.string.sky));
             }else {
-            tv_ozner_days.setText(getString(R.string.recharge_days)+days+"天");
+            tv_ozner_days.setText(getString(R.string.recharge_days)+days+getString(R.string.sky));
             }
         }
         //获取净化前后的TDS值
@@ -838,7 +841,7 @@ public class ROWaterPurifierFragment extends DeviceFragment {
             Log.e(TAG, "onReceive: " + mWaterPurifer.toString());
 //            Toast.makeText(getActivity(),"onReceive: " + mWaterPurifer.toString(),Toast.LENGTH_LONG).show();
             refreshConnectState(intent.getAction());
-            refreshUIData();
+//            refreshUIData();
         }
     }
 }
