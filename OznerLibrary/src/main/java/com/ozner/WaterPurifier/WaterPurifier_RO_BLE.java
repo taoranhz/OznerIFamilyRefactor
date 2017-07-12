@@ -156,6 +156,11 @@ public class WaterPurifier_RO_BLE extends WaterPurifier {
     private WaterPurifierIMP waterPurifierIMP = new WaterPurifierIMP();
     public static final int BLE_RO_ScanResponseType = 0x11;
 
+    @Override
+    public int getTimerDelay() {
+        return defaultAutoUpdatePeriod;
+    }
+
     public WaterPurifier_RO_BLE(Context context, String Address, String Model, String Setting) {
         super(context, Address, Model, Setting);
     }
