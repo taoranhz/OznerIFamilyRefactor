@@ -108,6 +108,7 @@ public class KettleStatus {
             stringBuilder.append(String.format("煮沸模式:%s 保温温度:%d\n", preservationMode.toString(), preservationTemperature));
             stringBuilder.append(String.format("保温时间:%d 剩余保温时间:%d\n", preservationTime, preservationTime));
             stringBuilder.append(String.format("当前加热时间:%d\n", this.heatingTime));
+            stringBuilder.append(String.format("煮沸温度：%d", this.boilingTemperature));
 
             return stringBuilder.toString();
         } else {

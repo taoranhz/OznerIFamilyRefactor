@@ -48,6 +48,7 @@ public class KettleSetting extends DeviceSetting {
 
     /**
      * 保温温度
+     *
      * @return
      */
     public int preservationTemperature() {
@@ -83,6 +84,7 @@ public class KettleSetting extends DeviceSetting {
 
     /**
      * 预约时间
+     *
      * @param time 分钟单位
      */
     public void reservationTime(int time) {
@@ -91,6 +93,7 @@ public class KettleSetting extends DeviceSetting {
 
     /**
      * 获取预约时间
+     *
      * @return 分钟单位
      */
     public int reservationTime() {
@@ -99,19 +102,20 @@ public class KettleSetting extends DeviceSetting {
 
     /**
      * 预约使能
+     *
      * @return
      */
-    public boolean reservationEnable()
-    {
-        return reservationEnable;
+    public boolean reservationEnable() {
+        return (boolean) get("reservationEnable", false);
     }
 
     /**
      * 预约使能
+     *
      * @param enable
      */
-    public void reservationEnable(boolean enable)
-    {
-        reservationEnable=enable;
+    public void reservationEnable(boolean enable) {
+        put("reservationEnable", enable);
+//        reservationEnable=enable;
     }
 }

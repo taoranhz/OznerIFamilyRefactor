@@ -44,6 +44,11 @@ public class Kettle extends OznerDevice {
     }
 
     @Override
+    public int getTimerDelay() {
+        return defaultAutoUpdatePeriod;
+    }
+
+    @Override
     protected String getDefaultName() {
         return context().getString(R.string.kettle_name);
     }
@@ -90,7 +95,7 @@ public class Kettle extends OznerDevice {
     @Override
     public void updateSettings() {
         if (IO() != null && IO().isReady()) {
-            kettleImp.sendSetting();
+            kettleImp.sendSetting(null);
         }
     }
 
@@ -99,14 +104,134 @@ public class Kettle extends OznerDevice {
     }
 
     /**
+     * 设置保温时间
+     *
+     * @param minute
+     * @param cb
+     *
+     * @return
+     */
+    public boolean setPreservationTime(int minute, OperateCallback<Void> cb) {
+        if (IO() != null && IO().isReady()) {
+            getSetting().preservationTime(minute);
+            return kettleImp.sendSetting(cb);
+        } else {
+            if (cb != null) {
+                cb.onFailure(null);
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 设置保温温度
+     *
+     * @param temperature
+     * @param cb
+     *
+     * @return
+     */
+    public boolean setPreservationTemperature(int temperature, OperateCallback<Void> cb) {
+        if (IO() != null && IO().isReady()) {
+            getSetting().preservationTemperature(temperature);
+            return kettleImp.sendSetting(cb);
+        } else {
+            if (cb != null) {
+                cb.onFailure(null);
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 设置保温模式
+     *
+     * @param mode
+     * @param cb
+     *
+     * @return
+     */
+    public boolean setPreservationMode(PreservationMode mode, OperateCallback<Void> cb) {
+        if (IO() != null && IO().isReady()) {
+            getSetting().preservationMode(mode);
+            return kettleImp.sendSetting(cb);
+        } else {
+            if (cb != null) {
+                cb.onFailure(null);
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 设置预约分钟
+     *
+     * @param minute
+     * @param cb
+     *
+     * @return
+     */
+    public boolean setAdvanceMinute(int minute, OperateCallback<Void> cb) {
+        if (IO() != null && IO().isReady()) {
+            getSetting().reservationTime(minute);
+            return kettleImp.sendSetting(cb);
+        } else {
+            if (cb != null) {
+                cb.onFailure(null);
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 设置煮沸温度
+     *
+     * @param temperature
+     * @param cb
+     *
+     * @return
+     */
+    public boolean setBolingTemperature(int temperature, OperateCallback<Void> cb) {
+        if (IO() != null && IO().isReady()) {
+            getSetting().boilingTemperature(temperature);
+            return kettleImp.sendSetting(cb);
+        } else {
+            if (cb != null) {
+                cb.onFailure(null);
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 预约使能
+     *
+     * @param advance
+     * @param cb
+     *
+     * @return
+     */
+    public boolean enableAdvance(boolean advance, OperateCallback<Void> cb) {
+        if (IO() != null && IO().isReady()) {
+            getSetting().reservationEnable(advance);
+            return kettleImp.sendSetting(cb);
+        } else {
+            if (cb != null) {
+                cb.onFailure(null);
+            }
+            return false;
+        }
+    }
+
+    /**
      * 设备进入待机模式
      *
      * @return
      */
-    public boolean setIdle() {
+    public boolean setIdle(OperateCallback<Void> cb) {
         byte[] datas = new byte[2];
         datas[1] = 0;
-        return kettleImp.send(opCode_SendWorkMode, datas, null);
+        return kettleImp.send(opCode_SendWorkMode, datas, cb);
 
     }
 
@@ -115,10 +240,10 @@ public class Kettle extends OznerDevice {
      *
      * @return
      */
-    public boolean setHeating() {
+    public boolean setHeating(OperateCallback<Void> cb) {
         byte[] datas = new byte[2];
         datas[1] = 1;
-        return kettleImp.send(opCode_SendWorkMode, datas, null);
+        return kettleImp.send(opCode_SendWorkMode, datas, cb);
     }
 
     /**
@@ -126,10 +251,10 @@ public class Kettle extends OznerDevice {
      *
      * @return
      */
-    public boolean setPreservation() {
+    public boolean setPreservation(OperateCallback<Void> cb) {
         byte[] datas = new byte[2];
         datas[1] = 2;
-        return kettleImp.send(opCode_SendWorkMode, datas, null);
+        return kettleImp.send(opCode_SendWorkMode, datas, cb);
     }
 
     @Override
@@ -149,7 +274,7 @@ public class Kettle extends OznerDevice {
             BluetoothIO.CheckTransmissionsCompleteCallback {
 
         private boolean send(byte opCode, byte[] data, OperateCallback<Void> cb) {
-            return IO() != null && IO().send(BluetoothIO.makePacket(opCode, data));
+            return IO() != null && IO().send(BluetoothIO.makePacket(opCode, data), cb);
         }
 
         public void doTimer() {
@@ -190,7 +315,7 @@ public class Kettle extends OznerDevice {
 
         }
 
-        public boolean sendSetting() {
+        public boolean sendSetting(OperateCallback<Void> cb) {
             KettleSetting setting = (KettleSetting) Setting();
             if (setting == null) {
                 return false;
@@ -199,10 +324,14 @@ public class Kettle extends OznerDevice {
             bytes[0] = (byte) setting.preservationTemperature();
             ByteUtil.putShort(bytes, (short) setting.preservationTime(), 1);
             bytes[3] = (byte) setting.boilingTemperature();
-            ByteUtil.putShort(bytes, (short) setting.preservationTime(), 4);
-            bytes[5] = (byte) (setting.reservationTime() > 0 ? 1 : 0);
+            if (setting.preservationMode() == PreservationMode.Boiling) {
+                bytes[4] = 0;
+            } else {
+                bytes[4] = 1;
+            }
+            bytes[5] = (byte) (setting.reservationEnable() ? 1 : 0);
             ByteUtil.putShort(bytes, (short) setting.reservationTime(), 6);
-            return this.send(opCode_SendSetting, bytes, null);
+            return this.send(opCode_SendSetting, bytes, cb);
         }
 
 
@@ -217,10 +346,10 @@ public class Kettle extends OznerDevice {
 
             switch (opCode) {
                 case opCode_ReadStatusRet:
-                    synchronized (this) {
-                        mStatus.load(bytes);
-                        Log.e(TAG, "onIORecv: sensor:" + mStatus.toString());
-                    }
+//                    synchronized (this) {
+                    mStatus.load(bytes);
+                    Log.e(TAG, "onIORecv: sensor:" + mStatus.toString());
+//                    }
 //                    Intent intent = new Intent(ACTION_BLUETOOTH_KETTLE_SENSOR);
 //                    intent.putExtra("Address",IO().getAddress());
 //                    intent.putExtra("Sensor",data);
@@ -232,7 +361,8 @@ public class Kettle extends OznerDevice {
 
         @Override
         public boolean onIOInit() {
-            return true;
+           return requestStatus();
+//            return true;
         }
     }
 }

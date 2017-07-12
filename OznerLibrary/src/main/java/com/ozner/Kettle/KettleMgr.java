@@ -40,6 +40,7 @@ public class KettleMgr extends BaseDeviceManager {
     public boolean checkIsBindMode(BaseDeviceIO io) {
         if (isMyDevice(io.getType()))
         {
+//            return true;
             BluetoothIO bluetoothIO=(BluetoothIO)io;
             if (bluetoothIO.getScanResponseType()==0x20)
             {
