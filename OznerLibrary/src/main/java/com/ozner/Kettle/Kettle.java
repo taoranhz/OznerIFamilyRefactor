@@ -267,6 +267,19 @@ public class Kettle extends OznerDevice {
         kettleImp.doTimer();
     }
 
+    public static boolean isBindMode(BaseDeviceIO io){
+        if(!KettleMgr.isKettle(io.getType())) return false;
+        BluetoothIO bluetoothIO=(BluetoothIO)io;
+        if (bluetoothIO.getScanResponseType()==0x20)
+        {
+            if ((bluetoothIO.getScanResponseData()!=null) && (bluetoothIO.getScanResponseData().length>1))
+            {
+                return bluetoothIO.getScanResponseData()[0]!=0;
+            }
+        }
+        return false;
+    }
+
     class KettleImp implements
             BluetoothIO.OnInitCallback,
             BluetoothIO.OnTransmissionsCallback,

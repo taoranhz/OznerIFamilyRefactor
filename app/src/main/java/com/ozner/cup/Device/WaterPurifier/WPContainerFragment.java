@@ -43,7 +43,7 @@ public class WPContainerFragment extends DeviceFragment {
     //    private WaterPurifier mWaterPurifer;
     private String mUserid;
     private OznerDeviceSettings oznerSetting;
-//    private WaterPurifierAttr purifierAttr;
+    //    private WaterPurifierAttr purifierAttr;
 //    private WaterNetInfoManager waterNetInfoManager;
     private String mac;
     private DeviceFragment waterFragment;
@@ -234,12 +234,12 @@ public class WPContainerFragment extends DeviceFragment {
      */
     private void loadEspecialView(String deviceType) {
         switch (deviceType) {
-            case WPLGFragment.A8_CSF:
-            case WPLGFragment.A8_FSF:
+            case WPLGFragment.LG_DRF:
                 loadLGView();
                 break;
             case WPA8Fragment.A8_DRF:
-            case WPA8Fragment.LG_DRF:
+            case WPA8Fragment.A8_CSF:
+            case WPA8Fragment.A8_FSF:
                 loadA8View();
                 break;
             default:

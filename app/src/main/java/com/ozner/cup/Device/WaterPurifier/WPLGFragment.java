@@ -40,8 +40,7 @@ import butterknife.OnClick;
  */
 public class WPLGFragment extends DeviceFragment {
     private static final String TAG = "WPLGFragment";
-    public static final String A8_FSF = "f4edba26-549a-11e7-9baf-00163e120d98";//温度，三个开关
-    public static final String A8_CSF = "2821b472-5263-11e7-9baf-00163e120d98";//温度，三个开关
+    public static final String LG_DRF = "b5d03ee4-549b-11e7-9baf-00163e120d98";//温度，三个开关
 
     private static final int NumSize = 60;
     private static final int TextSize = 40;

@@ -9,10 +9,11 @@ import android.content.Context;
  */
 
 public class MQTTProxyFog extends SMQTTProxy {
-    private final static String host_fog = "tcp://211.136.146.211:1883";
+    //    private final static String host_fog = "tcp://211.136.146.211:1883";
+    private final static String host_fog = "tcp://qk.ozner.net:1883";
 
     public MQTTProxyFog(Context context) {
         super(context);
-        init(host_fog,"ProxyFog");
+        init(host_fog, "ProxyFog");
     }
 }

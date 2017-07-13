@@ -57,13 +57,17 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 /**
- * LGFragment和A8Fragment功能写反了，就这样吧，不改了
+ * description: WPA8Fragment
+ * autour: ozner_67
+ * date: 2017/7/13 9:29
+ * e-mail: xinde.zhang@cftcn.com
  */
 public class WPA8Fragment extends DeviceFragment {
     private static final String TAG = "WPA8Fragment";
 
-    public static final String A8_DRF = "67ea604c-549b-11e7-9baf-00163e120d98";//温度，TDS，两个个开关
-    public static final String LG_DRF = "b5d03ee4-549b-11e7-9baf-00163e120d98";//温度，TDS，三个开关
+    public static final String A8_DRF = "67ea604c-549b-11e7-9baf-00163e120d98";//温度，TDS，两个开关
+    public static final String A8_FSF = "f4edba26-549a-11e7-9baf-00163e120d98";//温度，TDS，三个开关
+    public static final String A8_CSF = "2821b472-5263-11e7-9baf-00163e120d98";//温度，TDS，三个开关
 
     private static final int TextSize = 40;
     private static final int NumSize = 50;
@@ -271,7 +275,8 @@ public class WPA8Fragment extends DeviceFragment {
                 });
                 break;
 
-            case LG_DRF:
+            case A8_CSF:
+            case A8_FSF:
                 ViewStub vstubthree = (ViewStub) getView().findViewById(R.id.vs_switcher_three);
                 vstubthree.inflate();
                 tvCoolswitch = (TextView) getView().findViewById(R.id.tv_coolswitch);

@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ozner.AirPurifier.AirPurifierManager;
+import com.ozner.Kettle.KettleMgr;
 import com.ozner.WaterPurifier.WaterPurifierManager;
 import com.ozner.WaterReplenishmentMeter.WaterReplenishmentMeterMgr;
 import com.ozner.cup.Base.BaseFragment;
@@ -509,6 +510,10 @@ public class LeftMenuFragment extends BaseFragment implements AdapterView.OnItem
                 // TODO: 2016/11/4 补水仪
                 typeResId = R.mipmap.connect_bluetooth_on;
                 setItemSelected(holder, isSelected, R.mipmap.icon_replen_on, R.mipmap.icon_replen_off);
+            } else if (KettleMgr.isKettle(deviceType)) {
+                // TODO: 2017/7/12 智能保温壶
+                typeResId = R.mipmap.connect_bluetooth_on;
+                setItemSelected(holder, isSelected, R.mipmap.icon_cup_on, R.mipmap.icon_cup_off);
             }
 
             holder.setImageResource(R.id.iv_deviceType, typeResId);

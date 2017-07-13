@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.ozner.cup">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.ozner.cup">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -104,12 +104,10 @@
         <activity android:name=".QRCodeScan.activity.CaptureActivity"/>
         <activity android:name=".Device.AirPurifier.AirDeskFilterActivity">
         </activity>
-
-        <activity android:name=".Device.ROWaterPurifier.MatchROWaterPuriferActivity"></activity>
-        <activity android:name=".Device.ROWaterPurifier.ROFilterStatusActivity"></activity>
-        <activity android:name=".Device.ROWaterPurifier.SetupROWaterActivity"></activity>
-        <activity android:name=".Device.ROWaterPurifier.RoWaterRechargeActivity"></activity>
-
+        <activity android:name=".Device.ROWaterPurifier.MatchROWaterPuriferActivity"/>
+        <activity android:name=".Device.ROWaterPurifier.ROFilterStatusActivity"/>
+        <activity android:name=".Device.ROWaterPurifier.SetupROWaterActivity"/>
+        <activity android:name=".Device.ROWaterPurifier.RoWaterRechargeActivity"/>
         <activity android:name=".Base.WebActivity">
         </activity>
         <activity
@@ -296,19 +294,20 @@
         <activity android:name=".LoginWelcom.View.SignUpActivity">
         </activity>
 
-
-
-        <!--apk下载自动安装调取文件的provider-->
+        <!-- apk下载自动安装调取文件的provider -->
         <provider
-            android:authorities="${applicationId}.fileprovider"
             android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
-                tools:replace="android:resource"
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_provider_path" />
+                android:resource="@xml/file_provider_path"
+                tools:replace="android:resource"/>
         </provider>
+
+        <activity android:name=".Device.Kettle.MatchKettleActivity">
+        </activity>
     </application>
 
 </manifest>
